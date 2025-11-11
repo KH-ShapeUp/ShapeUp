@@ -1,0 +1,291 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+body {
+  background-color: #f0f0f0; 
+  color: #333;
+}
+
+header {
+  height: 60px;
+  background-color: #f7f7f7; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+main {
+  max-width: 1000px;
+  margin: 30px auto; 
+  padding: 0 20px;
+}
+
+h2 {
+  margin-bottom: 25px; 
+  font-weight: 700;
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* 왼쪽 박스 wrapper: left-box와 meal-summary를 감싸고, relative 기준을 제공 */
+.left-box-wrapper {
+  flex: 2;
+  position: relative; /* meal-summary의 absolute 기준 */
+  padding-top: 50px; /* meal-summary가 들어갈 공간 확보 (약 50px) */
+  display: flex; /* 내부 요소가 높이를 채우도록 */
+  flex-direction: column;
+}
+
+/* 왼쪽 박스 본문 */
+.left-box {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1; /* wrapper 안에서 남은 공간을 채움 */
+}
+
+/* 한줄평 박스: 본문 밖으로 나오도록 absolute 설정 */
+.meal-summary {
+  position: absolute;
+  top: 0; /* wrapper의 맨 위 */
+  left: 0;
+  right: 0; /* wrapper의 너비를 채움 */
+  
+  /* 디자인 스타일 */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px; 
+  background-color: #fff; /* 배경색 흰색 */
+  border: 1px solid #ddd; /* 테두리 추가 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
+}
+
+.meal-summary img {
+  width: 20px;
+  height: 20px;
+}
+
+/* calorie-box는 left-box 안에 들어가도록 조정 */
+.calorie-box {
+  background-color: #fff; 
+  border-radius: 10px;
+  padding: 0 0 20px 0; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.date-list {
+  width: 100%; 
+  display: flex;
+  justify-content: space-around; 
+  gap: 0; 
+  margin-bottom: 30px;
+  background-color: #f5f5f5;
+  padding: 0; 
+  border-radius: 10px 10px 0 0; 
+}
+
+.date-item {
+  flex-grow: 1; 
+  text-align: center;
+  padding: 10px 0; 
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #777;
+  transition: background-color 0.2s;
+}
+
+.date-item.active {
+  background-color: #fff;
+  color: #333;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0; 
+}
+
+.date-list .date-item:first-child {
+    border-top-left-radius: 10px;
+}
+
+.date-list .date-item:last-child {
+    border-top-right-radius: 10px;
+}
+
+.calorie-display {
+  /* 수정: 왼쪽으로 이동시키기 위해 정렬 방식을 변경하고 왼쪽 여백을 줍니다. */
+  width: 100%; /* 부모의 너비를 채웁니다. */
+  display: flex;
+  align-items: center;
+  /* 변경: 왼쪽으로 치우치도록 정렬 */
+  justify-content: flex-start; 
+  /* 수정: 원과 칼로리 값 사이의 간격을 늘립니다. */
+  gap: 80px; 
+  margin-bottom: 30px;
+  padding-left: 50px; /* 원을 왼쪽으로 밀어 넣는 여백 */
+}
+
+.circle-ratio {
+  width: 200px; 
+  height: 200px; 
+  border-radius: 50%;
+  border: 10px solid #ddd; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px; 
+  color: #555;
+  background-color: #fff;
+  /* 수정: 그림자 제거 */
+  box-shadow: none; 
+}
+
+.calorie-value {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  /* 추가: 칼로리 값을 오른쪽으로 더 밀어냅니다. */
+  margin-left: 20px; 
+}
+
+.calorie-value .value {
+  font-size: 36px; 
+  font-weight: 800;
+  color: #333;
+}
+
+.calorie-value .label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #888;
+}
+
+.nutrition-grid {
+  width: 90%; 
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 0 10px;
+  border-top: 1px solid #eee; 
+  padding-top: 20px;
+}
+
+.nutrition-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.nutrition-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -7.5px; 
+  top: 10px;
+  height: 80%;
+  width: 1px;
+  background-color: #eee;
+}
+
+.icon-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.nutrition-item img {
+  width: 18px; 
+  height: 18px;
+}
+
+.nutrient {
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+.amount {
+  font-weight: bold;
+  font-size: 15px;
+  color: #333;
+}
+
+/* 오른쪽 박스 */
+.right-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.meal-time {
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  cursor: default;
+  flex-grow: 1;
+}
+
+.meal-label {
+  font-weight: 600;
+  color: #444;
+}
+
+.meal-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.add-button {
+  font-size: 12px;
+  color: #007bff;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background-color: #e0f0ff;
+}
+
+.kcal-value {
+  font-weight: 700;
+  color: #333;
+  width: 60px;
+  text-align: right;
+}
