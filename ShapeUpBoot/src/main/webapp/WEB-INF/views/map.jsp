@@ -13,10 +13,11 @@
     <div class="container">
         <jsp:include page="/WEB-INF/views/include/header.jsp"/>
             <div class="map-wrap">
-                <button id="myLocationBtn" class="my-location-btn">
-                    <i class="fa-solid fa-crosshairs"></i>
-                </button>
-                <div id="map" style="width:100%;height:100%;"></div> 
+                <div id="map" style="width:100%;height:100%;">            
+                    <button id="myLocationBtn" class="my-location-btn">
+                        <i class="fa-solid fa-crosshairs"></i>
+                    </button>
+                </div> 
                 <div id="menu-wrap" class="bg_white">
                     <div class="option">
                         <div>
