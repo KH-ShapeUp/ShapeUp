@@ -1,0 +1,55 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background: #f5f6fa;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f5f6fa;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Fade-up on initial mount for cards and buttons */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chart-card,
+.message-box,
+.report-box {
+  animation: fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+.top-section > *:nth-child(1) { animation-delay: 0ms; }
+.top-section > *:nth-child(2) { animation-delay: 80ms; }
+.top-section > *:nth-child(3) { animation-delay: 160ms; }
+.bottom-section > *:nth-child(1) { animation-delay: 0ms; }
+.bottom-section > *:nth-child(2) { animation-delay: 80ms; }
+.bottom-section > *:nth-child(3) { animation-delay: 160ms; }
+
+.status-btn,
+button {
+  animation: fade-up 350ms ease-out both;
+  animation-delay: 120ms;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-card,
+  .message-box,
+  .report-box,
+  .status-btn,
+  button {
+    animation: none !important;
+  }
+}
