@@ -1,6 +1,6 @@
 var markers = [];
-var myLocation = null; // ★ 내 위치 좌표(LatLng)를 저장할 변수
-var myLocationMarker = null; // ★ 내 위치 마커를 저장할 변수
+var myLocation = null; //  내 위치 좌표(LatLng)를 저장할 변수
+var myLocationMarker = null; //  내 위치 마커를 저장할 변수
 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = {
@@ -21,9 +21,13 @@ function displayMarker(locPosition, message) {
     }
 
     // '내 위치' 마커 생성
+    var imageSrc = '../../resources/img/my-location.png', //  단일 마커 이미지
+    imageSize = new kakao.maps.Size(60, 60), // 실제 마커 이미지 크기
+    myMarkerImage = new kakao.maps.MarkerImage(imageSrc, imageSize),
     myLocationMarker = new kakao.maps.Marker({  
         map: map, 
-        position: locPosition
+        position: locPosition,
+        image : myMarkerImage
     }); 
     
     var iwContent = message,
@@ -266,7 +270,7 @@ function getListItem(index, places) {
 }
 // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
 function addMarker(position, idx, title) {
-    var imageSrc = '../../resources/img/marker_1.png', //  단일 마커 이미지
+    var imageSrc = '../../resources/img/map-marker.png', //  단일 마커 이미지
         imageSize = new kakao.maps.Size(60, 60), // 실제 마커 이미지 크기
         markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize),
         marker = new kakao.maps.Marker({
