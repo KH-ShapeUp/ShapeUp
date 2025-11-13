@@ -7,6 +7,10 @@ import PagePlaceholder from "../common/components/PagePlaceholder";
 import menus from "../common/config/menuConfig";
 import MembersUser from "./pages/MembersUser";
 import PostsNotice from "./pages/PostNotice";
+import PostFreeBoard from "./pages/PostFreeBoard";
+import PostSuccessBoard from "./pages/PostSuccessBoard";
+import PostQnaBoard from "./pages/PostQnaBoard";
+import MembersReport from "./pages/ReportManagement";
 import "./App.css";
 import "./styles/Dashboard.css";
 
@@ -31,7 +35,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <Sidebar />
+      <Sidebar homeHref="/" variant="admin" mainPath="/" />
       <div className="main-content">
         <Header title={title} />
 
@@ -43,7 +47,11 @@ function App() {
             Object.entries(section.subs).map(([subKey, sub]) => {
               const routeElements = {
                 "/members/user": <MembersUser />,
+                "/members/report": <MembersReport />,
                 "/posts/notice": <PostsNotice />,
+                "/posts/submenu2": <PostFreeBoard />,
+                "/posts/submenu3": <PostSuccessBoard />,
+                "/posts/submenu4": <PostQnaBoard />,
               };
               const element = routeElements[sub.path] ?? (
                 <PagePlaceholder title={`${section.name} - ${sub.label}`} />

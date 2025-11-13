@@ -8,7 +8,7 @@ const menus = {
     path: "/members",
     subs: {
       submenu1: { label: "회원 관리", path: "/members/user" },
-      submenu2: { label: "사이드메뉴2", path: "/members/submenu2" },
+      submenu2: { label: "회원 신고 관리", path: "/members/report" },
     },
   },
   trainers: {
