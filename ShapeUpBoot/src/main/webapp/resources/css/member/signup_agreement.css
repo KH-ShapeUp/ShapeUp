@@ -1,0 +1,218 @@
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+}
+
+.signup-container {
+  display: flex;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 1200px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* 왼쪽 */
+.left-panel {
+  flex: 1;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #ddd;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+/* 오른쪽 */
+.right-panel {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.logo {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.logo span {
+  font-weight: bold;
+  color: #333;
+}
+
+.tab-menu {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab {
+  border: none;
+  background: none;
+  font-size: 1rem;
+  margin: 0 10px;
+  cursor: pointer;
+  padding-bottom: 5px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  border-bottom: 2px solid #000;
+  font-weight: 600;
+}
+
+/* 박스 */
+.signup-box {
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 30px;
+  border-radius: 8px;
+  margin-top: 10px;  
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.sub-text {
+  color: #666;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 약관 */
+.agree-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.check-all {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.agree-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.toggle:hover {
+  color: #000;
+}
+
+/* 버튼 */
+.button-area {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  transition: all 0.2s;
+}
+
+.btn.cancel {
+  background: #fff;
+}
+
+.btn.cancel:hover {
+  background: #f0f0f0;
+}
+
+.btn.next {
+  background: #000;
+  color: #fff;
+  border: none;
+}
+
+.btn.next:hover {
+  background: #333;
+}
+
+/* 단계 표시 바 */
+.step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0 30px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  transition: all 0.3s;
+}
+
+.step.active .circle {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.step.active p {
+  color: #000;
+  font-weight: 600;
+}
+
+.line {
+  width: 50px;
+  height: 2px;
+  background: #ddd;
+  margin: 0 10px;
+}

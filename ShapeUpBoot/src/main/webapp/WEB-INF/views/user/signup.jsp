@@ -1,10 +1,13 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원가입 | ShapeUp</title>
-  <link rel="stylesheet" href="../../../resources/css/member/signup.css">
+
+  <!-- JSP에서는 경로를 contextPath 기반으로 -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/member/signup.css">
 </head>
 <body>
   <main class="signup-container">
@@ -13,14 +16,14 @@
     </section>
 
     <section class="right-panel">
-        <h1 class="logo">Shape<span>Up</span></h1>
-    
-        <div class="tab-menu">
-          <button class="tab">로그인</button>
-          <button class="tab active">회원가입</button>
-        </div>
-      <div class="signup-box">
+      <h1 class="logo">ShapeUp</h1>
 
+      <div class="tab-menu">
+        <button class="tab">로그인</button>
+        <button class="tab active">회원가입</button>
+      </div>
+
+      <div class="signup-box">
         <h2>회원가입</h2>
         <p class="sub-text">회원가입 방법을 선택해주세요</p>
 
