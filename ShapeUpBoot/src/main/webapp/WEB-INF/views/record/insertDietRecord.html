@@ -22,15 +22,19 @@
           <div class="tab-item">직접 입력</div>
         </div>
 
-        <div class="search-input-box">
-          <input type="text" placeholder="내가 먹은 음식 검색하기" />
+        <form class="search-input-box">
+          <input
+            type="text"
+            placeholder="내가 먹은 음식 검색하기"
+            name="food-query"
+          />
           <button type="submit">
             <img
               src="https://img.icons8.com/ios-filled/50/000000/search--v1.png"
               alt="search"
             />
           </button>
-        </div>
+        </form>
       </div>
 
       <div class="single-content-box">
@@ -44,10 +48,19 @@
         </div>
 
         <div class="integrated-list-container">
+          <!-- 좌측 div -->
           <div class="search-results section">
-            <div class="result-item">
+            <div
+              class="result-item"
+              data-name="불고기 피자"
+              data-kcal="298"
+              data-carb="34"
+              data-protein="12"
+              data-fat="13"
+              data-portion="1조각 (99g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
+                <p class="title">불고기 피자</p>
                 <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
                 <p class="nutrition">
                   약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
@@ -55,115 +68,149 @@
               </div>
               <button class="add-btn">+</button>
             </div>
-            <div class="result-item">
+
+            <div
+              class="result-item"
+              data-name="닭가슴살 샐러드"
+              data-kcal="250"
+              data-carb="15"
+              data-protein="30"
+              data-fat="8"
+              data-portion="1팩 (200g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
-                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="title">닭가슴살 샐러드</p>
+                <p class="details">1팩 ( 닭가슴살 100g, 채소 100g ) (200g)</p>
                 <p class="nutrition">
-                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                  약 250 kcal | 탄수화물 15g 단백질 30g 지방 8g
                 </p>
               </div>
               <button class="add-btn">+</button>
             </div>
-            <div class="result-item">
+
+            <div
+              class="result-item"
+              data-name="짜장면"
+              data-kcal="797"
+              data-carb="123"
+              data-protein="26"
+              data-fat="22"
+              data-portion="1그릇 (650g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
-                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="title">짜장면</p>
+                <p class="details">1그릇 ( 표준 1인분 ) (650g)</p>
                 <p class="nutrition">
-                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                  약 797 kcal | 탄수화물 123g 단백질 26g 지방 22g
                 </p>
               </div>
               <button class="add-btn">+</button>
             </div>
           </div>
 
+          <!-- 우측 div -->
           <div class="selected-list section">
-            <div class="result-item">
+            <div
+              class="result-item"
+              data-name="공기밥"
+              data-kcal="300"
+              data-carb="67"
+              data-protein="5.6"
+              data-fat="0.8"
+              data-portion="1그릇 (650g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
-                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="title">공기밥</p>
+                <p class="details">한 공기 (200g)</p>
                 <p class="nutrition">
-                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                  약 300 kcal | 탄수화물 67g 단백질 5.6g 지방 0.8g
                 </p>
               </div>
               <button class="add-btn">+</button>
             </div>
-            <div class="result-item">
+            <div
+              class="result-item"
+              data-name="황금올리브 치킨"
+              data-kcal="2100"
+              data-carb="2.9"
+              data-protein="150"
+              data-fat="23"
+              data-portion="한 마리 (800g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
-                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="title">황금올리브 치킨</p>
+                <p class="details">한 마리 (800g)</p>
                 <p class="nutrition">
-                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                  약 2100 kcal | 탄수화물 2.9g 단백질 150g 지방 23g
                 </p>
               </div>
               <button class="add-btn">+</button>
             </div>
-            <div class="result-item">
+            <div
+              class="result-item"
+              data-name="마라탕"
+              data-kcal="538"
+              data-carb="36"
+              data-protein="13"
+              data-fat="37"
+              data-portion="1인분 (210g)"
+            >
               <div class="info">
-                <p class="title">검색결과명</p>
-                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="title">마라탕</p>
+                <p class="details">1인분 (210g)</p>
                 <p class="nutrition">
-                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                  약 538 kcal | 탄수화물 36g 단백질 13g 지방 37g
                 </p>
               </div>
               <button class="add-btn">+</button>
             </div>
           </div>
         </div>
+
         <p class="pagination">
           <a href="#" style="text-decoration: none">확장</a>
         </p>
       </div>
     </main>
-    <!-- 모달 보이게 하려면 style="display: none;" 삭제 -->
-    <div class="modal-backdrop" style="display: none;">
+
+    <div class="modal-backdrop" style="display: none">
       <div class="food-modal">
         <div class="modal-title-bar">
           <h3 class="food-name">음식명</h3>
-
-          <span class="modal-center-info">피자</span>
+          <span class="modal-center-info"></span>
         </div>
-        <p class="food-kcal">880kcal</p>
+        <p class="food-kcal">0kcal</p>
 
         <div class="nutrition-summary">
           <div class="nutrition-item">
-            <img
-              src=""
-              alt="탄수화물 아이콘"
-            />
+            <img src="" alt="탄수화물 아이콘" />
             <span>탄수화물</span>
-            <span class="nutrition-value">220g</span>
+            <span class="nutrition-value carb-value">0g</span>
           </div>
           <div class="nutrition-item">
-            <img
-              src=""
-              alt="단백질 아이콘"
-            />
+            <img src="" alt="단백질 아이콘" />
             <span>단백질</span>
-            <span class="nutrition-value">0g</span>
+            <span class="nutrition-value protein-value">0g</span>
           </div>
           <div class="nutrition-item">
-            <img
-              src=""
-              alt="지방 아이콘"
-            />
+            <img src="" alt="지방 아이콘" />
             <span>지방</span>
-            <span class="nutrition-value">함유량 g</span>
+            <span class="nutrition-value fat-value">0g</span>
           </div>
         </div>
 
         <div class="portion-input-section">
           <div class="portion-display">
-            <span>1.5인분</span>
+            <span class="portion-count">1인분</span>
           </div>
           <div class="amount-display">
-            <span>약 220g</span>
+            <span class="amount-g">약 0g</span>
           </div>
         </div>
 
         <div class="quantity-control">
           <button class="quantity-btn minus">-</button>
-          <span class="current-quantity">1.5</span>
+          <span class="current-quantity">1</span>
           <button class="quantity-btn plus">+</button>
         </div>
 
@@ -172,5 +219,79 @@
         </div>
       </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const addButtons = document.querySelectorAll(".add-btn");
+        const modalBackdrop = document.querySelector(".modal-backdrop");
+        const registerButton = document.querySelector(".add-to-diet-btn");
+        const modal = document.querySelector(".food-modal");
+
+        // 모달 내 영양소 표시 요소
+        const modalFoodName = modal.querySelector(".food-name");
+        const modalKcal = modal.querySelector(".food-kcal");
+        const modalCarb = modal.querySelector(".carb-value");
+        const modalProtein = modal.querySelector(".protein-value");
+        const modalFat = modal.querySelector(".fat-value");
+
+        // 초기 수량 설정
+        const quantityDisplay = modal.querySelector(".current-quantity");
+        quantityDisplay.textContent = "1";
+
+        // 모달 표시 함수
+        const openModal = (e) => {
+          // 1. 선택된 항목(.result-item) 참조 가져오기
+          const resultItem = e.target.closest(".result-item");
+          const data = resultItem.dataset; // data-* 속성들을 객체로 가져옴
+
+          // 2. 제목 업데이트
+          modalFoodName.textContent = data.name || "음식명";
+
+          // 3. ✨ 칼로리 및 영양소 업데이트
+          modalKcal.textContent = `${data.kcal}kcal`;
+          modalCarb.textContent = `${data.carb}g`;
+          modalProtein.textContent = `${data.protein}g`;
+          modalFat.textContent = `${data.fat}g`;
+
+          // 4. 수량/중량 정보 업데이트 (단순 텍스트 복사)
+          modal.querySelector(".portion-count").textContent = "1인분"; // 기본값
+          modal.querySelector(".amount-g").textContent =
+            data.portion || "약 100g"; // data-portion 값
+
+          // 모달을 보이게 설정
+          modalBackdrop.style.display = "flex";
+        };
+
+        // 모달 닫기 함수
+        const closeModal = () => {
+          modalBackdrop.style.display = "none";
+        };
+
+        // '+' 버튼 클릭 이벤트 등록
+        addButtons.forEach((button) => {
+          button.addEventListener("click", openModal);
+        });
+
+        // 모달 외부 클릭 시 닫기
+        modalBackdrop.addEventListener("click", (e) => {
+          if (e.target === modalBackdrop) {
+            closeModal();
+          }
+        });
+
+        // 모달 내 '추가하기' 버튼 클릭 시 닫기
+        registerButton.addEventListener("click", closeModal);
+      });
+
+      // 검색 폼 새로고침 방지 (Enter 키 검색 기능 활성화용)
+      document
+        .querySelector(".search-input-box")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+          const query = e.target.querySelector("input").value;
+          console.log("검색 실행:", query);
+          // 여기에 실제 검색 로직 (AJAX 등)을 구현해야 합니다.
+        });
+    </script>
   </body>
 </html>
