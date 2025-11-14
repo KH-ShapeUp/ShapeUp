@@ -1,5 +1,6 @@
 import React from "react";
 import ChartCard from "../../common/components/ChartCard";
+import KpiCardSection from "../components/KpiCardSection";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
@@ -12,6 +13,8 @@ const Dashboard = () => {
         <ChartCard title="일일 방문량" data={visitData} />
         <ChartCard title="일일 회원 수" data={memberData} />
       </div>
+
+      <KpiCardSection /> 
 
       <div className="bottom-section">
         <div className="message-box">

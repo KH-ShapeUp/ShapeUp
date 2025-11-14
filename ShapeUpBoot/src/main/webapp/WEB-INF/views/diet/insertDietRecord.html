@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 저녁</title>
+    <link rel="stylesheet" href="/resources/css/diet/insertDietRecord.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>헤더</header>
+    <main>
+      <div class="header-line"></div>
+      <h2>오늘의 저녁</h2>
+
+      <div class="search-section">
+        <div class="tab-menu">
+          <div class="tab-item active">음식 검색</div>
+          <div class="tab-item">직접 입력</div>
+        </div>
+
+        <div class="search-input-box">
+          <input type="text" placeholder="내가 먹은 음식 검색하기" />
+          <button type="submit">
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/search--v1.png"
+              alt="search"
+            />
+          </button>
+        </div>
+      </div>
+
+      <div class="single-content-box">
+        <div class="stat-header">
+          <p class="result-count">검색결과 X개</p>
+          <div class="selected-summary">
+            <p>선택한 음식 X개</p>
+            <p class="total-kcal">총 0Kcal</p>
+            <button class="register-btn">식단 등록하기</button>
+          </div>
+        </div>
+
+        <div class="integrated-list-container">
+          <div class="search-results section">
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+
+          <div class="selected-list section">
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item">
+              <div class="info">
+                <p class="title">검색결과명</p>
+                <p class="details">1조각 ( 1/8 지름 30CM ) (99g)</p>
+                <p class="nutrition">
+                  약 298 kcal | 탄수화물 34g 단백질 12g 지방 13g
+                </p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <p class="pagination">
+          <a href="#" style="text-decoration: none">확장</a>
+        </p>
+      </div>
+    </main>
+    <!-- 모달 보이게 하려면 style="display: none;" 삭제 -->
+    <div class="modal-backdrop">
+      <div class="food-modal">
+        <div class="modal-title-bar">
+          <h3 class="food-name">음식명</h3>
+
+          <span class="modal-center-info">피자</span>
+        </div>
+        <p class="food-kcal">880kcal</p>
+
+        <div class="nutrition-summary">
+          <div class="nutrition-item">
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/rice-bowl--v1.png"
+              alt="탄수화물 아이콘"
+            />
+            <span>탄수화물</span>
+            <span class="nutrition-value">220g</span>
+          </div>
+          <div class="nutrition-item">
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/shish-kebab--v1.png"
+              alt="단백질 아이콘"
+            />
+            <span>단백질</span>
+            <span class="nutrition-value">0g</span>
+          </div>
+          <div class="nutrition-item">
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/milk-bottle--v1.png"
+              alt="지방 아이콘"
+            />
+            <span>지방</span>
+            <span class="nutrition-value">함유량 g</span>
+          </div>
+        </div>
+
+        <div class="portion-input-section">
+          <div class="portion-display">
+            <span>1.5인분</span>
+          </div>
+          <div class="amount-display">
+            <span>약 220g</span>
+          </div>
+        </div>
+
+        <div class="quantity-control">
+          <button class="quantity-btn minus">-</button>
+          <span class="current-quantity">1.5</span>
+          <button class="quantity-btn plus">+</button>
+        </div>
+
+        <div class="modal-actions">
+          <button class="add-to-diet-btn">추가하기</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

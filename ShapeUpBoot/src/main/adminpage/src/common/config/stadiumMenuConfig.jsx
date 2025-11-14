@@ -1,5 +1,5 @@
 // src/common/config/stadiumMenuConfig.jsx
-import { FaHome, FaBuilding, FaMoneyCheckAlt } from "react-icons/fa";
+import { FaBuilding, FaBell } from "react-icons/fa";
 
 const stadiumMenus = {
 
@@ -13,13 +13,13 @@ const stadiumMenus = {
     },
   },
 
-  income: {
-    name: "정산 / 매출 관리",
-    icon: <FaMoneyCheckAlt />,
-    path: "/stadium/income",
+  alerts: {
+    name: "알림 / 메모",
+    icon: <FaBell />,
+    path: "/stadium/alerts",
     subs: {
-      summary: { label: "정산 내역", path: "/stadium/income/summary" },
-      deposit: { label: "입금 확인", path: "/stadium/income/deposit" },
+      maintenance: { label: "시설 점검 일정 확인", path: "/stadium/alerts/maintenance" },
+      notifications: { label: "운영 알림", path: "/stadium/alerts/notifications" },
     },
   },
 };

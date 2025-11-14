@@ -1,0 +1,227 @@
+.stadium-dashboard {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stadium-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stadium-kpi {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  border: 2px solid transparent;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stadium-kpi:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+}
+
+.kpi-label {
+  font-size: 0.95rem;
+  color: #5c6477;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stadium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.stadium-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stadium-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+}
+
+.stadium-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.stadium-card__header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.stadium-card__header p {
+  margin: 4px 0 0;
+  color: #7e8598;
+  font-size: 0.9rem;
+}
+
+.badge {
+  background: #e6e9f5;
+  color: #4c4f65;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.badge--primary {
+  background: #e0ecff;
+  color: #2465e2;
+}
+
+.badge--orange {
+  background: #fff1d5;
+  color: #ad5a00;
+}
+
+.stadium-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.stadium-table th,
+.stadium-table td {
+  border-bottom: 1px solid #eceff5;
+  padding: 8px;
+  text-align: left;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.pill--확정 {
+  background: #e8f7ef;
+  color: #1d7a3c;
+}
+
+.pill--입금대기,
+.pill--pending {
+  background: #fff2dd;
+  color: #a66500;
+}
+
+.pill--대기 {
+  background: #e9ecff;
+  color: #3f52c6;
+}
+
+.maintenance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.maintenance-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #edf0fb;
+}
+
+.maintenance-list strong {
+  display: block;
+}
+
+.maintenance-list span {
+  font-size: 0.85rem;
+  color: #6d7388;
+}
+
+.maintenance-list .due {
+  font-weight: 600;
+  color: #333b4f;
+}
+
+.priority-high {
+  border-left: 4px solid #ff6b6b;
+}
+
+.priority-medium {
+  border-left: 4px solid #f5a524;
+}
+
+.priority-low {
+  border-left: 4px solid #2dcc70;
+}
+
+.deposit-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-list li {
+  color: #4b4f63;
+  font-size: 0.95rem;
+}
+
+.memo-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memo-list li {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #eceff5;
+  background: #f9fbff;
+}
+
+.memo-list span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #6d7388;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stadium-kpi,
+  .stadium-card {
+    animation: none !important;
+  }
+}
