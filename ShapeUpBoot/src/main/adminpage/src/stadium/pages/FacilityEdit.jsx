@@ -6,6 +6,8 @@ import { useFacilityData } from "../context/FacilityDataContext";
 const FacilityEdit = () => {
   const { timeSlots, setTimeSlots, schedules, facilities } = useFacilityData();
   const [selectedFacility, setSelectedFacility] = useState(facilities[0] ?? "시설 1");
+  const [draftSlots, setDraftSlots] = useState(timeSlots);
+  const [saveStatus, setSaveStatus] = useState("");
 
   useEffect(() => {
     if (!facilities.includes(selectedFacility) && facilities.length) {
@@ -13,11 +15,32 @@ const FacilityEdit = () => {
     }
   }, [facilities, selectedFacility]);
 
-  const addTimeSlot = () => setTimeSlots((prev) => [...prev, ""]);
+  useEffect(() => {
+    setDraftSlots(timeSlots);
+  }, [timeSlots]);
+
+  const addTimeSlot = () => setDraftSlots((prev) => [...prev, ""]);
   const removeTimeSlot = (idx) =>
-    setTimeSlots((prev) => prev.filter((_, i) => i !== idx));
+    setDraftSlots((prev) => prev.filter((_, i) => i !== idx));
   const updateTime = (idx, value) => {
-    setTimeSlots((prev) => prev.map((slot, i) => (i === idx ? value : slot)));
+    setDraftSlots((prev) => prev.map((slot, i) => (i === idx ? value : slot)));
+  };
+
+  const saveTimeSlots = () => {
+    const sanitized = draftSlots.map((slot) => slot.trim()).filter(Boolean);
+    if (!sanitized.length) {
+      setSaveStatus("시간대를 한 개 이상 입력하세요.");
+      return;
+    }
+    const invalid = sanitized.find((slot) => !/^\d{2}:\d{2}~\d{2}:\d{2}$/.test(slot));
+    if (invalid) {
+      setSaveStatus("시간대를 24시간 형식(HH:MM~HH:MM)으로 입력하세요.");
+      return;
+    }
+    const uniqueSorted = Array.from(new Set(sanitized)).sort((a, b) => a.localeCompare(b));
+    setTimeSlots(uniqueSorted);
+    setSaveStatus("공통 시간대가 저장되었습니다.");
+    setTimeout(() => setSaveStatus(""), 1500);
   };
 
   const facilityDates = useMemo(
@@ -88,8 +111,8 @@ const FacilityEdit = () => {
             <button className="add-btn" onClick={addTimeSlot}>＋</button>
           </div>
           <div className="time-list">
-            {timeSlots.map((time, idx) => (
-              <div key={`${time}-${idx}`} className="time-item">
+            {draftSlots.map((time, idx) => (
+              <div key={idx} className="time-item">
                 <input
                   type="text"
                   value={time}
@@ -107,6 +130,10 @@ const FacilityEdit = () => {
           <p className="time-helper">
             이 시간대 목록은 Facility Check 화면에서 빈 슬롯 생성 시 활용됩니다.
           </p>
+          <button type="button" className="submit-btn save-btn" onClick={saveTimeSlots}>
+            공통 시간대 저장
+          </button>
+          {saveStatus && <p className="save-status">{saveStatus}</p>}
         </div>
 
         <div className="date-preview-section">

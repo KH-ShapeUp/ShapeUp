@@ -1,11 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/StadiumAlerts.css";
 
-const seedNotifications = [
-  { id: 1, text: "11/14 10:00 시설 관리자 미팅", pinned: false },
-  { id: 2, text: "신규 단체 이용 문의 2건 접수", pinned: true },
-  { id: 3, text: "세금계산서 발행 마감 D-3", pinned: false },
-];
+const STORAGE_KEY = "stadium_operational_notifications";
 
 const seedMemos = [
   { id: 1, text: "요가 강사 스케줄 업데이트 필요", date: "2025-11-14 09:40" },
@@ -13,81 +9,57 @@ const seedMemos = [
 ];
 
 const StadiumNotifications = () => {
-  const [notifications, setNotifications] = useState(seedNotifications);
-  const [memos, setMemos] = useState(seedMemos);
-  const [noticeDraft, setNoticeDraft] = useState("");
-  const [memoDraft, setMemoDraft] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [memos] = useState(seedMemos);
 
-  const addNotification = () => {
-    if (!noticeDraft.trim()) return;
-    setNotifications((prev) => [
-      { id: Date.now(), text: noticeDraft.trim(), pinned: false },
-      ...prev,
-    ]);
-    setNoticeDraft("");
+  const loadNotifications = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      return JSON.parse(raw);
+    } catch (err) {
+      console.warn("Failed to load notifications", err);
+      return [];
+    }
   };
 
-  const togglePin = (id) => {
-    setNotifications((prev) =>
-      prev.map((notice) => (notice.id === id ? { ...notice, pinned: !notice.pinned } : notice))
-    );
-  };
-
-  const addMemo = () => {
-    if (!memoDraft.trim()) return;
-    const stamp = new Date().toLocaleString();
-    setMemos((prev) => [{ id: Date.now(), text: memoDraft.trim(), date: stamp }, ...prev]);
-    setMemoDraft("");
-  };
-
-  const sortedNotifications = [...notifications].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+  useEffect(() => {
+    setNotifications(loadNotifications());
+    const handler = () => setNotifications(loadNotifications());
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
 
   return (
     <div className="stadium-alerts-page">
       <header className="alerts-header">
         <div>
           <h2>운영 알림 · 팀 메모</h2>
-          <p>현장 관리자와 공유할 알림 및 메모를 관리하세요.</p>
+          <p>어드민에서 전달된 운영 지침을 확인하세요.</p>
         </div>
       </header>
 
       <section className="alerts-grid">
         <article className="alerts-card">
-          <h3>운영 알림</h3>
-          <div className="alert-form">
-            <textarea
-              placeholder="알림 내용을 입력하세요"
-              value={noticeDraft}
-              onChange={(e) => setNoticeDraft(e.target.value)}
-            />
-            <button type="button" onClick={addNotification}>
-              알림 추가
-            </button>
-          </div>
+          <h3>운영 알림 ({notifications.length}건)</h3>
           <ul className="notification-list">
-            {sortedNotifications.map((notice) => (
-              <li key={notice.id} className={notice.pinned ? "pinned" : ""}>
-                <p>{notice.text}</p>
-                <button type="button" onClick={() => togglePin(notice.id)}>
-                  {notice.pinned ? "고정 해제" : "상단 고정"}
-                </button>
+            {notifications.map((notice) => (
+              <li key={notice.id}>
+                <div>
+                  <strong>{notice.title}</strong>
+                  <p>{notice.message}</p>
+                  <span>
+                    대상: {notice.audience} · {notice.date}
+                  </span>
+                </div>
               </li>
             ))}
+            {!notifications.length && <p className="empty">수신된 알림이 없습니다.</p>}
           </ul>
         </article>
 
         <article className="alerts-card">
           <h3>팀 메모</h3>
-          <div className="memo-form">
-            <textarea
-              placeholder="메모를 입력하세요"
-              value={memoDraft}
-              onChange={(e) => setMemoDraft(e.target.value)}
-            />
-            <button type="button" onClick={addMemo}>
-              메모 저장
-            </button>
-          </div>
           <ul className="memo-list">
             {memos.map((memo) => (
               <li key={memo.id}>

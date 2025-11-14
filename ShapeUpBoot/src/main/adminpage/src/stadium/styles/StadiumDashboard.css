@@ -133,6 +133,11 @@
   color: #3f52c6;
 }
 
+.pill--완료 {
+  background: #e7f8ee;
+  color: #1f8650;
+}
+
 .maintenance-list {
   list-style: none;
   margin: 0;
@@ -217,6 +222,45 @@
   margin-top: 4px;
   font-size: 0.85rem;
   color: #6d7388;
+}
+
+.message-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.message-list li {
+  border: 1px solid #eceff5;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fdfdff;
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: #5d6377;
+}
+
+.message-subject {
+  margin: 6px 0 2px;
+  font-weight: 600;
+  color: #303651;
+}
+
+.message-preview {
+  margin: 0;
+  color: #6c738a;
+  font-size: 0.9rem;
+}
+
+.suggestion-table td:nth-child(3) {
+  max-width: 220px;
 }
 
 @media (prefers-reduced-motion: reduce) {

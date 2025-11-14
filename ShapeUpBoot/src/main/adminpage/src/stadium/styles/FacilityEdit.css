@@ -62,6 +62,17 @@ textarea {
   cursor: pointer;
 }
 
+.save-btn {
+  width: fit-content;
+  margin-top: 10px;
+}
+
+.save-status {
+  margin-top: 8px;
+  color: #2b67f6;
+  font-weight: 600;
+}
+
 .time-edit-section {
   margin-top: 24px;
 }

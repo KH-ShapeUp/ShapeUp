@@ -10,7 +10,9 @@ import PostsNotice from "./pages/PostNotice";
 import PostFreeBoard from "./pages/PostFreeBoard";
 import PostSuccessBoard from "./pages/PostSuccessBoard";
 import PostQnaBoard from "./pages/PostQnaBoard";
+import SendGuideline from "./pages/SendGuideline";
 import MembersReport from "./pages/ReportManagement";
+import TrainerReport from "./pages/TrainerReport";
 import "./App.css";
 import "./styles/Dashboard.css";
 
@@ -48,10 +50,12 @@ function App() {
               const routeElements = {
                 "/members/user": <MembersUser />,
                 "/members/report": <MembersReport />,
+                "/members/trainer-report": <TrainerReport />,
                 "/posts/notice": <PostsNotice />,
                 "/posts/submenu2": <PostFreeBoard />,
                 "/posts/submenu3": <PostSuccessBoard />,
                 "/posts/submenu4": <PostQnaBoard />,
+                "/feeds/send-guideline": <SendGuideline />,
               };
               const element = routeElements[sub.path] ?? (
                 <PagePlaceholder title={`${section.name} - ${sub.label}`} />
