@@ -2,14 +2,15 @@
 import { FaBuilding, FaBell } from "react-icons/fa";
 
 const stadiumMenus = {
-
   facility: {
     name: "시설 관리자",
     icon: <FaBuilding />,
     path: "/stadium/facility",
     subs: {
       check: { label: "입금 / 예약 확인", path: "/stadium/facility/check" },
-      edit: { label: "시설 추가 및 수정", path: "/stadium/facility/edit" }
+      edit: { label: "시설 추가 및 수정", path: "/stadium/facility/edit" },
+      manage: { label: "건의 사항 관리", path: "/stadium/facility/manage" },
+      review: { label: "리뷰 관리", path: "/stadium/facility/review" },
     },
   },
 

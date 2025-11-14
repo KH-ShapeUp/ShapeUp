@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/StadiumDashboard.css";
+import {
+  STADIUM_MESSAGE_STORAGE_KEY,
+  STORAGE_EVENTS,
+} from "../../common/utils/storageKeys";
 
 const initialKpis = [
   { label: "오늘 예약", value: 42, accent: "#4c8bf5" },
@@ -33,12 +37,81 @@ const initialMemos = [
   { id: 2, text: "풋살장 잔디 교체 일정 확인", date: "2025-11-14 13:05" },
 ];
 
+const inboxMessages = [
+  {
+    id: 1,
+    sender: "ShapeUp 본사",
+    subject: "정기 시설 안전 점검 안내",
+    preview: "이번 주 내 점검표 공유 바랍니다.",
+    date: "11.14",
+  },
+  {
+    id: 2,
+    sender: "회원 민지원",
+    subject: "수영장 이용 문의",
+    preview: "주말 이용 가능 여부 확인 요청",
+    date: "11.13",
+  },
+];
+
+const suggestionItems = [
+  {
+    id: 1,
+    user: "김태훈",
+    facility: "헬스장",
+    content: "스트레칭 매트 추가 배치",
+    status: "대기",
+  },
+  {
+    id: 2,
+    user: "이지수",
+    facility: "요가실",
+    content: "주말 오전 클래스 증설 요청",
+    status: "완료",
+  },
+];
+
+const isBrowser = typeof window !== "undefined";
+
+const readInboxFromStorage = () => {
+  if (!isBrowser) return [];
+  try {
+    const raw = window.localStorage.getItem(STADIUM_MESSAGE_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.warn("Failed to load inbox messages", err);
+    return [];
+  }
+};
+
 const StadiumDashboard = () => {
   const kpis = initialKpis;
   const bookings = initialBookings;
   const maintenanceList = initialMaintenance;
   const notifications = initialNotifications;
   const memos = initialMemos;
+  const suggestions = suggestionItems;
+  const [incomingMessages, setIncomingMessages] = useState([]);
+
+  useEffect(() => {
+    if (!isBrowser) return;
+    const sync = () => setIncomingMessages(readInboxFromStorage());
+    const storageHandler = (event) => {
+      if (event.key && event.key !== STADIUM_MESSAGE_STORAGE_KEY) return;
+      sync();
+    };
+    sync();
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener(STORAGE_EVENTS.STADIUM_MESSAGES, sync);
+    return () => {
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener(STORAGE_EVENTS.STADIUM_MESSAGES, sync);
+    };
+  }, []);
+
+  const messages = [...incomingMessages, ...inboxMessages];
 
   return (
     <div className="stadium-dashboard">
@@ -140,6 +213,61 @@ const StadiumDashboard = () => {
               </li>
             ))}
           </ul>
+        </article>
+      </section>
+
+      <section className="stadium-grid">
+        <article className="stadium-card">
+          <header className="stadium-card__header">
+            <div>
+              <h3>받은 쪽지</h3>
+              <p>관리자 공지 및 회원 문의</p>
+            </div>
+            <span className="badge">최근 {messages.length}건</span>
+          </header>
+          <ul className="message-list">
+            {messages.map((msg) => (
+              <li key={msg.id}>
+                <div className="message-meta">
+                  <strong>{msg.sender}</strong>
+                  <span>{msg.date}</span>
+                </div>
+                <p className="message-subject">{msg.subject}</p>
+                <p className="message-preview">{msg.preview}</p>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="stadium-card">
+          <header className="stadium-card__header">
+            <div>
+              <h3>건의 사항</h3>
+              <p>회원 요청 대응 현황</p>
+            </div>
+          </header>
+          <table className="stadium-table suggestion-table">
+            <thead>
+              <tr>
+                <th>회원</th>
+                <th>시설</th>
+                <th>내용</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {suggestions.map((row) => (
+                <tr key={row.id}>
+                  <td>{row.user}</td>
+                  <td>{row.facility}</td>
+                  <td>{row.content}</td>
+                  <td>
+                    <span className={`pill pill--${row.status}`}>{row.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </article>
       </section>
     </div>

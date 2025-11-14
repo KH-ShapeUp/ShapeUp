@@ -10,12 +10,18 @@ const FacilityCheck = () => {
     schedules,
     setSchedules,
     facilities,
-    buildEmptySlots,
+    timeSlots,
   } = useFacilityData();
   const [selectedDate, setSelectedDate] = useState("2025-12-12");
   const [selectedFacility, setSelectedFacility] = useState("시설 1");
   const [modal, setModal] = useState({ open: false, member: null, result: "" });
+  const [cancelModal, setCancelModal] = useState({
+    open: false,
+    slot: null,
+    message: "",
+  });
   const closeTimerRef = useRef(null);
+  const cancelTimerRef = useRef(null);
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const [memberFilterFacility, setMemberFilterFacility] = useState("전체");
   const [searchText, setSearchText] = useState("");
@@ -24,6 +30,9 @@ const FacilityCheck = () => {
     return () => {
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
+      }
+      if (cancelTimerRef.current) {
+        clearTimeout(cancelTimerRef.current);
       }
     };
   }, []);
@@ -88,12 +97,16 @@ const FacilityCheck = () => {
   }, [filteredMembers, sort]);
 
   const reservations = useMemo(() => {
-    const daySlots = schedules[selectedFacility]?.[selectedDate] ?? buildEmptySlots();
-    return daySlots.map((slot) => ({
+    const daySlots = schedules[selectedFacility]?.[selectedDate] ?? [];
+    const normalized = timeSlots.map((slot) => {
+      const existing = daySlots.find((item) => item.time === slot);
+      return existing ?? { time: slot, memberId: null };
+    });
+    return normalized.map((slot) => ({
       ...slot,
       member: slot.memberId ? memberMap[slot.memberId] : null,
     }));
-  }, [selectedFacility, selectedDate, schedules, memberMap]);
+  }, [selectedFacility, selectedDate, schedules, memberMap, timeSlots]);
 
   const formatDisplayDate = (value) => value.replace(/-/g, ".");
 
@@ -113,6 +126,12 @@ const FacilityCheck = () => {
 
   const openModal = (member) => setModal({ open: true, member, result: "" });
   const closeModal = () => setModal({ open: false, member: null, result: "" });
+  const openCancelModal = (slot) => {
+    if (!slot?.member) return;
+    setCancelModal({ open: true, slot, message: "" });
+  };
+  const closeCancelModal = () =>
+    setCancelModal({ open: false, slot: null, message: "" });
   const toggleSort = (key) => {
     setSort((prev) =>
       prev.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }
@@ -162,6 +181,26 @@ const FacilityCheck = () => {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     closeTimerRef.current = setTimeout(() => {
       closeModal();
+    }, 1000);
+  };
+
+  const handleCancelReservation = () => {
+    const member = cancelModal.slot?.member;
+    if (!member) return;
+
+    setMembers((prev) =>
+      prev.map((m) => (m.id === member.id ? { ...m, status: "예약 거부" } : m))
+    );
+    updateScheduleSlot(member, "reject");
+
+    setCancelModal((prev) => ({
+      ...prev,
+      message: "취소하였습니다.",
+    }));
+
+    if (cancelTimerRef.current) clearTimeout(cancelTimerRef.current);
+    cancelTimerRef.current = setTimeout(() => {
+      closeCancelModal();
     }, 1000);
   };
 
@@ -266,7 +305,9 @@ const FacilityCheck = () => {
                       <p className="confirm-text">✅ 예약이 확정되었습니다.</p>
                     )}
                     <div className="res-actions">
-                      <button type="button">취소</button>
+                      <button type="button" onClick={() => openCancelModal(slot)}>
+                        취소
+                      </button>
                       <button type="button">채팅</button>
                     </div>
                   </div>
@@ -308,6 +349,38 @@ const FacilityCheck = () => {
                 </button>
                 <button className="reject" onClick={() => handleModalAction("reject")}>
                   예약 거부
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {cancelModal.open && cancelModal.slot && (
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeCancelModal}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeCancelModal} aria-label="닫기">
+              ×
+            </button>
+            <h3>예약 취소</h3>
+            <p>예약자: {cancelModal.slot.member.user}</p>
+            <p>예약 시설: {cancelModal.slot.member.facility}</p>
+            <p>예약일: {formatDisplayDate(cancelModal.slot.member.date)}</p>
+            <p>시간대: {cancelModal.slot.member.time}</p>
+            <p>해당 예약을 취소하시겠습니까?</p>
+            {cancelModal.message ? (
+              <p className="modal-feedback">{cancelModal.message}</p>
+            ) : (
+              <div className="modal-actions">
+                <button className="approve" onClick={handleCancelReservation}>
+                  예
+                </button>
+                <button className="reject" onClick={closeCancelModal}>
+                  아니오
                 </button>
               </div>
             )}

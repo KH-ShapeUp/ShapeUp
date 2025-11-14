@@ -9,6 +9,7 @@ const menus = {
     subs: {
       submenu1: { label: "회원 관리", path: "/members/user" },
       submenu2: { label: "회원 신고 관리", path: "/members/report" },
+      trainerReport: { label: "트레이너 신고 관리", path: "/members/trainer-report" },
     },
   },
   trainers: {
@@ -20,12 +21,11 @@ const menus = {
     },
   },
   feeds: {
-    name: "피드 관리",
+    name: "요청 보내기",
     icon: <FaRegNewspaper />,
     path: "/feeds",
     subs: {
-      submenu1: { label: "사이드메뉴1", path: "/feeds/submenu1" },
-      submenu2: { label: "사이드메뉴2", path: "/feeds/submenu2" },
+      send: { label: "운영지침 보내기", path: "/feeds/send-guideline" },
     },
   },
   posts: {
