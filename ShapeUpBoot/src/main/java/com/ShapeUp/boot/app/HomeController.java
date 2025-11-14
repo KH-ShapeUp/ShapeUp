@@ -21,5 +21,15 @@ public class HomeController {
 	public String mapPage() {
 		return "map";
 	}
+	
+	@GetMapping("/t")
+	public String page() {
+		return "diet/dietRecord";
+	}
+	
+	@GetMapping("/tt")
+	public String paget() {
+		return "diet/customDietRecord";
+	}
 }
 
