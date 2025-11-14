@@ -1,0 +1,26 @@
+.page-placeholder {
+  width: 100%;
+  min-height: 280px;
+  border: 2px dashed #d0d7e2;
+  border-radius: 12px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+  text-align: center;
+  padding: 24px;
+}
+.page-placeholder h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1f2a37;
+}
+.page-placeholder p {
+  margin: 0;
+  font-size: 1rem;
+  color: #6b7280;
+}

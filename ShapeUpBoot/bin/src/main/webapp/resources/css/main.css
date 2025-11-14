@@ -1,0 +1,694 @@
+@charset "UTF-8";
+.main {
+	width: 80%;
+    padding: 2vw 8vw;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+    gap: 3em;
+}
+
+/* 광고 */
+.ad-wrapper {
+    width: 100%;
+    height: 230px;
+    background-color: #0a2fff;
+    border-radius: 12px;
+}
+
+/* 식단, 환영 문구 */
+.diet-wrapper {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.diet-wrapper .diet-left {
+    width: 40%;
+    height: 100%;
+    border-radius: 12px;
+    background: linear-gradient(0deg, rgba(235, 120, 241, 1) 0%, rgba(105, 165, 255, 1) 100%);
+}
+
+.morning,
+.lunch, 
+.dinner, 
+.other,
+.carb,
+.protein,
+.fat  {
+    --border: 1px solid #000;
+    border-radius: 12px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+    
+.diet-right {
+    width: 60%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 0.8fr 0.8fr 0.8fr 0.8fr 1.6fr; /* 아래쪽을 더 크게 */
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    gap: 15px;
+}
+   
+.diet-right .diet-view-wrapper {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.diet-view-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.diet-view-bottom {
+    text-align: right;
+}
+
+.diet-view-bottom span {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.detail-wrapper {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    border-radius: 12px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    --border: 1px solid #000;
+}
+
+.detail-view-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-view-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+}
+
+.detail-view-bottom span {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+        
+.morning { grid-area: 1 / 1 / 3 / 4;}
+.lunch { grid-area: 1 / 4 / 3 / 7; }
+.dinner { grid-area: 3 / 1 / 5 / 4; }
+.other { grid-area: 3 / 4 / 5 / 7; }
+.carb { grid-area: 5 / 1 / 6 / 3; }
+.protein { grid-area: 5 / 3 / 6 / 5; }
+.fat { grid-area: 5 / 5 / 6 / 7; }
+    
+/* 최근 올라온 매칭 */
+.recent-matching-wrapper {
+    width: 100%;
+}
+
+.matching {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+
+.matching span {
+    font-weight: 500;
+    color: #111;
+}
+
+#matching-all-list-btn {
+    color: #111;
+    text-decoration: none;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+#matching-all-list-btn .fa-solid {
+    margin-left: 3px;
+    font-size: .8rem;
+    color: #111;
+}
+
+.matching-content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.matching-card {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.25s ease;
+}
+
+.matching-card:hover {
+    transform: scale(1.01);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.matching-user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.matching-user img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    object-fit: cover;
+}       
+
+.user-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nick-name {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.workout-category {
+    width: 43px;
+    height: 20px;
+    text-align: center;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #666;
+    background-color: #d1d1d1;
+    border-radius: 8px;
+    align-self: flex-start;
+}
+
+.matching-title {
+    margin-bottom: 1.25rem;
+}
+
+.matching-title h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;   
+}      
+
+.matching-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2열 그리드 */
+    gap: 0.75rem; /* 항목 간 간격 */
+    font-size: .9rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.matching-info span {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.matching-info .fa-solid {
+    margin-right: 4px;
+    color:#666;
+    font-size: 1rem;
+}
+
+.matching-btn-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.matching-btn-wrapper #matching-btn {
+    width: 100%;
+    height: 45px;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background-color: #0A84FF;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.matching-btn-wrapper #matching-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 성공후기 게시판 */
+.goal-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.goal-left-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.goal-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.goal span {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #111;
+}
+
+.goal-all #goal-all-list-btn {
+    color: #111;
+    text-decoration: none;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+#goal-all-list-btn .fa-solid {
+    margin-left: 3px;
+    font-size: .8rem;
+    color: #111;
+}
+
+.goal-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.goal-content a {
+    text-decoration: none;
+    color: #111;
+}
+
+.goal-card {
+    background-color: #fff;
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 1.5rem;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    gap: 10px;
+}
+
+.goal-user-profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.profile-img img {
+    width: 50px;
+    border-radius: 5px;
+    margin-right: 0.75rem;
+    object-fit: cover;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-info .writer {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.profile-info .writerDate {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.goal-title span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111;
+}
+
+.goal-setting {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.goal-setting .fa-solid {
+    margin-right: 5px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.goal-setting span {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #666;
+}
+
+
+/* 공지사항 */
+.goal-right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 30px;
+}
+
+.post-left-notice {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.post-left-notice .goal-wrapper-title {
+   border-bottom: 1px solid #d5d5d5;
+   padding-bottom: 15px;
+}
+
+.notice-main a {
+    text-decoration: none;
+    color: #111;
+}
+
+.notice-main a:hover {
+    color: #0A84FF;
+}
+
+.notice-card {
+    background-color: #fff;
+    margin-top: 10px;
+    padding: .8rem;
+    border: 1px solid #f2f3f4;
+    display: flex;
+    border-radius: 12px;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.15s ease;
+}
+
+.notice-card:hover {
+    background-color: #f3f4f6;;
+}
+
+.notice-ahref {
+    text-decoration: none;
+    color: #111;
+}
+
+.notice-top {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 공지 사항 카테고리가 nomral 일 때 */
+.notice-top .notice-category-n {
+    background-color: #FF3B30;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 공지사항 카테고리가 이벤트일때*/
+.notice-top .notice-category-e {
+    background-color: #E3F2FD;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #1E88E5;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 공지사항 카테고리가 제휴 일때*/
+.notice-top .notice-category-c {
+    background-color: #D0F0C0;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #2E7D32;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 공지사항 카테고리가 징계 일때*/
+.notice-top .notice-category-d {
+    background-color: #FFF3CD;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #C58B00;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.notice-top .notice-writeDate {
+    color: #111;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.notice-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.notice-icon  {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.notice-icon .fa-solid {
+    margin-right: 5px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.notice-icon span {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.notice-middle h4{
+    padding-bottom: 5px;
+}
+
+.notice-middle .notice-comment {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #0A84FF;
+}
+
+.notice-middle span {
+    font-size: .9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* 자유 게시판 */
+.post-right-free {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+}
+
+.post-right-free .post-wrapper-title {
+    padding-bottom: 15px ;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+.post-content .post-ahref {
+    text-decoration: none;
+    color: #111;
+}
+
+.post-card {
+    background-color: #fff;
+    margin-top: 10px;
+    padding: .8rem;
+    border: 1px solid #f2f3f4;
+    display: flex;
+    border-radius: 12px;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.15s ease;
+}
+
+.post-card:hover {
+    background-color: #f2f3f4;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-header-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.post-header-left .post-category {
+    background-color: #e2e2e2;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.post-header-left .post-nickName {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.post-header-left .post-writeDate {
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.post-icon {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.post-icon .fa-solid {
+    margin-right: 5px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.post-icon span {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.post-middle .post-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.post-middle .post-comment {
+    font-size: 0.8rem;
+    color: #0A84FF;
+    font-weight: 500;
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+    .main {
+        width: 100%;
+        display: flex;
+        padding: 5vw;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+        flex-direction: column;
+        gap: 2em;
+    }
+
+    .diet-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .diet-wrapper .diet-left, 
+    .diet-wrapper .diet-right {
+        width: 100%;
+    }
+
+    .recent-matching-wrapper .matching-content {
+        display: flex;
+        flex-direction: row; 
+        overflow-x: auto;   
+        /* 모바일 스크롤바 숨기기 */
+        -ms-overflow-style: none; 
+        scrollbar-width: none; 
+    }
+    
+    .recent-matching-wrapper .matching-content::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .recent-matching-wrapper .matching-card {
+        flex: 0 0 auto; 
+        width: 280px;   
+        padding-bottom: 10px;
+    }
+
+    .goal-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .goal-content {
+        overflow-y: auto;
+        flex-direction: row;
+        -ms-overflow-style: none; 
+        scrollbar-width: none; 
+        padding: 0px 10px 10px 10px;
+        gap: 20px;
+    }
+    
+    .goal-content::-webkit-scrollbar {
+        display: none;
+    }
+
+    .goal-content a {
+        flex: 0 0 auto;
+        width: 280px;    
+        margin-top: 0;
+    }
+
+    .goal-card {
+        padding: 15px;
+    }
+
+    .goal-setting {
+        gap: 15px;
+    }
+}

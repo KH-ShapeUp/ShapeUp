@@ -1,0 +1,58 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background: #f5f6fa;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f5f6fa;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Shared card animation (aligned with 회원 관리) */
+@keyframes members-card-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chart-card,
+.message-box,
+.report-box,
+.kpi-container,
+.kpi-item {
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.chart-card:hover,
+.message-box:hover,
+.report-box:hover,
+.kpi-container:hover,
+.kpi-item:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.top-section > *:nth-child(1) { animation-delay: 0ms; }
+.top-section > *:nth-child(2) { animation-delay: 80ms; }
+.top-section > *:nth-child(3) { animation-delay: 160ms; }
+.bottom-section > *:nth-child(1) { animation-delay: 0ms; }
+.bottom-section > *:nth-child(2) { animation-delay: 80ms; }
+.bottom-section > *:nth-child(3) { animation-delay: 160ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-card,
+  .message-box,
+  .report-box {
+    animation: none !important;
+  }
+}
