@@ -19,98 +19,102 @@
 
 			<!-- 식단, 환영 div -->
 			<div class="diet-wrapper">
-				<div class="diet-left">
-					<!-- 환영 문구-->
-					<div class="welcome-text">
-
-					</div>
-					<!-- 환영 문구 끝 -->
+				<div class="diet-wrapper-title">
+					<h2>오늘의 칼로리</h2>
+					<span>오늘의 식단을 관리하세요.</span>
 				</div>
-
-				<div class="diet-right">
+				<div class="diet-content">
 					<!-- 아침 -->
-					<div class="morning diet-view-wrapper">
-						<div class="diet-view-top">
-							<h2>아침</h2>
-							<img src="../../resources/img/diet-img/morning.png" width="30px">
-						</div>
-						<div class="diet-view-bottom">
-							<span>0 Kcal</span>
-						</div>
+					<div class="user-diet-record" style="border-top: 4px solid #F2B84B;">
+						<a href="morning">
+							<div class="title">
+								<i class="fa-solid fa-mug-saucer"></i>
+								<div class="title-info">
+									<h3>아침</h3>
+									<p>07:30 AM</p>
+								</div>	
+							</div>
+							<div class="info">
+								<div class="cal">섭취칼로리</div>
+								<h2 class="cal-num">450</h2>
+							</div>
+							<div class="progress" id="progressWrapper">
+								<div class="progress-out" id="progressOut">
+									<div class="progress-in" id="progressIn"></div>
+								</div>
+							</div>
+							<div class="meta">목표 : 500 Kcal</div>
+						</a>
 					</div>
-					<!-- 아침 끝 -->
-
+	
 					<!-- 점심 -->
-					<div class="lunch diet-view-wrapper">
-						<div class="diet-view-top">
-							<h2>점심</h2>
-							<img src="../../resources/img/diet-img/lunch.png" width="30px">
-						</div>
-						<div class="diet-view-bottom">
-							<span>0 Kcal</span>
-						</div>
+					<div class="user-diet-record" style="border-top: 4px solid #2E8CFF;">
+						<a href="lunch">
+							<div class="title">
+								<i class="fa-solid fa-utensils"></i>
+								<div class="title-info">
+									<h3>점심</h3>
+									<p>13:30 PM</p>
+								</div>	
+							</div>
+							<div class="info">
+								<div class="cal">섭취칼로리</div>
+								<h2 class="cal-num">650</h2>
+							</div>
+							<div class="progress" id="progressWrapper">
+								<div class="progress-out" id="progressOut">
+									<div class="progress-in" id="progressIn"></div>
+								</div>
+							</div>
+							<div class="meta">목표 : 680 Kcal</div>
+						</a>
 					</div>
-					<!-- 점심 끝 -->
-
+	
 					<!-- 저녁 -->
-					<div class="dinner diet-view-wrapper">
-							<div class="diet-view-top">
-							<h2>저녁</h2>
-							<img src="../../resources/img/diet-img/dinner.png" width="30px">
-						</div>
-						<div class="diet-view-bottom">
-							<span>0 Kcal</span>
-						</div>
+					<div class="user-diet-record" style="border-top: 4px solid #F25C5C;">
+						<a href="dinner">
+							<div class="title">
+								<i class="fa-solid fa-bowl-food"></i>
+								<div class="title-info">
+									<h3>저녁</h3>
+									<p>18:30 PM</p>
+								</div>	
+							</div>
+							<div class="info">
+								<div class="cal">섭취칼로리</div>
+								<h2 class="cal-num">350</h2>
+							</div>
+							<div class="progress" id="progressWrapper">
+								<div class="progress-out" id="progressOut">
+									<div class="progress-in" id="progressIn"></div>
+								</div>
+							</div>
+							<div class="meta">목표 : 550 Kcal</div>
+						</a>
 					</div>
-					<!-- 저녁 끝 -->
-
+	
 					<!-- 기타 -->
-					<div class="other diet-view-wrapper">
-							<div class="diet-view-top">
-							<h2>기타</h2>
-							<img src="../../resources/img/diet-img/other.png" width="30px">
-						</div>
-						<div class="diet-view-bottom">
-							<span>0 Kcal</span>
-						</div>
+					<div class="user-diet-record" style="border-top: 4px solid #C58C5D;">
+						<a href="other">
+							<div class="title">
+								<i class="fa-solid fa-cookie-bite"></i>
+								<div class="title-info">
+									<h3>기타</h3>
+									<p>간식 / 음료</p>
+								</div>	
+							</div>
+							<div class="info">
+								<div class="cal">섭취칼로리</div>
+								<h2 class="cal-num">50</h2>
+							</div>
+							<div class="progress" id="progressWrapper">
+								<div class="progress-out" id="progressOut">
+									<div class="progress-in" id="progressIn"></div>
+								</div>
+							</div>
+							<div class="meta">목표 : 500 Kcal</div>	
+						</a>
 					</div>
-					<!-- 기타 끝 -->
-
-					<!--**********-->
-
-					<!-- 탄수화물 -->
-					<div class="carb detail-wrapper">
-						<div class="detail-view-top">
-							<h3>탄수화물</h3>
-						</div>
-						<div class="detail-view-bottom">
-							<span>0 g</span>
-						</div>
-					</div>
-					<!-- 탄수화물 끝 -->
-
-					<!-- 단백질 -->
-					<div class="protein detail-wrapper">
-						<div class="detail-view-top">
-							<h3>단백질</h3>
-						</div>
-						<div class="detail-view-bottom">
-							<span>0 g</span>
-						</div>
-					</div>
-					<!-- 단백질 끝 -->
-
-					<!-- 지방 -->
-					<div class="fat detail-wrapper">
-						<div class="detail-view-top">
-							<h3>지방</h3>
-						</div>
-						<div class="detail-view-bottom">
-							<span>0 g</span>
-						</div>
-					</div>
-					<!-- 지방 끝-->
-
 				</div>
 			</div>
 			<!-- 식단 div 끝 -->
@@ -257,184 +261,37 @@
 					<div class="goal-content">
 						<a href="#">
 							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
+								<div class="goal-top">
+									<div class="goal-profile-img">
+										<img src="../../resources/img/person.png" alt="">
 									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
+									<div class="goal-profile-info">
+										<span>윤태혁</span>
+										<span>2025.10.31</span>
 									</div>
 								</div>
-							</div>
-						</a>				
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
+
+								<div class="goal-main">
+									<div class="goal-title">
+										3개월만에 20kg 감량
 									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
+									<div class="goal-main">
+										<span class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</span>
+										<span class="goal-comment">(120)</span>
+										<div class="goal-icon">
+											<div class="goal-view">
+												<i class="fa-solid fa-eye"></i>
+												<span>1,203</span>
+											</div>
+											<div class="goal-good">
+												<i class="fa-solid fa-thumbs-up"></i>
+												<span>38</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
-						</a>				
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
-									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
-									</div>
-								</div>
-							</div>
-						</a>				
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
-									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
-									</div>
-								</div>
-							</div>
-						</a>				
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
-									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
-									</div>
-								</div>
-							</div>
-						</a>								
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-user-profile">
-									<div class="profile-img">
-										<img src="../../resources/img/person.png">
-									</div>
-									<div class="profile-info">
-										<span class="writer">윤태혁</span>
-										<span class="writerDate">2025.11.13</span>
-									</div>
-								</div>
-								<div class="goal-title">
-									<span>3개월만에 20감량</span>
-								</div>
-								<div class="goal-setting">
-									<div class="goal-view">
-										<i class="fa-solid fa-eye"></i>
-										<span>1,203</span>
-									</div>
-									<div class="goal-comment">
-										<i class="fa-solid fa-comments"></i>
-										<span>30</span>
-									</div>
-									<div class="goal-good">
-										<i class="fa-solid fa-thumbs-up"></i>
-										<span>38</span>
-									</div>
-								</div>
-							</div>
-						</a>				
+						</a>			
 					</div>
 				</div>
 
