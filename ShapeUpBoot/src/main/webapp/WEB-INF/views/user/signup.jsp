@@ -7,7 +7,7 @@
   <title>회원가입 | ShapeUp</title>
 
   <!-- JSP에서는 경로를 contextPath 기반으로 -->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/signup.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/member/signup.css">
 </head>
 <body>
   <main class="signup-container">
