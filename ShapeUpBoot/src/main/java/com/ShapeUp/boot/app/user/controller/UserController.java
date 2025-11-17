@@ -14,8 +14,8 @@ public class UserController {
 	    return "user/signupAgreement"; // /WEB-INF/views/user/signupAgreement.jsp
 	}
 	@GetMapping("/user/signupInsertInfo")
-	public String signupsignupInsertInfo() {
-	    return "user/signupsignupInsertInfo"; // /WEB-INF/views/user/signupAgreement.jsp
+	public String signupInsertInfo() {
+	    return "user/signupInsertInfo"; // /WEB-INF/views/user/signupAgreement.jsp
 	}
 	@GetMapping("/user/signupSuccess")
 	public String signupSuccess() {
