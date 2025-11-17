@@ -22,6 +22,11 @@ public class HomeController {
 		return "map";
 	}
 	
+	@GetMapping("/matching")
+	public String matchingPage() {
+		return "matchingBoard";
+	}
+	
 	@GetMapping("/t")
 	public String page() {
 		return "diet/dietRecord";
