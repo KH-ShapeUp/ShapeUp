@@ -1,0 +1,138 @@
+.memo-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.memo-header {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.memo-header h2 {
+  margin: 0 0 4px;
+}
+
+.memo-header p {
+  margin: 0;
+  color: #717890;
+}
+
+.memo-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memo-filter select {
+  border-radius: 8px;
+  border: 1px solid #d7dcea;
+  padding: 6px 10px;
+}
+
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.memo-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.memo-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+}
+
+.memo-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memo-form-card select,
+.memo-form-card textarea {
+  border: 1px solid #d7dcea;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.memo-form-card textarea {
+  min-height: 140px;
+  resize: none;
+}
+
+.memo-form-card button {
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.memo-feedback {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.memo-list-card .memo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memo-list-card li {
+  border: 1px solid #e2e6f2;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fdfdff;
+}
+
+.memo-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #69708a;
+  margin-bottom: 6px;
+}
+
+.memo-list-card button {
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.memo-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.empty {
+  text-align: center;
+  color: #8a90a7;
+}

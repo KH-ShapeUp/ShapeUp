@@ -201,6 +201,12 @@
   font-size: 0.95rem;
 }
 
+.memo-filter select {
+  border-radius: 8px;
+  border: 1px solid #d7dcea;
+  padding: 4px 8px;
+}
+
 .memo-list {
   list-style: none;
   margin: 16px 0 0;

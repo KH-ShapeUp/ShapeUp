@@ -7,6 +7,7 @@ import {
   STORAGE_EVENTS,
   TRAINER_REPORT_STORAGE_KEY,
 } from "../../common/utils/storageKeys";
+import { appendInboxMessage } from "../../common/utils/messageUtils";
 
 const baseReviews = [
   {
@@ -18,6 +19,7 @@ const baseReviews = [
     title: "러닝머신 상태가 좋아요",
     content: "최근에 러닝머신을 교체해 주셔서 사용감이 훨씬 좋아졌습니다.",
     status: "대기",
+    mailNotified: false,
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ const baseReviews = [
     title: "트레이너 언행이 거슬렸어요",
     content: "PT 진행 중 트레이너가 반말을 해서 불쾌했습니다.",
     status: "대기",
+    mailNotified: false,
   },
   {
     id: 3,
@@ -38,6 +41,7 @@ const baseReviews = [
     title: "수영장 수질 최고",
     content: "물 온도와 수질 관리가 뛰어나요.",
     status: "대기",
+    mailNotified: false,
   },
   {
     id: 4,
@@ -48,6 +52,7 @@ const baseReviews = [
     title: "락커룸 위생 문제",
     content: "청소가 제대로 되지 않아 냄새가 심합니다.",
     status: "대기",
+    mailNotified: false,
   },
   {
     id: 5,
@@ -58,6 +63,7 @@ const baseReviews = [
     title: "예약 시스템 오류",
     content: "모바일에서 예약이 자꾸 끊깁니다.",
     status: "대기",
+    mailNotified: false,
   },
 ];
 
@@ -138,6 +144,28 @@ const FacilityReview = () => {
       window.removeEventListener(STORAGE_EVENTS.FACILITY_REVIEWS, sync);
     };
   }, []);
+
+  useEffect(() => {
+    let needUpdate = false;
+    const nextReviews = reviews.map((review) => {
+      if (!review.mailNotified) {
+        appendInboxMessage({
+          sender: "회원 리뷰",
+          subject: `[리뷰] ${review.facility} - ${review.title}`,
+          preview: `${review.member} · ${review.facility}`,
+          body: review.content,
+          category: "리뷰",
+          metadata: { facility: review.facility, reviewer: review.member },
+        });
+        needUpdate = true;
+        return { ...review, mailNotified: true };
+      }
+      return review;
+    });
+    if (needUpdate) {
+      setReviews(nextReviews);
+    }
+  }, [reviews, setReviews]);
 
   const facilityFilters = useMemo(() => {
     const all = new Set([...facilityTabs, ...facilities]);

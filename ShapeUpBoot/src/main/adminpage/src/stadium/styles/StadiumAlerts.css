@@ -20,6 +20,10 @@
   gap: 20px;
 }
 
+.alerts-grid.single {
+  grid-template-columns: minmax(320px, 1fr);
+}
+
 .alerts-card {
   background: #fff;
   border-radius: 14px;

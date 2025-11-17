@@ -3,6 +3,8 @@ import Chart from "chart.js/auto";
 import "../styles/StadiumSuggestion.css";
 import "../../admin/styles/PostNotice.css";
 import { useFacilityData } from "../context/FacilityDataContext";
+import { appendInboxMessage } from "../../common/utils/messageUtils";
+import { STADIUM_SUGGESTION_STORAGE_KEY } from "../../common/utils/storageKeys";
 
 const initialSuggestions = [
   {
@@ -15,6 +17,7 @@ const initialSuggestions = [
     attachments: ["treadmill_waiting.png"],
     status: "대기",
     answer: "",
+    mailNotified: false,
   },
   {
     id: 2,
@@ -26,6 +29,7 @@ const initialSuggestions = [
     attachments: [],
     status: "완료",
     answer: "다음 주에 전체 교체 예정이며 안내 드리겠습니다.",
+    mailNotified: false,
   },
   {
     id: 3,
@@ -37,6 +41,7 @@ const initialSuggestions = [
     attachments: ["locker_video.mp4"],
     status: "대기",
     answer: "",
+    mailNotified: false,
   },
   {
     id: 4,
@@ -48,16 +53,40 @@ const initialSuggestions = [
     attachments: [],
     status: "완료",
     answer: "강사 스케줄 조정 후 주말 오후 세션을 열 예정입니다.",
+    mailNotified: false,
   },
 ];
 
 const chartLabels = ["대기", "완료"];
+const isBrowser = typeof window !== "undefined";
+
+const loadSuggestions = () => {
+  if (!isBrowser) return initialSuggestions;
+  try {
+    const raw = window.localStorage.getItem(STADIUM_SUGGESTION_STORAGE_KEY);
+    if (!raw) {
+      window.localStorage.setItem(STADIUM_SUGGESTION_STORAGE_KEY, JSON.stringify(initialSuggestions));
+      return initialSuggestions;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (err) {
+    console.warn("Failed to load suggestions", err);
+  }
+  return initialSuggestions;
+};
+
+const persistSuggestions = (data) => {
+  if (!isBrowser) return;
+  window.localStorage.setItem(STADIUM_SUGGESTION_STORAGE_KEY, JSON.stringify(data));
+};
 
 const StadiumSuggestion = () => {
   const { facilities } = useFacilityData();
-  const [suggestions, setSuggestions] = useState(initialSuggestions);
+  const initialData = useMemo(() => loadSuggestions(), []);
+  const [suggestions, setSuggestions] = useState(initialData);
   const [selectedFacility, setSelectedFacility] = useState("전체");
-  const [selectedId, setSelectedId] = useState(initialSuggestions[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useState(initialData[0]?.id ?? null);
   const [answerDraft, setAnswerDraft] = useState("");
   const [message, setMessage] = useState("");
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
@@ -74,6 +103,10 @@ const StadiumSuggestion = () => {
       setSelectedFacility("전체");
     }
   }, [facilityOptions, selectedFacility]);
+
+  useEffect(() => {
+    persistSuggestions(suggestions);
+  }, [suggestions]);
 
   const filteredSuggestions = useMemo(() => {
     return suggestions.filter(
@@ -166,6 +199,28 @@ const StadiumSuggestion = () => {
     });
     return () => chartInstance.destroy();
   }, [pendingList.length, answeredList.length]);
+
+  useEffect(() => {
+    let needsUpdate = false;
+    const nextSuggestions = suggestions.map((item) => {
+      if (!item.mailNotified) {
+        appendInboxMessage({
+          sender: "건의 사항",
+          subject: `[건의] ${item.title}`,
+          preview: `${item.member} · ${item.facility}`,
+          body: item.content,
+          category: "건의 사항",
+          metadata: { facility: item.facility, member: item.member },
+        });
+        needsUpdate = true;
+        return { ...item, mailNotified: true };
+      }
+      return item;
+    });
+    if (needsUpdate) {
+      setSuggestions(nextSuggestions);
+    }
+  }, [suggestions]);
 
   const handleAnswer = () => {
     if (!selectedItem) return;

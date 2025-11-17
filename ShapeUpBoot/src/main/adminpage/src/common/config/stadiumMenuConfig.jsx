@@ -21,6 +21,8 @@ const stadiumMenus = {
     subs: {
       maintenance: { label: "시설 점검 일정 확인", path: "/stadium/alerts/maintenance" },
       notifications: { label: "운영 알림", path: "/stadium/alerts/notifications" },
+      memo: { label: "팀 메모", path: "/stadium/alerts/memo" },
+      mail: { label: "받은 쪽지", path: "/stadium/alerts/mail" },
     },
   },
 };

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../styles/StadiumDashboard.css";
 import {
   STADIUM_MESSAGE_STORAGE_KEY,
+  STADIUM_MEMO_STORAGE_KEY,
+  STADIUM_NOTIFICATION_STORAGE_KEY,
   STORAGE_EVENTS,
 } from "../../common/utils/storageKeys";
 
@@ -86,14 +88,50 @@ const readInboxFromStorage = () => {
   }
 };
 
+const readNotificationFeed = () => {
+  if (!isBrowser) return initialNotifications;
+  try {
+    const raw = window.localStorage.getItem(STADIUM_NOTIFICATION_STORAGE_KEY);
+    if (!raw) {
+      window.localStorage.setItem(
+        STADIUM_NOTIFICATION_STORAGE_KEY,
+        JSON.stringify(initialNotifications)
+      );
+      return initialNotifications;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length ? parsed : initialNotifications;
+  } catch (err) {
+    console.warn("Failed to load notifications", err);
+    return initialNotifications;
+  }
+};
+
+const readMemosFromStorage = () => {
+  if (!isBrowser) return initialMemos;
+  try {
+    const raw = window.localStorage.getItem(STADIUM_MEMO_STORAGE_KEY);
+    if (!raw) {
+      window.localStorage.setItem(STADIUM_MEMO_STORAGE_KEY, JSON.stringify(initialMemos));
+      return initialMemos;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : initialMemos;
+  } catch (err) {
+    console.warn("Failed to load memos", err);
+    return initialMemos;
+  }
+};
+
 const StadiumDashboard = () => {
   const kpis = initialKpis;
   const bookings = initialBookings;
   const maintenanceList = initialMaintenance;
-  const notifications = initialNotifications;
-  const memos = initialMemos;
   const suggestions = suggestionItems;
   const [incomingMessages, setIncomingMessages] = useState([]);
+  const [notifications, setNotifications] = useState(() => readNotificationFeed());
+  const [memoFeed, setMemoFeed] = useState(() => readMemosFromStorage());
+  const [memoTab, setMemoTab] = useState("전체");
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -111,7 +149,42 @@ const StadiumDashboard = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isBrowser) return;
+    const syncNotices = () => setNotifications(readNotificationFeed());
+    const storageHandler = (event) => {
+      if (event.key && event.key !== STADIUM_NOTIFICATION_STORAGE_KEY) return;
+      syncNotices();
+    };
+    syncNotices();
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener(STORAGE_EVENTS.STADIUM_NOTIFICATIONS, syncNotices);
+    return () => {
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener(STORAGE_EVENTS.STADIUM_NOTIFICATIONS, syncNotices);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isBrowser) return;
+    const syncMemos = () => setMemoFeed(readMemosFromStorage());
+    const storageHandler = (event) => {
+      if (event.key && event.key !== STADIUM_MEMO_STORAGE_KEY) return;
+      syncMemos();
+    };
+    syncMemos();
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener(STORAGE_EVENTS.STADIUM_MEMOS, syncMemos);
+    return () => {
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener(STORAGE_EVENTS.STADIUM_MEMOS, syncMemos);
+    };
+  }, []);
+
   const messages = [...incomingMessages, ...inboxMessages];
+  const memoList = memoFeed.filter((memo) =>
+    memoTab === "전체" ? true : memo.facility === memoTab
+  );
 
   return (
     <div className="stadium-dashboard">
@@ -192,9 +265,22 @@ const StadiumDashboard = () => {
             </div>
           </header>
           <ul className="notification-list">
-            {notifications.map((note, idx) => (
-              <li key={idx}>{note}</li>
-            ))}
+            {notifications.map((item, idx) => {
+              if (typeof item === "string") {
+                return <li key={idx}>{item}</li>;
+              }
+              return (
+                <li key={item.id ?? idx}>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.message}</p>
+                    <span>
+                      대상: {item.audience} · {item.date}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </article>
 
@@ -202,16 +288,27 @@ const StadiumDashboard = () => {
           <header className="stadium-card__header">
             <div>
               <h3>메모</h3>
-              <p>팀 공유 메모 {memos.length}건</p>
+              <p>팀 공유 메모 {memoFeed.length}건</p>
+            </div>
+            <div className="memo-filter">
+              <label>필터</label>
+              <select value={memoTab} onChange={(e) => setMemoTab(e.target.value)}>
+                <option value="전체">전체</option>
+                <option value="시설 1">시설 1</option>
+                <option value="시설 2">시설 2</option>
+                <option value="시설 3">시설 3</option>
+              </select>
             </div>
           </header>
           <ul className="memo-list">
-            {memos.map((memo) => (
+            {memoList.slice(0, 5).map((memo) => (
               <li key={memo.id}>
-                <p>{memo.text}</p>
+                <strong>{memo.facility || "시설 미지정"}</strong>
+                <p>{memo.content}</p>
                 <span>{memo.date}</span>
               </li>
             ))}
+            {memoList.length === 0 && <p className="empty">등록된 메모가 없습니다.</p>}
           </ul>
         </article>
       </section>

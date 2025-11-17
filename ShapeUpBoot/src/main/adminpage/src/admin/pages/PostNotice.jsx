@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
+import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 
 const PostNotice = () => {
   const initialPosts = useMemo(
@@ -36,6 +37,7 @@ const PostNotice = () => {
       chartLabels={["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"]}
       chartData={[5, 9, 3, 7, 6]}
       chartDatasetLabel="공지 등록 수"
+      storageKey={BOARD_STORAGE_KEYS.NOTICE}
     />
   );
 };

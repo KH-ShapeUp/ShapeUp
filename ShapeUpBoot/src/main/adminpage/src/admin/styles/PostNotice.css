@@ -127,6 +127,28 @@
   color: #0f6a3f;
 }
 
+.qna-filter-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.qna-filter-group button {
+  border: 1px solid #cfd6eb;
+  background: #f6f8ff;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.qna-filter-group button.active {
+  background: #2b67f6;
+  color: #fff;
+  border-color: #2b67f6;
+}
+
 .posts-table tr.active {
   background: #e8f0ff;
 }
