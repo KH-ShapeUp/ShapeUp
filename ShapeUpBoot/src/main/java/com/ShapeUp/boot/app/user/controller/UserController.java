@@ -1,6 +1,6 @@
-package com.ShapeUp.boot.app.User.controller;
+package com.ShapeUp.boot.app.user.controller;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
-	private final BCryptPasswordEncoder bcrypt;
+
 }
