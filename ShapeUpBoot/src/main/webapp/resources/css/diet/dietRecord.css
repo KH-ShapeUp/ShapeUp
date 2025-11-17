@@ -1,0 +1,424 @@
+﻿/* dietRecord.css */
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Noto Sans KR", sans-serif;
+}
+
+body {
+    background-color: #f0f0f0; 
+    color: #333;
+}
+
+header {
+    height: 60px;
+    background-color: #f7f7f7; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #555;
+    border-bottom: 1px solid #eee;
+}
+
+main {
+    max-width: 1100px;
+    margin: 60px auto 80px;
+    padding: 10px 24px;
+}
+
+h2 {
+    margin-bottom: 28px; 
+    font-weight: 700;
+}
+
+/* ================================================= */
+/* PC/Tablet (Default - 1000px ?댁긽) ?덉씠?꾩썐 */
+/* ================================================= */
+.content {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* ?쇱そ 諛뺤뒪 wrapper: left-box? meal-summary瑜?媛먯떥怨? relative 湲곗????쒓났 */
+.left-box-wrapper {
+    flex: 2;
+    position: relative; /* meal-summary??absolute 湲곗? */
+    padding-top: 60px; /* meal-summary媛 ?ㅼ뼱媛?怨듦컙 ?뺣낫 (??50px) */
+    display: flex; /* ?대? ?붿냼媛 ?믪씠瑜?梨꾩슦?꾨줉 */
+    flex-direction: column;
+}
+
+/* ?쇱そ 諛뺤뒪 蹂몃Ц */
+.left-box {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex-grow: 1; /* wrapper ?덉뿉???⑥? 怨듦컙??梨꾩? */
+}
+
+/* ?쒖쨪??諛뺤뒪: 蹂몃Ц 諛뽰쑝濡??섏삤?꾨줉 absolute ?ㅼ젙 */
+.meal-summary {
+    position: absolute;
+    top: 0; /* wrapper??留???*/
+    left: 0;
+    right: 0; /* wrapper???덈퉬瑜?梨꾩? */
+    
+    /* ?붿옄???ㅽ???*/
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px; 
+    background-color: #fff; /* 諛곌꼍???곗깋 */
+    border: 1px solid #ddd; /* ?뚮몢由?異붽? */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #444;
+}
+
+.meal-summary img {
+    width: 20px;
+    height: 20px;
+}
+
+/* calorie-box??left-box ?덉뿉 ?ㅼ뼱媛?꾨줉 議곗젙 */
+.calorie-box {
+    background-color: #fff; 
+    border-radius: 10px;
+    padding: 0 0 20px 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* ?좎쭨 ??*/
+.date-list {
+    width: 100%; 
+    display: flex;
+    justify-content: space-around; 
+    gap: 0; 
+    margin-bottom: 30px;
+    background-color: #f5f5f5;
+    padding: 0; 
+    border-radius: 10px 10px 0 0; 
+}
+
+.date-item {
+    flex-grow: 1; 
+    text-align: center;
+    padding: 10px 0; 
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #777;
+    transition: background-color 0.2s;
+}
+
+.date-item.active {
+    background-color: #fff;
+    color: #333;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0; 
+}
+
+.date-list .date-item:first-child {
+    border-top-left-radius: 10px;
+}
+
+.date-list .date-item:last-child {
+    border-top-right-radius: 10px;
+}
+
+/* 移쇰줈由??꾪솴 (PC: ?먰삎 + ?띿뒪?? */
+.calorie-display {
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 80px; 
+    margin-bottom: 30px;
+    padding-left: 50px; 
+}
+
+.circle-ratio {
+    width: 200px; 
+    height: 200px; 
+    border-radius: 50%;
+    border: 10px solid #ddd; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px; 
+    color: #555;
+    background-color: #fff;
+    box-shadow: none; 
+}
+
+.calorie-value {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 20px; 
+}
+
+.calorie-value .value {
+    font-size: 36px; 
+    font-weight: 800;
+    color: #333;
+}
+
+.calorie-value .label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #888;
+}
+
+/* ?꾨떒吏 洹몃━??*/
+.nutrition-grid {
+    width: 90%; 
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 0 10px;
+    border-top: 1px solid #eee; 
+    padding-top: 20px;
+}
+
+.nutrition-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.nutrition-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -7.5px; 
+    top: 10px;
+    height: 80%;
+    width: 1px;
+    background-color: #eee;
+}
+
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.nutrition-item img {
+    width: 18px; 
+    height: 18px;
+}
+
+.nutrient {
+    font-weight: 500;
+    font-size: 14px;
+    color: #555;
+}
+
+.amount {
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+}
+
+/* ?ㅻⅨ履?諛뺤뒪 (?앹궗 ?쒓컙蹂? */
+.right-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+}
+
+.meal-time {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    cursor: default;
+    flex-grow: 1;
+}
+
+.meal-label {
+    font-weight: 600;
+    color: #444;
+}
+
+.meal-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.add-button {
+    font-size: 12px;
+    color: #007bff;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background-color: #e0f0ff;
+}
+
+.kcal-value {
+    font-weight: 700;
+    color: #333;
+    width: 60px;
+    text-align: right;
+}
+
+/* ================================================= */
+/* ??Mobile (諛섏쓳?? ?덉씠?꾩썐: 768px ?댄븯 */
+/* ================================================= */
+@media (max-width: 768px) {
+    main {
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+    h2 {
+        padding-left: 10px;
+    }
+
+    /* 而⑦뀗痢좊? ?몃줈濡??볦뒿?덈떎. */
+    .content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* ?쒖쨪??諛뺤뒪 */
+    .left-box-wrapper {
+        flex: auto;
+        padding-top: 0; /* ?쒖쨪?됱쓣 ?댁젣 absolute濡??꾩슦吏 ?딄퀬 ?먯뿰?ㅻ읇寃??곷떒??諛곗튂 */
+    }
+
+    .meal-summary {
+        position: static; /* absolute ?댁젣 */
+        margin-bottom: 15px; /* ?꾨옒履?肄섑뀗痢좎???媛꾧꺽 */
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .left-box, .right-box {
+        padding: 0; /* 紐⑤컮?쇱뿉?쒕뒗 ?⑤뵫??以꾩뿬??肄섑뀗痢??덈퉬 ?뺣낫 */
+        box-shadow: none; /* 洹몃┝???쒓굅 (諛곌꼍怨??⑹퀜吏?꾨줉) */
+        border-radius: 0;
+        background-color: transparent;
+    }
+    
+    /* ?좎쭨 ???붿옄??議곗젙 */
+    .calorie-box {
+        background-color: #fff; 
+        border-radius: 12px;
+        padding-bottom: 20px; 
+    }
+
+    .date-list {
+        margin-bottom: 20px;
+        border-radius: 12px 12px 0 0;
+        background-color: transparent;
+    }
+
+    .date-item.active {
+        box-shadow: none;
+    }
+
+    /* ?대?吏? 媛숈? ?몃줈 ?덉씠?꾩썐 */
+    .calorie-display {
+        flex-direction: column; /* ?몃줈濡?諛곗튂 */
+        justify-content: center;
+        gap: 10px; /* 媛꾧꺽 以꾩엫 */
+        padding-left: 0; /* ?쇱そ ?뺣젹 ?댁젣 */
+        margin-bottom: 15px;
+    }
+
+    /* ?먰삎 鍮꾩쑉 以묒븰 ?뺣젹 */
+    .circle-ratio {
+        width: 150px; /* ?ш린 異뺤냼 */
+        height: 150px; /* ?ш린 異뺤냼 */
+        font-size: 16px;
+        margin-bottom: 10px;
+        border: 8px solid #ddd;
+    }
+
+    /* 移쇰줈由?媛?以묒븰 ?뺣젹 (?대?吏 李몄“) */
+    .calorie-value {
+        align-items: center; /* ?몃줈 ?붿냼 以묒븰 ?뺣젹 */
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .calorie-value .value {
+        font-size: 30px; 
+    }
+
+    .calorie-value .label {
+        font-size: 14px;
+    }
+    
+    /* ?꾨떒吏 洹몃━?? ?대?吏泥섎읆 諛곌꼍???ы븿??媛쒕퀎 諛뺤뒪濡?蹂寃?*/
+    .nutrition-grid {
+        width: 100%;
+        padding: 0 20px 0 20px;
+        border-top: none;
+        margin-top: 10px;
+    }
+    
+    /* ?대?吏泥섎읆 媛쒕퀎 諛뺤뒪 ?붿옄???곸슜 */
+    .nutrition-item {
+        background-color: #f7f7f7;
+        border-radius: 10px;
+        padding: 10px 0;
+    }
+
+    /* 援щ텇???쒓굅 */
+    .nutrition-item:not(:last-child)::after {
+        content: none;
+    }
+    
+    /* ?ㅻⅨ履?諛뺤뒪 (?앹궗 ?쒓컙蹂? 紐⑤컮?????*/
+    .right-box {
+        flex: auto;
+        gap: 10px;
+    }
+    
+    .meal-time {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .add-button {
+        font-size: 11px;
+    }
+    
+    .kcal-value {
+        width: 50px;
+        font-size: 15px;
+    }
+}
+

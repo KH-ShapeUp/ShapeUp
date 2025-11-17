@@ -1,0 +1,77 @@
+﻿/* Common modal layout */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.food-modal {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    width: 95%;
+    max-width: 520px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Diet list modal wider */
+.diet-list-modal {
+    width: 95% !important;
+    max-width: 1120px !important;
+    padding: 32px 36px;
+}
+
+@media (max-width: 768px) {
+    .modal-backdrop {
+        align-items: flex-start;
+        padding: 0;
+    }
+    .food-modal {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        padding: 18px 16px 24px 16px;
+    }
+    .diet-list-modal {
+        width: 100%;
+        max-width: none;
+        padding: 20px 16px;
+    }
+}
+
+.diet-list-modal .integrated-list-container {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Diet list item layout: text left, button right */
+.diet-list-modal .result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.diet-list-modal .result-item .info {
+    flex: 1;
+}
+
+.diet-list-modal .result-item .add-btn {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
