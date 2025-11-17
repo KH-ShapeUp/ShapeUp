@@ -16,11 +16,13 @@
 
     <!-- 오른쪽 -->
     <section class="right-panel">
-      <h1 class="logo">Shape<span>Up</span></h1>
+      <div class="logo">
+            <img src="../../../../resources/img/main_logo.png" alt="" width="180px"></a>
+        </div>
 
       <!-- 회원가입 탭 -->
       <div class="tab-menu">
-        <button class="tab">회원가입</button>
+       <h3>회원가입</h3>
       </div>
 
       <!-- 단계 표시 바 -->

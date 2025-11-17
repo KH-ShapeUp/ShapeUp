@@ -55,7 +55,7 @@
                         </form>
                         <div class="account-list">
                             <ul>
-                                <li><a href="#">회원가입</a></li>
+                                <li><a href="/user/signupAgreement">회원가입</a></li>
                                 <li>&#8739;</li>
                                 <li><a href="#">아이디 찾기</a></li>
                                 <li>&#8739;</li>

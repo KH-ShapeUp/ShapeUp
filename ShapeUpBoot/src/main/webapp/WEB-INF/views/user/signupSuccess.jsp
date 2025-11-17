@@ -14,11 +14,13 @@
 
     <!-- 오른쪽 영역 -->
     <section class="right-panel">
-      <h1 class="logo">Shape<span>Up</span></h1>
+      <div class="logo">
+            <img src="../../../../resources/img/main_logo.png" alt="" width="180px"></a>
+        </div>
 
       <!-- 상단 탭 -->
       <div class="tab-menu">
-        <button class="tab active">회원가입</button>
+       <h3>회원가입</h3>
       </div>
 
       <!-- 3단계 진행 바 -->
