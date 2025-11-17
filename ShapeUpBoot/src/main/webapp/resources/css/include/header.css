@@ -221,6 +221,8 @@
         display: flex;
         width: 100%;
         padding: 0px 20px;
+        background-color: #fff;
+        padding-bottom: 20px;
     }
 
     .mobile-searchInput input {
@@ -239,7 +241,7 @@
     .mobile-searchInput .material-symbols-outlined {
         position: absolute;
         right: 30px; 
-        top: 50%;
+        top: 38%;
         transform: translateY(-50%);
         color: #999;
         pointer-events: none; 

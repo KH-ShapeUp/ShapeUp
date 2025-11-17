@@ -18,7 +18,7 @@
                 <li class="has-submenu">
                     <a>매칭 찾기</a>
                     <ul class="sub-menu">
-                        <li><a href="#">일반 매칭</a></li>
+                        <li><a href="/matching">일반 매칭</a></li>
                         <li><a href="#">트레이너 매칭</a></li>
                     </ul>
                 </li>
@@ -77,7 +77,7 @@
                     </a>
                 </div>
                 <div class="list-item">
-                    <a href="#"> 
+                    <a href="/matching"> 
                         <span class="material-symbols-outlined">group_search</span>
                         <span>일반 매칭</span>
                     </a>
