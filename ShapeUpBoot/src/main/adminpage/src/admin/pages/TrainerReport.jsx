@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import "../styles/TrainerReport.css";
 import {
   FACILITY_REVIEW_STORAGE_KEY,
-  STADIUM_MESSAGE_STORAGE_KEY,
   STORAGE_EVENTS,
   TRAINER_REPORT_STORAGE_KEY,
 } from "../../common/utils/storageKeys";
+import { appendInboxMessage } from "../../common/utils/messageUtils";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -128,29 +128,6 @@ const TrainerReport = () => {
     writeStorageArray(FACILITY_REVIEW_STORAGE_KEY, nextReviews, STORAGE_EVENTS.FACILITY_REVIEWS);
   };
 
-  const appendInboxMessage = (facility, reason) => {
-    if (!isBrowser) return;
-    const existing = readStorageArray(STADIUM_MESSAGE_STORAGE_KEY);
-    const payload = {
-      id: Date.now(),
-      sender: "어드민 센터",
-      subject: "리뷰 신고 반려",
-      preview: `리뷰 반려 사유 : ${reason}`,
-      facility,
-      date: new Date().toLocaleString("ko-KR", {
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-    writeStorageArray(
-      STADIUM_MESSAGE_STORAGE_KEY,
-      [payload, ...existing],
-      STORAGE_EVENTS.STADIUM_MESSAGES
-    );
-  };
-
   const handleDeleteConfirm = () => {
     if (!selectedReport) return;
     removeReviewFromStorage(selectedReport.reviewId);
@@ -184,7 +161,14 @@ const TrainerReport = () => {
           : report
       )
     );
-    appendInboxMessage(selectedReport.facility, reason);
+    appendInboxMessage({
+      sender: "어드민 센터",
+      subject: `[반려] ${selectedReport.facility} 리뷰 신고`,
+      preview: `리뷰 반려 사유 : ${reason}`,
+      body: `시설 ${selectedReport.facility}의 리뷰 신고가 반려되었습니다.\n사유: ${reason}`,
+      category: "반려",
+      metadata: { facility: selectedReport.facility, reviewer: selectedReport.reviewer },
+    });
     setRejectModal({ open: false, reason: "", message: "" });
     setFeedback("신고를 반려했습니다.");
   };

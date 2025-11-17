@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
+import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 
 const PostSuccessBoard = () => {
   const initialPosts = useMemo(
@@ -53,6 +54,7 @@ const PostSuccessBoard = () => {
       chartData={[3, 4, 2, 5, 4]}
       chartDatasetLabel="후기 등록 수"
       detailMode="readonly"
+      storageKey={BOARD_STORAGE_KEYS.SUCCESS}
     />
   );
 };

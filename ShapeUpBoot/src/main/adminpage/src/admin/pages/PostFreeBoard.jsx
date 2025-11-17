@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
+import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 
 const PostFreeBoard = () => {
   const initialPosts = useMemo(
@@ -62,6 +63,7 @@ const PostFreeBoard = () => {
       chartData={[8, 11, 9, 7, 10]}
       chartDatasetLabel="게시글 등록 수"
       detailMode="readonly"
+      storageKey={BOARD_STORAGE_KEYS.FREE}
     />
   );
 };

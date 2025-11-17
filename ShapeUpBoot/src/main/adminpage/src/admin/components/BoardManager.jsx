@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import "../styles/PostNotice.css";
+import { BOARD_STORAGE_EVENT } from "../../common/utils/storageKeys";
 
 const defaultChartLabels = ["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"];
+const isBrowser = typeof window !== "undefined";
 
 const BoardManager = ({
   boardTitle = "게시판",
@@ -12,8 +14,31 @@ const BoardManager = ({
   chartData = [5, 9, 3, 7, 6],
   chartDatasetLabel = "등록 게시물 수",
   detailMode = "edit",
+  storageKey = null,
 }) => {
-  const [posts, setPosts] = useState(initialPosts);
+  const loadStoredPosts = () => {
+    const fallback = Array.isArray(initialPosts) ? initialPosts : [];
+    if (!storageKey || !isBrowser) return fallback;
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (!raw) {
+        window.localStorage.setItem(storageKey, JSON.stringify(fallback));
+        return fallback;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (err) {
+      console.warn(`Failed to load board data for ${storageKey}`, err);
+    }
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(fallback));
+    } catch {
+      /* ignore */
+    }
+    return fallback;
+  };
+
+  const [posts, setPosts] = useState(() => loadStoredPosts());
   const [selectedPost, setSelectedPost] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("전체");
   const [titleQuery, setTitleQuery] = useState("");
@@ -27,8 +52,21 @@ const BoardManager = ({
   const [deleteModal, setDeleteModal] = useState({ open: false, status: "confirm" });
 
   useEffect(() => {
+    if (storageKey) return;
     setPosts(initialPosts);
-  }, [initialPosts]);
+  }, [initialPosts, storageKey]);
+
+  useEffect(() => {
+    if (!storageKey || !isBrowser) return;
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(posts));
+      window.dispatchEvent(
+        new CustomEvent(BOARD_STORAGE_EVENT, { detail: { storageKey } })
+      );
+    } catch (err) {
+      console.warn(`Failed to save board data for ${storageKey}`, err);
+    }
+  }, [posts, storageKey]);
 
   const categoryOptions = useMemo(() => {
     const options = ["전체"];

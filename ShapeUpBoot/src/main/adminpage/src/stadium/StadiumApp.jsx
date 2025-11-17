@@ -12,6 +12,8 @@ import StadiumMaintenance from "./pages/StadiumMaintenance";
 import StadiumNotifications from "./pages/StadiumNotifications";
 import StadiumSuggestion from "./pages/StadiumSuggestion";
 import FacilityReview from "./pages/FacilityReview";
+import StadiumMemo from "./pages/StadiumMemo";
+import StadiumMail from "./pages/StadiumMail";
 import "../stadium/styles/StadiumLayout.css";
 import { FacilityDataProvider } from "./context/FacilityDataContext";
 
@@ -41,6 +43,8 @@ function StadiumApp() {
     "/stadium/facility/review": <FacilityReview />,
     "/stadium/alerts/maintenance": <StadiumMaintenance />,
     "/stadium/alerts/notifications": <StadiumNotifications />,
+    "/stadium/alerts/memo": <StadiumMemo />,
+    "/stadium/alerts/mail": <StadiumMail />,
   };
 
   return (

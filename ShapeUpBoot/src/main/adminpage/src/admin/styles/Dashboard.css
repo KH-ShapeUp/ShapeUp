@@ -74,3 +74,69 @@ h4 {
   height: 200px;
   border: 1px solid black;
 }
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.report-header .qna-filter-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.report-header .qna-filter-group button {
+  border: 1px solid #cfd6eb;
+  background: #f6f8ff;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.report-header .qna-filter-group button.active {
+  background: #2b67f6;
+  color: #fff;
+  border-color: #2b67f6;
+}
+
+.dashboard-qna-table-wrapper {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.dashboard-qna-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.dashboard-qna-table th,
+.dashboard-qna-table td {
+  border-bottom: 1px solid #e6eaf4;
+  padding: 8px;
+  text-align: left;
+}
+
+.dashboard-qna-table th {
+  color: #5e647a;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+
+.dashboard-qna-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dashboard-qna-table .empty-row {
+  text-align: center;
+  color: #8a91a8;
+  padding: 16px 0;
+}

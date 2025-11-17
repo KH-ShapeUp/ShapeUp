@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import "../styles/PostNotice.css";
+import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 
 const initialPosts = [
   {
@@ -50,14 +51,51 @@ const initialPosts = [
 ];
 
 const chartLabels = ["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"];
+const STORAGE_KEY = BOARD_STORAGE_KEYS.QNA;
+const isBrowser = typeof window !== "undefined";
+
+const loadStoredQnaPosts = () => {
+  const fallback = Array.isArray(initialPosts) ? initialPosts : [];
+  if (!isBrowser) return fallback;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+      return fallback;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (err) {
+    console.warn("Failed to load Q&A posts", err);
+  }
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback));
+  } catch {
+    /* ignore */
+  }
+  return fallback;
+};
+
+const categoryFilters = ["전체", "질문", "버그", "건의"];
 
 const PostQnaBoard = () => {
-  const [posts, setPosts] = useState(initialPosts);
-  const [selectedId, setSelectedId] = useState(initialPosts[0]?.id ?? null);
+  const initialData = useMemo(() => loadStoredQnaPosts(), []);
+  const [posts, setPosts] = useState(initialData);
+  const [selectedId, setSelectedId] = useState(initialData[0]?.id ?? null);
   const [answerDraft, setAnswerDraft] = useState("");
   const [message, setMessage] = useState("");
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const chartRef = useRef(null);
+  const [categoryFilter, setCategoryFilter] = useState("전체");
+
+  useEffect(() => {
+    if (!isBrowser) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    } catch (err) {
+      console.warn("Failed to save Q&A posts", err);
+    }
+  }, [posts]);
 
   const sortPosts = (list) => {
     const collator = new Intl.Collator("ko");
@@ -88,13 +126,27 @@ const PostQnaBoard = () => {
     });
   };
 
+  const filteredByCategory = useMemo(
+    () =>
+      posts.filter((post) =>
+        categoryFilter === "전체" ? true : post.category === categoryFilter
+      ),
+    [posts, categoryFilter]
+  );
+
+  useEffect(() => {
+    if (!filteredByCategory.some((post) => post.id === selectedId)) {
+      setSelectedId(filteredByCategory[0]?.id ?? null);
+    }
+  }, [filteredByCategory, selectedId]);
+
   const pendingPosts = useMemo(
-    () => sortPosts(posts.filter((p) => p.status !== "완료")),
-    [posts, sort]
+    () => sortPosts(filteredByCategory.filter((p) => p.status !== "완료")),
+    [filteredByCategory, sort]
   );
   const answeredPosts = useMemo(
-    () => sortPosts(posts.filter((p) => p.status === "완료")),
-    [posts, sort]
+    () => sortPosts(filteredByCategory.filter((p) => p.status === "완료")),
+    [filteredByCategory, sort]
   );
 
   const toggleSort = (key) => {
@@ -163,6 +215,18 @@ const PostQnaBoard = () => {
 
   return (
     <div className="posts-container qna-board">
+      <div className="qna-filter-group">
+        {categoryFilters.map((label) => (
+          <button
+            key={label}
+            type="button"
+            className={categoryFilter === label ? "active" : ""}
+            onClick={() => setCategoryFilter(label)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <div className="posts-list">
         <div className="qna-block">
           <div className="qna-block-header">대기 중 질문 / 건의</div>
