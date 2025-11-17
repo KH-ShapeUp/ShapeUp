@@ -14,6 +14,7 @@ body {
   align-items: center;
   min-height: 100vh;
   background-color: #f8f8f8;
+  
 }
 
 /* 페이지 전체 박스 (단일 패널 전용) */
@@ -23,6 +24,7 @@ body {
   border-radius: 10px;
   padding: 40px;
   box-shadow: 0 0 20px rgba(0,0,0,0.12);
+  animation: fadeIn 1s ease;
 }
 
 /* 오른쪽 패널은 단독 패널로 사용 */
@@ -31,6 +33,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  
 }
 
 /* 로고 */
@@ -219,6 +222,10 @@ h2 {
 }
 
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 @media (max-width: 768px) {
 

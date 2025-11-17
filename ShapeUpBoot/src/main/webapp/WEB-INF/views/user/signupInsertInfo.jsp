@@ -99,26 +99,20 @@
           </div>
 
           <div class="form-group">
-            <label>성별</label>
-            <div class="radio-box">
-              <label><input type="radio" name="gender" value="M" required> 남성</label>
-              <label><input type="radio" name="gender" value="F" required> 여성</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>생년월일</label>
+            <label>생년월일 및 성별</label>
             <div class="birth-box">
-              <input type="text" name="birthYear" placeholder="YYYY" maxlength="4" required>
-              <input type="text" name="birthMonth" placeholder="MM" maxlength="2" required>
-              <input type="text" name="birthDay" placeholder="DD" maxlength="2" required>
+              <input type="text" name="birthDate" id="birthDateInput" placeholder="YYMMDD" maxlength="6" required>
+              <span class="dash">-</span>
+              <input type="text" name="genderDigit" placeholder="" maxlength="1" class="gender-digit" required>
+              <span class="dots">● ● ● ● ● ●</span>
             </div>
+            <p class="hint-text">생년월일 6자리와 주민등록번호 뒷자리 첫 번째 숫자를 입력하세요 (1,2,3,4)</p>
           </div>
 
           <div class="form-group">
             <label>전화번호</label>
             <div class="field-inline">
-              <input type="text" name="phone" required>
+              <input type="text" placeholder="010-1234-5678" name="phone" required>
               <button type="button" class="check-btn">인증번호 발송</button>
             </div>
           </div>
@@ -152,6 +146,16 @@ document.getElementById("emailDomainSelect").addEventListener("change", function
     }
 });
 
+// 생년월일 숫자만 입력
+document.getElementById('birthDateInput').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// 주민번호 뒷자리 유효성 검사 (숫자만 입력)
+document.querySelector('input[name="genderDigit"]').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^1-4]/g, '');
+});
+
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
     if (confirm('회원가입을 취소하시겠습니까?')) {
@@ -179,14 +183,65 @@ document.querySelector('.btn.next').addEventListener('click', function() {
     }
     
     // 생년월일 유효성 검사
-    const birthYear = document.querySelector('input[name="birthYear"]').value;
-    const birthMonth = document.querySelector('input[name="birthMonth"]').value;
-    const birthDay = document.querySelector('input[name="birthDay"]').value;
+    const birthDate = document.querySelector('input[name="birthDate"]').value;
     
-    if (birthYear.length !== 4 || birthMonth.length !== 2 || birthDay.length !== 2) {
-        alert('생년월일을 정확히 입력해주세요.');
+    if (birthDate.length !== 6) {
+        alert('생년월일 6자리를 정확히 입력해주세요. (YYMMDD)');
         return;
     }
+    
+    // 주민번호 뒷자리 첫 번째 숫자 유효성 검사
+    const genderDigit = document.querySelector('input[name="genderDigit"]').value;
+    
+    if (!genderDigit || !['1', '2', '3', '4'].includes(genderDigit)) {
+        alert('주민번호 뒷자리 첫 번째 숫자를 정확히 입력해주세요. (1, 2, 3, 4)');
+        return;
+    }
+    
+    // 성별 자동 결정 (1,3 = 남성, 2,4 = 여성)
+    const gender = (genderDigit === '1' || genderDigit === '3') ? 'M' : 'F';
+    
+    // hidden input으로 성별과 생년월일 분리 데이터 추가
+    let genderInput = document.querySelector('input[name="gender"]');
+    if (!genderInput) {
+        genderInput = document.createElement('input');
+        genderInput.type = 'hidden';
+        genderInput.name = 'gender';
+        form.appendChild(genderInput);
+    }
+    genderInput.value = gender;
+    
+    // 생년월일 분리 (서버에서 필요한 경우)
+    const birthYear = '20' + birthDate.substring(0, 2); // 또는 '19' + (필요시 genderDigit으로 판단)
+    const birthMonth = birthDate.substring(2, 4);
+    const birthDay = birthDate.substring(4, 6);
+    
+    let yearInput = document.querySelector('input[name="birthYear"]');
+    if (!yearInput) {
+        yearInput = document.createElement('input');
+        yearInput.type = 'hidden';
+        yearInput.name = 'birthYear';
+        form.appendChild(yearInput);
+    }
+    yearInput.value = birthYear;
+    
+    let monthInput = document.querySelector('input[name="birthMonth"]');
+    if (!monthInput) {
+        monthInput = document.createElement('input');
+        monthInput.type = 'hidden';
+        monthInput.name = 'birthMonth';
+        form.appendChild(monthInput);
+    }
+    monthInput.value = birthMonth;
+    
+    let dayInput = document.querySelector('input[name="birthDay"]');
+    if (!dayInput) {
+        dayInput = document.createElement('input');
+        dayInput.type = 'hidden';
+        dayInput.name = 'birthDay';
+        form.appendChild(dayInput);
+    }
+    dayInput.value = birthDay;
     
     // 다음 페이지로 이동
     window.location.href = '/user/signupSurvey';
