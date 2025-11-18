@@ -6,6 +6,7 @@ import {
   TRAINER_REPORT_STORAGE_KEY,
 } from "../../common/utils/storageKeys";
 import { appendInboxMessage } from "../../common/utils/messageUtils";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -45,6 +46,12 @@ const formatDate = (iso) => {
     minute: "2-digit",
   });
 };
+
+const logFilterOptions = [
+  { label: "전체", value: "전체" },
+  { label: "삭제 완료", value: "삭제 완료" },
+  { label: "반려", value: "반려" },
+];
 
 const TrainerReport = () => {
   const [reports, setReports] = useState(() => readStorageArray(TRAINER_REPORT_STORAGE_KEY));
@@ -234,15 +241,13 @@ const TrainerReport = () => {
             <h3>신고 처리 기록</h3>
             <div className="status-filter">
               <label htmlFor="logFilter">상태</label>
-              <select
+              <CustomSelect
                 id="logFilter"
                 value={logFilter}
-                onChange={(e) => setLogFilter(e.target.value)}
-              >
-                <option value="전체">전체</option>
-                <option value="삭제 완료">삭제 완료</option>
-                <option value="반려">반려</option>
-              </select>
+                options={logFilterOptions}
+                onChange={setLogFilter}
+                size="sm"
+              />
             </div>
           </div>
           <table className="trainer-table">
@@ -298,19 +303,19 @@ const TrainerReport = () => {
               </p>
             </header>
             <div className="detail-grid">
-              <div>
+              <div className="detail-pair">
                 <label>평점</label>
                 <p>{selectedReport.rating?.toFixed(1)}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>신고 사유</label>
                 <p>{selectedReport.reportReason}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>상태</label>
                 <p>{selectedReport.status}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>신고일</label>
                 <p>{formatDate(selectedReport.reportedAt)}</p>
               </div>

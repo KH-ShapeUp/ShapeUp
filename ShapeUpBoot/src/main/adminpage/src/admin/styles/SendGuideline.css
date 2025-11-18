@@ -29,6 +29,27 @@
   gap: 12px;
 }
 
+.guideline-form .form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guideline-form .form-row label {
+  width: 100px;
+  font-weight: 600;
+}
+
+.guideline-form .form-row input,
+.guideline-form .form-row select,
+.guideline-form .form-row textarea {
+  flex: 1;
+}
+
+.guideline-form .textarea-row {
+  align-items: flex-start;
+}
+
 .guideline-form input,
 .guideline-form select,
 .guideline-form textarea {
@@ -36,6 +57,7 @@
   border-radius: 8px;
   padding: 8px;
   font-size: 0.95rem;
+  margin-top: 4px;
 }
 
 .guideline-form textarea {
