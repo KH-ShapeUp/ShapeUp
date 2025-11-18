@@ -11,18 +11,15 @@
 
   <main class="signup-container">
 
-    <!-- 오른쪽 영역 -->
     <section class="right-panel">
       <div class="logo">
-            <img src="../../../../resources/img/main_logo.png" alt="" width="180px"></a>
-        </div>
-
-      <!-- 상단 탭 -->
-     <div class="tab-menu">
-       <h3>회원가입</h3>
+        <img src="../../../../resources/img/main_logo.png" alt="" width="180px">
       </div>
 
-      <!-- 3단계 진행 바 -->
+      <div class="tab-menu">
+        <h3>회원가입</h3>
+      </div>
+
       <div class="step-bar">
         <div class="step completed">
           <div class="circle">1</div>
@@ -40,16 +37,14 @@
         </div>
       </div>
 
-      <!-- 설문 박스 -->
       <div class="signup-box">
         <form action="/user/signup/survey" method="post">
 
-          <!-- 질문 1: 어떤 운동에 관심있으신가요? -->
+          <!-- 질문 1: 운동 관심사 -->
           <div class="question-group">
             <h3>어떤 운동에 관심있으신가요?</h3>
             <p class="question-sub">아래 보기 중 선택해주세요(다중선택 가능)</p>
-            
-            <!-- 구기종목 드롭다운 -->
+
             <div class="dropdown-section">
               <button type="button" class="dropdown-toggle" onclick="toggleDropdown('ballSports')">
                 <span>구기종목</span>
@@ -68,7 +63,6 @@
               </div>
             </div>
 
-            <!-- 기타 드롭다운 -->
             <div class="dropdown-section">
               <button type="button" class="dropdown-toggle" onclick="toggleDropdown('others')">
                 <span>기타</span>
@@ -86,42 +80,52 @@
                 </div>
               </div>
             </div>
-            
+
             <input type="hidden" name="interests" id="interestsValue" />
           </div>
 
-          <!-- 질문 2: 어떤 시간대에 활동하세요? -->
+          <!-- 질문 2: 활동 시간대 -->
           <div class="question-group">
             <h3>어떤 시간대에 활동하세요?</h3>
             <p class="question-sub">아래 보기 중 선택해주세요(다중선택 가능)</p>
-            
             <div class="tag-grid time-grid">
               <button type="button" class="tag-btn" data-group="time" data-value="평일">평일</button>
               <button type="button" class="tag-btn" data-group="time" data-value="주말">주말</button>
-              </div>
+            </div>
             <div class="tag-grid time-grid">
               <button type="button" class="tag-btn" data-group="time" data-value="아침">아침</button>
               <button type="button" class="tag-btn" data-group="time" data-value="점심">점심</button>
               <button type="button" class="tag-btn" data-group="time" data-value="저녁">저녁</button>
               <button type="button" class="tag-btn" data-group="time" data-value="새벽">새벽</button>
             </div>
-            
             <input type="hidden" name="times" id="timesValue" />
           </div>
 
-          <!-- 질문 3: 어느 지역에서 활동하세요? -->
+          <!-- 질문 3: 지역 선택 -->
           <div class="question-group">
             <h3>어느 지역에서 활동하세요?</h3>
-            <p class="question-sub">활동 지역을 검색하여 선택해주세요</p>
-            
-            <!-- 선택된 주소 태그 표시 영역 -->
-            <div class="selected-addresses" id="selectedAddresses"></div>
-            
-            <div class="address-input-area">
-              <input type="text" id="memberAddress" placeholder="주소를 입력하세요" onkeypress="handleAddressEnter(event)">
-              <button type="button" class="addr-button" onclick="searchMyAddress()">주소찾기</button>
+            <p class="question-sub">활동 지역을 선택해주세요</p>
+            <div class="dropdown-section">
+              <select id="memberAddressDropdown" class="dropdown-toggle">
+                <option value="">모든 지역</option>
+                <option value="서울">서울</option>
+                <option value="경기">경기</option>
+                <option value="인천">인천</option>
+                <option value="강원">강원</option>
+                <option value="대전/세종">대전/세종</option>
+                <option value="충남">충남</option>
+                <option value="충북">충북</option>
+                <option value="대구">대구</option>
+                <option value="경북">경북</option>
+                <option value="부산">부산</option>
+                <option value="울산">울산</option>
+                <option value="경남">경남</option>
+                <option value="광주">광주</option>
+                <option value="전남">전남</option>
+                <option value="전북">전북</option>
+                <option value="제주">제주</option>
+              </select>
             </div>
-            
             <input type="hidden" name="addresses" id="addressesValue" />
           </div>
 
@@ -138,166 +142,50 @@
 
 </body>
 
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-// 선택된 주소 배열
-let selectedAddresses = [];
-
-// 엔터키로 주소 추가
-function handleAddressEnter(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        addAddressManually();
-    }
-}
-
-// 수동으로 주소 추가
-function addAddressManually() {
-    const input = document.getElementById('memberAddress');
-    const address = input.value.trim();
-    
-    if (address === '') {
-        alert('주소를 입력해주세요.');
-        return;
-    }
-    
-    // 중복 체크
-    if (selectedAddresses.includes(address)) {
-        alert('이미 선택된 주소입니다.');
-        input.value = '';
-        return;
-    }
-    
-    // 주소 추가
-    selectedAddresses.push(address);
-    renderAddressTags();
-    
-    // 입력창 비우기
-    input.value = '';
-}
-
-// 드롭다운 토글 기능
-function toggleDropdown(id) {
-  const dropdown = document.getElementById(id);
-  const toggleBtn = event.currentTarget;
-  
-  // 현재 드롭다운 토글
-  dropdown.classList.toggle('active');
-  toggleBtn.classList.toggle('active');
-}
-
-// 태그 버튼 클릭 이벤트
+// 태그 버튼 선택 토글
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('tag-btn')) {
     e.target.classList.toggle('active');
   }
 });
 
-// 주소 검색
-function searchMyAddress(){
-    new daum.Postcode({
-        oncomplete: function(data) {
-            // 전체 주소 생성
-            let fullAddress = data.address;
-            let extraAddress = '';
-            
-            // 도로명 주소인 경우
-            if (data.addressType === 'R') {
-                if (data.bname !== '') {
-                    extraAddress += data.bname;
-                }
-                if (data.buildingName !== '') {
-                    extraAddress += (extraAddress !== '' ? ', ' + data.buildingName : data.buildingName);
-                }
-                if (extraAddress !== '') {
-                    fullAddress += ' (' + extraAddress + ')';
-                }
-            }
-            
-            // 중복 체크
-            if (selectedAddresses.includes(fullAddress)) {
-                alert('이미 선택된 주소입니다.');
-                return;
-            }
-            
-            // 주소 추가
-            selectedAddresses.push(fullAddress);
-            renderAddressTags();
-        }
-    }).open();
-}
-
-// 주소 태그 렌더링
-function renderAddressTags() {
-    const container = document.getElementById('selectedAddresses');
-    
-    if (!container) {
-        console.error('selectedAddresses 컨테이너를 찾을 수 없습니다.');
-        return;
-    }
-    
-    container.innerHTML = '';
-    
-    selectedAddresses.forEach((address, index) => {
-        const tag = document.createElement('div');
-        tag.className = 'address-tag';
-        
-        const span = document.createElement('span');
-        span.textContent = address;
-        
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'remove-tag';
-        button.textContent = '×';
-        button.onclick = function() { removeAddress(index); };
-        
-        tag.appendChild(span);
-        tag.appendChild(button);
-        container.appendChild(tag);
-    });
-}
-
-// 주소 삭제
-function removeAddress(index) {
-    selectedAddresses.splice(index, 1);
-    renderAddressTags();
+// 드롭다운 토글
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(id);
+  const toggleBtn = event.currentTarget;
+  dropdown.classList.toggle('active');
+  toggleBtn.classList.toggle('active');
 }
 
 // 폼 제출
 function submitForm() {
-  // 선택된 운동 종류 수집
   const selectedExercises = Array.from(document.querySelectorAll('.tag-btn[data-group="exercise"].active'))
     .map(btn => btn.getAttribute('data-value'));
   document.getElementById('interestsValue').value = selectedExercises.join(',');
 
-  // 선택된 시간대 수집
   const selectedTimes = Array.from(document.querySelectorAll('.tag-btn[data-group="time"].active'))
     .map(btn => btn.getAttribute('data-value'));
   document.getElementById('timesValue').value = selectedTimes.join(',');
 
-  // 주소 수집
-  document.getElementById('addressesValue').value = selectedAddresses.join('|');
+  const selectedAddress = document.getElementById('memberAddressDropdown').value;
+  document.getElementById('addressesValue').value = selectedAddress;
 
-  // 유효성 검사
   if (selectedExercises.length === 0) {
     alert('관심있는 운동을 하나 이상 선택해주세요.');
     return;
   }
-
   if (selectedTimes.length === 0) {
     alert('활동 시간대를 하나 이상 선택해주세요.');
     return;
   }
-
-  if (selectedAddresses.length === 0) {
-    alert('활동 지역을 하나 이상 선택해주세요.');
+  if (!selectedAddress) {
+    alert('활동 지역을 선택해주세요.');
     return;
   }
 
-  // 👉 여기만 변경됨
   window.location.href = "/user/signupSuccess";
 }
-
 
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {

@@ -5,13 +5,15 @@ import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
+@Setter
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserVO {
 	private int userNo;              // USER_NO (시퀀스)
 	private String userId;           // USER_ID
 	private String userPw;           // USER_PW
