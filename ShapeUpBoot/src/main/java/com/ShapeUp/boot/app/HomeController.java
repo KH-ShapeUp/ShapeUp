@@ -27,14 +27,9 @@ public class HomeController {
 		return "matchingBoard";
 	}
 	
-	@GetMapping("/t")
-	public String page() {
-		return "diet/dietRecord";
-	}
-	
-	@GetMapping("/tt")
-	public String paget() {
-		return "diet/customDietRecord";
+	@GetMapping("/matching/insert")
+	public String matchingInsertPage() {
+		return "matchingInsert";
 	}
 }
 

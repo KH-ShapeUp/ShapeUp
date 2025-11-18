@@ -101,7 +101,7 @@
                                     <button class="filter-btn" id="board-filter-btn">마감임박순</button>
                                 </div>
                             </div>                                   
-                            <a href="#" id="matching-add-btn">
+                            <a href="/matching/insert" id="matching-add-btn">
                                 <i class="fa-solid fa-plus"></i>
                                 <span>매칭 등록</span>
                             </a>

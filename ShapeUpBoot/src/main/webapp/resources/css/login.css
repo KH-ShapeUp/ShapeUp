@@ -11,14 +11,19 @@
 }
 
 .main {
-    width: 80%;
+    width: 50%;
     height: 550px;
     display: flex;
     flex-direction: row;
-    border-radius: 16px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    background-color: #fff;
     overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    border-radius: 16px;
+    background-color: #fff;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 0px;
 }
 
 .login-wrapper {
@@ -26,12 +31,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    overflow: hidden;
 }
 
 /* 비디오 사용시 주석 해제 */
 .login-gif {
     position: relative;
-    width: 45%;
+    width: 55%;
     height: 100%;
     /*background-image: url("../../resources/img/person.png");
     background-position: center;
@@ -69,14 +75,16 @@
     pointer-events: none; /* iframe 클릭, 호버 모두 차단 */
 }
 
-.login-form {
-    width: 55%;
+.login-form-wrapper {
+    padding: 0;
+    width: 45%;
     display: flex;
     flex-direction: column;
     align-items: center;    
+    justify-content: center;
 }
 
-.login-form-top img {
+.login-form-wrapper img {
     width: 130px;
     display: block;
     margin-bottom: 20px;
@@ -224,19 +232,33 @@
         flex-direction: column;
         width: 90%;
         height: auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     }
 
     .login-gif {
         display: none;
     }
 
+    .login-form-wrapper {
+        width: 100%;
+    }
+
     .login-form {
         width: 100%;
-        padding: 30px 20px;
+        border-radius:none;
+        box-shadow: none;
     }
 
     .login-form form {
         width: 100%;
+    }
+
+    .account-list {
+        display: flex;
+        justify-content: center;
     }
 
     .social-login {
