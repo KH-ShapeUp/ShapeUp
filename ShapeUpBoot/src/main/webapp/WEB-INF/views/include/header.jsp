@@ -40,7 +40,7 @@
         </div>
         <div class="sideBtn">
             <a href="/login" id="loginBtn">로그인</a>
-            <a href="#" id="singnBtn"">회원가입</a>
+            <a href="/user/signupAgreement" id="singnBtn"">회원가입</a>
         </div>
         <span class="material-symbols-outlined" id="menu-icon">menu</span>
     </div>

@@ -1,91 +1,27 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../common/styles/CommonLayout.css";
 import "../styles/FacilityCheck.css";
-
-const defaultTimeSlots = [
-  "08:00~09:00",
-  "09:00~10:00",
-  "10:00~11:00",
-  "11:00~12:00",
-  "12:00~13:00",
-  "13:00~14:00",
-  "14:00~15:00",
-];
-
-const buildEmptySlots = () => defaultTimeSlots.map((time) => ({ time, memberId: null }));
-
-const initialSchedules = {
-  "시설 1": {
-    "2025-12-11": [
-      { time: "09:00~10:00", memberId: 6 },
-      { time: "10:00~11:00", memberId: null },
-      { time: "11:00~12:00", memberId: 7 },
-      { time: "12:00~13:00", memberId: null },
-      { time: "13:00~14:00", memberId: null },
-      { time: "14:00~15:00", memberId: null },
-    ],
-    "2025-12-12": [
-      { time: "09:00~10:00", memberId: 1 },
-      { time: "10:00~11:00", memberId: 2 },
-      { time: "11:00~12:00", memberId: null },
-      { time: "12:00~13:00", memberId: null },
-      { time: "13:00~14:00", memberId: null },
-      { time: "14:00~15:00", memberId: 3 },
-    ],
-    "2025-12-13": [
-      { time: "09:00~10:00", memberId: null },
-      { time: "10:00~11:00", memberId: null },
-      { time: "11:00~12:00", memberId: null },
-      { time: "12:00~13:00", memberId: null },
-      { time: "13:00~14:00", memberId: null },
-    ],
-  },
-  "시설 2": {
-    "2025-12-12": [
-      { time: "08:00~09:00", memberId: 4 },
-      { time: "09:00~10:00", memberId: null },
-      { time: "10:00~11:00", memberId: 5 },
-      { time: "11:00~12:00", memberId: null },
-      { time: "12:00~13:00", memberId: null },
-      { time: "13:00~14:00", memberId: null },
-    ],
-    "2025-12-14": [
-      { time: "08:00~09:00", memberId: null },
-      { time: "09:00~10:00", memberId: null },
-      { time: "10:00~11:00", memberId: null },
-      { time: "11:00~12:00", memberId: null },
-      { time: "12:00~13:00", memberId: null },
-    ],
-  },
-  "시설 3": {
-    "2025-12-13": [
-      { time: "08:00~09:00", memberId: null },
-      { time: "09:00~10:00", memberId: 8 },
-      { time: "10:00~11:00", memberId: null },
-      { time: "11:00~12:00", memberId: 9 },
-      { time: "12:00~13:00", memberId: null },
-      { time: "13:00~14:00", memberId: null },
-    ],
-  },
-};
+import { useFacilityData } from "../context/FacilityDataContext";
 
 const FacilityCheck = () => {
-  const [members, setMembers] = useState([
-    { id: 1, user: "홍길동", userId: "user01", facility: "시설 1", date: "2025-12-12", time: "09:00~10:00", price: 50000, status: "입금 확인 대기" },
-    { id: 2, user: "김철수", userId: "user02", facility: "시설 1", date: "2025-12-12", time: "10:00~11:00", price: 70000, status: "예약 확인 대기" },
-    { id: 3, user: "이영희", userId: "user03", facility: "시설 1", date: "2025-12-12", time: "14:00~15:00", price: 40000, status: "입금 확인 대기" },
-    { id: 4, user: "최지원", userId: "user04", facility: "시설 2", date: "2025-12-12", time: "08:00~09:00", price: 65000, status: "확인 완료" },
-    { id: 5, user: "조민수", userId: "user05", facility: "시설 2", date: "2025-12-12", time: "10:00~11:00", price: 75000, status: "입금 확인 대기" },
-    { id: 6, user: "오지현", userId: "user06", facility: "시설 1", date: "2025-12-11", time: "09:00~10:00", price: 42000, status: "입금 확인 대기" },
-    { id: 7, user: "남지훈", userId: "user07", facility: "시설 1", date: "2025-12-11", time: "11:00~12:00", price: 38000, status: "예약 확인 대기" },
-    { id: 8, user: "장유나", userId: "user08", facility: "시설 3", date: "2025-12-13", time: "09:00~10:00", price: 56000, status: "입금 확인 대기" },
-    { id: 9, user: "백승환", userId: "user09", facility: "시설 3", date: "2025-12-13", time: "11:00~12:00", price: 61000, status: "예약 확인 대기" },
-  ]);
+  const {
+    members,
+    setMembers,
+    schedules,
+    setSchedules,
+    facilities,
+    timeSlots,
+  } = useFacilityData();
   const [selectedDate, setSelectedDate] = useState("2025-12-12");
   const [selectedFacility, setSelectedFacility] = useState("시설 1");
-  const [schedules, setSchedules] = useState(initialSchedules);
   const [modal, setModal] = useState({ open: false, member: null, result: "" });
+  const [cancelModal, setCancelModal] = useState({
+    open: false,
+    slot: null,
+    message: "",
+  });
   const closeTimerRef = useRef(null);
+  const cancelTimerRef = useRef(null);
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const [memberFilterFacility, setMemberFilterFacility] = useState("전체");
   const [searchText, setSearchText] = useState("");
@@ -95,10 +31,11 @@ const FacilityCheck = () => {
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
       }
+      if (cancelTimerRef.current) {
+        clearTimeout(cancelTimerRef.current);
+      }
     };
   }, []);
-
-  const facilities = Object.keys(schedules);
 
   const memberMap = useMemo(() => {
     return members.reduce((acc, member) => {
@@ -160,14 +97,24 @@ const FacilityCheck = () => {
   }, [filteredMembers, sort]);
 
   const reservations = useMemo(() => {
-    const daySlots = schedules[selectedFacility]?.[selectedDate] ?? buildEmptySlots();
-    return daySlots.map((slot) => ({
+    const daySlots = schedules[selectedFacility]?.[selectedDate] ?? [];
+    const normalized = timeSlots.map((slot) => {
+      const existing = daySlots.find((item) => item.time === slot);
+      return existing ?? { time: slot, memberId: null };
+    });
+    return normalized.map((slot) => ({
       ...slot,
       member: slot.memberId ? memberMap[slot.memberId] : null,
     }));
-  }, [selectedFacility, selectedDate, schedules, memberMap]);
+  }, [selectedFacility, selectedDate, schedules, memberMap, timeSlots]);
 
   const formatDisplayDate = (value) => value.replace(/-/g, ".");
+
+  useEffect(() => {
+    if (!schedules[selectedFacility] && facilities.length) {
+      setSelectedFacility(facilities[0]);
+    }
+  }, [facilities, schedules, selectedFacility]);
 
   const shiftDate = (direction) => {
     const base = new Date(selectedDate);
@@ -179,6 +126,12 @@ const FacilityCheck = () => {
 
   const openModal = (member) => setModal({ open: true, member, result: "" });
   const closeModal = () => setModal({ open: false, member: null, result: "" });
+  const openCancelModal = (slot) => {
+    if (!slot?.member) return;
+    setCancelModal({ open: true, slot, message: "" });
+  };
+  const closeCancelModal = () =>
+    setCancelModal({ open: false, slot: null, message: "" });
   const toggleSort = (key) => {
     setSort((prev) =>
       prev.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }
@@ -228,6 +181,26 @@ const FacilityCheck = () => {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     closeTimerRef.current = setTimeout(() => {
       closeModal();
+    }, 1000);
+  };
+
+  const handleCancelReservation = () => {
+    const member = cancelModal.slot?.member;
+    if (!member) return;
+
+    setMembers((prev) =>
+      prev.map((m) => (m.id === member.id ? { ...m, status: "예약 거부" } : m))
+    );
+    updateScheduleSlot(member, "reject");
+
+    setCancelModal((prev) => ({
+      ...prev,
+      message: "취소하였습니다.",
+    }));
+
+    if (cancelTimerRef.current) clearTimeout(cancelTimerRef.current);
+    cancelTimerRef.current = setTimeout(() => {
+      closeCancelModal();
     }, 1000);
   };
 
@@ -332,7 +305,9 @@ const FacilityCheck = () => {
                       <p className="confirm-text">✅ 예약이 확정되었습니다.</p>
                     )}
                     <div className="res-actions">
-                      <button type="button">취소</button>
+                      <button type="button" onClick={() => openCancelModal(slot)}>
+                        취소
+                      </button>
                       <button type="button">채팅</button>
                     </div>
                   </div>
@@ -374,6 +349,38 @@ const FacilityCheck = () => {
                 </button>
                 <button className="reject" onClick={() => handleModalAction("reject")}>
                   예약 거부
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {cancelModal.open && cancelModal.slot && (
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeCancelModal}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeCancelModal} aria-label="닫기">
+              ×
+            </button>
+            <h3>예약 취소</h3>
+            <p>예약자: {cancelModal.slot.member.user}</p>
+            <p>예약 시설: {cancelModal.slot.member.facility}</p>
+            <p>예약일: {formatDisplayDate(cancelModal.slot.member.date)}</p>
+            <p>시간대: {cancelModal.slot.member.time}</p>
+            <p>해당 예약을 취소하시겠습니까?</p>
+            {cancelModal.message ? (
+              <p className="modal-feedback">{cancelModal.message}</p>
+            ) : (
+              <div className="modal-actions">
+                <button className="approve" onClick={handleCancelReservation}>
+                  예
+                </button>
+                <button className="reject" onClick={closeCancelModal}>
+                  아니오
                 </button>
               </div>
             )}

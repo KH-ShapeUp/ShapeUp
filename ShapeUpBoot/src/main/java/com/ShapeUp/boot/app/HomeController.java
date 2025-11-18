@@ -11,6 +11,11 @@ public class HomeController {
 	public String homePage() {
 		return "index";
 	}
+
+	@GetMapping("/index")
+	public String indexPage() {
+		return "index";
+	}
 	
 	@GetMapping("/login")
 	public String loginPage() {
@@ -32,4 +37,3 @@ public class HomeController {
 		return "matchingInsert";
 	}
 }
-

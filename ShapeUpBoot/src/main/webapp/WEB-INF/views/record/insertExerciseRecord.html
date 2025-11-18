@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 운동</title>
+    <link
+      rel="stylesheet"
+      href="/resources/css/record/insertExerciseRecord.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>헤더</header>
+    <main>
+      <div class="header-line"></div>
+      <h2>오늘의 운동</h2>
+
+      <div class="search-section">
+        <div class="tab-menu">
+          <div class="tab-item active">운동 검색</div>
+          <div class="tab-item">직접 입력</div>
+        </div>
+
+        <form class="search-input-box">
+          <input
+            type="text"
+            placeholder="운동 검색하기"
+            name="exercise-query"
+          />
+          <button type="submit">
+            <img
+              src="https://img.icons8.com/ios-filled/50/000000/search--v1.png"
+              alt="search"
+            />
+          </button>
+        </form>
+      </div>
+      <div class="single-content-box">
+        <div class="stat-header">
+          <p class="result-count">검색결과 X개</p>
+          <div class="selected-summary">
+            <p>선택한 운동 X개</p>
+            <p class="total-kcal">총 0Kcal</p>
+            <button class="register-btn">운동 등록하기</button>
+          </div>
+        </div>
+
+        <div class="integrated-list-container">
+          <div class="search-results section">
+            <div class="result-item" data-kcal="600">
+              <div class="info">
+                <p class="title">달리기</p>
+                <p class="nutrition">시간당 약 600 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item" data-kcal="200">
+              <div class="info">
+                <p class="title">요가</p>
+                <p class="nutrition">시간당 약 200 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item" data-kcal="400">
+              <div class="info">
+                <p class="title">근력 운동</p>
+                <p class="nutrition">시간당 약 400 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+
+          <div class="selected-list section">
+            <div class="result-item" data-kcal="500">
+              <div class="info">
+                <p class="title">축구</p>
+                <p class="nutrition">시간당 약 500 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item"  data-kcal="600">
+              <div class="info">
+                <p class="title">농구</p>
+                <p class="nutrition">시간당 약 600 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+            <div class="result-item"  data-kcal="50">
+              <div class="info">
+                <p class="title">숨쉬기</p>
+                <p class="nutrition">시간당 약 50 kcal 소모</p>
+              </div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <p class="pagination">
+          <a href="#" style="text-decoration: none">확장</a>
+        </p>
+      </div>
+    </main>
+
+    <div class="modal-backdrop" style="display: none">
+      <div class="food-modal">
+        <h3 class="exercise-name">활동명</h3>
+
+        <p class="exercise-kcal-burn">약 880kcal 소모</p>
+
+        <div class="intensity-selection">
+          <button class="intensity-btn light">가볍게</button>
+          <button class="intensity-btn normal">적당히</button>
+          <button class="intensity-btn strong active">강하게</button>
+        </div>
+
+        <div class="time-control">
+          <button class="time-btn minus">-</button>
+          <span class="current-time">1시간 30분</span>
+          <button class="time-btn plus">+</button>
+        </div>
+
+        <div class="modal-actions">
+          <button class="add-to-diet-btn">추가하기</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const addButtons = document.querySelectorAll(".add-btn");
+        const modalBackdrop = document.querySelector(".modal-backdrop");
+        const modal = document.querySelector(".food-modal");
+        const registerButton = document.querySelector(".add-to-diet-btn");
+
+        // 모달 내 칼로리 표시 요소 미리 가져오기
+        const modalKcal = modal.querySelector(".exercise-kcal-burn");
+
+        // 모달 표시 함수
+        const openModal = (e) => {
+          // 1. 클릭된 항목(.result-item) 참조 가져오기
+          const resultItem = e.target.closest(".result-item");
+
+          // 2. 제목 가져와 모달에 표시
+          const itemTitle = resultItem.querySelector(".title").textContent;
+          const modalTitle = modal.querySelector(".exercise-name");
+          modalTitle.textContent = itemTitle;
+
+          // 3. ✨ data-kcal 속성에서 칼로리 값 가져와 모달에 표시
+          // data-kcal="600" 이면, dataset.kcal로 "600"을 가져옵니다.
+          const itemKcal = resultItem.dataset.kcal;
+          modalKcal.textContent = `약 ${itemKcal}kcal 소모`;
+
+          // 모달을 보이게 설정
+          modalBackdrop.style.display = "flex";
+        };
+
+        // 모달 닫기 함수
+        const closeModal = () => {
+          modalBackdrop.style.display = "none";
+        };
+
+        // '+' 버튼 클릭 이벤트 등록
+        addButtons.forEach((button) => {
+          button.addEventListener("click", openModal);
+        });
+
+        // 모달 외부 클릭 시 닫기
+        modalBackdrop.addEventListener("click", (e) => {
+          if (e.target === modalBackdrop) {
+            closeModal();
+          }
+        });
+
+        // 모달 내 '추가하기' 버튼 클릭 시 닫기
+        registerButton.addEventListener("click", closeModal);
+      });
+    </script>
+  </body>
+</html>

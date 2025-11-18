@@ -1,0 +1,579 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+body {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+header {
+  height: 60px;
+  background-color: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: #555;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header-line {
+  border-top: 1px solid #ddd;
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+/* ================================================= */
+/* PC/Tablet (Default - 768px 초과) 레이아웃 */
+/* 탭 메뉴 복구를 위해 .search-section, .search-input-box 수정 */
+/* ================================================= */
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0px;
+  padding-left: 50px; /* 탭 메뉴 시작점 */
+}
+
+.tab-menu {
+  display: flex;
+  gap: 10px;
+}
+
+.tab-item {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  background-color: #f7f7f7;
+}
+
+.tab-item.active {
+  background-color: #fff;
+  color: #333;
+  font-weight: 600;
+  border-color: #ddd;
+  position: relative;
+  z-index: 10;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 8px 15px;
+  background-color: #fff;
+  width: 350px; /* 원래 너비로 복원 */
+  margin-bottom: 10px;
+}
+
+.search-input-box input {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+.search-input-box input::placeholder {
+  color: #aaa;
+}
+
+.search-input-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.search-input-box button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* New: 단일 컨테이너 스타일 */
+.single-content-box {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+/* 상단 정보 헤더 */
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.stat-header .result-count {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.selected-summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.selected-summary .total-kcal {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.selected-summary .register-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* 통합된 리스트 컨테이너 (스크롤 영역) */
+.integrated-list-container {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1;
+  padding-bottom: 10px;
+  overflow-y: auto;
+}
+
+.search-results,
+.selected-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-right: 10px;
+}
+
+/* ...확장 텍스트 */
+.pagination {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  padding-top: 15px;
+}
+
+/* 검색/선택된 결과 공통 스타일 */
+.result-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.result-item .title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.result-item .details {
+  display: none; /* 운동 기록에 불필요하여 숨김 */
+}
+
+.result-item .nutrition {
+  font-size: 14px; /* 크기 조정 */
+  color: #333; /* 색상 조정 */
+  font-weight: 600;
+  margin-top: 4px; /* 제목과의 간격 */
+}
+
+.result-item .add-btn {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  font-weight: 300;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.1s;
+}
+
+.result-item .add-btn:hover {
+  background-color: #eee;
+}
+
+/* ============================== */
+/* ✨ 운동 기록 모달 스타일 (이미지 기반) */
+/* ============================== */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.food-modal {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 활동명 (H3) 스타일 */
+.exercise-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 40px;
+  align-self: flex-start;
+}
+
+/* 소모량 (약 880kcal 소모) 스타일 */
+.exercise-kcal-burn {
+  font-size: 28px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 30px;
+}
+
+/* 강도 선택 버튼 그룹 */
+.intensity-selection {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.intensity-btn {
+  flex: 1;
+  padding: 12px 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #555;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.intensity-btn.active {
+  background-color: #888888;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 시간 조절 섹션 (Time Control) */
+.time-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin-bottom: 40px;
+  max-width: 90%;
+}
+
+.time-btn {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  font-weight: 300;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.time-btn:hover {
+  background-color: #ddd;
+}
+
+.current-time {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* 추가하기 버튼 */
+.modal-actions {
+  text-align: right;
+  width: 100%;
+}
+
+.add-to-diet-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-to-diet-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ================================================= */
+/* ✨ Mobile (반응형) 레이아웃: 768px 이하 */
+/* ================================================= */
+@media (max-width: 768px) {
+  main {
+    padding: 0 10px;
+  }
+
+  h2 {
+    padding-left: 10px;
+    margin-bottom: 15px;
+  }
+
+  /* 검색 섹션: 탭 메뉴와 검색창을 세로로 쌓습니다. (탭 메뉴 복구) */
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  .tab-menu {
+    align-self: flex-start;
+    margin-left: 10px;
+    margin-bottom: 0;
+  }
+
+  .tab-item {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .search-input-box {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+
+  /* 통합 컨테이너 스타일 */
+  .single-content-box {
+    padding: 15px 10px;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding-bottom: 100px;
+  }
+
+  /* 상단 정보 헤더 */
+  .stat-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  /* PC용 .selected-summary는 상단에서 숨깁니다. */
+  .stat-header .selected-summary {
+    display: none;
+  }
+
+  /* 통합 리스트를 스크롤 가능한 1단 레이아웃으로 변경 */
+  .integrated-list-container {
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+
+  .search-results,
+  .selected-list {
+    flex: auto;
+    padding-right: 0;
+    gap: 8px;
+  }
+
+  /* 검색/선택된 항목 스타일 조정 */
+  .result-item {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .result-item .title {
+    font-size: 15px;
+  }
+
+  /* 기존 .pagination (확장 텍스트)은 숨김 */
+  .pagination {
+    display: none;
+  }
+
+  /* .selected-summary를 하단 고정 푸터로 띄웁니다. */
+  .single-content-box::after {
+    content: "";
+    display: block;
+    height: 80px;
+  }
+
+  .stat-header .selected-summary {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
+    z-index: 100;
+
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .selected-summary p {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .selected-summary .total-kcal {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-right: auto;
+  }
+
+  .selected-summary .register-btn {
+    display: block;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+
+    width: auto;
+    min-width: 120px;
+    margin: 0;
+  }
+
+  /* 모달 모바일 전체 화면 대응 */
+  .modal-backdrop {
+    align-items: flex-end;
+  }
+
+  .food-modal {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .exercise-name {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+
+  .exercise-kcal-burn {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  /* 수량 조절 섹션 간격 조정 */
+  .intensity-selection {
+    padding: 0;
+    margin-bottom: 15px;
+  }
+
+  .intensity-btn {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+
+  .time-control {
+    max-width: 100%;
+    margin-bottom: 30px;
+    padding: 8px 10px;
+  }
+
+  .time-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+  }
+
+  .current-time {
+    font-size: 18px;
+  }
+
+  /* 추가하기 버튼 모바일 전체 너비로 확장 */
+  .modal-actions {
+    text-align: center;
+  }
+
+  .add-to-diet-btn {
+    width: 100%;
+    padding: 15px 0;
+    font-size: 16px;
+  }
+}

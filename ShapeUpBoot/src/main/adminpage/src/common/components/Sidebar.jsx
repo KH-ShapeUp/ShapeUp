@@ -2,24 +2,46 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaHome, FaSignOutAlt, FaChevronDown } from "react-icons/fa";
 import defaultMenus from "../config/menuConfig";
+import adminLogo from "../images/admin_logo.png";
+import stadiumLogo from "../images/stadium_logo.png";
 import "../styles/Sidebar.css";
 
-const Sidebar = ({ menus = defaultMenus, homePath = "/" }) => {
+const Sidebar = ({
+  menus = defaultMenus,
+  homePath = "/",
+  homeHref,
+  variant = "admin",
+  mainPath = homePath,
+}) => {
   const [open, setOpen] = useState({});
   const navigate = useNavigate();
 
   const toggle = (id, hasSub) => {
     if (!hasSub) {
-      navigate(homePath);
+      navigate(mainPath);
       return;
     }
     setOpen(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const goMain = () => {
+    navigate(mainPath);
+  };
+
+  const goHome = () => {
+    const target = homeHref || homePath;
+    const url = target.startsWith("http")
+      ? target
+      : `${window.location.protocol}//${window.location.hostname}:8080${target}`;
+    window.location.href = url;
+  };
+
+  const logoSrc = variant === "stadium" ? stadiumLogo : adminLogo;
+
   return (
     <aside className="sidebar">
       <div className="logo">
-        <span className="logo-text">ShapeUp ADMIN</span>
+        <img src={logoSrc} alt="ShapeUp Logo" className="logo-img" />
       </div>
 
       <ul className="menu">
@@ -27,8 +49,9 @@ const Sidebar = ({ menus = defaultMenus, homePath = "/" }) => {
           <button
             type="button"
             className="menu-toggle"
-            onClick={() => navigate(homePath)}
+            onClick={goMain}
           >
+            <FaHome className="menu-icon" />
             <span className="menu-label">메인 페이지</span>
           </button>
         </li>
@@ -65,7 +88,7 @@ const Sidebar = ({ menus = defaultMenus, homePath = "/" }) => {
         <button
           className="icon-btn"
           aria-label="Home"
-          onClick={() => navigate(homePath)}
+          onClick={goHome}
         >
           <FaHome />
         </button>

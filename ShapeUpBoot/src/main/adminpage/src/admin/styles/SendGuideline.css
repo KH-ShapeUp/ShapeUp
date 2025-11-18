@@ -1,0 +1,166 @@
+.guideline-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guideline-header h2 {
+  margin: 0;
+}
+
+.guideline-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.guideline-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+}
+
+.guideline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guideline-form input,
+.guideline-form select,
+.guideline-form textarea {
+  border: 1px solid #d7deef;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.95rem;
+}
+
+.guideline-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.guideline-form button {
+  align-self: flex-end;
+  border: none;
+  background: #2b67f6;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.guideline-status {
+  color: #2b67f6;
+  font-weight: 600;
+}
+
+.guideline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guideline-list li {
+  border: 1px solid #eceff5;
+  border-radius: 10px;
+  padding: 12px;
+  background: #f9fbff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.guideline-list span {
+  font-size: 0.85rem;
+  color: #6d7388;
+}
+
+.guideline-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.guideline-delete {
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  height: fit-content;
+}
+
+.guideline-delete:hover {
+  opacity: 0.9;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.delete {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+  animation: members-card-in 320ms ease both;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.modal-header .close {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  margin-bottom: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-btn,
+.cancel-btn {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  color: #fff;
+}
+
+.confirm-btn {
+  background: #2563eb;
+}
+
+.cancel-btn {
+  background: #cbd5f5;
+  color: #1f2968;
+}
