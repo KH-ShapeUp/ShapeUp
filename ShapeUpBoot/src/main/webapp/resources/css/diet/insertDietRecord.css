@@ -1,0 +1,94 @@
+﻿@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  background: #f7f9fc;
+  color: #222;
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.form-card {
+  background: #fff;
+  border: 1px solid #e3e7ed;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(18, 18, 18, 0.05);
+  padding: 24px;
+}
+
+.form-card h2 {
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.primary-btn,
+.ghost-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #0a84ff;
+}
+
+.primary-btn {
+  background: #0a84ff;
+  color: #fff;
+}
+
+.primary-btn:hover {
+  background: #fff;
+  color: #0a84ff;
+}
+
+.ghost-btn {
+  background: #fff;
+  color: #0a84ff;
+}
+
+.ghost-btn:hover {
+  background: #e8f2ff;
+}
+
+@media (max-width: 640px) {
+  .btn-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
