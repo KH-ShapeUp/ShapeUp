@@ -1,0 +1,287 @@
+@charset "UTF-8";
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.main {
+    gap: 20px;
+}
+
+.matching-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.matching-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+/* 매칭 왼쪽 부분 */
+.matching-wrapper-left {
+    background-color: #fff;
+    border-radius: 12px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+
+/* 폼 그룹 공통 */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.form-group label, .form-title, .label  {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.form-group input, textarea {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border: 1.5px solid var(--main-color);
+}
+/* 폼 그룹 공통 */
+
+/* textarea */
+.form-group #matchingContent {
+    height: 20vh;
+    resize: none;
+}
+
+#partnerType {
+    resize: none;
+    height: 10vh;
+}
+
+/* 난이도 선택 */
+.level-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #f2f3f4;
+    border-radius: 12px;
+    padding: 5px;
+    height: 50px;
+    gap: 10px;
+}
+
+.level-wrapper input {
+    display: none;
+}
+
+.level-wrapper label {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.level-wrapper label span {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.level-wrapper label:has(input:checked) {
+    background: #fff;
+    color: var(--txt-color);
+    box-shadow: var(--box-shadow);
+}
+
+/* 매칭 오른쪽 부분 */
+.matching-wrapper-right {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    justify-content: center;
+    border-radius: 12px;
+    flex: 0 0 350px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+
+.form-group i {
+    color: #666;
+    font-size: .9rem;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.form-row .form-group {
+    width: 100%;
+}
+
+#form-location {
+    position: relative;
+}
+ 
+#form-user {
+    position: relative;
+    width: 100%;
+}
+
+#form-user i {
+    position: absolute;
+    left: 10px;
+    top: 52%;
+    transform: translateY(-50%);
+}
+
+#form-user input {
+    padding-left: 35px;
+}
+
+/*********************************
+    매칭 지역 선택 드롭다운 css
+*********************************/
+/* 필터 드롭다운 버튼(div) */
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* 필터 드롭다운 클릭시 */
+.dropdown-header.active {
+    border: 1.5px solid var(--main-color);
+}
+
+.filter-btn-wrapper {
+    position: absolute;
+    display: flex;
+    top: 75%;                
+    left: 0;
+    width: 100%;  
+    max-height: 300px;
+    background-color: #fff;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+/* 필터 종류 사라지는 클래스 */
+.filter-btn-wrapper.hidden {
+    display: none;
+}
+
+/* 스크롤바 디자인 (크롬) */
+.filter-btn-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filter-btn-wrapper::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 12px;
+}
+
+/* 드롭다운 안 버튼 */
+.filter-btn {
+    background: #fff;
+    border: none;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+/* hover */
+.filter-btn:hover {
+    background: #f1f1f1;
+}
+
+/* 선택(active) 표시 */
+.filter-btn.active {
+    background: #e9f4ff;
+    font-weight: 600;
+}
+/*********************************
+   매칭 지역 선택 드롭다운 css 끝
+*********************************/
+
+.btn-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-row button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: .9rem;
+    color: #fff;
+    cursor: pointer;
+}
+.btn-row #save-btn {
+    background-color: var(--main-color);
+}
+
+.btn-row #cancel-btn {
+    background-color: var(--border-color);
+    color: #666;
+}
+
+
+@media screen and (max-width: 768px) {
+    .mobile-searchInput {display:none;}
+
+    .main {
+        width: 100%;
+        display: flex;
+        padding: 5vw;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .matching-title {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--box-shadow);
+    }
+    .matching-wrapper {
+        flex-direction: column;
+    }
+}
+

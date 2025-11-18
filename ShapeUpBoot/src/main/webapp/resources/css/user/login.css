@@ -1,0 +1,267 @@
+@charset "UTF-8";
+.container {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none; /* 텍스트 드래그 방지 */
+    animation: fadeIn 1s ease;
+}
+
+.main {
+    width: 50%;
+    height: 550px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    border-radius: 16px;
+    background-color: #fff;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 0px;
+}
+
+.login-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* 비디오 사용시 주석 해제 */
+.login-gif {
+    position: relative;
+    width: 55%;
+    height: 100%;
+    /*background-image: url("../../resources/img/person.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover*/
+}
+
+/* 비디오 사용시 주석 해제 */
+/*.login-gif video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    aspect-ratio: 9 / 16; 
+}*/
+
+/* 비디오 사용시 주석 */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* iframe 클릭, 호버 모두 차단 */
+    z-index: 2;
+}
+
+/* 비디오 사용시 주석 */
+.login-gif iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+    pointer-events: none; /* iframe 클릭, 호버 모두 차단 */
+}
+
+.login-form-wrapper {
+    padding: 0;
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    justify-content: center;
+}
+
+.login-form-wrapper img {
+    width: 130px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: #111;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.form-group input {
+    margin-top: 5px;
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: 0.25s;
+}
+
+.form-group input[type='password'] {
+    padding-right: 35px;
+}
+
+.form-group input:focus {
+    border-color: #0A84FF;
+    outline: none;
+}
+
+.form-group .fa-eye, .fa-eye-slash {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(50%);
+    color:#999;
+    cursor: pointer;
+}
+
+/* 자동 로그인 */
+.auto-login {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.auto-login input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0A84FF; /* 체크박스 색상 */
+    cursor: pointer;
+}
+
+.auto-login label {
+    font-size: 13px;
+    color: #111;
+    cursor: pointer;
+}
+
+/* 로그인 버튼 */
+#login-btn {
+    width: 100%;
+    padding: 12px 0px;
+    border: none;
+    background-color: #0A84FF;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+#login-btn:hover {
+    background-color: #0080ff;
+    transform: translateY(-3px);
+}
+
+/* 회원가입, 아이디, 비밀번호 */
+.login-form .account-list {
+    margin: 25px 0px 25px 0px;
+    text-align: center;
+}
+
+.login-form .account-list ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.login-form .account-list a {
+    color: #111;
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.25s;
+}
+
+.login-form .account-list a:hover {
+    color: #0A84FF;
+}
+
+/* sns 로그인 */
+.social-login {
+    width: 100%;
+    display: flex;
+    max-width: 320px;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.social-login  {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.social-login img {
+    width: 50px;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.social-login img:hover {
+    transform: translateY(-3px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media screen and (max-width: 768px) {
+    .main {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    }
+
+    .login-gif {
+        display: none;
+    }
+
+    .login-form-wrapper {
+        width: 100%;
+    }
+
+    .login-form {
+        width: 100%;
+        border-radius:none;
+        box-shadow: none;
+    }
+
+    .login-form form {
+        width: 100%;
+    }
+
+    .account-list {
+        display: flex;
+        justify-content: center;
+    }
+
+    .social-login {
+        width: 100%;
+    }
+}

@@ -19,21 +19,11 @@ public class HomeController {
 	
 	@GetMapping("/login")
 	public String loginPage() {
-		return "login";
+		return "user/login";
 	}
 	
 	@GetMapping("/map")
 	public String mapPage() {
-		return "map";
-	}
-	
-	@GetMapping("/matching")
-	public String matchingPage() {
-		return "matchingBoard";
-	}
-	
-	@GetMapping("/matching/insert")
-	public String matchingInsertPage() {
-		return "matchingInsert";
+		return "map/map";
 	}
 }
