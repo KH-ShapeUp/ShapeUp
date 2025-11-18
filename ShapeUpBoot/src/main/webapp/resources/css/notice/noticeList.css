@@ -1,9 +1,6 @@
-/*
- * 파일명: noticeList.css
- * 설명: 공지사항 목록 화면의 전체 스타일 (Sticky Footer 적용 및 검색 중앙 배치)
- */
-
-/* -------------------- 1. 기본 설정 및 Sticky Footer 레이아웃 -------------------- */
+/* ========================================================= */
+/* 1. 기본 설정 + Sticky Footer */
+/* ========================================================= */
 body {
   font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
   line-height: 1.5;
@@ -11,7 +8,6 @@ body {
   padding: 0;
   background-color: white;
 
-  /* Sticky Footer 적용 */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -20,32 +16,24 @@ body {
 .container {
   width: 900px;
   margin: 0 auto;
-  flex-grow: 1; /* 본문 내용 확장 */
+  flex-grow: 1;
 }
 
-/* 헤더/푸터 공간 확보 */
-.header-placeholder {
-  width: 100%;
-  height: 60px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 15px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
+.header-placeholder,
 .footer-placeholder {
   width: 100%;
   height: 60px;
   background-color: #f7f7f7;
-  border-top: 1px solid #ddd;
-  margin-top: 15px;
-  margin-bottom: 0;
+  border: 1px solid #ddd;
   box-sizing: border-box;
   flex-shrink: 0;
 }
+.header-placeholder { border-bottom: 1px solid #ddd; }
+.footer-placeholder { border-top: 1px solid #ddd; }
 
-/* -------------------- 2. 상단 섹션 (공지사항 제목 + 로고) -------------------- */
+/* ========================================================= */
+/* 2. 상단 섹션 (공지 + 로고) */
+/* ========================================================= */
 .top-section {
   display: flex;
   justify-content: space-between;
@@ -54,10 +42,11 @@ body {
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 20px;
+  margin-top: 20px;
   background: #f0f0f0;
   height: 100px;
-  box-sizing: border-box;
   position: relative;
+  box-sizing: border-box;
 }
 
 .page-title {
@@ -67,17 +56,16 @@ body {
   margin: 0;
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
   left: 60px;
+  transform: translateY(-50%);
 }
 
 .logo-area {
-  /* 로고 영역 */
   width: 250px;
   height: 40px;
   position: absolute;
-  top: 50%;
   right: 20px;
+  top: 50%;
   transform: translateY(-50%);
 }
 .logo-area img {
@@ -85,9 +73,10 @@ body {
   max-height: 100%;
 }
 
-/* -------------------- 3. 검색 섹션 (🚨 중앙 정렬 및 너비 조정됨) -------------------- */
+/* ========================================================= */
+/* 3. 검색 섹션 */
+/* ========================================================= */
 .search-section {
-  /* 중앙 정렬을 위해 justify-content를 center로 변경 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -100,18 +89,14 @@ body {
 .search-section input[type="text"] {
   padding: 8px 10px;
   border: 1px solid #ddd;
-  /* 🚨 너비를 전체 container(900px)의 약 60%를 목표로 설정 */
-  width: 450px; /* (900px의 50% + 버튼 너비를 고려하여 조정) */
+  width: 450px;
   margin-right: 5px;
+  height: 60px;
   box-sizing: border-box;
 }
 
-.search-section input[type="text"],
 .search-btn {
   height: 60px;
-}
-.search-btn {
-  margin-left: -40px;
   padding: 5px 20px;
   background-color: #e57373;
   color: white;
@@ -119,7 +104,9 @@ body {
   cursor: pointer;
 }
 
-/* -------------------- 4. 카테고리/총 건수 섹션 + 글쓰기 버튼 -------------------- */
+/* ========================================================= */
+/* 4. 카테고리 + 총 건수 + 글쓰기 */
+/* ========================================================= */
 .category-section {
   display: flex;
   justify-content: space-between;
@@ -141,8 +128,8 @@ body {
 .category-list a {
   text-decoration: none;
   color: #333;
-  padding: 5px 10px;
   margin-left: 10px;
+  padding: 5px 10px;
   font-size: 16px;
 }
 
@@ -152,19 +139,18 @@ body {
   text-decoration: underline;
 }
 
-/* 글쓰기 버튼 스타일 */
 .write-btn {
   padding: 8px 15px;
   background-color: #e57373;
   color: white;
   border: none;
   cursor: pointer;
-  font-size: 14px;
   font-weight: bold;
-  margin-bottom: 0px;
 }
 
-/* -------------------- 5. 목록 테이블 -------------------- */
+/* ========================================================= */
+/* 5. 공지 리스트 테이블 */
+/* ========================================================= */
 .notice-table {
   width: 100%;
   border-collapse: collapse;
@@ -179,15 +165,8 @@ body {
   font-size: 14px;
 }
 
-/* 테이블 행 호버 효과 */
-.notice-table tbody tr:hover {
-  background-color: #fafafa;
-  cursor: pointer;
-}
-
 .notice-table th {
   background-color: #f9f9f9;
-  font-weight: bold;
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
 }
@@ -197,40 +176,37 @@ body {
   padding-left: 20px;
 }
 
-/* 분류 뱃지 스타일 */
+.notice-table tbody tr:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+/* 뱃지 */
 .badge {
   display: inline-block;
   padding: 3px 8px;
-  border-radius: 3px;
   font-size: 12px;
+  border-radius: 3px;
   color: white;
-  font-weight: normal;
 }
+.badge.notice { background-color: #ff7300; }
+.badge.event { background-color: #003cff; }
+.badge.campaign { background-color: #65cc65; }
 
-.badge.notice {
-  background-color: #ff7300;
-}
-.badge.campaign {
-  background-color: #65cc65;
-}
-.badge.event {
-  background-color: #003cff;
-}
-
-/* -------------------- 6. 페이지네이션 -------------------- */
+/* ========================================================= */
+/* 6. 페이지네이션 */
+/* ========================================================= */
 .pagination {
   text-align: center;
   padding: 20px 0;
 }
 
 .pagination a {
-  text-decoration: none;
-  color: #666;
   padding: 5px 10px;
   margin: 0 2px;
   border: 1px solid #ccc;
-  min-width: 10px;
-  display: inline-block;
+  text-decoration: none;
+  color: #666;
 }
 
 .pagination a.current {
@@ -241,446 +217,158 @@ body {
 }
 
 /* ========================================================= */
-/* 📱 반응형 디자인 (Media Query for smaller screens) */
+/* 모바일 반응형 스타일 (max-width: 900px) 📢 최종 정렬 및 인풋 길이 수정 */
 /* ========================================================= */
-
 @media (max-width: 900px) {
-  /* 1. 기본 설정 및 컨테이너 */
+  /* 1. 기본 설정: 컨테이너에서 패딩 제거 */
   .container {
     width: 100%;
-    padding: 0 10px;
+    padding: 0; /* ⬅️ 컨테이너의 좌우 패딩 제거 */
     box-sizing: border-box;
   }
-
-  /* 🚨 테이블 가로 스크롤을 위한 래퍼 스타일 (HTML 수정 필수) */
-  .notice-table-wrapper {
-    overflow-x: auto;
-    /* 테이블이 컨테이너 밖으로 넘어가지 않도록 설정 */
-    width: 100%;
+  
+  /* 상단 섹션 조정: 좌우 정렬을 위해 padding 추가 */
+  .top-section { 
+    height: 70px; 
+    padding: 15px 10px; /* ⬅️ 좌우 10px 패딩 추가 */
+    margin-top: 10px; 
+    border-radius: 10px; /* 둥근 모서리 유지 */
   }
-  .notice-table {
-    /* 모든 열이 표시될 수 있도록 최소 너비 설정 */
-    min-width: 650px;
+  .page-title { 
+    font-size: 28px; 
+    left: 20px; 
+    transform: translateY(-50%);
   }
-
-  /* 2. 상단 섹션 (공지사항 제목만 중앙에) */
-  .top-section {
-    height: auto;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0 10px 0;
-    border: none;
-    background: none;
-    margin-bottom: 5px;
-    position: static;
-    /* 기존 border, background, height 제거 */
+  .logo-area { 
+    width: 150px; 
+    right: 15px; 
   }
 
-  .page-title {
-    position: static;
-    transform: none;
-    left: auto;
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
 
-  .logo-area {
-    display: none; /* 모바일에서 로고 숨김 */
-  }
-
-  /* 3. 검색 섹션 & 버튼 (이미지처럼 가로 정렬) */
+  /* 2. 검색 섹션: 검색창 길게, 버튼 정렬 */
   .search-section {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    padding: 0;
-    border: none;
-    margin-bottom: 15px;
+    margin-bottom: 10px; 
+    border-top: none; 
+    border-bottom: none;
+    padding: 10px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-
+  
   .search-section input[type="text"] {
-    width: calc(70% - 5px);
+    flex-grow: 1; /* ⬅️ 최대한 길게 늘어남 */
     height: 40px;
+    font-size: 14px;
     margin-right: 5px;
+    width: auto; 
+    border-radius: 0;
+    padding: 0 10px; 
   }
 
   .search-btn {
-    margin-left: 0; /* 버튼이 인풋과 분리되도록 조정 */
-    padding: 5px 15px;
     height: 40px;
-    font-size: 14px;
-    width: 30%;
-  }
-
-  /* 4. 카테고리/총 건수 섹션 + 글쓰기 버튼 (이미지처럼 한 줄에) */
-  .category-section {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0 10px 0;
-    border-bottom: 2px solid #333;
-    margin-bottom: 5px;
-  }
-
-  .left-content {
-    /* 총 건수와 카테고리 목록을 가로로 */
-    flex-direction: row;
-    align-items: center;
-    padding-left: 0;
-    width: auto;
-    margin-bottom: 0;
-  }
-
-  .total-count {
-    margin-right: 15px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .category-list {
-    /* 카테고리 목록을 가로 정렬 */
-    width: auto;
-    white-space: normal;
-    overflow-x: hidden;
-    padding-bottom: 0;
-    border-bottom: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .category-list a {
-    margin: 5px 15px 5px 0;
-    padding: 5px 0;
-    font-size: 15px;
-  }
-
-  .write-btn {
-    /* 글쓰기 버튼 크기 및 위치 조정 */
-    width: 80px;
-    text-align: center;
-    margin-top: 0;
-    padding: 8px 10px;
-    font-size: 14px;
-    margin-right: 0;
-  }
-
-  /* 5. 목록 테이블 (모든 컬럼 표시를 위해 폰트 및 패딩만 조정) */
-  .notice-table th,
-  .notice-table td {
-    padding: 8px 5px;
-    font-size: 13px;
-    white-space: nowrap; /* 내용이 줄바꿈 되지 않도록 */
-  }
-
-  .notice-table td.title-col {
-    padding-left: 10px;
-    white-space: normal; /* 제목만 줄바꿈 허용 */
-  }
-
-  /* 6. 페이지네이션 */
-  .pagination a {
-    padding: 3px 8px;
-    font-size: 12px;
-  }
-}
-/* ========================================================= */
-/* 📱 반응형 디자인 (Media Query for smaller screens) */
-/* ========================================================= */
-
-@media (max-width: 900px) {
-  /* 1. 기본 설정 및 컨테이너 */
-  .container {
-    width: 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-
-  /* 🚨 테이블 가로 스크롤을 위한 래퍼 스타일 */
-  .notice-table-wrapper {
-    overflow-x: auto;
-    width: 100%;
-    margin-bottom: 15px; /* 페이지네이션과의 간격 확보 */
-  }
-  .notice-table {
-    /* 모든 열이 표시될 수 있도록 최소 너비 설정 */
-    min-width: 650px;
-  }
-
-  /* 2. 상단 섹션 (공지사항 제목만 중앙에) */
-  .top-section {
-    height: auto;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0 10px 0;
-    border: none;
-    background: none;
-    margin-bottom: 5px;
-    position: static;
-  }
-
-  .page-title {
-    position: static;
-    transform: none;
-    left: auto;
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  .logo-area {
-    display: none; /* 모바일에서 로고 숨김 */
-  }
-
-  /* 3. 검색 섹션 & 버튼 (이미지처럼 가로 정렬) */
-  .search-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    width: 70px; 
     padding: 0;
-    border: none;
-    margin-bottom: 15px;
-  }
-
-  .search-section input[type="text"] {
-    width: calc(70% - 5px);
-    height: 40px;
-    margin-right: 5px;
-  }
-
-  .search-btn {
-    margin-left: 0;
-    padding: 5px 15px;
-    height: 40px;
     font-size: 14px;
-    width: 30%;
+    flex-shrink: 0;
+    border-radius: 0;
   }
-
-  /* 4. 카테고리/총 건수 섹션 + 글쓰기 버튼 (이미지처럼 한 줄에) */
+  
+  /* 3. 카테고리 섹션: 글쓰기 버튼 정렬 및 스크롤 개선 */
   .category-section {
-    flex-direction: row;
+    display: flex;
+    flex-direction: row; 
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 10px 0;
-    border-bottom: 2px solid #333;
-    margin-bottom: 5px;
+    border-bottom: none; 
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-
+  
   .left-content {
-    flex-direction: row;
+    display: flex;
     align-items: center;
     padding-left: 0;
-    width: auto;
-    margin-bottom: 0;
+    gap: 10px;
+    
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    max-width: calc(100% - 100px); 
+    white-space: nowrap;
+    padding-bottom: 0; 
   }
-
-  .total-count {
-    margin-right: 15px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .category-list {
-    width: auto;
-    white-space: normal;
-    overflow-x: hidden;
-    padding-bottom: 0;
-    border-bottom: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .category-list a {
-    margin: 5px 15px 5px 0;
-    padding: 5px 0;
-    font-size: 15px;
-  }
-
-  .write-btn {
-    width: 80px;
-    text-align: center;
-    margin-top: 0;
-    padding: 8px 10px;
-    font-size: 14px;
-    margin-right: 0;
-  }
-
-  /* 5. 목록 테이블 (모든 컬럼 표시를 위해 폰트 및 패딩만 조정) */
-  .notice-table th,
-  .notice-table td {
-    padding: 8px 5px;
-    font-size: 13px;
-    white-space: nowrap; /* 내용이 줄바꿈 되지 않도록 */
-  }
-
-  .notice-table td.title-col {
-    padding-left: 10px;
-    white-space: normal; /* 제목만 줄바꿈 허용 */
-  }
-
-  /* 6. 페이지네이션 */
-  .pagination a {
-    padding: 3px 8px;
-    font-size: 12px;
-  }
-}
-
-/* ========================================================= */
-/* 📱 반응형 디자인 (Media Query for smaller screens) */
-/* ========================================================= */
-
-@media (max-width: 900px) {
-  /* 1. 기본 설정 및 컨테이너 */
-  .container {
-    width: 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-
-  /* 테이블 가로 스크롤을 위한 래퍼 스타일 */
-  .notice-table-wrapper {
-    overflow-x: auto;
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  .notice-table {
-    min-width: 650px;
-  }
-
-  /* 2. 상단 섹션 */
-  .top-section {
-    height: auto;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0 10px 0;
-    border: none;
-    background: none;
-    margin-bottom: 5px;
-    position: static;
-  }
-
-  .page-title {
-    position: static;
-    transform: none;
-    left: auto;
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  .logo-area {
+  
+  .left-content::-webkit-scrollbar {
     display: none;
   }
 
-  /* 3. 검색 섹션 & 버튼 */
-  .search-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0;
-    border: none;
-    margin-bottom: 15px;
-    height: 40px;
-  }
-
-  /* 검색창과 버튼 */
-  .search-input-group {
-    display: flex;
-    flex-grow: 1; /* 검색창 그룹이 남은 공간 차지 */
-    justify-content: flex-end; /* 오른쪽으로 붙임 */
-    align-items: center;
-  }
-
-  .search-section input[type="text"] {
-    flex-grow: 1;
-    width: auto;
-    height: 40px;
-    margin-right: 5px;
-    padding: 8px 10px;
-  }
-
-  .search-btn {
-    height: 40px;
-    width: 70px;
-    margin-left: 0;
-    padding: 5px 10px;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  /* 4. 카테고리/총 건수 섹션 + 글쓰기 버튼 */
-  .category-section {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0 10px 0;
-    border-bottom: none;
-    margin-bottom: -5px;
-  }
-
-  .left-content {
-    flex-direction: row;
-    align-items: center;
-    padding-left: 0;
-    width: calc(100% - 80px);
-    margin-bottom: 0;
-  }
-
   .total-count {
-    margin-right: 15px;
-    font-weight: bold;
-    color: #333;
+    font-size: 14px;
+    color: #666;
+    margin-right: 0;
     flex-shrink: 0;
-  }
-
-  .category-list {
-    width: 100%;
-    white-space: normal;
-    overflow-x: hidden;
-    padding-bottom: 0;
-    border-bottom: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
   }
 
   .category-list a {
-    margin: 5px 40px 0px 0px;
-    padding: 5px 0;
-    font-size: 15px;
     flex-shrink: 0;
-  }
-
-  .write-btn {
-    /* 🚨 핵심 수정: 왼쪽 마진을 추가하여 간격 확보 */
-    margin-left: 10px;
-    width: 80px;
-    text-align: center;
-    margin-top: 0;
-    padding: 8px 10px;
+    margin: 0;
+    padding: 5px 10px;
     font-size: 14px;
-    margin-right: 0;
+  }
+  
+  .write-btn {
+    width: 80px;
+    height: 40px;
     flex-shrink: 0;
-    height: 40px; /* 검색 버튼/입력창 높이와 일치 */
-    box-sizing: border-box;
+    margin-bottom: 0; 
   }
 
-  /* 5. 목록 테이블 (모든 컬럼 표시) */
-  .notice-table th,
-  .notice-table td {
-    padding: 8px 5px;
-    font-size: 13px;
-    white-space: nowrap;
+  /* 4. 공지 리스트 테이블 조정: 좌우 10px 패딩 적용 */
+  .notice-table-wrapper {
+    padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
+  }
+  .notice-table { 
+    font-size: 12px; 
+    margin-top: 0; 
+  }
+  
+  .notice-table th, .notice-table td { 
+    padding: 8px 3px; 
   }
 
+  /* 테이블 열 표시/숨김 설정 (유지) */
+  .notice-table th:nth-child(1), .notice-table td:nth-child(1) { display: table-cell; width: 30px; min-width: 30px; } 
+  .notice-table th:nth-child(2), .notice-table td:nth-child(2) { display: table-cell; width: 70px; min-width: 70px; }
+  .notice-table th:nth-child(4), .notice-table td:nth-child(4) { display: none; }
+  .notice-table th:nth-child(5), .notice-table td:nth-child(5) { display: table-cell; width: 50px; min-width: 50px; } 
+  .notice-table th:nth-child(6), .notice-table td:nth-child(6) { display: table-cell; width: 40px; min-width: 40px; }
+  
+  /* 제목 줄바꿈 방지 (유지) */
   .notice-table td.title-col {
+    max-width: 1px;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+    text-align: left;
     padding-left: 10px;
-    white-space: normal;
   }
+  
+  /* 5. 페이지네이션: 좌우 10px 패딩 적용 */
+  .pagination { 
+    padding-top: 15px;
+    padding: 15px 10px 20px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
+  }
+  .pagination a { padding: 3px 8px; font-size: 12px; }
+}
 
-  /* 6. 페이지네이션 */
-  .pagination a {
-    padding: 3px 8px;
-    font-size: 12px;
-  }
+/* 추가 스타일 (미디어 쿼리 밖) */
+.notice-table-wrapper {
+  overflow-x: auto;
+}
+.search-section input[type="text"],
+.search-btn {
+  border-radius: 0;
 }
