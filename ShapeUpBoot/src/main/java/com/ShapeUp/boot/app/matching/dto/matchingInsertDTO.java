@@ -1,19 +1,11 @@
-package com.ShapeUp.boot.domain.matching.model.vo;
+package com.ShapeUp.boot.app.matching.dto;
 
 import java.sql.Timestamp;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-public class matchingVO {
+@Data
+public class matchingInsertDTO {
 	private int matchingNo;				// 매칭 구분 번호
 	private String boardTitle;			// 매칭 제목
 	private String boardContent;		// 매칭 내용

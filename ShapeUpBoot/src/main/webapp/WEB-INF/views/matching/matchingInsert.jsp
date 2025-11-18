@@ -144,17 +144,32 @@
             const level = document.querySelector("input[name='matchingLevel']:checked").value;
     
             const matchingData = {
-                title : document.querySelector("#matchingTitle").value,
-                content : document.querySelector("#matchingContent").value,
-                level : level,
-                day : document.querySelector("#matchingDay").value,
-                time : document.querySelector("#matchingTime").value,
-                location : locationBtn,
+                boardTitle : document.querySelector("#matchingTitle").value,
+                boardContent : document.querySelector("#matchingContent").value,
+                matchingLevel : level,
+                matchingDate : document.querySelector("#matchingDay").value,
+                matchingTime : document.querySelector("#matchingTime").value,
+                matchingLocation : locationBtn,
                 partnerType : document.querySelector("#partnerType").value,
-                userCount : document.querySelector("#userCount").value
+                matchingUserCount : document.querySelector("#userCount").value
             }
-            console.log(matchingData);
-        }
+            
+            fetch("/matching", {
+                method: 'post',
+                headers:{"Content-Type" : "application/json"},
+                body: JSON.stringify(matchingData)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result > 0) {
+                    alert("삽입 완료");
+                    location.href="/matching"
+                } else {
+                    alert("삽입 실패");
+                }
+            })
+            .catch(err => console.log(err));
+        };
 
     </script>
 </body>
