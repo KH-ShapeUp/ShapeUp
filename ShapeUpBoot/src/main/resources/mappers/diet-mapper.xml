@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.diet.model.store.DietMapper">
+ 	<select id="getFoodsByKeyword" resultType="FoodApi">
+ 		SELECT * 
+ 		FROM FOOD_API_TBL 
+ 		WHERE FOOD_NAME LIKE '%'||#{keyword}||'%'
+ 		ORDER BY FOOD_NAME ASC
+ 	</select>
+ </mapper>

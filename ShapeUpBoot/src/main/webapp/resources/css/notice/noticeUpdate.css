@@ -1,0 +1,753 @@
+/* ========================================================= */
+/* 1. 기본 설정 + Sticky Footer */
+/* ========================================================= */
+body {
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 푸터 고정을 위한 최소 높이 설정 */
+}
+
+.container {
+  width: 900px;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+.header-placeholder,
+.footer-placeholder {
+  width: 100%;
+  height: 60px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.header-placeholder { border-bottom: 1px solid #ddd; }
+.footer-placeholder { border-top: 1px solid #ddd; }
+
+/* ========================================================= */
+/* 2. 상단 섹션 (공지 제목 + 로고) - 목록/상세/작성/수정 공용 */
+/* ========================================================= */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  background: #f0f0f0;
+  height: 100px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 40px;
+  color: #333;
+  font-weight: bold;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 60px;
+  transform: translateY(-50%);
+}
+
+.logo-area {
+  width: 250px;
+  height: 40px;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.logo-area img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ========================================================= */
+/* 3. 검색 섹션 (목록 페이지 전용) */
+/* ========================================================= */
+.search-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.search-section input[type="text"] {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  width: 450px;
+  margin-right: 5px;
+  height: 60px;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+.search-btn {
+  height: 60px;
+  padding: 5px 20px;
+  background-color: #e57373;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+/* ========================================================= */
+/* 4. 카테고리 + 총 건수 + 글쓰기 (목록 페이지 전용) */
+/* ========================================================= */
+.category-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.left-content {
+  display: flex;
+  align-items: flex-end;
+  padding-left: 20px;
+}
+
+.total-count {
+  font-size: 14px;
+  color: #666;
+  margin-right: 20px;
+}
+
+.category-list a {
+  text-decoration: none;
+  color: #333;
+  margin-left: 10px;
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.category-list a.active {
+  font-weight: bold;
+  color: #1900ff;
+  text-decoration: underline;
+}
+
+.write-btn {
+  padding: 8px 15px;
+  background-color: #e57373;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ========================================================= */
+/* 5. 공지 리스트 테이블 (목록 페이지 전용) */
+/* ========================================================= */
+.notice-table-wrapper {
+  overflow-x: auto;
+}
+
+.notice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.notice-table th,
+.notice-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.notice-table th {
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.notice-table td.title-col {
+  text-align: left;
+  padding-left: 20px;
+}
+
+.notice-table tbody tr:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+/* 뱃지 */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  color: white;
+}
+.badge.notice { background-color: #ff7300; }
+.badge.event { background-color: #003cff; }
+.badge.campaign { background-color: #65cc65; }
+
+/* ========================================================= */
+/* 6. 페이지네이션 (목록 페이지 전용) */
+/* ========================================================= */
+.pagination {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.pagination a {
+  padding: 5px 10px;
+  margin: 0 2px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: #666;
+}
+
+.pagination a.current {
+  background-color: #f0f0f0;
+  color: #e57373;
+  border-color: #ccc;
+  font-weight: bold;
+}
+
+
+/* ========================================================= */
+/* 7. 상세 페이지 스타일 (noticeDetail 전용) */
+/* ========================================================= */
+.detail-section {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.detail-date {
+  font-size: 14px;
+  color: #777;
+}
+
+.detail-content {
+  line-height: 1.8;
+  color: #444;
+}
+
+.detail-content p {
+  margin-bottom: 15px;
+}
+
+.detail-content strong {
+  color: #333;
+}
+
+.detail-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+.detail-content li {
+  margin-bottom: 5px;
+}
+
+.detail-image-placeholder {
+  width: 100%;
+  height: 300px;
+  background-color: #f0f0f0;
+  border: 1px dashed #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 18px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+.detail-image-placeholder::before {
+  content: "이미지 영역 (현재는 회색 박스)";
+}
+
+
+.detail-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.right-buttons {
+  display: flex;
+  gap: 10px; /* 수정/삭제 버튼 간격 10px 통일 */
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0; /* 불필요한 마진 제거 */
+}
+
+.btn-primary {
+  background-color: #e57373;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+
+/* ========================================================= */
+/* 9. 공지사항 작성/수정 페이지 스타일 (noticeInsert/noticeUpdate 공용) */
+/* ========================================================= */
+.write-section {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.form-group .required {
+  color: #e57373;
+  margin-left: 2px;
+}
+
+/* 제목/분류 그룹 */
+.title-group {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  flex-wrap: nowrap;
+}
+
+.title-group input[type="text"] {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.title-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 120px; 
+}
+
+/* 파일 첨부 그룹 */
+.file-group {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  gap: 5px; 
+}
+.file-group .file-path {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  cursor: default;
+}
+.file-group .file-input {
+  display: none; 
+}
+.file-select-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 🚩 일정 그룹 (이벤트 선택 시 JS로 보임) */
+.date-group {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  gap: 10px; 
+  justify-content: flex-start;
+}
+.date-group input[type="date"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 150px; 
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.date-group .date-separator {
+  font-size: 20px;
+  color: #555;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.hidden {
+  display: none !important; /* JS 토글을 위한 숨김 클래스 */
+}
+
+/* 내용 입력 그룹 */
+.content-group {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.content-group label {
+  margin-bottom: 5px;
+}
+.content-group textarea {
+  width: 100%;
+  min-height: 400px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  resize: none; 
+}
+
+/* 버튼 영역 */
+.write-buttons {
+  display: flex;
+  justify-content: flex-end; 
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.btn-secondary, .btn-primary.write-btn-submit {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  width: 100px; 
+}
+
+.btn-primary.write-btn-submit {
+  background-color: #e57373;
+  color: white;
+}
+
+
+/* ========================================================= */
+/* 8. 모바일 반응형 스타일 (max-width: 900px) 📢 최종 통합 버전 */
+/* ========================================================= */
+@media (max-width: 900px) {
+  /* 1. 기본 설정 및 상단 섹션 */
+  .container {
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .top-section { 
+    height: 70px; 
+    padding: 15px 10px; 
+    margin-top: 10px; 
+    border-radius: 10px;
+  }
+  .page-title { 
+    font-size: 28px; 
+    left: 20px; 
+    transform: translateY(-50%);
+  }
+  .logo-area { 
+    width: 150px; 
+    right: 15px; 
+  }
+
+
+  /* 2. 검색 섹션 (목록 페이지) */
+  .search-section {
+    margin-bottom: 10px; 
+    border-top: none; 
+    border-bottom: none; 
+    padding: 10px 10px;
+  }
+  
+  .search-section input[type="text"] {
+    flex-grow: 1;
+    height: 40px;
+    font-size: 14px;
+    margin-right: 5px;
+    padding: 0 10px; 
+  }
+
+  .search-btn {
+    height: 40px;
+    width: 70px; 
+    font-size: 14px;
+  }
+  
+  /* 3. 카테고리 섹션 (목록 페이지) */
+  .category-section {
+    border-bottom: 2px solid #333; 
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    padding: 0 10px;
+  }
+
+  .left-content {
+    padding-left: 0;
+    gap: 10px;
+    overflow-x: scroll; 
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+    max-width: calc(100% - 100px); 
+    white-space: nowrap;
+  }
+  .left-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .total-count {
+    font-size: 14px;
+    margin-right: 0;
+    flex-shrink: 0;
+  }
+
+  .category-list a {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+  
+  .write-btn {
+    width: 80px;
+    height: 40px;
+  }
+
+  /* 4. 공지 리스트 테이블 (목록 페이지) */
+  .notice-table-wrapper {
+    padding: 0 10px;
+  }
+  .notice-table { 
+    font-size: 12px; 
+  }
+  
+  .notice-table th, .notice-table td { 
+    padding: 8px 3px; 
+  }
+
+  /* 테이블 열 표시/숨김 설정 */
+  .notice-table th:nth-child(1), .notice-table td:nth-child(1) { display: table-cell; width: 30px; min-width: 30px; } 
+  .notice-table th:nth-child(2), .notice-table td:nth-child(2) { display: table-cell; width: 70px; min-width: 70px; }
+  .notice-table th:nth-child(4), .notice-table td:nth-child(4) { display: none; }
+  .notice-table th:nth-child(5), .notice-table td:nth-child(5) { display: table-cell; width: 50px; min-width: 50px; } 
+  .notice-table th:nth-child(6), .notice-table td:nth-child(6) { display: table-cell; width: 40px; min-width: 40px; }
+  
+  .notice-table td.title-col {
+    max-width: 1px;
+    padding-left: 10px;
+  }
+  
+  /* 5. 페이지네이션 (목록 페이지) */
+  .pagination { 
+    padding: 15px 10px 20px 10px;
+  }
+  .pagination a { padding: 3px 8px; font-size: 12px; }
+
+  /* 7. 상세 페이지 모바일 반응형 */
+  .detail-section {
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-header {
+    flex-direction: column; 
+    align-items: flex-start;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  .detail-meta {
+    width: 100%; 
+    justify-content: flex-start; 
+    margin-bottom: 5px;
+  }
+
+  .detail-title {
+    font-size: 20px; 
+  }
+
+  .detail-date {
+    font-size: 12px; 
+    width: 100%; 
+    text-align: left; 
+  }
+
+  .detail-content {
+    font-size: 14px;
+  }
+
+  .detail-image-placeholder {
+    height: 200px; 
+    font-size: 16px;
+  }
+
+  .detail-buttons {
+    flex-direction: column;
+    align-items: stretch; 
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%; 
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  .detail-buttons > .btn-primary {
+    margin-bottom: 10px;
+  }
+  .right-buttons .btn-secondary:last-child {
+    margin-bottom: 0;
+  }
+
+  .right-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  /* 9. 작성/수정 페이지 모바일 반응형 */
+  .write-section {
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 5px; 
+    width: 100%; 
+  }
+
+  .form-group label {
+    width: 100%; 
+    margin-bottom: 5px;
+  }
+
+  /* 제목/분류 그룹 */
+  .title-group {
+    flex-direction: column; 
+  }
+  .title-group input[type="text"],
+  .title-group select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 파일 첨부 그룹 */
+  .file-group {
+    flex-direction: column; 
+    gap: 5px;
+  }
+  .file-group .file-path,
+  .file-select-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* 🚩 일정 그룹 모바일 스타일 */
+  .date-group {
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+  }
+  .date-group label {
+      width: auto;
+      margin-bottom: 0;
+      flex-shrink: 0;
+  }
+  .date-group input[type="date"] {
+    width: calc(50% - 25px);
+    max-width: 150px;
+    font-size: 14px;
+  }
+  .date-group .date-separator {
+      font-size: 18px;
+      margin: 0 5px;
+      flex-shrink: 0;
+  }
+
+  /* 내용 입력 그룹 */
+  .content-group  {
+    min-height: 250px; 
+  }
+
+  /* 버튼 영역 */
+  .write-buttons {
+    justify-content: center; 
+    margin-top: 20px;
+    gap: 15px;
+  }
+  .btn-secondary, .btn-primary.write-btn-submit {
+    width: 120px; 
+    font-size: 14px;
+  }
+}
