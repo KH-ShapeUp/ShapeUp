@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
-<link rel="stylesheet" href="../../resources/css/main.css">
+<link rel="stylesheet" href="../../resources/css/index.css">
 </head>
 <body>
 	<div class="container">

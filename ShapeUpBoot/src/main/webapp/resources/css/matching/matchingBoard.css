@@ -1,0 +1,458 @@
+@charset "UTF-8";
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+/* 메인 */
+.main {
+    width: 80%;
+    padding: 2vw 8vw;
+	display: flex;
+	flex-direction: column;
+    gap: 3em;
+}
+
+/* 매칭 전체 wrapper */
+.matching-main-wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    gap: 30px;
+}
+
+/* 전체 필터(공통) */
+.filter-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 250px;
+    gap: 20px;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    height: 330px;
+}
+
+/* 전체 필터 -> "필터" */
+.filter-wrapper p {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+/* 각 필터 */
+.filter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 각 필터 타입 */
+.filter .label {
+    font-size: .8rem;
+    font-weight: 500;
+    padding-bottom: 8px;
+    color: var(--txt-color);
+}
+
+/* 필터 드롭다운 버튼(div) */
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* 필터 드롭다운 클릭시 */
+.dropdown-header.active {
+    border-color: #111;
+    font-weight: bold;
+}
+
+/* 필터 드롭다운 안에 버튼 wrapper */
+.filter-btn-wrapper {
+    position: absolute;
+    display: flex;
+    top: 100%;                
+    left: 0;
+    width: 100%;  
+    max-height: 300px;
+    background-color: #fff;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+/* 필터 종류 사라지는 클래스 */
+.filter-btn-wrapper.hidden {
+    display: none;
+}
+
+/* 스크롤바 디자인 (크롬) */
+.filter-btn-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filter-btn-wrapper::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 12px;
+}
+
+/* 드롭다운 안 버튼 */
+.filter-btn {
+    background: #fff;
+    border: none;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+/* hover */
+.filter-btn:hover {
+    background: #f1f1f1;
+}
+
+/* 선택(active) 표시 */
+.filter-btn.active {
+    background: #e9f4ff;
+    font-weight: 600;
+}
+
+/* 매칭 게시판 */
+.matching-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 20px;
+}
+
+/* 매칭 게시판 탑 */
+.matching-wrapper-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 카드 유저 이름 */
+.user-name {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 카드 카테고리 */
+.user-category {
+    padding: 1px 5px;
+    text-align: center;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #666;
+    background-color: #d1d1d1;
+    border-radius: 8px;
+    align-self: flex-start;
+}
+
+/* 매칭 게시판 "매칭게시판" 커스텀 */
+.matching-top-left p {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* 매칭 게시판 버튼, 필터 wrapper */
+.matching-top-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+#boardHeader {
+    display: flex;
+    width: 110px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.matching-top-right #matching-board-type {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#matching-add-btn{
+    display: flex;
+    padding: 8px 15px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: var(--main-color);
+    color: #fff;
+    text-decoration: none;
+    gap: 5px;
+    font-size: .9rem;
+}
+
+#matching-add-btn .fa-plus {
+    margin-top: 2px;
+}
+
+/* 매칭 게시판 카드 */
+.matching-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.matching-card:hover {
+    background-color: #f2f3f4;
+}
+
+.matching-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 매칭 카드 헤더 */
+.matching-card-header {
+    align-items: center;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+}
+
+/* 매칭 카드 이미지 */
+.card-img img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 매칭 카드 회원 관련 */
+.card-user-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1; 
+}
+
+/* 모집중 */
+.card-state-ing {
+    background-color: #D6EBFF;
+    color: var(--main-color);
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+/* 마감임박 */
+.card-state-imminent {
+    background-color: #FFE4D9;
+    color: #F25C5C;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: .7rem;
+    font-weight: 600;    
+}
+
+/* 마감 */
+.card-state-finish {
+    background-color: #ddd;
+    color: #666;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+/* 매칭 카드 메인 */
+.mathcing-card-main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 매칭 카드 제목 */
+.mathcing-card-main .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 매칭 카드 본몬 */
+.mathcing-card-main .card-content {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #666;
+}
+
+/* 매칭 카드 유저 정보 */
+.card-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+/* 매칭 바텀 */
+.matching-card-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 매칭 카드 간단 정보 wrapper */
+.matching-left {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+/* 매칭 카드 간단 정보 */
+.matching-left span {
+    font-size: .9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+
+/* 매칭 카드 간단 정보 아이콘 */
+.matching-left i {
+    margin-right: 5px;
+    font-size: .9rem;
+    color: #666;
+}
+
+/* 매칭 신청하기 버튼 */
+.matching-application-btn {
+    padding: 8px 12px;
+    border: none;
+    background-color: var(--main-color);
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+/* 페이징네이션 */
+.matching-pagination-wrapper {
+	display: block;
+    padding: 30px 0px;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination li {
+    list-style: none;
+}
+
+.pagination button {
+    padding: 10px 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: transparent;
+    color: #666;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #0A84FF;
+    color: #fff;
+}
+
+@media screen and (max-width: 768px) {
+    .mobile-searchInput {display:none;}
+    .main {
+        width: 100%;
+        display: flex;
+        padding: 5vw;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+        flex-direction: column;
+        gap: 2em;
+    }
+
+    .matching-wrapper-top {
+        display: flex;
+    }
+
+    #matching-add-btn {
+        display: flex;
+        padding: 8px 10px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background-color: var(--main-color);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        gap: 5px;
+        font-size: .9rem;
+    }
+
+    .matching-main-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .matching-card-bottom {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+ 
+    }
+
+    .matching-left{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 5px;
+    }
+
+    .matching-right {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .matching-application-btn {
+        width: 100%;
+    }
+}
