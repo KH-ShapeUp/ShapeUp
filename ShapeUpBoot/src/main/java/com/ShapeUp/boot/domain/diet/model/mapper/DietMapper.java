@@ -1,4 +1,4 @@
-package com.ShapeUp.boot.domain.diet.model.store;
+package com.ShapeUp.boot.domain.diet.model.mapper;
 
 import java.util.List;
 
