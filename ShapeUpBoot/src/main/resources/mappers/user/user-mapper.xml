@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="UserMapper">
-    
-    <!-- ResultMap 정의 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ShapeUp.boot.domain.user.model.mapper.UserMapper">
+
+    <!-- ResultMap (첫 번째 XML에서 가져온 정식 매핑 버전) -->
     <resultMap id="userResultMap" type="com.ShapeUp.boot.domain.user.model.vo.UserVO">
         <id property="userNo" column="USER_NO"/>
         <result property="userId" column="USER_ID"/>
@@ -18,23 +21,28 @@
         <result property="userNickname" column="USER_NICKNAME"/>
         <result property="status" column="STATUS"/>
     </resultMap>
-    
-    <!-- 회원가입 -->
-    <insert id="insertUser" parameterType="com.ShapeUp.boot.domain.user.model.vo.UserVO">
-        INSERT INTO USER_TBL (
-            USER_NO,
-            USER_ID,
-            USER_PW,
-            USER_NAME,
+
+
+    <!-- 회원가입 (두 번째 XML 버전 사용) -->
+    <insert id="insertUser" parameterType="UserVO">
+        INSERT INTO USER_TBL
+        (
+            USER_NO, 
+            USER_ID, 
+            USER_PW, 
+            USER_NAME, 
             USER_AGE,
-            USER_EMAIL,
+            USER_EMAIL, 
             USER_PHONE,
             USER_SERIAL_NO,
-            USER_TYPE,
-            CREATED_AT,
             USER_NICKNAME,
-            STATUS
-        ) VALUES (
+            USER_TYPE,
+            STATUS,
+            CREATED_AT,
+            UPDATED_AT
+        )
+        VALUES
+        (
             SEQ_USER_NO.NEXTVAL,
             #{userId},
             #{userPw},
@@ -43,129 +51,93 @@
             #{userEmail},
             #{userPhone},
             #{userSerialNo},
-            DEFAULT,
-            SYSTIMESTAMP,
             #{userNickname},
-            DEFAULT
+            #{userType},
+            #{status},
+            SYSTIMESTAMP,
+            SYSTIMESTAMP
         )
     </insert>
-    
-    <!-- 아이디 중복 체크 -->
-    <select id="checkUserIdDuplicate" parameterType="string" resultType="int">
-        SELECT COUNT(*)
+
+
+    <!-- 아이디 중복 체크 (두 번째 버전) -->
+    <select id="checkUserIdDuplicate" resultType="int">
+        SELECT COUNT(*) FROM USER_TBL WHERE USER_ID = #{userId}
+    </select>
+
+    <!-- 닉네임 중복 체크 (두 번째 버전) -->
+    <select id="checkNicknameDuplicate" resultType="int">
+        SELECT COUNT(*) FROM USER_TBL WHERE USER_NICKNAME = #{nickname}
+    </select>
+
+
+    <!-- 아이디로 회원 조회 → resultMap 반영 -->
+    <select id="selectUserById" resultMap="userResultMap">
+        SELECT *
         FROM USER_TBL
         WHERE USER_ID = #{userId}
     </select>
-    
-    <!-- 닉네임 중복 체크 -->
-    <select id="checkNicknameDuplicate" parameterType="string" resultType="int">
-        SELECT COUNT(*)
-        FROM USER_TBL
-        WHERE USER_NICKNAME = #{nickname}
-    </select>
-    
-    <!-- 아이디로 회원 조회 -->
-    <select id="selectUserById" parameterType="string" resultMap="userResultMap">
-        SELECT 
-            USER_NO,
-            USER_ID,
-            USER_PW,
-            USER_NAME,
-            USER_AGE,
-            USER_EMAIL,
-            USER_PHONE,
-            USER_SERIAL_NO,
-            USER_TYPE,
-            CREATED_AT,
-            UPDATED_AT,
-            USER_NICKNAME,
-            STATUS
-        FROM USER_TBL
-        WHERE USER_ID = #{userId}
-        AND STATUS = DEFAULT
-    </select>
-    
-    <!-- 이메일로 회원 조회 -->
-    <select id="selectUserByEmail" parameterType="string" resultMap="userResultMap">
-        SELECT 
-            USER_NO,
-            USER_ID,
-            USER_PW,
-            USER_NAME,
-            USER_AGE,
-            USER_EMAIL,
-            USER_PHONE,
-            USER_SERIAL_NO,
-            USER_TYPE,
-            CREATED_AT,
-            UPDATED_AT,
-            USER_NICKNAME,
-            STATUS
+
+    <!-- 이메일로 회원 조회 → resultMap 반영 -->
+    <select id="selectUserByEmail" resultMap="userResultMap">
+        SELECT *
         FROM USER_TBL
         WHERE USER_EMAIL = #{email}
-        AND STATUS = DEFAULT
     </select>
-    
-    <!-- 이름과 이메일로 회원 조회 (아이디 찾기) -->
-    <select id="selectUserByNameAndEmail" parameterType="map" resultMap="userResultMap">
-        SELECT 
-            USER_NO,
-            USER_ID,
-            USER_NAME,
-            USER_EMAIL,
-            CREATED_AT
+
+
+    <!-- 이름 + 이메일로 회원 찾기 (두 번째 XML) -->
+    <select id="findUserByNameAndEmail" resultMap="userResultMap">
+        SELECT *
         FROM USER_TBL
         WHERE USER_NAME = #{name}
         AND USER_EMAIL = #{email}
-        AND STATUS = DEFAULT
     </select>
-    
-    <!-- 아이디, 이름, 이메일로 회원 조회 (비밀번호 찾기) -->
-    <select id="selectUserByIdAndNameAndEmail" parameterType="map" resultMap="userResultMap">
-        SELECT 
-            USER_NO,
-            USER_ID,
-            USER_NAME,
-            USER_EMAIL
+
+
+    <!-- 비밀번호 찾기 - 아이디 + 이름 + 이메일 -->
+    <select id="selectUserByIdAndNameAndEmail" resultMap="userResultMap">
+        SELECT *
         FROM USER_TBL
         WHERE USER_ID = #{userId}
         AND USER_NAME = #{name}
         AND USER_EMAIL = #{email}
-        AND STATUS = '정상'
     </select>
-    
-    <!-- 비밀번호 업데이트 (임시 비밀번호) -->
-    <update id="updatePassword" parameterType="map">
-        UPDATE USER_TBL
-        SET USER_PW = #{userPw},
-            UPDATED_AT = SYSTIMESTAMP
-        WHERE USER_ID = #{userId}
-    </update>
-    
-    <!-- 회원 정보 수정 -->
-    <update id="updateUser" parameterType="com.ShapeUp.boot.domain.user.model.vo.UserVO">
-        UPDATE USER_TBL
-        SET USER_NICKNAME = #{userNickname},
-            USER_EMAIL = #{userEmail},
-            USER_PHONE = #{userPhone},
-            UPDATED_AT = SYSTIMESTAMP
-        WHERE USER_ID = #{userId}
-    </update>
-    
-    <!-- 회원 상태 변경 (탈퇴, 정지 등) -->
-    <update id="updateUserStatus" parameterType="map">
-        UPDATE USER_TBL
-        SET STATUS = #{status},
-            UPDATED_AT = SYSTIMESTAMP
-        WHERE USER_ID = #{userId}
-    </update>
-    
-    <!-- 회원 전체 수 조회 -->
-    <select id="selectUserCount" resultType="int">
-        SELECT COUNT(*)
-        FROM USER_TBL
-        WHERE STATUS = '정상'
-    </select>
-    
-</mapper>
 
+
+    <!-- 비밀번호 변경 (두 번째 XML 버전) -->
+    <update id="updatePassword">
+        UPDATE USER_TBL
+        SET USER_PW = #{encodedPassword},
+            UPDATED_AT = SYSTIMESTAMP
+        WHERE USER_ID = #{userId}
+    </update>
+
+
+    <!-- USER_ID로 USER_NO 조회 -->
+    <select id="selectUserNoByUserId" resultType="int">
+        SELECT USER_NO FROM USER_TBL WHERE USER_ID = #{userId}
+    </select>
+
+
+    <!-- 사용자 관심사 추가 (두 번째 XML 버전) -->
+    <insert id="insertUserInterest">
+        INSERT INTO USER_INTEREST
+        (
+            USER_INTEREST_NO,
+            USER_NO,
+            INTEREST_ACTIVITY,
+            ACTIVE_TIME,
+            ACTIVE_LOCATION
+        )
+        VALUES
+        (
+            SEQ_USER_INTEREST.NEXTVAL,
+            #{userNo},
+            #{interests},
+            #{times},
+            #{addresses}
+        )
+    </insert>
+
+</mapper>

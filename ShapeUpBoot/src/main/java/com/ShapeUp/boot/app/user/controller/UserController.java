@@ -2,16 +2,20 @@ package com.ShapeUp.boot.app.user.controller;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -19,11 +23,76 @@ public class UserController {
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    /* ================================
+        0. 중복 체크 API
+    ================================ */
+
+    /**
+     * 아이디 중복 체크
+     * @param userid 확인할 아이디
+     * @return true: 중복(사용불가), false: 사용가능
+     */
+    @PostMapping("/user/checkUserId")
+    @ResponseBody
+    public boolean checkUserId(@RequestParam String userid) {
+        log.info("🔍 아이디 중복 체크 요청: {}", userid);
+        int count = userService.checkUserIdDuplicate(userid);
+        log.info("📊 DB 조회 결과 count: {}", count);
+        boolean result = count > 0;
+        log.info("✅ 최종 반환값 (true=중복, false=사용가능): {}", result);
+        return result;
+    }
+
+    /**
+     * 닉네임 중복 체크
+     * @param nickname 확인할 닉네임
+     * @return true: 중복(사용불가), false: 사용가능
+     */
+    @PostMapping("/user/checkNickname")
+    @ResponseBody
+    public boolean checkNickname(@RequestParam String nickname) {
+        log.info("🔍 닉네임 중복 체크 요청: {}", nickname);
+        int count = userService.checkNicknameDuplicate(nickname);
+        log.info("📊 DB 조회 결과 count: {}", count);
+        boolean result = count > 0;
+        log.info("✅ 최종 반환값 (true=중복, false=사용가능): {}", result);
+        return result;
+    }
+
+    /* ================================
+        1. 약관 동의
+    ================================ */
+
+    // 약관 동의 페이지
+    @GetMapping("/user/signupAgreement")
+    public String signupAgreement() {
+        return "user/signupAgreement";
+    }
+
+    // 약관 동의 처리
+    @PostMapping("/user/signupAgreement")
+    public String signupAgreementProcess(
+            @RequestParam(required = false) String termsAgree,
+            @RequestParam(required = false) String privacyAgree
+    ) {
+        if (termsAgree == null || privacyAgree == null) {
+            return "redirect:/user/signupAgreement?error=required";
+        }
+        return "redirect:/user/signupInsertInfo";
+    }
+
+
+    /* ================================
+        2. 정보 입력
+    ================================ */
+
+    // 정보 입력 페이지
     @GetMapping("/user/signupInsertInfo")
     public String signupInsertInfo() {
         return "user/signupInsertInfo";
     }
 
+    // 정보 입력 처리
     @PostMapping("/user/signupInsertInfo")
     public String signupInsertInfoProcess(
             @RequestParam String userid,
@@ -31,19 +100,45 @@ public class UserController {
             @RequestParam String password2,
             @RequestParam String name,
             @RequestParam String nickname,
-            @RequestParam String email,
+            @RequestParam String emailId,
+            @RequestParam String emailDomain,
             @RequestParam String phone,
             @RequestParam String birthDate,
             @RequestParam String genderDigit,
             HttpSession session
     ) {
+        log.info("회원가입 정보 입력 - 아이디: {}, 닉네임: {}", userid, nickname);
+        
+        // 비밀번호 확인
         if (!password.equals(password2)) {
+            log.warn("비밀번호 불일치");
             return "redirect:/user/signupInsertInfo?error=password";
         }
 
+        // 아이디 중복 체크
+        int userIdCount = userService.checkUserIdDuplicate(userid);
+        log.info("아이디 중복 체크 결과: {}", userIdCount);
+        if (userIdCount > 0) {
+            log.warn("아이디 중복: {}", userid);
+            return "redirect:/user/signupInsertInfo?error=duplicateId";
+        }
+
+        // 닉네임 중복 체크
+        int nicknameCount = userService.checkNicknameDuplicate(nickname);
+        log.info("닉네임 중복 체크 결과: {}", nicknameCount);
+        if (nicknameCount > 0) {
+            log.warn("닉네임 중복: {}", nickname);
+            return "redirect:/user/signupInsertInfo?error=duplicateNickname";
+        }
+
         try {
+            // 이메일 합치기
+            String email = emailId + "@" + emailDomain;
+
+            // 주민번호 + 나이 계산
             String userSerialNo = birthDate + "-" + genderDigit;
             int birthYear = Integer.parseInt(birthDate.substring(0, 2));
+
             if (genderDigit.equals("1") || genderDigit.equals("2")) {
                 birthYear += 1900;
             } else {
@@ -52,6 +147,7 @@ public class UserController {
 
             int age = java.time.Year.now().getValue() - birthYear + 1;
 
+            // 입력 정보 세션 저장
             session.setAttribute("userId", userid);
             session.setAttribute("password", password);
             session.setAttribute("name", name);
@@ -61,27 +157,42 @@ public class UserController {
             session.setAttribute("userSerialNo", userSerialNo);
             session.setAttribute("age", age);
 
+            log.info("세션 저장 완료 - userId: {}, age: {}, nickname: {}", userid, age, nickname);
+
             return "redirect:/user/signupSurvey";
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("회원가입 정보 입력 중 오류 발생", e);
             return "redirect:/user/signupInsertInfo?error=exception";
         }
     }
 
-    // ❗ GET 핸들러 추가 (Survey 페이지 보여주기)
+
+    /* ================================
+        3. 설문조사
+    ================================ */
+
+    // 설문조사 페이지
     @GetMapping("/user/signupSurvey")
     public String showSignupSurvey() {
-        return "user/signupSurvey"; // JSP 파일 위치
+        return "user/signupSurvey";
     }
-
+    
+    @GetMapping("/user/signupSuccess")
+    public String signupSuccess() {
+        return "user/signupSuccess";
+    }
+    
+    // 설문조사 처리
     @PostMapping("/user/signupSurvey")
     public String signupSurveyProcess(
-            @RequestParam(required=false) String interests,
-            @RequestParam(required=false) String times,
-            @RequestParam(required=false) String addresses,
+            @RequestParam(required = false) String interests,
+            @RequestParam(required = false) String times,
+            @RequestParam(required = false) String addresses,
             HttpSession session
     ) {
         try {
+            // 1) 저장된 회원가입 정보 가져오기
             String userId = (String) session.getAttribute("userId");
             String password = (String) session.getAttribute("password");
             String name = (String) session.getAttribute("name");
@@ -91,12 +202,19 @@ public class UserController {
             String userSerialNo = (String) session.getAttribute("userSerialNo");
             Integer age = (Integer) session.getAttribute("age");
 
-            if (userId == null || password == null || name == null) {
+            // 세션 데이터 검증 강화
+            if (userId == null || password == null || name == null || 
+                nickname == null || email == null || phone == null || 
+                userSerialNo == null || age == null) {
+                log.error("세션 데이터 누락 - userId: {}, password: {}, name: {}, nickname: {}, email: {}, phone: {}, userSerialNo: {}, age: {}", 
+                         userId, password != null, name, nickname, email, phone, userSerialNo, age);
                 return "redirect:/user/signupInsertInfo?error=session";
             }
 
+            // 비밀번호 암호화
             String encodedPassword = passwordEncoder.encode(password);
 
+            // 2) USER 객체 생성
             UserVO user = new UserVO();
             user.setUserId(userId);
             user.setUserPw(encodedPassword);
@@ -109,17 +227,82 @@ public class UserController {
             user.setUserType("USER");
             user.setStatus("정상");
 
+            log.info("회원가입 진행 - 아이디: {}, 닉네임: {}, 나이: {}", userId, nickname, age);
+            log.info("User 객체: {}", user);
+
+            // 3) USER INSERT
             int result = userService.insertUser(user);
+            log.info("USER INSERT 결과: {}", result);
 
             if (result > 0) {
-                session.invalidate();
-                return "redirect:/user/signupSuccess";
+                // 4) USER_NO 조회
+                int userNo = userService.selectUserNoByUserId(userId);
+                log.info("조회된 USER_NO: {}", userNo);
+                
+                if (userNo > 0) {
+                    // 5) 설문 데이터 저장 (null 체크)
+                    if (interests != null || times != null || addresses != null) {
+                        log.info("설문 데이터 저장 - interests: {}, times: {}, addresses: {}", 
+                                interests, times, addresses);
+                        userService.insertUserInterest(
+                            userNo, 
+                            interests != null ? interests : "", 
+                            times != null ? times : "", 
+                            addresses != null ? addresses : ""
+                        );
+                    } else {
+                        log.info("설문 데이터 없음 - 건너뜀");
+                    }
+                    
+                    log.info("✅ 회원가입 완료 - USER_NO: {}", userNo);
+                    
+                    // 가입 완료 → 세션 삭제
+                    session.invalidate();
+                    
+                    return "redirect:/user/signupSuccess";
+                } else {
+                    log.error("❌ USER_NO 조회 실패 - userId: {}", userId);
+                    return "redirect:/user/signupSurvey?error=fail";
+                }
             } else {
+                log.error("❌ 회원 INSERT 실패 - userId: {}", userId);
                 return "redirect:/user/signupSurvey?error=fail";
             }
+
         } catch (Exception e) {
+            log.error("❌ 회원가입 처리 중 오류 발생", e);
             e.printStackTrace();
             return "redirect:/user/signupSurvey?error=exception";
         }
     }
+    @GetMapping("/user/login")
+    public String loginForm() {
+        return "user/login"; // login.jsp
+    }
+
+    @PostMapping("/user/login")
+    public String loginProcess(@RequestParam String userId,
+                               @RequestParam String userPw,
+                               HttpSession session,
+                               Model model) {
+
+        UserVO user = userService.selectUserById(userId);
+
+        if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
+            session.setAttribute("userNo", user.getUserNo());
+            session.setAttribute("userNickname", user.getUserNickname());
+            return "redirect:/"; // 로그인 성공 시 홈
+        } else {
+            model.addAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");
+            return "user/login";
+        }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
 }
+
+

@@ -13,7 +13,7 @@
 
     <section class="right-panel">
       <div class="logo">
-        <img src="../../../../resources/img/main_logo.png" alt="" width="180px">
+        <img src="<%=request.getContextPath()%>/resources/img/main_logo.png" alt="" width="180px">
       </div>
 
       <div class="tab-menu">
@@ -38,7 +38,8 @@
       </div>
 
       <div class="signup-box">
-        <form action="/user/signup/survey" method="post">
+        <!-- action 경로 수정 및 id 추가 -->
+        <form id="surveyForm" action="<%=request.getContextPath()%>/user/signupSurvey" method="post">
 
           <!-- 질문 1: 운동 관심사 -->
           <div class="question-group">
@@ -132,6 +133,7 @@
           <!-- 버튼 영역 -->
           <div class="button-area">
             <button type="button" class="btn cancel">취소</button>
+            <!-- type="button"으로 유지하고 onclick으로 제출 -->
             <button type="button" class="btn next" onclick="submitForm()">다음</button>
           </div>
 
@@ -143,6 +145,8 @@
 </body>
 
 <script>
+const contextPath = '<%=request.getContextPath()%>';
+
 // 태그 버튼 선택 토글
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('tag-btn')) {
@@ -158,19 +162,23 @@ function toggleDropdown(id) {
   toggleBtn.classList.toggle('active');
 }
 
-// 폼 제출
+// 폼 제출 - 실제 form.submit() 호출하도록 수정
 function submitForm() {
+  // 선택된 운동 종목 수집
   const selectedExercises = Array.from(document.querySelectorAll('.tag-btn[data-group="exercise"].active'))
     .map(btn => btn.getAttribute('data-value'));
   document.getElementById('interestsValue').value = selectedExercises.join(',');
 
+  // 선택된 시간대 수집
   const selectedTimes = Array.from(document.querySelectorAll('.tag-btn[data-group="time"].active'))
     .map(btn => btn.getAttribute('data-value'));
   document.getElementById('timesValue').value = selectedTimes.join(',');
 
+  // 선택된 지역 수집
   const selectedAddress = document.getElementById('memberAddressDropdown').value;
   document.getElementById('addressesValue').value = selectedAddress;
 
+  // 유효성 검사
   if (selectedExercises.length === 0) {
     alert('관심있는 운동을 하나 이상 선택해주세요.');
     return;
@@ -184,13 +192,20 @@ function submitForm() {
     return;
   }
 
-  window.location.href = "/user/signupSuccess";
+  // ✅ 실제 form 제출 (POST 요청)
+  console.log('설문 제출:', {
+    interests: selectedExercises.join(','),
+    times: selectedTimes.join(','),
+    addresses: selectedAddress
+  });
+  
+  document.getElementById('surveyForm').submit();
 }
 
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
   if (confirm('회원가입을 취소하시겠습니까?')) {
-    window.location.href = '/';
+    window.location.href = contextPath + '/';
   }
 });
 </script>
