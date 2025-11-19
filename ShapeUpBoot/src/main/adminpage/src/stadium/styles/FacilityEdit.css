@@ -44,6 +44,18 @@ input, textarea, select {
   font-size: 14px;
 }
 
+.form-group .custom-select {
+  width: 100%;
+}
+
+.form-group .custom-select__trigger {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 28px 8px 10px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
 textarea {
   height: 100px;
   resize: none;

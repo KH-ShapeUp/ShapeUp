@@ -32,10 +32,15 @@
   gap: 8px;
 }
 
-.memo-filter select {
+.memo-filter .custom-select {
+  min-width: 150px;
+}
+
+.memo-filter .custom-select__trigger {
   border-radius: 8px;
   border: 1px solid #d7dcea;
-  padding: 6px 10px;
+  padding: 6px 30px 6px 12px;
+  box-shadow: none;
 }
 
 .memo-grid {
@@ -64,11 +69,18 @@
   gap: 10px;
 }
 
-.memo-form-card select,
+.memo-form-card .custom-select,
 .memo-form-card textarea {
   border: 1px solid #d7dcea;
   border-radius: 10px;
   padding: 8px;
+}
+
+.memo-form-card .custom-select__trigger {
+  border: none;
+  border-radius: 10px;
+  box-shadow: none;
+  border: 1px solid #d7dcea;
 }
 
 .memo-form-card textarea {

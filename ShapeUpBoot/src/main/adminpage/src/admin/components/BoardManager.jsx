@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import "../styles/PostNotice.css";
 import { BOARD_STORAGE_EVENT } from "../../common/utils/storageKeys";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const defaultChartLabels = ["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"];
 const isBrowser = typeof window !== "undefined";
@@ -75,6 +76,9 @@ const BoardManager = ({
     });
     return options;
   }, [categories]);
+
+  const advancedOptions = useMemo(() => ["전체", "날짜", "제목", "작성자"], []);
+  const pageSizeOptions = useMemo(() => ["5", "10", "30", "50"], []);
 
   const getDisplayDate = (post) => {
     if (post.category === "이벤트") {
@@ -235,38 +239,33 @@ const BoardManager = ({
           </span>
           <div className="search-stack">
             <div className="search-bar">
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                {categoryOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <CustomSelect
+                value={categoryFilter}
+                options={categoryOptions.map((option) => ({ label: option, value: option }))}
+                onChange={setCategoryFilter}
+                size="sm"
+              />
               <input
                 type="text"
                 placeholder="제목을 입력하세요"
                 value={titleQuery}
                 onChange={(e) => setTitleQuery(e.target.value)}
               />
-              <select
+              <CustomSelect
                 className="page-size-select"
-                value={pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-              >
-                {[5, 10, 30, 50].map((size) => (
-                  <option key={size} value={size}>
-                    {size}개
-                  </option>
-                ))}
-              </select>
+                value={String(pageSize)}
+                options={pageSizeOptions.map((size) => ({ label: `${size}개`, value: size }))}
+                onChange={(val) => setPageSize(Number(val))}
+                size="sm"
+              />
             </div>
             <div className="search-bar secondary-search">
-              <select value={advancedFilter} onChange={(e) => setAdvancedFilter(e.target.value)}>
-                <option value="전체">전체</option>
-                <option value="날짜">날짜</option>
-                <option value="제목">제목</option>
-                <option value="작성자">작성자</option>
-              </select>
+              <CustomSelect
+                value={advancedFilter}
+                options={advancedOptions.map((option) => ({ label: option, value: option }))}
+                onChange={setAdvancedFilter}
+                size="sm"
+              />
               <input
                 type="text"
                 placeholder="추가 검색어 입력"

@@ -6,6 +6,7 @@ import {
   TRAINER_REPORT_STORAGE_KEY,
 } from "../../common/utils/storageKeys";
 import { appendInboxMessage } from "../../common/utils/messageUtils";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -45,6 +46,12 @@ const formatDate = (iso) => {
     minute: "2-digit",
   });
 };
+
+const logFilterOptions = [
+  { label: "전체", value: "전체" },
+  { label: "삭제 완료", value: "삭제 완료" },
+  { label: "반려", value: "반려" },
+];
 
 const TrainerReport = () => {
   const [reports, setReports] = useState(() => readStorageArray(TRAINER_REPORT_STORAGE_KEY));
@@ -128,9 +135,18 @@ const TrainerReport = () => {
     writeStorageArray(FACILITY_REVIEW_STORAGE_KEY, nextReviews, STORAGE_EVENTS.FACILITY_REVIEWS);
   };
 
+  const updateReviewStatusInStorage = (reviewId, status, extra = {}) => {
+    if (!isBrowser) return;
+    const nextReviews = readStorageArray(FACILITY_REVIEW_STORAGE_KEY).map((item) =>
+      item.id === reviewId ? { ...item, status, ...extra } : item
+    );
+    writeStorageArray(FACILITY_REVIEW_STORAGE_KEY, nextReviews, STORAGE_EVENTS.FACILITY_REVIEWS);
+  };
+
   const handleDeleteConfirm = () => {
     if (!selectedReport) return;
     removeReviewFromStorage(selectedReport.reviewId);
+    updateReviewStatusInStorage(selectedReport.reviewId, "삭제 완료");
     updateReports((prev) =>
       prev.map((report) =>
         report.id === selectedReport.id
@@ -164,11 +180,12 @@ const TrainerReport = () => {
     appendInboxMessage({
       sender: "어드민 센터",
       subject: `[반려] ${selectedReport.facility} 리뷰 신고`,
-      preview: `리뷰 반려 사유 : ${reason}`,
-      body: `시설 ${selectedReport.facility}의 리뷰 신고가 반려되었습니다.\n사유: ${reason}`,
+      preview: `${selectedReport.facility} 리뷰 반려 안내`,
+      body: `시설 ${selectedReport.facility}의 리뷰가 반려되었습니다.\n\n[사유]\n${reason}\n\n리뷰 제목 : ${selectedReport.title}\n리뷰 내용 : ${selectedReport.content}`,
       category: "반려",
       metadata: { facility: selectedReport.facility, reviewer: selectedReport.reviewer },
     });
+    updateReviewStatusInStorage(selectedReport.reviewId, "반려", { rejectReason: reason });
     setRejectModal({ open: false, reason: "", message: "" });
     setFeedback("신고를 반려했습니다.");
   };
@@ -234,15 +251,13 @@ const TrainerReport = () => {
             <h3>신고 처리 기록</h3>
             <div className="status-filter">
               <label htmlFor="logFilter">상태</label>
-              <select
+              <CustomSelect
                 id="logFilter"
                 value={logFilter}
-                onChange={(e) => setLogFilter(e.target.value)}
-              >
-                <option value="전체">전체</option>
-                <option value="삭제 완료">삭제 완료</option>
-                <option value="반려">반려</option>
-              </select>
+                options={logFilterOptions}
+                onChange={setLogFilter}
+                size="sm"
+              />
             </div>
           </div>
           <table className="trainer-table">
@@ -298,19 +313,19 @@ const TrainerReport = () => {
               </p>
             </header>
             <div className="detail-grid">
-              <div>
+              <div className="detail-pair">
                 <label>평점</label>
                 <p>{selectedReport.rating?.toFixed(1)}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>신고 사유</label>
                 <p>{selectedReport.reportReason}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>상태</label>
                 <p>{selectedReport.status}</p>
               </div>
-              <div>
+              <div className="detail-pair">
                 <label>신고일</label>
                 <p>{formatDate(selectedReport.reportedAt)}</p>
               </div>

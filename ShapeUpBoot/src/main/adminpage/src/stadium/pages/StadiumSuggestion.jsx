@@ -244,26 +244,22 @@ const StadiumSuggestion = () => {
 
   return (
     <div className="posts-container qna-board stadium-qna-board">
-      <div className="posts-header">
-        <div>
-          <h3>시설 건의 사항 관리</h3>
-          <p className="count-label">시설별 건의 요청을 확인하고 답변하세요.</p>
-        </div>
-        <div className="facility-filter-group">
-          {facilityFilters.map((label) => (
-            <button
-              type="button"
-              key={label}
-              className={selectedFacility === label ? "active" : ""}
-              onClick={() => setSelectedFacility(label)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="posts-list">
+        <div className="suggestion-filter-bar">
+          <span className="filter-label">시설 필터</span>
+          <div className="facility-filter-group">
+            {facilityFilters.map((label) => (
+              <button
+                type="button"
+                key={label}
+                className={selectedFacility === label ? "active" : ""}
+                onClick={() => setSelectedFacility(label)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="qna-block">
           <div className="qna-block-header">대기 중 건의 사항</div>
           <table className="posts-table">

@@ -106,6 +106,7 @@ h4 {
 
 .dashboard-qna-table-wrapper {
   max-height: 260px;
+  min-height: 220px;
   overflow-y: auto;
 }
 

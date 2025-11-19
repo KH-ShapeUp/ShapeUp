@@ -44,13 +44,26 @@
 
 .search-bar {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.search-bar select, .search-bar input {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.search-bar .custom-select {
+  width: auto;
+  min-width: 140px;
+}
+
+.search-bar .custom-select--sm .custom-select__trigger,
+.search-bar .custom-select .custom-select__trigger {
+  min-width: 140px;
+}
+
+.search-bar input {
+  min-width: 200px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 8px 12px;
 }
 
 .report-table {

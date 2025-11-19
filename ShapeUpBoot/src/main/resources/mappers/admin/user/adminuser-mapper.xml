@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.admin.user.model.mapper.AdminUserMapper">
+
+  <select id="selectAllUsers" resultType="com.ShapeUp.boot.domain.admin.user.model.vo.AdminUserVO">
+    SELECT
+      USER_NO,
+      USER_ID,
+      USER_PW,
+      USER_NAME,
+      USER_AGE,
+      USER_EMAIL,
+      USER_PHONE,
+      USER_SERIAL_NO,
+      USER_TYPE,
+      CREATED_AT,
+      UPDATED_AT,
+      USER_NICKNAME,
+      STATUS
+    FROM USER_TBL
+    ORDER BY USER_NO DESC
+  </select>
+
+  <select id="selectUserByNo" parameterType="int" resultType="com.ShapeUp.boot.domain.admin.user.model.vo.AdminUserVO">
+    SELECT
+      USER_NO,
+      USER_ID,
+      USER_PW,
+      USER_NAME,
+      USER_AGE,
+      USER_EMAIL,
+      USER_PHONE,
+      USER_SERIAL_NO,
+      USER_TYPE,
+      CREATED_AT,
+      UPDATED_AT,
+      USER_NICKNAME,
+      STATUS
+    FROM USER_TBL
+    WHERE USER_NO = #{userNo}
+  </select>
+
+  <update id="updateUserStatus">
+    UPDATE USER_TBL
+    SET STATUS = #{status},
+        UPDATED_AT = SYSTIMESTAMP
+    WHERE USER_NO = #{userNo}
+  </update>
+
+</mapper>

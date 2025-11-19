@@ -1,8 +1,13 @@
 // src/admin/pages/ReportManagement.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/ReportManagement.css";
+import CustomSelect from "../../common/components/CustomSelect";
+import {
+  ADMIN_REPORT_STORAGE_KEY,
+  STORAGE_EVENTS,
+} from "../../common/utils/storageKeys";
 
-const initialReports = [
+const seedReports = [
   {
     id: 1,
     reporter: "user01",
@@ -41,9 +46,46 @@ const initialReports = [
   },
 ];
 
+const categoryOptions = ["전체", "게시글", "댓글"];
+const logStatusOptions = ["전체", "처리 완료", "반려"];
+const penaltyTypeOptions = [
+  { label: "로그인 차단", value: "로그인 차단" },
+  { label: "글쓰기 제한", value: "글쓰기 제한" },
+  { label: "아이디 영구 정지", value: "아이디 영구 정지" },
+];
+const isBrowser = typeof window !== "undefined";
+
+const readReportsStorage = () => {
+  const fallback = seedReports;
+  if (!isBrowser) return fallback;
+  try {
+    const raw = window.localStorage.getItem(ADMIN_REPORT_STORAGE_KEY);
+    if (!raw) {
+      window.localStorage.setItem(ADMIN_REPORT_STORAGE_KEY, JSON.stringify(fallback));
+      return fallback;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (err) {
+    console.warn("Failed to load admin reports", err);
+  }
+  return fallback;
+};
+
+const persistReports = (reports) => {
+  if (!isBrowser) return;
+  try {
+    window.localStorage.setItem(ADMIN_REPORT_STORAGE_KEY, JSON.stringify(reports));
+    window.dispatchEvent(new Event(STORAGE_EVENTS.ADMIN_REPORTS));
+  } catch (err) {
+    console.warn("Failed to save admin reports", err);
+  }
+};
+
 const ReportManagement = () => {
-  const [reports, setReports] = useState(initialReports);
-  const [selectedReportId, setSelectedReportId] = useState(initialReports[0]?.id ?? null);
+  const initialData = useMemo(() => readReportsStorage(), []);
+  const [reports, setReports] = useState(initialData);
+  const [selectedReportId, setSelectedReportId] = useState(initialData[0]?.id ?? null);
   const [categoryFilter, setCategoryFilter] = useState("전체");
   const [searchTerm, setSearchTerm] = useState("");
   const [requestSort, setRequestSort] = useState({ key: "id", dir: "asc" });
@@ -143,11 +185,34 @@ const ReportManagement = () => {
     }
   }, [pendingReports, processedReports, selectedReportId]);
 
+  useEffect(() => {
+    if (!isBrowser) return;
+    const sync = () => setReports(readReportsStorage());
+    const handler = (event) => {
+      if (event.key && event.key !== ADMIN_REPORT_STORAGE_KEY) return;
+      sync();
+    };
+    window.addEventListener("storage", handler);
+    window.addEventListener(STORAGE_EVENTS.ADMIN_REPORTS, sync);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener(STORAGE_EVENTS.ADMIN_REPORTS, sync);
+    };
+  }, []);
+
+  const updateReports = (updater) => {
+    setReports((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      persistReports(next);
+      return next;
+    });
+  };
+
   const selectedReport = reports.find((report) => report.id === selectedReportId) || null;
 
   const handleActionConfirm = () => {
     if (!selectedReport) return;
-    setReports((prev) =>
+    updateReports((prev) =>
       prev.map((report) =>
         report.id === selectedReport.id
           ? {
@@ -167,7 +232,7 @@ const ReportManagement = () => {
 
   const handleRejectConfirm = () => {
     if (!selectedReport) return;
-    setReports((prev) =>
+    updateReports((prev) =>
       prev.map((report) =>
         report.id === selectedReport.id
           ? {
@@ -201,11 +266,11 @@ const ReportManagement = () => {
           <div className="section-title">
             <h3>신고 요청 리스트 (대기)</h3>
             <div className="search-bar">
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                <option value="전체">전체</option>
-                <option value="게시글">게시글</option>
-                <option value="댓글">댓글</option>
-              </select>
+              <CustomSelect
+                value={categoryFilter}
+                options={categoryOptions}
+                onChange={setCategoryFilter}
+              />
               <input
                 type="text"
                 placeholder="검색어 입력"
@@ -271,11 +336,11 @@ const ReportManagement = () => {
           <div className="section-title">
             <h3>신고 처리 기록</h3>
             <div className="search-bar">
-              <select value={logStatusFilter} onChange={(e) => setLogStatusFilter(e.target.value)}>
-                <option value="전체">전체</option>
-                <option value="처리 완료">처리 완료</option>
-                <option value="반려">반려</option>
-              </select>
+              <CustomSelect
+                value={logStatusFilter}
+                options={logStatusOptions}
+                onChange={setLogStatusFilter}
+              />
             </div>
           </div>
 
@@ -427,11 +492,11 @@ const ReportManagement = () => {
                   onChange={(e) => setPenaltyDays(Math.max(1, Number(e.target.value)))}
                 />
                 <span>일 동안</span>
-                <select value={penaltyType} onChange={(e) => setPenaltyType(e.target.value)}>
-                  <option value="로그인 차단">로그인 차단</option>
-                  <option value="게시글 작성 제한">게시글 작성 제한</option>
-                  <option value="댓글 작성 제한">댓글 작성 제한</option>
-                </select>
+                <CustomSelect
+                  value={penaltyType}
+                  options={penaltyTypeOptions}
+                  onChange={setPenaltyType}
+                />
               </div>
             </div>
             <div className="modal-footer">

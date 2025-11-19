@@ -215,21 +215,23 @@ const PostQnaBoard = () => {
 
   return (
     <div className="posts-container qna-board">
-      <div className="qna-filter-group">
-        {categoryFilters.map((label) => (
-          <button
-            key={label}
-            type="button"
-            className={categoryFilter === label ? "active" : ""}
-            onClick={() => setCategoryFilter(label)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
       <div className="posts-list">
         <div className="qna-block">
-          <div className="qna-block-header">대기 중 질문 / 건의</div>
+          <div className="qna-block-header">
+            <span>대기 중 질문 / 건의</span>
+            <div className="qna-filter-group">
+              {categoryFilters.map((label) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={categoryFilter === label ? "active" : ""}
+                  onClick={() => setCategoryFilter(label)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <table className="posts-table">
             <thead>
               <tr>

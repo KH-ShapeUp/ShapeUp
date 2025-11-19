@@ -33,11 +33,21 @@
   gap: 6px;
 }
 
-.search-area select,
 .search-area input {
   padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
+
+.search-area .custom-select {
+  min-width: 120px;
+}
+
+.search-area .custom-select__trigger {
+  padding: 6px 28px 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  box-shadow: none;
 }
 
 .member-table {
@@ -92,6 +102,11 @@
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.filter-bar .custom-select__trigger {
+  min-width: 140px;
+  box-shadow: none;
 }
 
 .date-picker {

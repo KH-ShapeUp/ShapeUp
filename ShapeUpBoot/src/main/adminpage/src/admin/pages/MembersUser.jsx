@@ -2,15 +2,42 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Chart from "chart.js/auto";
 import "../styles/MembersUser.css";
+import CustomSelect from "../../common/components/CustomSelect";
+const mapUserToMember = (user) => ({
+  id: user.userNo,
+  name: user.userName ?? "",
+  age: user.userAge ?? 0,
+  nickname: user.userNickname ?? "",
+  joinedAt: user.createdAt?.slice(0, 10) ?? "",
+  category: user.userType === "TRAINER" ? "트레이너" : user.userType === "ADMIN" ? "어드민" : "유저",
+  status: user.status ?? "정상",
+  gender: user.userSerialNo?.slice(-1) % 2 === 0 ? "여" : "남",
+  username: user.userId ?? "",
+  password: user.userPw ?? "",
+  email: user.userEmail ?? "",
+  phone: user.userPhone ?? "",
+  rrn: user.userSerialNo ?? "",
+});
 
-const initialMembers = [
-  { id: 1, name: "김철수", age: 28, nickname: "철수", joinedAt: "2024-06-01", category: "유저", status: "정상", gender: "남", username: "chulsoo", password: "pass1234", email: "chulsoo@example.com", phone: "010-1111-2222", rrn: "900101-1234567" },
-  { id: 2, name: "이영희", age: 32, nickname: "영희", joinedAt: "2023-12-15", category: "트레이너", status: "정상", gender: "여", username: "younghee", password: "abcd1234", email: "younghee@example.com", phone: "010-2222-3333", rrn: "920202-2345678" },
-  { id: 3, name: "박민수", age: 41, nickname: "민수", joinedAt: "2022-03-20", category: "어드민", status: "정지", gender: "남", username: "minsu", password: "qwer1234", email: "minsu@example.com", phone: "010-3333-4444", rrn: "850505-3456789" },
+const searchFieldOptions = ["전체", "아이디", "비밀번호", "이름", "나이", "닉네임"];
+const pageSizeOptions = ["5", "10", "30", "50"];
+const genderOptions = [
+  { label: "남", value: "남" },
+  { label: "여", value: "여" },
+];
+const categoryOptions = [
+  { label: "유저", value: "유저" },
+  { label: "트레이너", value: "트레이너" },
+  { label: "어드민", value: "어드민" },
+];
+const statusOptions = [
+  { label: "정상", value: "정상" },
+  { label: "정지", value: "정지" },
+  { label: "탈퇴", value: "탈퇴" },
 ];
 
 const MembersUser = () => {
-  const [members, setMembers] = useState(initialMembers);
+  const [members, setMembers] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
@@ -19,7 +46,35 @@ const MembersUser = () => {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const chartRef = useRef(null);
+
+  useEffect(() => {
+    let ignore = false;
+    const loadMembers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/admin/users");
+        if (!response.ok) throw new Error("회원 목록을 불러오지 못했습니다.");
+        const data = await response.json();
+        if (ignore) return;
+        const mapped = Array.isArray(data) ? data.map(mapUserToMember) : [];
+        setMembers(mapped);
+        setSelectedId(mapped[0]?.id ?? null);
+        setError(null);
+      } catch (err) {
+        console.error(err);
+        if (!ignore) setError("회원 정보를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    loadMembers();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const filteredMembers = useMemo(() => {
     const keyword = searchText.trim().toLowerCase();
@@ -125,15 +180,29 @@ const MembersUser = () => {
 
   const selected = useMemo(() => sorted.find((m) => m.id === selectedId) || null, [sorted, selectedId]);
 
+  useEffect(() => {
+    if (selectedId == null) return;
+    if (!members.some((member) => member.id === selectedId)) {
+      setSelectedId(members[0]?.id ?? null);
+    }
+  }, [members, selectedId]);
+
+  const updateMembers = (updater) => {
+    setMembers((prev) => (typeof updater === "function" ? updater(prev) : updater));
+  };
+
   const handleSelect = (id) => setSelectedId(id);
-  const handleChange = (e) => {
+  const updateMemberField = (name, value) => {
     if (!selected) return;
+    updateMembers((prev) => prev.map((m) => (m.id === selected.id ? { ...m, [name]: value } : m)));
+  };
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setMembers((prev) => prev.map((m) => (m.id === selected.id ? { ...m, [name]: value } : m)));
+    updateMemberField(name, value);
   };
   const handleUpdate = () => {
     if (!selected) return;
-    alert("저장되었습니다 (더미)");
+    alert("저장되었습니다.");
   };
 
   const toggleSort = (key) => {
@@ -141,26 +210,34 @@ const MembersUser = () => {
   };
   const sortMark = (key) => (sort.key === key ? (sort.dir === "asc" ? " ▲" : " ▼") : "");
 
+  if (loading) {
+    return <div className="members-container">회원 정보를 불러오는 중...</div>;
+  }
+
+  if (error) {
+    return <div className="members-container error-state">{error}</div>;
+  }
+
   return (
     <div className="members-container">
       <div className="members-list">
         <div className="list-header">
           <span>회원 목록 <em className="count-label">(총 회원수 : {totalMembers.toLocaleString()}명)</em></span>
           <div className="members-search">
-            <select value={searchField} onChange={(e) => setSearchField(e.target.value)}>
-              <option value="전체">전체</option>
-              <option value="아이디">아이디</option>
-              <option value="비밀번호">비밀번호</option>
-              <option value="이름">이름</option>
-              <option value="나이">나이</option>
-              <option value="닉네임">닉네임</option>
-            </select>
+            <CustomSelect
+              value={searchField}
+              options={searchFieldOptions}
+              onChange={setSearchField}
+              size="sm"
+            />
             <input type="text" placeholder="검색어를 입력하세요" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-            <select className="page-size-select" value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
-              {[5, 10, 30, 50].map((size) => (
-                <option key={size} value={size}>{size}개</option>
-              ))}
-            </select>
+            <CustomSelect
+              className="page-size-select"
+              value={String(pageSize)}
+              options={pageSizeOptions.map((size) => ({ label: `${size}개`, value: size }))}
+              onChange={(val) => setPageSize(Number(val))}
+              size="sm"/*  */
+            />
           </div>
         </div>
 
@@ -220,51 +297,82 @@ const MembersUser = () => {
         <div className="detail-header">회원 상태 수정</div>
         {selected ? (
           <>
-            <label>이름</label>
-            <input name="name" value={selected.name} onChange={handleChange} />
-
-            <label>닉네임</label>
-            <input name="nickname" value={selected.nickname} onChange={handleChange} />
-
-            <label>성별</label>
-            <select name="gender" value={selected.gender} onChange={handleChange}>
-              <option value="남">남</option>
-              <option value="여">여</option>
-            </select>
-
-            <label>아이디</label>
-            <input name="username" value={selected.username} onChange={handleChange} />
-
-            <label>비밀번호</label>
-            <div className="password-input">
-              <input type={showPassword ? "text" : "password"} name="password" value={selected.password} onChange={handleChange} />
-              <button type="button" className="eye-btn" onClick={() => setShowPassword((v) => !v)} aria-label="비밀번호 보기">
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
+            <div className="detail-field">
+              <label>이름</label>
+              <input name="name" value={selected.name} onChange={handleChange} />
             </div>
 
-            <label>이메일</label>
-            <input type="email" name="email" value={selected.email} onChange={handleChange} />
+            <div className="detail-field">
+              <label>닉네임</label>
+              <input name="nickname" value={selected.nickname} onChange={handleChange} />
+            </div>
 
-            <label>전화번호</label>
-            <input name="phone" value={selected.phone} onChange={handleChange} placeholder="010-0000-0000" />
+            <div className="detail-field">
+              <label>성별</label>
+              <CustomSelect
+                value={selected.gender}
+                options={genderOptions}
+                onChange={(val) => updateMemberField("gender", val)}
+              />
+            </div>
 
-            <label>주민번호</label>
-            <input name="rrn" value={selected.rrn} onChange={handleChange} placeholder="######-#######" />
+            <div className="detail-field">
+              <label>아이디</label>
+              <input name="username" value={selected.username} onChange={handleChange} />
+            </div>
 
-            <label>회원 분류</label>
-            <select name="category" value={selected.category} onChange={handleChange}>
-              <option value="유저">유저</option>
-              <option value="트레이너">트레이너</option>
-              <option value="어드민">어드민</option>
-            </select>
+            <div className="detail-field">
+              <label>비밀번호</label>
+              <div className="password-input">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={selected.password}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="eye-btn"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label="비밀번호 보기"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
 
-            <label>상태</label>
-            <select name="status" value={selected.status} onChange={handleChange}>
-              <option value="정상">정상</option>
-              <option value="정지">정지</option>
-              <option value="탈퇴">탈퇴</option>
-            </select>
+            <div className="detail-field">
+              <label>이메일</label>
+              <input type="email" name="email" value={selected.email} onChange={handleChange} />
+            </div>
+
+            <div className="detail-field">
+              <label>전화번호</label>
+              <input name="phone" value={selected.phone} onChange={handleChange} placeholder="010-0000-0000" />
+            </div>
+
+            <div className="detail-field">
+              <label>주민번호</label>
+              <input name="rrn" value={selected.rrn} onChange={handleChange} placeholder="######-#######" />
+            </div>
+
+            <div className="detail-field">
+              <label>회원 분류</label>
+              <CustomSelect
+                value={selected.category}
+                options={categoryOptions}
+                onChange={(val) => updateMemberField("category", val)}
+              />
+            </div>
+
+            <div className="detail-field">
+              <label>상태</label>
+              <CustomSelect
+                value={selected.status}
+                options={statusOptions}
+                onChange={(val) => updateMemberField("status", val)}
+              />
+            </div>
 
             <button className="update-btn" onClick={handleUpdate}>저장</button>
           </>

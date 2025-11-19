@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ShapeUp.boot.domain.diet.model.mapper.DietMapper;
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
-import com.ShapeUp.boot.domain.diet.model.store.DietMapper;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
 
 import lombok.RequiredArgsConstructor;

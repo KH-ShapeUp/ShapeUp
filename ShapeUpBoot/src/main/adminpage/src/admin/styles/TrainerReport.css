@@ -65,10 +65,13 @@
   gap: 8px;
 }
 
-.status-filter select {
-  border-radius: 8px;
-  border: 1px solid #d4d8e6;
-  padding: 6px 8px;
+.status-filter label {
+  min-width: 56px;
+  font-weight: 600;
+}
+
+.status-filter .custom-select {
+  min-width: 140px;
 }
 
 .trainer-table {
@@ -131,15 +134,21 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 12px;
 }
 
-.detail-grid label {
-  display: block;
-  font-size: 0.85rem;
-  color: #6c7288;
+.detail-pair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-pair label {
+  min-width: 70px;
+  font-weight: 600;
+  color: #5a6075;
 }
 
 .detail-body {

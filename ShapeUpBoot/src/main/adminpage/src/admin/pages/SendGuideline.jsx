@@ -5,6 +5,7 @@ import {
   STADIUM_NOTIFICATION_STORAGE_KEY,
   STORAGE_EVENTS,
 } from "../../common/utils/storageKeys";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const loadNotifications = () => {
   try {
@@ -112,35 +113,41 @@ const SendGuideline = () => {
 
       <section className="guideline-card">
         <form className="guideline-form" onSubmit={handleSubmit}>
-          <label>
-            지침 제목
+          <div className="form-row">
+            <label htmlFor="titleInput">지침 제목</label>
             <input
+              id="titleInput"
               type="text"
               name="title"
               value={form.title}
               onChange={handleInput}
               placeholder="예: 주말 운영 정책"
             />
-          </label>
+          </div>
 
-          <label>
-            전달 대상
-            <select name="audience" value={form.audience} onChange={handleInput}>
-              <option value="전체">전체</option>
-              <option value="시설 관리자">시설 관리자</option>
-              <option value="현장 매니저">현장 매니저</option>
-            </select>
-          </label>
+          <div className="form-row">
+            <label>전달 대상</label>
+            <CustomSelect
+              value={form.audience}
+              options={[
+                { label: "전체", value: "전체" },
+                { label: "시설 관리자", value: "시설 관리자" },
+                { label: "트레이너", value: "트레이너" },
+              ]}
+              onChange={(val) => setForm((prev) => ({ ...prev, audience: val }))}
+            />
+          </div>
 
-          <label>
-            내용
+          <div className="form-row textarea-row">
+            <label htmlFor="messageInput">내용</label>
             <textarea
+              id="messageInput"
               name="message"
               value={form.message}
               onChange={handleInput}
               placeholder="지침 내용을 입력하세요"
             />
-          </label>
+          </div>
 
           {status && <p className="guideline-status">{status}</p>}
 

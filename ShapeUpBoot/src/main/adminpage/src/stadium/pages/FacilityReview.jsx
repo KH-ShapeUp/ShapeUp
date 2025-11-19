@@ -8,6 +8,7 @@ import {
   TRAINER_REPORT_STORAGE_KEY,
 } from "../../common/utils/storageKeys";
 import { appendInboxMessage } from "../../common/utils/messageUtils";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const baseReviews = [
   {
@@ -69,6 +70,19 @@ const baseReviews = [
 
 const facilityTabs = ["전체", "시설 1", "시설 2", "시설 3"];
 
+const statusFilterOptions = [
+  { label: "전체", value: "전체" },
+  { label: "대기", value: "대기" },
+  { label: "신고 완료", value: "신고 완료" },
+  { label: "반려", value: "반려" },
+];
+
+const pageSizeOptions = [
+  { label: "5개", value: 5 },
+  { label: "10개", value: 10 },
+  { label: "20개", value: 20 },
+];
+
 const isBrowser = typeof window !== "undefined";
 
 const readStorageArray = (key, fallback = []) => {
@@ -115,6 +129,9 @@ const FacilityReview = () => {
     reason: "",
     message: "",
   });
+  const [statusFilter, setStatusFilter] = useState("전체");
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -173,16 +190,25 @@ const FacilityReview = () => {
   }, [facilities]);
 
   const filteredReviews = useMemo(() => {
-    return reviews.filter(
-      (review) => selectedFacility === "전체" || review.facility === selectedFacility
-    );
-  }, [reviews, selectedFacility]);
+    return reviews
+      .filter((review) => selectedFacility === "전체" || review.facility === selectedFacility)
+      .filter((review) => (statusFilter === "전체" ? true : review.status === statusFilter));
+  }, [reviews, selectedFacility, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredReviews.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * pageSize;
+  const paginatedReviews = filteredReviews.slice(pageStart, pageStart + pageSize);
 
   useEffect(() => {
     if (!filteredReviews.some((item) => item.id === selectedId)) {
       setSelectedId(filteredReviews[0]?.id ?? null);
     }
   }, [filteredReviews, selectedId]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedFacility, statusFilter, pageSize]);
 
   const selectedReview = reviews.find((review) => review.id === selectedId) ?? null;
 
@@ -252,17 +278,33 @@ const FacilityReview = () => {
           <h3>시설 리뷰 관리</h3>
           <p>시설별 리뷰를 확인하고 필요한 경우 본사에 신고하세요.</p>
         </div>
-        <div className="facility-filter-group">
-          {facilityFilters.map((label) => (
-            <button
-              key={label}
-              type="button"
-              className={selectedFacility === label ? "active" : ""}
-              onClick={() => setSelectedFacility(label)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="review-header-controls">
+          <div className="facility-filter-group">
+            {facilityFilters.map((label) => (
+              <button
+                key={label}
+                type="button"
+                className={selectedFacility === label ? "active" : ""}
+                onClick={() => setSelectedFacility(label)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="review-controls">
+            <CustomSelect
+              value={statusFilter}
+              options={statusFilterOptions}
+              onChange={setStatusFilter}
+              size="sm"
+            />
+            <CustomSelect
+              value={String(pageSize)}
+              options={pageSizeOptions}
+              onChange={(val) => setPageSize(Number(val))}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
 
@@ -281,7 +323,7 @@ const FacilityReview = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredReviews.map((review) => (
+              {paginatedReviews.map((review) => (
                 <tr
                   key={review.id}
                   className={review.id === selectedId ? "active" : ""}
@@ -293,7 +335,15 @@ const FacilityReview = () => {
                   <td>{review.rating.toFixed(1)}</td>
                   <td className="title-cell">{review.title}</td>
                   <td>
-                    <span className={`status-chip ${review.status === "신고 완료" ? "status-chip--reported" : ""}`}>
+                    <span
+                      className={`status-chip ${
+                        review.status === "신고 완료"
+                          ? "status-chip--reported"
+                          : review.status === "반려"
+                          ? "status-chip--warn"
+                          : ""
+                      }`}
+                    >
                       {review.status}
                     </span>
                   </td>
@@ -305,9 +355,9 @@ const FacilityReview = () => {
                         e.stopPropagation();
                         openReportModal(review);
                       }}
-                      disabled={review.status === "신고 완료"}
+                      disabled={review.status !== "대기"}
                     >
-                      {review.status === "신고 완료" ? "신고됨" : "신고"}
+                      {review.status === "신고 완료" ? "신고됨" : review.status === "반려" ? "반려됨" : "신고"}
                     </button>
                   </td>
                 </tr>
@@ -321,6 +371,25 @@ const FacilityReview = () => {
               )}
             </tbody>
           </table>
+          <div className="review-pagination">
+            <button
+              type="button"
+              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              이전
+            </button>
+            <span>
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              다음
+            </button>
+          </div>
         </div>
 
         <div className="review-detail">
@@ -347,15 +416,25 @@ const FacilityReview = () => {
                     <p>{selectedReview.reportReason}</p>
                   </div>
                 )}
+                {selectedReview.rejectReason && (
+                  <div className="reject-note">
+                    <strong>반려 사유</strong>
+                    <p>{selectedReview.rejectReason}</p>
+                  </div>
+                )}
               </div>
 
               <div className="detail-actions">
                 <button
                   type="button"
                   onClick={() => openReportModal(selectedReview)}
-                  disabled={selectedReview.status === "신고 완료"}
+                  disabled={selectedReview.status !== "대기"}
                 >
-                  {selectedReview.status === "신고 완료" ? "신고 완료" : "관리자에게 신고"}
+                  {selectedReview.status === "신고 완료"
+                    ? "신고 완료"
+                    : selectedReview.status === "반려"
+                    ? "반려됨"
+                    : "관리자에게 신고"}
                 </button>
               </div>
             </>
