@@ -1,19 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+    // 세션에서 로그인 정보 가져오기
+    String loginUserNickname = (String) session.getAttribute("userNickname");
+    boolean isLogin = loginUserNickname != null;
+%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insert title here</title>
+    <title>로그인 | ShapeUp</title>
     <jsp:include page="/WEB-INF/views/include/head.jsp"/> 
     <link rel="stylesheet" href="../../../resources/css/user/login.css">
 </head>
 <body>
+
+    <!-- 모바일 검색 / 사이드바 등 생략 가능 -->
+
+    <!-- 메인 컨테이너 -->
     <div class="container">
         <div class="main">
-            <div class="login-gif">
-                <div class="video-overlay"></div>
+            <!-- iframe 배경 -->
+            <div class="login-gif" style="position: relative; height: 100vh;">
                 <iframe 
                     width="100%" 
                     height="100%" 
@@ -24,36 +32,46 @@
                     referrerpolicy="strict-origin-when-cross-origin" 
                     allowfullscreen
                     playsinline
+                    style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0;"
                 ></iframe>
+                <!-- 반투명 오버레이 -->
+                <div class="video-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.4); z-index:1;"></div>
             </div>
 
-            <div class="login-form-wrapper">
+            <!-- 로그인 폼 -->
+            <div class="login-form-wrapper" style="position: relative; z-index:2;">
                 <div class="login-form-top">
                     <a href="/"><img src="../../resources/img/main_logo.png"></a>
                 </div>
 
                 <div class="login-form">
-                    <form action="#" method="get" style="width: 100%;">
+                    <form action="/user/login" method="post" style="width: 100%;">
                         <div class="form-group">
                             <label for="userId">아이디
-                                <input type="text" name="userId" id="userId">
+                                <input type="text" name="userId" id="userId" required>
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label for="userPw">비밀번호
-                                <input type="password" name="userPw" id="userPw">
+                                <input type="password" name="userPw" id="userPw" required>
                                 <i class="fa-solid fa-eye" style="display: none;"></i>
                                 <i class="fa-solid fa-eye-slash"></i>
                             </label>
                         </div>
 
                         <div class="auto-login">
-                            <input type="checkbox" id="auto-login">
+                            <input type="checkbox" id="auto-login" name="autoLogin">
                             <label for="auto-login">자동 로그인</label>
                         </div>
 
                         <button type="submit" id="login-btn">로그인</button>
+
+                        <% if(request.getAttribute("errorMsg") != null) { %>
+                            <div class="error-msg" style="color:red; margin-top:10px;">
+                                <%= request.getAttribute("errorMsg") %>
+                            </div>
+                        <% } %>
                     </form>
 
                     <div class="account-list">
@@ -71,7 +89,6 @@
                         <img src="../../resources/img/kakao.png" class="kakao">
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

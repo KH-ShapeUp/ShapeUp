@@ -1,55 +1,34 @@
 package com.ShapeUp.boot.domain.user.model.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.ShapeUp.boot.domain.user.model.mapper.UserMapper;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
-
-    // resetPassword에서만 필요
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder passwordEncoder; // Bean 주입
 
     @Override
-    @Transactional
     public int insertUser(UserVO user) {
-        // Controller에서 이미 암호화된 비밀번호를 전달받음
         return userMapper.insertUser(user);
     }
 
     @Override
-    public boolean checkUserIdDuplicate(String userId) {
-        int count = userMapper.checkUserIdDuplicate(userId);
-        return count == 0;
+    public int checkUserIdDuplicate(String userId) {
+        return userMapper.checkUserIdDuplicate(userId);
     }
 
     @Override
-    public boolean checkNicknameDuplicate(String nickname) {
-        int count = userMapper.checkNicknameDuplicate(nickname);
-        return count == 0;
-    }
-
-    @Override
-    public boolean sendEmailVerification(String email) {
-        String verificationCode = String.format("%06d", (int)(Math.random() * 1000000));
-        System.out.println("이메일 인증번호: " + verificationCode);
-        return true;
-    }
-
-    @Override
-    public boolean sendPhoneVerification(String phone) {
-        String verificationCode = String.format("%06d", (int)(Math.random() * 1000000));
-        System.out.println("전화번호 인증번호: " + verificationCode);
-        return true;
+    public int checkNicknameDuplicate(String nickname) {
+        return userMapper.checkNicknameDuplicate(nickname);
     }
 
     @Override
@@ -64,58 +43,51 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO findUserByNameAndEmail(String name, String email) {
-        return userMapper.selectUserByNameAndEmail(name, email);
+        return userMapper.findUserByNameAndEmail(name, email);
     }
 
     @Override
-    @Transactional
-    public boolean resetPassword(String userId, String name, String email) {
+    public UserVO selectUserByIdAndNameAndEmail(String userId, String name, String email) {
+        return userMapper.selectUserByIdAndNameAndEmail(userId, name, email);
+    }
 
-        UserVO user = userMapper.selectUserByIdAndNameAndEmail(userId, name, email);
+    @Override
+    public int updatePassword(String userId, String encodedPassword) {
+        return userMapper.updatePassword(userId, encodedPassword);
+    }
 
-        if (user == null) {
-            return false;
-        }
+    @Override
+    public int selectUserNoByUserId(String userId) {
+        return userMapper.selectUserNoByUserId(userId);
+    }
 
-        // 임시 비밀번호 생성
-        String tempPassword = generateTempPassword();
+    @Override
+    public int insertUserInterest(int userNo, String interests, String times, String addresses) {
+        return userMapper.insertUserInterest(userNo, interests, times, addresses);
+    }
 
-        // 암호화
-        String encodedPassword = passwordEncoder.encode(tempPassword);
-
-        // DB 업데이트
-        int result = userMapper.updatePassword(userId, encodedPassword);
-
-        if (result > 0) {
-            System.out.println("임시 비밀번호: " + tempPassword);
-            System.out.println("이메일 발송 대상: " + email);
-            return true;
-        }
-
+    @Override
+    public boolean sendEmailVerification(String email) {
         return false;
     }
 
-    private String generateTempPassword() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder tempPassword = new StringBuilder();
-
-        for (int i = 0; i < 8; i++) {
-            int index = (int) (Math.random() * chars.length());
-            tempPassword.append(chars.charAt(index));
-        }
-
-        return tempPassword.toString();
+    @Override
+    public boolean sendPhoneVerification(String phone) {
+        return false;
     }
 
-	@Override
-	public UserVO selectUserByIdAndNameAndEmail(String userId, String name, String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public boolean resetPassword(String userId, String name, String email) {
+        return false;
+    }
 
-	@Override
-	public int updatePassword(String userId, String encodedPassword) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    // 🔹 로그인 구현
+    @Override
+    public UserVO login(String userId, String rawPassword) {
+        UserVO user = userMapper.selectUserById(userId);
+        if (user != null && passwordEncoder.matches(rawPassword, user.getUserPw())) {
+            return user; // 로그인 성공
+        }
+        return null; // 로그인 실패
+    }
 }
