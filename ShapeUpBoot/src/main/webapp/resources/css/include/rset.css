@@ -28,6 +28,50 @@ body {
     scroll-behavior: smooth;
 }
 
+/* 커스텀 알람 [성공] */
+.success-popup {
+    width: 400px !important;
+    background-color: #fff !important;
+    border-radius: 15px !important;
+}
+.success-title {
+    font-size: 1.2rem !important;
+    color: #111 !important;
+}
+.success-text {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+}
+.success-button {
+    width: 100% !important;
+    background-color: var(--main-color) !important;
+    border: none !important;
+    color: white !important;
+}
+
+/* 커스텀 알람 [실패] */
+.error-popup {
+    width: 400px !important;
+    background-color: #fff !important;
+    border-radius: 15px !important; 
+}
+.error-title {
+    font-size: 1.2rem !important; 
+    color: #111 !important;
+}
+.error-text {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+}
+.error-button {
+    width: 100% !important;
+    background-color: #ff3b00 !important;
+    border: none !important;
+    color: white !important;
+}
+
 @media screen and (max-width:768px) {
 	.container {
 	    width:100%;
@@ -39,4 +83,10 @@ body {
 	    overflow-y: auto;
 	    scroll-behavior: smooth;
 	}
+    /* 알람 커스텀 */
+    .success-popup, .error-popup {
+        width: 85% !important;
+        background-color: #fff !important;
+        border-radius: 15px !important;
+    }
 }
