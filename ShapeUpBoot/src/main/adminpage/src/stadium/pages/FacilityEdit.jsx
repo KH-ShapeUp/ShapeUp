@@ -2,12 +2,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/FacilityEdit.css";
 import { useFacilityData } from "../context/FacilityDataContext";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const FacilityEdit = () => {
   const { timeSlots, setTimeSlots, schedules, facilities } = useFacilityData();
   const [selectedFacility, setSelectedFacility] = useState(facilities[0] ?? "시설 1");
   const [draftSlots, setDraftSlots] = useState(timeSlots);
   const [saveStatus, setSaveStatus] = useState("");
+  const facilityOptions = useMemo(
+    () => (facilities.length ? facilities : ["시설 1", "시설 2", "시설 3"]),
+    [facilities]
+  );
 
   useEffect(() => {
     if (!facilities.includes(selectedFacility) && facilities.length) {
@@ -76,13 +81,12 @@ const FacilityEdit = () => {
 
         <div className="form-group">
           <label>수정할 시설</label>
-          <select value={selectedFacility} onChange={(e) => setSelectedFacility(e.target.value)}>
-            {facilities.map((facility) => (
-              <option key={facility} value={facility}>
-                {facility}
-              </option>
-            ))}
-          </select>
+          <CustomSelect
+            value={selectedFacility}
+            options={facilityOptions}
+            onChange={setSelectedFacility}
+            size="sm"
+          />
         </div>
 
         <div className="form-group">

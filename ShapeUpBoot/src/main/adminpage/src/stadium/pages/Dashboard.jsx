@@ -4,8 +4,11 @@ import {
   STADIUM_MESSAGE_STORAGE_KEY,
   STADIUM_MEMO_STORAGE_KEY,
   STADIUM_NOTIFICATION_STORAGE_KEY,
+  STADIUM_MAINTENANCE_STORAGE_KEY,
   STORAGE_EVENTS,
 } from "../../common/utils/storageKeys";
+import { loadMaintenanceTasks } from "../utils/maintenanceStorage";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const initialKpis = [
   { label: "오늘 예약", value: 42, accent: "#4c8bf5" },
@@ -21,12 +24,6 @@ const initialBookings = [
   { time: "13:00 - 14:00", facility: "요가실", user: "고은", status: "대기" },
 ];
 
-const initialMaintenance = [
-  { title: "트레드밀 점검", facility: "헬스장", due: "11.15", priority: "high" },
-  { title: "샤워실 배수 청소", facility: "공용", due: "11.16", priority: "medium" },
-  { title: "풋살장 조명 교체", facility: "풋살장", due: "11.18", priority: "low" },
-];
-
 const initialNotifications = [
   "11/14 10:00 시설 관리자 미팅",
   "신규 단체 이용 문의 2건 접수",
@@ -38,6 +35,8 @@ const initialMemos = [
   { id: 1, text: "요가실 환기 점검 필요", date: "2025-11-14 09:20" },
   { id: 2, text: "풋살장 잔디 교체 일정 확인", date: "2025-11-14 13:05" },
 ];
+
+const memoFilterOptions = ["전체", "시설 1", "시설 2", "시설 3"];
 
 const inboxMessages = [
   {
@@ -126,12 +125,12 @@ const readMemosFromStorage = () => {
 const StadiumDashboard = () => {
   const kpis = initialKpis;
   const bookings = initialBookings;
-  const maintenanceList = initialMaintenance;
   const suggestions = suggestionItems;
   const [incomingMessages, setIncomingMessages] = useState([]);
   const [notifications, setNotifications] = useState(() => readNotificationFeed());
   const [memoFeed, setMemoFeed] = useState(() => readMemosFromStorage());
   const [memoTab, setMemoTab] = useState("전체");
+  const [maintenanceList, setMaintenanceList] = useState(() => loadMaintenanceTasks());
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -181,6 +180,22 @@ const StadiumDashboard = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isBrowser) return;
+    const syncMaintenance = () => setMaintenanceList(loadMaintenanceTasks());
+    const storageHandler = (event) => {
+      if (event.key && event.key !== STADIUM_MAINTENANCE_STORAGE_KEY) return;
+      syncMaintenance();
+    };
+    syncMaintenance();
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener(STORAGE_EVENTS.STADIUM_MAINTENANCE, syncMaintenance);
+    return () => {
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener(STORAGE_EVENTS.STADIUM_MAINTENANCE, syncMaintenance);
+    };
+  }, []);
+
   const messages = [...incomingMessages, ...inboxMessages];
   const memoList = memoFeed.filter((memo) =>
     memoTab === "전체" ? true : memo.facility === memoTab
@@ -211,10 +226,10 @@ const StadiumDashboard = () => {
           <table className="stadium-table">
             <thead>
               <tr>
-                <th>시간</th>
-                <th>시설</th>
-                <th>회원</th>
-                <th>상태</th>
+                <th>시간 </th>
+                <th>시설 </th>
+                <th>회원 </th>
+                <th>상태 </th>
               </tr>
             </thead>
             <tbody>
@@ -292,12 +307,12 @@ const StadiumDashboard = () => {
             </div>
             <div className="memo-filter">
               <label>필터</label>
-              <select value={memoTab} onChange={(e) => setMemoTab(e.target.value)}>
-                <option value="전체">전체</option>
-                <option value="시설 1">시설 1</option>
-                <option value="시설 2">시설 2</option>
-                <option value="시설 3">시설 3</option>
-              </select>
+              <CustomSelect
+                size="sm"
+                value={memoTab}
+                options={memoFilterOptions}
+                onChange={setMemoTab}
+              />
             </div>
           </header>
           <ul className="memo-list">

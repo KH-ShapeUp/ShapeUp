@@ -38,7 +38,7 @@
             <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
         </div>
     </div>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1382c885f22984e6547b8e00aa6fab29&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1f84a14755e9481fa87f85ec94d95eaa&libraries=services"></script>
     <script src="../../resources/js/map.js"></script>
 </body>
 </html>

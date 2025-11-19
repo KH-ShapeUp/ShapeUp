@@ -201,10 +201,16 @@
   font-size: 0.95rem;
 }
 
-.memo-filter select {
+.memo-filter .custom-select {
+  min-width: 140px;
+}
+
+.memo-filter .custom-select__trigger {
   border-radius: 8px;
   border: 1px solid #d7dcea;
-  padding: 4px 8px;
+  padding: 4px 28px 4px 10px;
+  font-size: 0.9rem;
+  box-shadow: none;
 }
 
 .memo-list {

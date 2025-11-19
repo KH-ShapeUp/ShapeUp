@@ -27,6 +27,13 @@
   font-size: 0.95rem;
 }
 
+.review-header-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
 .facility-filter-group {
   display: flex;
   gap: 8px;
@@ -98,6 +105,16 @@
   background: #e8f0ff;
 }
 
+.review-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.review-controls .custom-select__trigger {
+  min-width: 120px;
+  box-shadow: none;
+}
+
 .title-cell {
   max-width: 220px;
   white-space: nowrap;
@@ -153,6 +170,27 @@
   min-height: 320px;
 }
 
+.review-pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 14px;
+  align-items: center;
+}
+
+.review-pagination button {
+  border: 1px solid #d1d7e5;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .detail-header {
   display: flex;
   justify-content: space-between;
@@ -193,6 +231,15 @@
   border-radius: 8px;
   background: #fff6e6;
   border: 1px solid #ffd8a4;
+}
+
+.reject-note {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffeef0;
+  border: 1px solid #ffc2c9;
+  color: #a13a50;
 }
 
 .detail-actions {

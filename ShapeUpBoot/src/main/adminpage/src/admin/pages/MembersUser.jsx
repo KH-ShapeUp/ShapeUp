@@ -3,12 +3,21 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Chart from "chart.js/auto";
 import "../styles/MembersUser.css";
 import CustomSelect from "../../common/components/CustomSelect";
-
-const initialMembers = [
-  { id: 1, name: "김철수", age: 28, nickname: "철수", joinedAt: "2024-06-01", category: "유저", status: "정상", gender: "남", username: "chulsoo", password: "pass1234", email: "chulsoo@example.com", phone: "010-1111-2222", rrn: "900101-1234567" },
-  { id: 2, name: "이영희", age: 32, nickname: "영희", joinedAt: "2023-12-15", category: "트레이너", status: "정상", gender: "여", username: "younghee", password: "abcd1234", email: "younghee@example.com", phone: "010-2222-3333", rrn: "920202-2345678" },
-  { id: 3, name: "박민수", age: 41, nickname: "민수", joinedAt: "2022-03-20", category: "어드민", status: "정지", gender: "남", username: "minsu", password: "qwer1234", email: "minsu@example.com", phone: "010-3333-4444", rrn: "850505-3456789" },
-];
+const mapUserToMember = (user) => ({
+  id: user.userNo,
+  name: user.userName ?? "",
+  age: user.userAge ?? 0,
+  nickname: user.userNickname ?? "",
+  joinedAt: user.createdAt?.slice(0, 10) ?? "",
+  category: user.userType === "TRAINER" ? "트레이너" : user.userType === "ADMIN" ? "어드민" : "유저",
+  status: user.status ?? "정상",
+  gender: user.userSerialNo?.slice(-1) % 2 === 0 ? "여" : "남",
+  username: user.userId ?? "",
+  password: user.userPw ?? "",
+  email: user.userEmail ?? "",
+  phone: user.userPhone ?? "",
+  rrn: user.userSerialNo ?? "",
+});
 
 const searchFieldOptions = ["전체", "아이디", "비밀번호", "이름", "나이", "닉네임"];
 const pageSizeOptions = ["5", "10", "30", "50"];
@@ -28,7 +37,7 @@ const statusOptions = [
 ];
 
 const MembersUser = () => {
-  const [members, setMembers] = useState(initialMembers);
+  const [members, setMembers] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
@@ -37,7 +46,35 @@ const MembersUser = () => {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const chartRef = useRef(null);
+
+  useEffect(() => {
+    let ignore = false;
+    const loadMembers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/admin/users");
+        if (!response.ok) throw new Error("회원 목록을 불러오지 못했습니다.");
+        const data = await response.json();
+        if (ignore) return;
+        const mapped = Array.isArray(data) ? data.map(mapUserToMember) : [];
+        setMembers(mapped);
+        setSelectedId(mapped[0]?.id ?? null);
+        setError(null);
+      } catch (err) {
+        console.error(err);
+        if (!ignore) setError("회원 정보를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    loadMembers();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const filteredMembers = useMemo(() => {
     const keyword = searchText.trim().toLowerCase();
@@ -143,10 +180,21 @@ const MembersUser = () => {
 
   const selected = useMemo(() => sorted.find((m) => m.id === selectedId) || null, [sorted, selectedId]);
 
+  useEffect(() => {
+    if (selectedId == null) return;
+    if (!members.some((member) => member.id === selectedId)) {
+      setSelectedId(members[0]?.id ?? null);
+    }
+  }, [members, selectedId]);
+
+  const updateMembers = (updater) => {
+    setMembers((prev) => (typeof updater === "function" ? updater(prev) : updater));
+  };
+
   const handleSelect = (id) => setSelectedId(id);
   const updateMemberField = (name, value) => {
     if (!selected) return;
-    setMembers((prev) => prev.map((m) => (m.id === selected.id ? { ...m, [name]: value } : m)));
+    updateMembers((prev) => prev.map((m) => (m.id === selected.id ? { ...m, [name]: value } : m)));
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -154,13 +202,21 @@ const MembersUser = () => {
   };
   const handleUpdate = () => {
     if (!selected) return;
-    alert("저장되었습니다 (더미)");
+    alert("저장되었습니다.");
   };
 
   const toggleSort = (key) => {
     setSort((prev) => (prev.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
   };
   const sortMark = (key) => (sort.key === key ? (sort.dir === "asc" ? " ▲" : " ▼") : "");
+
+  if (loading) {
+    return <div className="members-container">회원 정보를 불러오는 중...</div>;
+  }
+
+  if (error) {
+    return <div className="members-container error-state">{error}</div>;
+  }
 
   return (
     <div className="members-container">

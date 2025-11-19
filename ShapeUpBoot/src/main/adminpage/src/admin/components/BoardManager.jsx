@@ -69,6 +69,12 @@ const BoardManager = ({
     }
   }, [posts, storageKey]);
 
+  const categoryOptions = useMemo(() => {
+    const options = ["전체"];
+    categories.forEach((cat) => {
+      if (cat && !options.includes(cat)) options.push(cat);
+    });
+    return options;
   }, [categories]);
 
   const advancedOptions = useMemo(() => ["전체", "날짜", "제목", "작성자"], []);
@@ -506,4 +512,3 @@ const BoardManager = ({
 };
 
 export default BoardManager;
-  const categoryOptions = useMemo(() => {

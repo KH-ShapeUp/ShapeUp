@@ -1,62 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/StadiumAlerts.css";
-import { STADIUM_MAINTENANCE_STORAGE_KEY } from "../../common/utils/storageKeys";
+import {
+  STADIUM_MAINTENANCE_STORAGE_KEY,
+  STORAGE_EVENTS,
+} from "../../common/utils/storageKeys";
 import { appendInboxMessage } from "../../common/utils/messageUtils";
-
-const seedTasks = [
-  {
-    id: 1,
-    title: "트레드밀 점검",
-    facility: "헬스장",
-    due: "11.15",
-    priority: "high",
-    status: "대기",
-    mailNotified: false,
-  },
-  {
-    id: 2,
-    title: "샤워실 배수 청소",
-    facility: "공용",
-    due: "11.16",
-    priority: "medium",
-    status: "진행중",
-    mailNotified: false,
-  },
-  {
-    id: 3,
-    title: "풋살장 조명 교체",
-    facility: "풋살장",
-    due: "11.18",
-    priority: "low",
-    status: "대기",
-    mailNotified: false,
-  },
-];
+import {
+  loadMaintenanceTasks,
+  saveMaintenanceTasks,
+} from "../utils/maintenanceStorage";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const statusOptions = ["대기", "진행중", "완료"];
 const priorityOptions = ["high", "medium", "low"];
 const isBrowser = typeof window !== "undefined";
-
-const loadTasks = () => {
-  if (!isBrowser) return seedTasks;
-  try {
-    const raw = window.localStorage.getItem(STADIUM_MAINTENANCE_STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(STADIUM_MAINTENANCE_STORAGE_KEY, JSON.stringify(seedTasks));
-      return seedTasks;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-  } catch (err) {
-    console.warn("Failed to load maintenance tasks", err);
-  }
-  return seedTasks;
-};
-
-const persistTasks = (tasks) => {
-  if (!isBrowser) return;
-  window.localStorage.setItem(STADIUM_MAINTENANCE_STORAGE_KEY, JSON.stringify(tasks));
-};
 
 const parseDue = (due) => {
   if (!due) return null;
@@ -81,13 +38,33 @@ const parseDue = (due) => {
 };
 
 const StadiumMaintenance = () => {
-  const [tasks, setTasks] = useState(() => loadTasks());
+  const [tasks, setTasks] = useState(() => loadMaintenanceTasks());
   const [filter, setFilter] = useState("전체");
   const [form, setForm] = useState({ title: "", facility: "", due: "", priority: "medium" });
+  const filterOptions = useMemo(() => ["전체", ...statusOptions], []);
+  const prioritySelectOptions = useMemo(
+    () => priorityOptions.map((level) => ({ value: level, label: `우선순위: ${level}` })),
+    []
+  );
+  const statusSelectOptions = useMemo(
+    () => statusOptions.map((status) => ({ value: status, label: status })),
+    []
+  );
 
   useEffect(() => {
-    persistTasks(tasks);
-  }, [tasks]);
+    if (!isBrowser) return;
+    const sync = () => setTasks(loadMaintenanceTasks());
+    const storageHandler = (event) => {
+      if (event.key && event.key !== STADIUM_MAINTENANCE_STORAGE_KEY) return;
+      sync();
+    };
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener(STORAGE_EVENTS.STADIUM_MAINTENANCE, sync);
+    return () => {
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener(STORAGE_EVENTS.STADIUM_MAINTENANCE, sync);
+    };
+  }, []);
 
   const filteredTasks = useMemo(() => {
     if (filter === "전체") return tasks;
@@ -96,23 +73,29 @@ const StadiumMaintenance = () => {
 
   const addTask = () => {
     if (!form.title.trim()) return;
-    setTasks((prev) => [
-      {
-        id: Date.now(),
-        title: form.title.trim(),
-        facility: form.facility.trim() || "미지정",
-        due: form.due.trim() || "미정",
-        priority: form.priority,
-        status: "대기",
-        mailNotified: false,
-      },
-      ...prev,
-    ]);
+    const nextTask = {
+      id: Date.now(),
+      title: form.title.trim(),
+      facility: form.facility.trim() || "미지정",
+      due: form.due.trim() || "미정",
+      priority: form.priority,
+      status: "대기",
+      mailNotified: false,
+    };
+    setTasks((prev) => {
+      const next = [nextTask, ...prev];
+      saveMaintenanceTasks(next);
+      return next;
+    });
     setForm({ title: "", facility: "", due: "", priority: "medium" });
   };
 
   const updateStatus = (id, status) => {
-    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, status } : task)));
+    setTasks((prev) => {
+      const next = prev.map((task) => (task.id === id ? { ...task, status } : task));
+      saveMaintenanceTasks(next);
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -140,6 +123,7 @@ const StadiumMaintenance = () => {
     });
     if (updated) {
       setTasks(nextTasks);
+      saveMaintenanceTasks(nextTasks);
     }
   }, [tasks]);
 
@@ -150,14 +134,7 @@ const StadiumMaintenance = () => {
           <h2>시설 점검 일정</h2>
           <p>점검 / 청소 / 교체와 같은 작업 일정을 관리하세요.</p>
         </div>
-        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-          <option value="전체">전체</option>
-          {statusOptions.map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
+        <CustomSelect value={filter} options={filterOptions} onChange={setFilter} size="sm" />
       </header>
 
       <section className="alerts-grid">
@@ -182,16 +159,12 @@ const StadiumMaintenance = () => {
               value={form.due}
               onChange={(e) => setForm((prev) => ({ ...prev, due: e.target.value }))}
             />
-            <select
+            <CustomSelect
               value={form.priority}
-              onChange={(e) => setForm((prev) => ({ ...prev, priority: e.target.value }))}
-            >
-              {priorityOptions.map((level) => (
-                <option key={level} value={level}>
-                  우선순위: {level}
-                </option>
-              ))}
-            </select>
+              options={prioritySelectOptions}
+              onChange={(value) => setForm((prev) => ({ ...prev, priority: value }))}
+              size="sm"
+            />
             <button type="button" onClick={addTask}>
               일정 저장
             </button>
@@ -208,13 +181,12 @@ const StadiumMaintenance = () => {
                   <span>{task.facility}</span>
                   <small>예정일: {task.due}</small>
                 </div>
-                <select value={task.status} onChange={(e) => updateStatus(task.id, e.target.value)}>
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={task.status}
+                  options={statusSelectOptions}
+                  onChange={(value) => updateStatus(task.id, value)}
+                  size="sm"
+                />
               </li>
             ))}
           </ul>

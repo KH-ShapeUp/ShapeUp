@@ -42,7 +42,24 @@
   border-color: #94a3c5;
 }
 
-.stadium-qna-board .search-bar select {
+.suggestion-filter-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 12px;
+}
+
+.suggestion-filter-bar .filter-label {
+  font-weight: 600;
+  color: #4a4f63;
+}
+
+.stadium-qna-board .search-bar .custom-select {
   min-width: 160px;
 }
 

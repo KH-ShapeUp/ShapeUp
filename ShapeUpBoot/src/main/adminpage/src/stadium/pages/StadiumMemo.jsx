@@ -5,6 +5,7 @@ import {
   STADIUM_MEMO_STORAGE_KEY,
   STORAGE_EVENTS,
 } from "../../common/utils/storageKeys";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -43,6 +44,10 @@ const StadiumMemo = () => {
     if (!facilities.length) return ["시설 1", "시설 2", "시설 3"];
     return facilities;
   }, [facilities]);
+  const memoFilterOptions = useMemo(
+    () => ["전체", ...facilityOptions],
+    [facilityOptions]
+  );
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -116,14 +121,12 @@ const StadiumMemo = () => {
         </div>
         <div className="memo-filter">
           <label>확인 범위</label>
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-            <option value="전체">전체</option>
-            {facilityOptions.map((facility) => (
-              <option key={facility} value={facility}>
-                {facility}
-              </option>
-            ))}
-          </select>
+          <CustomSelect
+            size="sm"
+            value={filter}
+            options={memoFilterOptions}
+            onChange={setFilter}
+          />
         </div>
       </header>
 
@@ -132,16 +135,11 @@ const StadiumMemo = () => {
           <h3>메모 작성</h3>
           <form onSubmit={handleSubmit}>
             <label>대상 시설</label>
-            <select
+            <CustomSelect
               value={facilityInput}
-              onChange={(e) => setFacilityInput(e.target.value)}
-            >
-              {facilityOptions.map((facility) => (
-                <option key={facility} value={facility}>
-                  {facility}
-                </option>
-              ))}
-            </select>
+              options={facilityOptions}
+              onChange={setFacilityInput}
+            />
 
             <label>메모 내용</label>
             <textarea

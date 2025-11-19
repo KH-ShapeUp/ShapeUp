@@ -135,9 +135,18 @@ const TrainerReport = () => {
     writeStorageArray(FACILITY_REVIEW_STORAGE_KEY, nextReviews, STORAGE_EVENTS.FACILITY_REVIEWS);
   };
 
+  const updateReviewStatusInStorage = (reviewId, status, extra = {}) => {
+    if (!isBrowser) return;
+    const nextReviews = readStorageArray(FACILITY_REVIEW_STORAGE_KEY).map((item) =>
+      item.id === reviewId ? { ...item, status, ...extra } : item
+    );
+    writeStorageArray(FACILITY_REVIEW_STORAGE_KEY, nextReviews, STORAGE_EVENTS.FACILITY_REVIEWS);
+  };
+
   const handleDeleteConfirm = () => {
     if (!selectedReport) return;
     removeReviewFromStorage(selectedReport.reviewId);
+    updateReviewStatusInStorage(selectedReport.reviewId, "삭제 완료");
     updateReports((prev) =>
       prev.map((report) =>
         report.id === selectedReport.id
@@ -171,11 +180,12 @@ const TrainerReport = () => {
     appendInboxMessage({
       sender: "어드민 센터",
       subject: `[반려] ${selectedReport.facility} 리뷰 신고`,
-      preview: `리뷰 반려 사유 : ${reason}`,
-      body: `시설 ${selectedReport.facility}의 리뷰 신고가 반려되었습니다.\n사유: ${reason}`,
+      preview: `${selectedReport.facility} 리뷰 반려 안내`,
+      body: `시설 ${selectedReport.facility}의 리뷰가 반려되었습니다.\n\n[사유]\n${reason}\n\n리뷰 제목 : ${selectedReport.title}\n리뷰 내용 : ${selectedReport.content}`,
       category: "반려",
       metadata: { facility: selectedReport.facility, reviewer: selectedReport.reviewer },
     });
+    updateReviewStatusInStorage(selectedReport.reviewId, "반려", { rejectReason: reason });
     setRejectModal({ open: false, reason: "", message: "" });
     setFeedback("신고를 반려했습니다.");
   };

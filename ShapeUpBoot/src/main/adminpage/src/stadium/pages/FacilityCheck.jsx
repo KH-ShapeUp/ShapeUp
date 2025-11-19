@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../common/styles/CommonLayout.css";
 import "../styles/FacilityCheck.css";
 import { useFacilityData } from "../context/FacilityDataContext";
+import CustomSelect from "../../common/components/CustomSelect";
 
 const FacilityCheck = () => {
   const {
@@ -25,6 +26,14 @@ const FacilityCheck = () => {
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const [memberFilterFacility, setMemberFilterFacility] = useState("전체");
   const [searchText, setSearchText] = useState("");
+  const facilityOptions = useMemo(
+    () => (facilities.length ? facilities : ["시설 1", "시설 2", "시설 3"]),
+    [facilities]
+  );
+  const facilityFilterOptions = useMemo(
+    () => ["전체", ...facilityOptions],
+    [facilityOptions]
+  );
 
   useEffect(() => {
     return () => {
@@ -210,14 +219,12 @@ const FacilityCheck = () => {
         <div className="list-header">
           <h3>회원 리스트</h3>
           <div className="search-area">
-            <select value={memberFilterFacility} onChange={(e) => setMemberFilterFacility(e.target.value)}>
-              <option value="전체">전체</option>
-              {facilities.map((f) => (
-                <option key={f} value={f}>
-                  {f}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+              value={memberFilterFacility}
+              options={facilityFilterOptions}
+              onChange={setMemberFilterFacility}
+              size="sm"
+            />
             <input
               type="text"
               placeholder="검색어 입력"
@@ -261,13 +268,12 @@ const FacilityCheck = () => {
         <div className="res-header">
           <h3>시설 예약 확인</h3>
           <div className="filter-bar">
-            <select value={selectedFacility} onChange={(e) => setSelectedFacility(e.target.value)}>
-              {facilities.map((f) => (
-                <option key={f} value={f}>
-                  {f}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+              value={selectedFacility}
+              options={facilityOptions}
+              onChange={setSelectedFacility}
+              size="sm"
+            />
             <div className="date-picker">
               <button type="button" onClick={() => shiftDate(-1)} aria-label="하루 전">
                 ‹

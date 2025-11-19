@@ -16,35 +16,70 @@ const CustomSelect = ({
   const list = useMemo(() => options.map(normalizeOption), [options]);
   const selected = list.find((opt) => opt.value === value) ?? null;
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const containerRef = useRef(null);
+  const closeTimerRef = useRef(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const startClosing = () => {
+    if (!open) return;
+    clearCloseTimer();
+    setClosing(true);
+    closeTimerRef.current = setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+      closeTimerRef.current = null;
+    }, 180);
+  };
+
+  const toggleDropdown = () => {
+    if (disabled) return;
+    if (open && !closing) {
+      startClosing();
+    } else {
+      clearCloseTimer();
+      setClosing(false);
+      setOpen(true);
+    }
+  };
 
   useEffect(() => {
     const handleClick = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
+        if (open) startClosing();
       }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+  }, [open, startClosing]);
+
+  useEffect(() => () => clearCloseTimer(), []);
 
   const handleSelect = (option) => {
     if (disabled) return;
     onChange?.(option.value);
-    setOpen(false);
+    startClosing();
   };
 
   return (
     <div
       ref={containerRef}
-      className={`custom-select custom-select--${size} ${disabled ? "disabled" : ""} ${className}`}
+      className={`custom-select custom-select--${size} ${disabled ? "disabled" : ""} ${
+        open ? "open" : ""
+      } ${closing ? "closing" : ""} ${className}`}
     >
       <button
         type="button"
         className="custom-select__trigger"
-        onClick={() => !disabled && setOpen((prev) => !prev)}
+        onClick={toggleDropdown}
         aria-haspopup="listbox"
-        aria-expanded={open}
+        aria-expanded={open && !closing}
       >
         <span>{selected?.label ?? placeholder}</span>
         <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
@@ -52,7 +87,10 @@ const CustomSelect = ({
         </svg>
       </button>
       {open && (
-        <ul className="custom-select__list" role="listbox">
+        <ul
+          className={`custom-select__list ${closing ? "closing" : "opening"}`}
+          role="listbox"
+        >
           {list.map((option) => (
             <li
               key={option.value}
