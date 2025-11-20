@@ -1,5 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<div class="modal-overlay" id="activityListModalOverlay" onclick="closeActivityModal()"></div>
+
 <div id="activity-list-backdrop" class="modal-backdrop" style="display:none;">
-  <div class="modal-container diet-list-modal">
+  <div class="modal-container" id="activity-list-modal">
     <div class="modal-header">
       <div class="header-top">
         <h3>활동 목록</h3>
@@ -30,3 +34,11 @@
     </div>
   </div>
 </div>
+<script>
+	//모달 
+	function openActivityModal() {
+		document.getElementById('activity-list-backdrop').style.display='block';
+		document.getElementById('activity-list-modal').style.display='block';
+		document.body.style.overflow = 'hidden';
+	}
+</script>

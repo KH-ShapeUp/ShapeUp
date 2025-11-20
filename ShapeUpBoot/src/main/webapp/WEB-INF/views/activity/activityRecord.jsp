@@ -22,7 +22,7 @@
               <button class="calendar-btn" type="button">📅</button>
               <span class="today-text">2025.11.11</span>
             </div>
-            <button class="add-btn-lg">활동 추가하기</button>
+            <button class="add-btn-lg" onclick="openActivityModal()">활동 추가하기</button>
           </div>
           
           <div class="summary-grid">
