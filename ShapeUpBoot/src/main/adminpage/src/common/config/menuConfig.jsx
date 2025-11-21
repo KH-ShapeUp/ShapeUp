@@ -7,9 +7,9 @@ const menus = {
     icon: <FaUser />, // ✅ 아이콘 추가
     path: "/members",
     subs: {
-      submenu1: { label: "회원 관리", path: "/members/user" },
-      submenu2: { label: "회원 신고 관리", path: "/members/report" },
-      trainerReport: { label: "트레이너 신고 관리", path: "/members/trainer-report" },
+      submenu1: { label: "회원 관리", path: "/admin/members/user" },
+      submenu2: { label: "회원 신고 관리", path: "/admin/members/report" },
+      trainerReport: { label: "트레이너 신고 관리", path: "/admin/members/trainer-report" },
     },
   },
   trainers: {
@@ -25,7 +25,7 @@ const menus = {
     icon: <FaRegNewspaper />,
     path: "/feeds",
     subs: {
-      send: { label: "운영지침 보내기", path: "/feeds/send-guideline" },
+      send: { label: "운영지침 보내기", path: "/admin/feeds/send-guideline" },
     },
   },
   posts: {
@@ -33,10 +33,10 @@ const menus = {
     icon: <FaClipboardList />,
     path: "/posts",
     subs: {
-      submenu1: { label: "공지사항", path: "/posts/notice" },
-      submenu2: { label: "자유 게시판", path: "/posts/submenu2" },
-      submenu3: { label: "성공 후기", path: "/posts/submenu3" },
-      submenu4: { label: "질문 / 건의사항", path: "/posts/submenu4" },
+      submenu1: { label: "공지사항", path: "/admin/posts/notice" },
+      submenu2: { label: "자유 게시판", path: "/admin/posts/submenu2" },
+      submenu3: { label: "성공 후기", path: "/admin/posts/submenu3" },
+      submenu4: { label: "질문 / 건의사항", path: "/admin/posts/submenu4" },
     },
   },
 };

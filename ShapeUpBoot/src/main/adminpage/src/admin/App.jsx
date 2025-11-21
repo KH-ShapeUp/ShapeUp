@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../common/components/Sidebar";
 import Header from "../common/components/Header";
 import Dashboard from "./pages/Dashboard";
@@ -18,7 +18,7 @@ import "./styles/Dashboard.css";
 
 const useHeaderTitle = () => {
   const { pathname } = useLocation();
-  const parts = pathname.split("/").filter(Boolean);
+  const parts = pathname.split("/admin").filter(Boolean);
   if (parts.length === 0) return "메인 화면";
 
   const [section, submenu] = parts;
@@ -34,10 +34,43 @@ const useHeaderTitle = () => {
 
 function App() {
   const title = useHeaderTitle();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/session/user-type", { credentials: "include" });
+        if (!res.ok) {
+          alert("잘못된 접근입니다.");
+          window.location.href = "http://localhost:8080";
+          return;
+        }
+        const data = await res.json();
+        if (data.userType !== "SYSTEM_MANAGER") {
+          if (data.userType === "STADIUM_MANAGER") {
+            alert("잘못된 접근입니다.");
+            window.location.href = "http://localhost:5173/stadium";
+            return;
+          }
+          alert("잘못된 접근입니다.");
+          window.location.href = "http://localhost:8080";
+          return;
+        }
+        setAuthChecked(true);
+      } catch (e) {
+        alert("잘못된 접근입니다.");
+        window.location.href = "http://localhost:8080";
+      }
+    };
+    checkAuth();
+  }, []);
+
+  if (!authChecked) return null;
 
   return (
     <div className="app-container">
-      <Sidebar homeHref="/" variant="admin" mainPath="/" />
+      <Sidebar homeHref="/admin" variant="admin" mainPath="/admin" />
       <div className="main-content">
         <Header title={title} />
 
@@ -48,21 +81,28 @@ function App() {
           {Object.entries(menus).map(([sectionKey, section]) =>
             Object.entries(section.subs).map(([subKey, sub]) => {
               const routeElements = {
-                "/members/user": <MembersUser />,
-                "/members/report": <MembersReport />,
-                "/members/trainer-report": <TrainerReport />,
-                "/posts/notice": <PostsNotice />,
-                "/posts/submenu2": <PostFreeBoard />,
-                "/posts/submenu3": <PostSuccessBoard />,
-                "/posts/submenu4": <PostQnaBoard />,
-                "/feeds/send-guideline": <SendGuideline />,
+                "/admin/members/user": <MembersUser />,
+                "/admin/members/report": <MembersReport />,
+                "/admin/members/trainer-report": <TrainerReport />,
+                "/admin/posts/notice": <PostsNotice />,
+                "/admin/posts/submenu2": <PostFreeBoard />,
+                "/admin/posts/submenu3": <PostSuccessBoard />,
+                "/admin/posts/submenu4": <PostQnaBoard />,
+                "/admin/feeds/send-guideline": <SendGuideline />,
               };
               const element = routeElements[sub.path] ?? (
                 <PagePlaceholder title={`${section.name} - ${sub.label}`} />
               );
 
+              const relPath = sub.path.startsWith("/admin")
+                ? sub.path.substring("/admin".length)
+                : sub.path;
+
               return (
-                <Route key={`${sectionKey}-${subKey}`} path={sub.path} element={element} />
+                <React.Fragment key={`${sectionKey}-${subKey}`}>
+                  <Route path={sub.path} element={element} />
+                  <Route path={relPath} element={element} />
+                </React.Fragment>
               );
             })
           )}

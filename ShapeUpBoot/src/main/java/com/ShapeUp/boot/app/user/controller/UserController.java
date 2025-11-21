@@ -291,7 +291,16 @@ public class UserController {
         if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
-            return "redirect:/"; // 로그인 성공 시 홈
+            session.setAttribute("userType", user.getUserType());
+
+            // 권한별 리다이렉트
+            if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
+                return "redirect:http://localhost:5173/admin";
+            } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
+                return "redirect:http://localhost:5173/stadium";
+            } else {
+                return "redirect:/"; // USER 및 기타
+            }
         } else {
             model.addAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");
             return "user/login";

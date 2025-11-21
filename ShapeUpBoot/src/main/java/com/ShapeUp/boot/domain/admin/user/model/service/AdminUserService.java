@@ -11,4 +11,10 @@ public interface AdminUserService {
     AdminUserVO findUserByNo(int userNo);
 
     void changeUserStatus(int userNo, String status);
+
+    void changeUserPassword(int userNo, String rawPassword);
+
+    void changeUserType(int userNo, String userType);
+
+    void updateUserProfile(int userNo, String userId, String userName, String userNickname, String userEmail, String userPhone, String userSerialNo, Integer userAge);
 }

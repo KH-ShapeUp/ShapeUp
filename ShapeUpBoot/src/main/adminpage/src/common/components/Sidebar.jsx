@@ -28,8 +28,16 @@ const Sidebar = ({
     navigate(mainPath);
   };
 
+  const goLogout = () => {
+    fetch("/api/session/logout", { method: "POST", credentials: "include" })
+      .catch(() => {})
+      .finally(() => {
+        window.location.href = "http://localhost:8080";
+      });
+  };
+
   const goHome = () => {
-    const target = homeHref || homePath;
+    const target = homeHref || (variant === "stadium" ? "/" : homePath);
     const url = target.startsWith("http")
       ? target
       : `${window.location.protocol}//${window.location.hostname}:8080${target}`;
@@ -92,7 +100,7 @@ const Sidebar = ({
         >
           <FaHome />
         </button>
-        <button className="icon-btn" aria-label="Logout">
+        <button className="icon-btn" aria-label="Logout" onClick={goLogout}>
           <FaSignOutAlt />
         </button>
       </div>
