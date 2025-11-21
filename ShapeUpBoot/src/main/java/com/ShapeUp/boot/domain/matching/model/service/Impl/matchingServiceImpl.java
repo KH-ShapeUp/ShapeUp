@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
-import com.ShapeUp.boot.domain.activity.model.vo.Activity;
 import com.ShapeUp.boot.domain.matching.model.mapper.matchingMapper;
 import com.ShapeUp.boot.domain.matching.model.service.matchingService;
-import com.ShapeUp.boot.domain.matching.model.vo.ActivityVO;
+import com.ShapeUp.boot.domain.matching.model.vo.matchingActivityVO;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
 
 import lombok.RequiredArgsConstructor;
@@ -29,15 +28,15 @@ public class matchingServiceImpl implements matchingService{
 	
 	/* 매칭 카테고리 리스트 가져오기 */
 	@Override
-	public List<ActivityVO> matchingCategory() {
-		List<ActivityVO> aList = mMapper.matchingCategory();
+	public List<matchingActivityVO> matchingCategory() {
+		List<matchingActivityVO> aList = mMapper.matchingCategory();
 		return aList;
 	}
 
 	/* 매칭 카테고리 검색 */
 	@Override
-	public List<ActivityVO> searchCategory(String keyword) {
-		List<ActivityVO> aList = mMapper.searchCategory(keyword);
+	public List<matchingActivityVO> searchCategory(String keyword) {
+		List<matchingActivityVO> aList = mMapper.searchCategory(keyword);
 		return aList;
 	}
 

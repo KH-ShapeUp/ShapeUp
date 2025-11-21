@@ -1,5 +1,7 @@
 package com.ShapeUp.boot.domain.user.model.mapper;
 
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +19,11 @@ public interface UserMapper {
     UserVO selectUserByIdAndNameAndEmail(@Param("userId") String userId,
                                          @Param("name") String name,
                                          @Param("email") String email);
-
+    
+    UserVO findUserByNameEmailPhone(Map<String, String> params);
+    
+    int countEmail(String email);
+    
     int insertUser(UserVO user);
 
     int checkUserIdDuplicate(@Param("userId") String userId);

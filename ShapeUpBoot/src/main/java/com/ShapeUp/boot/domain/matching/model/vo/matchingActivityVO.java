@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 @Data
-public class ActivityVO {
+public class matchingActivityVO {
 	private int activityId;
 	private String activityName;
 	private String activityType;

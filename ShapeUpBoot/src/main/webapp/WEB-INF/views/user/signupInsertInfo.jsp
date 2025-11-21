@@ -149,7 +149,6 @@
           <label>전화번호</label>
           <div class="field-inline">
             <input type="text" placeholder="010-1234-5678" name="phone" id="phoneInput" required>
-            <button type="button" class="check-btn">인증번호 발송</button>
           </div>
         </div>
 

@@ -29,7 +29,11 @@ public interface UserService {
     boolean sendPhoneVerification(String phone);
 
     boolean resetPassword(String userId, String name, String email);
+    
+    boolean isEmailExists(String email);
 
     // 🔹 로그인 메서드 추가
     UserVO login(String userId, String rawPassword);
+    
+    UserVO findUserByNameEmailPhone(String name, String email, String phone);
 }

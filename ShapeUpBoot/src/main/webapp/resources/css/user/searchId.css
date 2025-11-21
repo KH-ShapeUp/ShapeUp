@@ -172,14 +172,14 @@ h2 {
   align-items: center;
 }
 
-/* 결과 표시 영역 */
+/* 결과 표시 영역 (성공) */
 .result-box {
   margin: 25px 0;
   padding: 25px;
-  background: #f8f8f8;
+  background: #e8f5e9;
   border-radius: 8px;
   text-align: center;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #a5d6a7;
 }
 
 .result-content {
@@ -196,14 +196,31 @@ h2 {
 .result-userid {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #000;
+  color: #2e7d32;
   letter-spacing: 2px;
 }
 
 .result-date {
   font-size: 0.9rem;
-  color: #999;
+  color: #888;
   margin-top: 5px;
+}
+
+/* 에러 표시 영역 (실패) */
+.error-box {
+  margin: 25px 0;
+  padding: 20px;
+  background: #ffebee;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #ef9a9a;
+}
+
+.error-box p {
+  color: #c62828;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 /* 버튼 영역 */
