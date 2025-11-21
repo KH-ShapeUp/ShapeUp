@@ -10,7 +10,7 @@ public interface AdminUserService {
 
     AdminUserVO findUserByNo(int userNo);
 
-    void changeUserStatus(int userNo, String status);
+    void changeUserStatus(int userNo, String status, java.sql.Timestamp updatedAt, Long banDays);
 
     void changeUserPassword(int userNo, String rawPassword);
 

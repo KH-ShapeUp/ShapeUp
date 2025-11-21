@@ -16,6 +16,12 @@
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+.members-detail {
+  position: relative;
+  overflow: visible;
+  z-index: 5;
+}
+
 .members-list:hover,
 .members-detail:hover,
 .members-chart:hover {
@@ -113,6 +119,24 @@
   background: #fffbe6;
   border-color: #ffc107;
   box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.35);
+}
+
+.ban-duration {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+.ban-duration input {
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.ban-duration .ban-text {
+  white-space: nowrap;
+  color: #555;
+  font-weight: 600;
 }
 
 .members-detail input, .members-detail .custom-select {
