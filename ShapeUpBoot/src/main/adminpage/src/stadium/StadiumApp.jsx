@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../common/components/Sidebar";
 import Header from "../common/components/Header";
 import PagePlaceholder from "../common/components/PagePlaceholder";
@@ -34,6 +34,39 @@ const useHeaderTitle = () => {
 
 function StadiumApp() {
   const title = useHeaderTitle();
+  const [authChecked, setAuthChecked] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/session/user-type", { credentials: "include" });
+        if (!res.ok) {
+          alert("잘못된 접근입니다.");
+          window.location.href = "http://localhost:8080";
+          return;
+        }
+        const data = await res.json();
+        if (data.userType !== "STADIUM_MANAGER") {
+          if (data.userType === "SYSTEM_MANAGER") {
+            alert("잘못된 접근입니다.");
+            window.location.href = "http://localhost:5173/admin";
+            return;
+          }
+          alert("잘못된 접근입니다.");
+          window.location.href = "http://localhost:8080";
+          return;
+        }
+        setAuthChecked(true);
+      } catch (e) {
+        alert("잘못된 접근입니다.");
+        window.location.href = "http://localhost:8080";
+      }
+    };
+    checkAuth();
+  }, []);
+
+  if (!authChecked) return null;
 
   const routeElements = {
     "/stadium": <Dashboard />,

@@ -49,4 +49,31 @@
     WHERE USER_NO = #{userNo}
   </update>
 
+  <update id="updateUserPassword">
+    UPDATE USER_TBL
+    SET USER_PW = #{userPw},
+        UPDATED_AT = SYSTIMESTAMP
+    WHERE USER_NO = #{userNo}
+  </update>
+
+  <update id="updateUserType">
+    UPDATE USER_TBL
+    SET USER_TYPE = #{userType},
+        UPDATED_AT = SYSTIMESTAMP
+    WHERE USER_NO = #{userNo}
+  </update>
+
+  <update id="updateUserProfile">
+    UPDATE USER_TBL
+    SET USER_ID = #{userId},
+        USER_NAME = #{userName},
+        USER_NICKNAME = #{userNickname},
+        USER_EMAIL = #{userEmail},
+        USER_PHONE = #{userPhone},
+        USER_SERIAL_NO = #{userSerialNo},
+        USER_AGE = #{userAge},
+        UPDATED_AT = SYSTIMESTAMP
+    WHERE USER_NO = #{userNo}
+  </update>
+
 </mapper>

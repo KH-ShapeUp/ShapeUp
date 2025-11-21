@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import "../styles/ChartCard.css";
 
-const ChartCard = ({ title, data }) => {
+const DEFAULT_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
+
+const ChartCard = ({ title, data, labels = DEFAULT_LABELS }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
@@ -18,7 +20,7 @@ const ChartCard = ({ title, data }) => {
     chartInstanceRef.current = new Chart(ctx, {
       type: "line",
       data: {
-        labels: ["월", "화", "수", "목", "금", "토", "일"],
+        labels,
         datasets: [
           {
             label: title,

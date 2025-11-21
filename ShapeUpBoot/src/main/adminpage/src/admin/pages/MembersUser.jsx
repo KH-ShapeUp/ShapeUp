@@ -3,19 +3,66 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Chart from "chart.js/auto";
 import "../styles/MembersUser.css";
 import CustomSelect from "../../common/components/CustomSelect";
+const userTypeLabels = {
+  USER: "유저",
+  SYSTEM_MANAGER: "어드민",
+  TRAINER: "트레이너",
+  STADIUM_MANAGER: "시설 관리자",
+};
+
+const deriveGenderFromRrn = (rrn) => {
+  const digit = rrn?.trim()?.replace(/[^0-9]/g, "").slice(-1);
+  if (digit === "2" || digit === "4" || digit === "0") return "여";
+  if (digit === "1" || digit === "3") return "남";
+  return "";
+};
+
+const deriveAgeFromRrn = (rrn) => {
+  const clean = rrn?.trim()?.replace(/[^0-9]/g, "");
+  if (!clean || clean.length < 7) return null;
+  const yy = clean.slice(0, 2);
+  const mm = clean.slice(2, 4);
+  const dd = clean.slice(4, 6);
+  const genderDigit = clean[6];
+  const baseCentury = genderDigit === "1" || genderDigit === "2" ? 1900 : 2000;
+  let year = baseCentury + Number(yy);
+  const currentYear = new Date().getFullYear();
+  if (year > currentYear) {
+    year -= 100; // 미래 연도 방지 (예: 2097 -> 1997)
+  }
+  const month = Number(mm) - 1;
+  const day = Number(dd);
+  const birth = new Date(year, month, day);
+  if (Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age -= 1;
+  return age;
+};
+
+const formatPhone = (phone) => {
+  const digits = (phone ?? "").replace(/[^0-9]/g, "").slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 const mapUserToMember = (user) => ({
   id: user.userNo,
   name: user.userName ?? "",
-  age: user.userAge ?? 0,
+  age: user.userAge ?? deriveAgeFromRrn(user.userSerialNo) ?? 0,
   nickname: user.userNickname ?? "",
   joinedAt: user.createdAt?.slice(0, 10) ?? "",
-  category: user.userType === "TRAINER" ? "트레이너" : user.userType === "ADMIN" ? "어드민" : "유저",
+  createdAt: user.createdAt ?? "",
+  userType: user.userType ?? "USER",
   status: user.status ?? "정상",
-  gender: user.userSerialNo?.slice(-1) % 2 === 0 ? "여" : "남",
+  gender: deriveGenderFromRrn(user.userSerialNo),
   username: user.userId ?? "",
-  password: user.userPw ?? "",
+  // 수정 화면에는 기존 해시를 표시하지 않고 빈 값으로 둔다
+  password: "",
   email: user.userEmail ?? "",
-  phone: user.userPhone ?? "",
+  phone: formatPhone(user.userPhone),
   rrn: user.userSerialNo ?? "",
 });
 
@@ -26,9 +73,10 @@ const genderOptions = [
   { label: "여", value: "여" },
 ];
 const categoryOptions = [
-  { label: "유저", value: "유저" },
-  { label: "트레이너", value: "트레이너" },
-  { label: "어드민", value: "어드민" },
+  { label: "유저", value: "USER" },
+  { label: "트레이너", value: "TRAINER" },
+  { label: "어드민", value: "SYSTEM_MANAGER" },
+  { label: "시설 관리자", value: "STADIUM_MANAGER" },
 ];
 const statusOptions = [
   { label: "정상", value: "정상" },
@@ -39,6 +87,8 @@ const statusOptions = [
 const MembersUser = () => {
   const [members, setMembers] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [baseSelected, setBaseSelected] = useState(null); // 저장된 기준 상태
+  const [dirtyFields, setDirtyFields] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const [searchField, setSearchField] = useState("전체");
@@ -48,7 +98,11 @@ const MembersUser = () => {
   const [pageInput, setPageInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [inlineMessage, setInlineMessage] = useState(null);
   const chartRef = useRef(null);
+  const chartInstanceRef = useRef(null);
 
   useEffect(() => {
     let ignore = false;
@@ -61,7 +115,9 @@ const MembersUser = () => {
         if (ignore) return;
         const mapped = Array.isArray(data) ? data.map(mapUserToMember) : [];
         setMembers(mapped);
-        setSelectedId(mapped[0]?.id ?? null);
+        const first = mapped[0] ?? null;
+        setSelectedId(first?.id ?? null);
+        setBaseSelected(first);
         setError(null);
       } catch (err) {
         console.error(err);
@@ -103,18 +159,18 @@ const MembersUser = () => {
   const sorted = useMemo(() => {
     const arr = [...filteredMembers];
     const collator = new Intl.Collator("ko");
-    const getVal = (m) => {
-      switch (sort.key) {
-        case "id": return m.id;
-        case "name": return m.name ?? "";
-        case "age": return m.age ?? 0;
-        case "nickname": return m.nickname ?? "";
-        case "joinedAt": return m.joinedAt ?? "";
-        case "category": return m.category ?? "";
-        case "status": return m.status ?? "";
-        default: return "";
-      }
-    };
+  const getVal = (m) => {
+    switch (sort.key) {
+      case "id": return m.id;
+      case "name": return m.name ?? "";
+      case "age": return m.age ?? 0;
+      case "nickname": return m.nickname ?? "";
+      case "joinedAt": return m.joinedAt ?? "";
+      case "category": return userTypeLabels[m.userType] ?? "";
+      case "status": return m.status ?? "";
+      default: return "";
+    }
+  };
     arr.sort((a, b) => {
       const va = getVal(a);
       const vb = getVal(b);
@@ -142,27 +198,54 @@ const MembersUser = () => {
     setPage((prev) => Math.min(prev, totalPages));
   }, [totalPages]);
 
+  // 가입일 기반 일별 가입자 그래프 (최근 7일)
   useEffect(() => {
     if (!chartRef.current) return;
     const ctx = chartRef.current.getContext("2d");
-    const chartInstance = new Chart(ctx, {
+
+    const today = new Date();
+    const dates = [];
+    for (let i = 6; i >= 0; i -= 1) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD
+      dates.push(iso);
+    }
+
+    const dayCount = new Map(dates.map((d) => [d, 0]));
+    members.forEach((m) => {
+      const raw = m.createdAt || m.joinedAt;
+      if (!raw) return;
+      let dateKey;
+      const parsed = new Date(raw);
+      if (!Number.isNaN(parsed.getTime())) {
+        dateKey = parsed.toISOString().slice(0, 10);
+      } else if (typeof raw === "string") {
+        dateKey = raw.slice(0, 10);
+      }
+      if (dateKey && dayCount.has(dateKey)) {
+        dayCount.set(dateKey, (dayCount.get(dateKey) || 0) + 1);
+      }
+    });
+    const labels = dates;
+  const values = dates.map((d) => dayCount.get(d) || 0);
+
+  if (chartInstanceRef.current) {
+    chartInstanceRef.current.destroy();
+  }
+
+    chartInstanceRef.current = new Chart(ctx, {
       type: "line",
       data: {
-        labels: ["6월", "7월", "8월", "9월", "10월", "11월"],
+        labels,
         datasets: [
           {
-            label: "가입자 수",
-            data: [24, 32, 28, 41, 37, 45],
+            label: "일일 가입자 수",
+            data: values,
             borderColor: "#4c8bf5",
             backgroundColor: "rgba(76, 139, 245, 0.15)",
-            tension: 0.35,
-            fill: true,
-          },
-          {
-            label: "탈퇴자 수",
-            data: [5, 7, 6, 4, 8, 5],
-            borderColor: "#ff6b6b",
-            backgroundColor: "rgba(255, 107, 107, 0.15)",
+            borderWidth: 3,
+            pointRadius: 4,
             tension: 0.35,
             fill: true,
           },
@@ -175,8 +258,11 @@ const MembersUser = () => {
         scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } },
       },
     });
-    return () => chartInstance.destroy();
-  }, []);
+
+    return () => {
+      if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+    };
+  }, [members]);
 
   const selected = useMemo(() => sorted.find((m) => m.id === selectedId) || null, [sorted, selectedId]);
 
@@ -184,25 +270,170 @@ const MembersUser = () => {
     if (selectedId == null) return;
     if (!members.some((member) => member.id === selectedId)) {
       setSelectedId(members[0]?.id ?? null);
+      setBaseSelected(members[0] ?? null);
+    } else {
+      const hit = members.find((member) => member.id === selectedId) || null;
+      // 선택된 사용자가 바뀐 경우에만 기준 상태를 갱신 (입력 중 덮어쓰기 방지)
+      if (!baseSelected || baseSelected.id !== selectedId) {
+        setBaseSelected(hit);
+        setDirtyFields({});
+      }
     }
-  }, [members, selectedId]);
+  }, [members, selectedId, baseSelected]);
+
+  // 저장된 기준과 비교해 변경 필드 기록
+  useEffect(() => {
+    if (!selected || !baseSelected) {
+      setDirtyFields({});
+      return;
+    }
+    const nextDirty = {};
+    const fieldsToCheck = [
+      "username",
+      "name",
+      "nickname",
+      "email",
+      "phone",
+      "userType",
+      "status",
+      "password",
+      "rrn",
+      "age",
+    ];
+    fieldsToCheck.forEach((field) => {
+      if ((selected[field] ?? "") !== (baseSelected[field] ?? "")) {
+        nextDirty[field] = true;
+      }
+    });
+    setDirtyFields(nextDirty);
+  }, [selected, baseSelected]);
+
+  // 페이지 벗어날 때 경고 + 내비게이션 링크 클릭 차단
+  useEffect(() => {
+    const hasDirty = Object.keys(dirtyFields).length > 0;
+    const beforeUnload = (e) => {
+      if (!hasDirty) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    const clickBlocker = (e) => {
+      if (!hasDirty) return;
+      const anchor = e.target.closest("a");
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
+      const confirmed = window.confirm("변경된 사항이 있습니다. 저장하지 않고 이동하시겠습니까?");
+      if (!confirmed) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("beforeunload", beforeUnload);
+    window.addEventListener("click", clickBlocker);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("click", clickBlocker);
+    };
+  }, [dirtyFields]);
 
   const updateMembers = (updater) => {
     setMembers((prev) => (typeof updater === "function" ? updater(prev) : updater));
   };
 
-  const handleSelect = (id) => setSelectedId(id);
+  const handleSelect = (id) => {
+    setInlineMessage(null);
+    setShowSaveModal(false);
+    setSelectedId(id);
+  };
   const updateMemberField = (name, value) => {
     if (!selected) return;
-    updateMembers((prev) => prev.map((m) => (m.id === selected.id ? { ...m, [name]: value } : m)));
+    updateMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== selected.id) return m;
+        if (name === "rrn") {
+          const gender = deriveGenderFromRrn(value);
+          const age = deriveAgeFromRrn(value);
+          return { ...m, rrn: value, gender: gender || m.gender, age: age ?? m.age };
+        }
+        return { ...m, [name]: value };
+      })
+    );
+    setDirtyFields((prev) => ({ ...prev, [name]: true }));
+    setInlineMessage(null);
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    updateMemberField(name, value);
+    if (name === "phone") {
+      updateMemberField(name, formatPhone(value));
+    } else {
+      updateMemberField(name, value);
+    }
   };
   const handleUpdate = () => {
     if (!selected) return;
-    alert("저장되었습니다.");
+    const hasDirty = Object.keys(dirtyFields).length > 0;
+    if (!hasDirty) {
+      setInlineMessage({ type: "error", text: "변동된 사항이 없습니다." });
+      return;
+    }
+    setInlineMessage(null);
+    setShowSaveModal(true);
+  };
+
+  const performSave = async () => {
+    if (!selected) return;
+    setIsSaving(true);
+    setInlineMessage(null);
+    const tasks = [];
+    // 프로필 업데이트 (아이디, 이름, 닉네임, 이메일, 전화번호)
+    tasks.push(
+      fetch(`/api/admin/users/${selected.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: selected.username,
+          userName: selected.name,
+          userNickname: selected.nickname,
+          userEmail: selected.email,
+          userPhone: selected.phone,
+          userSerialNo: selected.rrn,
+          userAge: selected.age ?? null,
+        }),
+      })
+    );
+    if (selected.status) {
+      tasks.push(fetch(`/api/admin/users/${selected.id}/status?status=${encodeURIComponent(selected.status)}`, { method: "PATCH" }));
+    }
+    if (selected.userType) {
+      tasks.push(fetch(`/api/admin/users/${selected.id}/type?userType=${encodeURIComponent(selected.userType)}`, { method: "PATCH" }));
+    }
+    if (selected.password && selected.password.trim()) {
+      tasks.push(fetch(`/api/admin/users/${selected.id}/password?password=${encodeURIComponent(selected.password)}`, { method: "PATCH" }));
+    }
+
+    try {
+      const responses = await Promise.all(tasks);
+      const failed = responses.find((res) => !res.ok);
+      if (failed) throw new Error("저장 중 오류가 발생했습니다.");
+
+      const res = await fetch("/api/admin/users");
+      if (!res.ok) throw new Error("회원 목록을 새로고침하지 못했습니다.");
+      const data = await res.json();
+      const mapped = Array.isArray(data) ? data.map(mapUserToMember) : [];
+      setMembers(mapped);
+      const nextSelected = mapped.find((m) => m.id === selected.id) ?? mapped[0] ?? null;
+      setSelectedId(nextSelected?.id ?? null);
+      setBaseSelected(nextSelected);
+      setShowPassword(false);
+      setDirtyFields({});
+      setInlineMessage({ type: "success", text: "저장되었습니다." });
+    } catch (err) {
+      console.error(err);
+      setInlineMessage({ type: "error", text: "저장에 실패했습니다." });
+    } finally {
+      setIsSaving(false);
+      setShowSaveModal(false);
+    }
   };
 
   const toggleSort = (key) => {
@@ -261,9 +492,9 @@ const MembersUser = () => {
                 <td>{m.age}</td>
                 <td>{m.nickname}</td>
                 <td>{m.joinedAt}</td>
-                <td>{m.category}</td>
-                <td>{m.status}</td>
-              </tr>
+                <td>{userTypeLabels[m.userType] ?? m.userType}</td>
+            <td>{m.status}</td>
+          </tr>
             ))}
           </tbody>
         </table>
@@ -299,26 +530,37 @@ const MembersUser = () => {
           <>
             <div className="detail-field">
               <label>이름</label>
-              <input name="name" value={selected.name} onChange={handleChange} />
-            </div>
-
-            <div className="detail-field">
-              <label>닉네임</label>
-              <input name="nickname" value={selected.nickname} onChange={handleChange} />
-            </div>
-
-            <div className="detail-field">
-              <label>성별</label>
-              <CustomSelect
-                value={selected.gender}
-                options={genderOptions}
-                onChange={(val) => updateMemberField("gender", val)}
+              <input
+                name="name"
+                value={selected.name}
+                onChange={handleChange}
+                className={dirtyFields.name ? "dirty-field" : ""}
               />
             </div>
 
             <div className="detail-field">
+              <label>닉네임</label>
+              <input
+                name="nickname"
+                value={selected.nickname}
+                onChange={handleChange}
+                className={dirtyFields.nickname ? "dirty-field" : ""}
+              />
+            </div>
+
+            <div className="detail-field">
+              <label>성별</label>
+              <CustomSelect value={selected.gender} options={genderOptions} disabled />
+            </div>
+
+            <div className="detail-field">
               <label>아이디</label>
-              <input name="username" value={selected.username} onChange={handleChange} />
+              <input
+                name="username"
+                value={selected.username}
+                onChange={handleChange}
+                className={dirtyFields.username ? "dirty-field" : ""}
+              />
             </div>
 
             <div className="detail-field">
@@ -329,6 +571,7 @@ const MembersUser = () => {
                   name="password"
                   value={selected.password}
                   onChange={handleChange}
+                  className={dirtyFields.password ? "dirty-field" : ""}
                 />
                 <button
                   type="button"
@@ -353,15 +596,22 @@ const MembersUser = () => {
 
             <div className="detail-field">
               <label>주민번호</label>
-              <input name="rrn" value={selected.rrn} onChange={handleChange} placeholder="######-#######" />
+              <input
+                name="rrn"
+                value={selected.rrn}
+                onChange={handleChange}
+                placeholder="######-#######"
+                className={dirtyFields.rrn ? "dirty-field" : ""}
+              />
             </div>
 
             <div className="detail-field">
               <label>회원 분류</label>
               <CustomSelect
-                value={selected.category}
+                value={selected.userType}
                 options={categoryOptions}
-                onChange={(val) => updateMemberField("category", val)}
+                onChange={(val) => updateMemberField("userType", val)}
+                className={dirtyFields.userType ? "dirty-field" : ""}
               />
             </div>
 
@@ -371,10 +621,14 @@ const MembersUser = () => {
                 value={selected.status}
                 options={statusOptions}
                 onChange={(val) => updateMemberField("status", val)}
+                className={dirtyFields.status ? "dirty-field" : ""}
               />
             </div>
 
             <button className="update-btn" onClick={handleUpdate}>저장</button>
+            {inlineMessage && (
+              <div className={`inline-message ${inlineMessage.type}`}>{inlineMessage.text}</div>
+            )}
           </>
         ) : (
           <p className="empty">수정할 회원을 선택해주세요.</p>
@@ -387,6 +641,22 @@ const MembersUser = () => {
           <canvas ref={chartRef} />
         </div>
       </div>
+
+      {showSaveModal && (
+        <div className="save-modal">
+          <div className="save-modal__box">
+            <p className="save-modal__title">저장하시겠습니까?</p>
+            <div className="save-modal__actions">
+              <button type="button" className="modal-btn secondary" onClick={() => setShowSaveModal(false)} disabled={isSaving}>
+                아니오
+              </button>
+              <button type="button" className="modal-btn primary" onClick={performSave} disabled={isSaving}>
+                예
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
