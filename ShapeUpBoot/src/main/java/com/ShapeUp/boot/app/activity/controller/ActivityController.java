@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ShapeUp.boot.domain.activity.model.service.ActivityService;
-import com.ShapeUp.boot.domain.activity.model.vo.ActivityVo;
+import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,12 +29,12 @@ public class ActivityController {
 	
 	@GetMapping("/list")
 	@ResponseBody
-	public List<ActivityVo> getActivityList(@RequestParam("q") String keyword){
+	public List<ActivityVO> getActivityList(@RequestParam("q") String keyword){
 		
 		if(keyword ==null || keyword.isBlank()) {
 			return List.of();
 		}
-		List<ActivityVo> activitys = aService.getActivityListByKeyword(keyword);
+		List<ActivityVO> activitys = aService.getActivityListByKeyword(keyword);
 		
 		return activitys;
 	}

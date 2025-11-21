@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.ShapeUp.boot.domain.activity.model.vo.ActivityVo;
+import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
 
 @Mapper
 public interface ActivityMapper {
 
-	List<ActivityVo> getActivityListByKeyword(String keyword);
+	List<ActivityVO> getActivityListByKeyword(String keyword);
 
 }

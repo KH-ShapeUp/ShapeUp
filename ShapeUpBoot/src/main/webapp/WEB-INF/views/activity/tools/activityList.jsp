@@ -72,13 +72,53 @@
     if(!raw) return null;
     return{
       name : raw.activityName || raw.name || '이름없음',
-      kcal : Number(raw.kcalPerMin) || 0,
+      kcal : Number(raw.kcalPerMin) || 0,       //추후 계산되도록 변경필요
       type : raw.activityType || raw.type || '분류없음',
       level : raw.weightLevel || raw.level || '일반',
-    }
+    };
   }
 
-  function renderActivityList(items [], emptyMessage = '검색 결과가 없습니다'){
+  function renderActivityList(items = [], emptyMessage = '검색 결과가 없습니다'){
+    const listEl = activityListState.listElement || document.getElementById('activity-list-container');
+    if(!listEl) return;
+    listEl.innerHTML = '';
+    if(!items.length) {
+      const li = document.createElement('li');
+      li.className = 'activity-item empty-message';
+      li.textContent = emptyMessage;
+      listEl.appendChild(li);
+      return;
+    }
     
+    items.forEach((item) => {
+      const activity = adaptActivity(item);
+      if(!activity) return;
+      const li = document.createElement('li');
+      li.className = 'activity-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'activity-name';
+      nameSpan.textContent = activity.name;
+      
+      const kcalSpan = document.createElement('span');
+      kcalSpan.className = 'activity-kcal';
+      kcalSpan.textContent = `${activity.kcal} kcal`;
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'buuton';
+      addBtn.className = 'add-btn';
+      addBtn.textContent = '+';
+      addBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        startInsertFood({...activity});
+      })
+
+      li.appendChild(nameSpan);
+      li.appendChild(kcalSpan);
+      li.appendChild(addBtn);
+      listEl.appendChild(li);
+    })
   }
+
+
 </script>
