@@ -1,193 +1,252 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <div id="diet-list-backdrop" class="modal-backdrop" style="display:none;">
-  <div class="modal-container diet-list-modal">
+  <div class="modal-container diet-list-modal" role="dialog" aria-modal="true">
     <div class="modal-header">
       <div class="header-top">
-        <h3>식단 목록</h3>
+        <h3>음식 검색</h3>
         <div class="header-actions">
-        <button type="button" class="ghost-btn direct-input-btn" onclick="openCustomModalFromList()">직접 입력하기</button>
-        <button type="button" class="close-btn" onclick="closeDietListModal()">✕</button>
-      </div>
+          <button type="button" class="ghost-btn" onclick="openCustomModalFromList()">직접 입력</button>
+          <button type="button" class="close-btn" onclick="closeDietListModal()">✕</button>
+        </div>
       </div>
       <form class="diet-search" id="diet-search-form">
-        <input type="text" id="diet-search-input" placeholder="음식명을 입력하세요" />
+        <input type="text" id="diet-search-input" placeholder="검색어를 입력하세요" />
         <button type="submit" class="primary-btn">검색</button>
       </form>
     </div>
     <div class="modal-body">
-      <ul class="diet-list" id="diet-list-container">
-        <li class="diet-item empty-message">음식을 검색해주세요</li>
-      </ul>
+      <ul class="diet-list" id="diet-list-container"></ul>
     </div>
     <div class="modal-footer">
       <div class="selected-wrap">
-        <div class="selected-name" id="selected-food-name">선택된 메뉴:</div>
+        <div class="selected-name">선택된 음식</div>
         <div class="selected-list" id="selected-food-list"></div>
       </div>
       <div class="footer-actions">
         <button type="button" class="ghost-btn" onclick="closeDietListModal()">닫기</button>
-        <button type="button" class="primary-btn footer-add-btn" id="diet-list-submit">추가하기</button>
+        <button type="button" class="primary-btn" id="diet-list-submit">선택 완료</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  /* 모달 열고 닫기 */
+  const dietListState = {
+    selectedFoods: [],
+    listElement: null,
+  };
+
   function openDietListModal() {
-    document.getElementById("diet-list-backdrop").style.display = "flex";
+    const backdrop = document.getElementById('diet-list-backdrop');
+    if (!backdrop) return;
+    backdrop.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    if (!dietListState.listElement) {
+      dietListState.listElement = document.getElementById('diet-list-container');
+    }
+    if (dietListState.listElement && !dietListState.listElement.childElementCount) {
+      renderFoodList([], '검색어를 입력해주세요');
+      renderSelectedList();
+    }
   }
+
   function closeDietListModal() {
-    document.getElementById("diet-list-backdrop").style.display = "none";
+    const backdrop = document.getElementById('diet-list-backdrop');
+    if (!backdrop) return;
+    backdrop.style.display = 'none';
+    document.body.style.overflow = 'auto';
   }
-  function openInsertFromList() {
-    closeDietListModal();
-    if (typeof openModal === "function") openModal();
-  }
+
   function openCustomModalFromList() {
     closeDietListModal();
-    if (typeof openCustomModal === "function") openCustomModal();
-  }
-
-  /* 검색 */
-  function searchFoodList() {
-    const keyWord = document.getElementById("diet-search-input")?.value?.trim() || "";
-    if (!keyWord) {
-      renderFoodList([], "음식을 검색해주세요");
-      return;
-    }
-    fetchFoodList(keyWord);
-  }
-  function handleEnterKey(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      searchFoodList();
+    if (typeof openCustomModal === 'function') {
+      openCustomModal();
     }
   }
 
-  /* 검색결과 렌더링 */
-  const dietListEl = document.getElementById("diet-list-container");
-  function renderFoodList(items = [], emptyMessage = "일치하는 음식이 없습니다") {
-    if (!dietListEl) return;
-    dietListEl.innerHTML = "";
-    if (!items || items.length === 0) {
-      const li = document.createElement("li");
-      li.className = "diet-item empty-message";
+  function adaptFood(raw) {
+    if (!raw) return null;
+    return {
+      name: raw.foodName || raw.name || '이름 없음',
+      kcal: Number(raw.kcal) || 0,
+      carb: Number(raw.carb) || 0,
+      protein: Number(raw.protein) || 0,
+      fat: Number(raw.fat) || 0,
+      servingSize: Number(raw.servingSize || raw.weight || raw.serving || 100) || 100,
+    };
+  }
+
+  function renderFoodList(items = [], emptyMessage = '검색 결과가 없습니다') {
+    const listEl = dietListState.listElement || document.getElementById('diet-list-container');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (!items.length) {
+      const li = document.createElement('li');
+      li.className = 'diet-item empty-message';
       li.textContent = emptyMessage;
-      dietListEl.appendChild(li);
+      listEl.appendChild(li);
       return;
     }
-    items.forEach((food) => {
-      const li = document.createElement("li");
-      li.className = "diet-item";
-      const name = document.createElement("span");
-      name.className = "food-name";
-      name.textContent = food.foodName || "이름 없음";
 
-      const kcal = document.createElement("span");
-      kcal.className = "food-kcal";
-      kcal.textContent = ((food.kcal ?? 0) + "") + " kcal";
+    items.forEach((item) => {
+      const food = adaptFood(item);
+      if (!food) return;
+      const li = document.createElement('li');
+      li.className = 'diet-item';
 
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "add-btn";
-      btn.textContent = "+";
-      btn.addEventListener("click", () => addSelectedFood(food.foodName || ""));
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'food-name';
+      nameSpan.textContent = food.name;
 
-      li.appendChild(name);
-      li.appendChild(kcal);
-      li.appendChild(btn);
-      dietListEl.appendChild(li);
+      const kcalSpan = document.createElement('span');
+      kcalSpan.className = 'food-kcal';
+      kcalSpan.textContent = `${food.kcal} kcal`;
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'add-btn';
+      addBtn.textContent = '+';
+      addBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        startInsertFood({ ...food });
+      });
+
+      li.appendChild(nameSpan);
+      li.appendChild(kcalSpan);
+      li.appendChild(addBtn);
+      listEl.appendChild(li);
     });
   }
 
-  // 검색 리스트 불러오기 (백엔드 호출 필요)
-  async function fetchFoodList(query) {
-    if (!query) {
-      renderFoodList([], "음식을 검색해주세요");
-      return;
-    }
-    const url = "/diet/list?q=" + encodeURIComponent(query || "");
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("검색 실패");
-      const data = await res.json();
-      renderFoodList(Array.isArray(data) ? data : [], "일치하는 음식이 없습니다");
-    } catch (err) {
-      console.error("음식 검색 실패", err);
-      renderFoodList([], "일치하는 음식이 없습니다");
-    }
-  }
-
-  /* 선택 음식 리스트 출력 */
-  const selectedFoods = [];
   function renderSelectedList() {
-    const listEl = document.getElementById("selected-food-list");
+    const listEl = document.getElementById('selected-food-list');
     if (!listEl) return;
-    listEl.innerHTML = "";
-    if (selectedFoods.length === 0) {
-      const empty = document.createElement("span");
-      empty.className = "selected-empty";
-      empty.textContent = "선택 없음";
+    listEl.innerHTML = '';
+    if (!dietListState.selectedFoods.length) {
+      const empty = document.createElement('span');
+      empty.className = 'selected-empty';
+      empty.textContent = '아직 선택된 음식이 없습니다';
       listEl.appendChild(empty);
       return;
     }
-    selectedFoods.forEach((name, idx) => {
-      const chip = document.createElement("div");
-      chip.className = "selected-chip";
-      chip.textContent = name;
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "chip-remove";
-      removeBtn.textContent = "✕";
-      removeBtn.addEventListener("click", () => {
-        selectedFoods.splice(idx, 1);
+
+    dietListState.selectedFoods.forEach((food, index) => {
+      const displayName = (food && food.name) ? String(food.name) : '선택 음식';
+
+      const chip = document.createElement('div');
+      chip.className = 'selected-chip';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'chip-name';
+      nameSpan.textContent = displayName;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'chip-remove';
+      removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', () => {
+        dietListState.selectedFoods.splice(index, 1);
         renderSelectedList();
       });
+
+      chip.appendChild(nameSpan);
       chip.appendChild(removeBtn);
       listEl.appendChild(chip);
     });
   }
 
-  /* 리스트에 음식 추가 */
-  function addSelectedFood(name) {
-    if (!name) return;
-    selectedFoods.push(name);
-    renderSelectedList();
+  function startInsertFood(food) {
+    if (!food) return;
+    closeDietListModal();
+    if (typeof setDietModalData === 'function') {
+      setDietModalData(food);
+    } else if (typeof openModal === 'function') {
+      openModal();
+    }
   }
 
-  /* 리스트에 담은 음식 전송 */
+  function addSelectedFood(food, options = {}) {
+    if (!food || (!food.name && !food.foodName)) return;
+    const fromInsert = options.fromInsert === true;
+    const normalizedFood = {
+      name: food.name || food.foodName,
+      kcal: Number(food.kcal) || 0,
+      carb: Number(food.carb) || 0,
+      protein: Number(food.protein) || 0,
+      fat: Number(food.fat) || 0,
+      servingSize: Number(food.servingSize || food.weight || food.serving || 100) || 100,
+    };
+    dietListState.selectedFoods.push(normalizedFood);
+    renderSelectedList();
+    if (!fromInsert) {
+      closeDietListModal();
+    }
+  }
+
+  async function fetchFoodList(query) {
+    const url = '/diet/list?q=' + encodeURIComponent(query || '');
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('검색 실패');
+      const data = await res.json();
+      renderFoodList(Array.isArray(data) ? data : [], '검색 결과가 없습니다');
+    } catch (err) {
+      console.error('음식 검색 실패', err);
+      renderFoodList([], '검색 결과가 없습니다');
+    }
+  }
+
+  function searchFoodList() {
+    const keyWord = document.getElementById('diet-search-input')?.value?.trim();
+    if (!keyWord) {
+      renderFoodList([], '검색어를 입력해주세요');
+      renderSelectedList();
+      return;
+    }
+    fetchFoodList(keyWord);
+  }
+
   async function submitSelectedFoods() {
     closeDietListModal();
-    const payload = { items: selectedFoods };
+    if (!dietListState.selectedFoods.length) return;
     try {
       await fetch('/diet/selected', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ items: dietListState.selectedFoods }),
       });
     } catch (err) {
-      console.error('선택된 메뉴 전송 실패', err);
+      console.error('선택 전송 실패', err);
     }
   }
 
-  // 초기 상태: 안내 메시지
-  renderFoodList([], "음식을 검색해주세요");
+  function receiveDietFromInsert(food) {
+    addSelectedFood(food, { fromInsert: true });
+    openDietListModal();
+  }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const searchForm = document.getElementById("diet-search-form");
-    const searchInput = document.getElementById("diet-search-input");
-    searchForm?.addEventListener("submit", (e) => {
-      e.preventDefault();
+  document.addEventListener('DOMContentLoaded', () => {
+    dietListState.listElement = document.getElementById('diet-list-container');
+    renderFoodList([], '검색어를 입력해주세요');
+    renderSelectedList();
+
+    document.getElementById('diet-search-form')?.addEventListener('submit', (event) => {
+      event.preventDefault();
       searchFoodList();
     });
-    searchInput?.addEventListener("keydown", handleEnterKey);
 
-    const submitBtn = document.getElementById('diet-list-submit');
-    submitBtn?.addEventListener('click', submitSelectedFoods);
+    document.getElementById('diet-search-input')?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        searchFoodList();
+      }
+    });
+
+    document.getElementById('diet-list-submit')?.addEventListener('click', submitSelectedFoods);
   });
+
+  window.openDietListModal = openDietListModal;
+  window.closeDietListModal = closeDietListModal;
+  window.openCustomModalFromList = openCustomModalFromList;
+  window.receiveDietFromInsert = receiveDietFromInsert;
 </script>
-
-
-
-

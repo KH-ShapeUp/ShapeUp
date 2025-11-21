@@ -11,7 +11,7 @@
     <form class="custom-form" onsubmit="return false;">
       <div class="form-row">
         <label for="customName">음식 이름</label>
-        <input type="text" id="customName" placeholder="예: 샐러드" />
+        <input type="text" id="customName" placeholder="예: 닭가슴살" />
       </div>
       <div class="macro-grid">
         <div class="form-row">
@@ -19,7 +19,7 @@
             <img src="https://img.icons8.com/ios-filled/50/000000/rice-bowl--v1.png" alt="탄수화물 아이콘" />
             <label for="customCarb">탄수화물(g)</label>
           </div>
-          <input type="number" id="customCarb" step="any" inputmode="decimal" min="0" value="" placeholder="0" />
+        <input type="number" id="customCarb" step="any" inputmode="decimal" min="0" value="" placeholder="0" />
         </div>
         <div class="form-row">
           <div class="label-with-icon">
@@ -106,8 +106,13 @@
     if (addBtn) {
       addBtn.addEventListener('click', () => {
         const name = (document.getElementById('customName')?.value || '').trim() || '직접 입력';
+        const carb = parseFloat(document.getElementById('customCarb').value) || 0;
+        const protein = parseFloat(document.getElementById('customProtein').value) || 0;
+        const fat = parseFloat(document.getElementById('customFat').value) || 0;
+        const kcal = Number((carb * 4 + protein * 4 + fat * 9).toFixed(1));
+        const foodPayload = { name, carb, protein, fat, kcal, servingSize: 100 };
         if (typeof addSelectedFood === 'function') {
-          addSelectedFood(name);
+          addSelectedFood(foodPayload, { fromInsert: true });
         }
         closeCustomModal();
         if (typeof openDietListModal === 'function') {

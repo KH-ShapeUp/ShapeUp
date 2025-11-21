@@ -5,8 +5,8 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 @Data
-public class Activity {
-	private int activityNo;
+public class ActivityVo {
+	private int activityId;
 	private String activityName;
 	private String activityType;
 	private double calPerMin;

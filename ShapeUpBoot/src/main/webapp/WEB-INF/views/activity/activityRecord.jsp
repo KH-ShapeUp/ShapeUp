@@ -7,6 +7,7 @@
   <title>오늘의 운동</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityRecord.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityList.css">
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 </head>
 <body class="activity-record">
@@ -22,7 +23,7 @@
               <button class="calendar-btn" type="button">📅</button>
               <span class="today-text">2025.11.11</span>
             </div>
-            <button class="add-btn-lg">활동 추가하기</button>
+            <button class="add-btn-lg" onclick="openActivityModal()">활동 추가하기</button>
           </div>
           
           <div class="summary-grid">

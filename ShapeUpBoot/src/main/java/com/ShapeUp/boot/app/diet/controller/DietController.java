@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
-import com.ShapeUp.boot.domain.diet.model.vo.Diet;
+import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
 
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public class DietController {
 //        if (loginUser == null) {
 //            return java.util.Map.of("success", false, "message", "LOGIN_REQUIRED");
 //        }
-		Diet diet = new Diet();
+		DietVo diet = new DietVo();
 		diet.setUserNo(userNo);
 		return java.util.Map.of(
 				
