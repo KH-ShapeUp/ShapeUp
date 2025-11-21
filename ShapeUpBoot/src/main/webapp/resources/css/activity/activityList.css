@@ -1,8 +1,9 @@
-ï»¿@charset "UTF-8";
+@charset "UTF-8";
 
-/* í™œë™ ë¦¬ìŠ¤íŠ¸ ëª¨ë‹¬ ë°±ë“œë¡­ */
+/* È°µ¿ ¸®½ºÆ® ¸ğ´Ş ¹éµå·Ó */
 body.activity-record .modal-backdrop {
   position: fixed;
+  top: 0; left: 0;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   display: flex;
@@ -11,7 +12,7 @@ body.activity-record .modal-backdrop {
   z-index: 1500;
 }
 
-/* ëª¨ë‹¬ ê¸°ë³¸ ë°•ìŠ¤ */
+/* ¸ğ´Ş ±âº» ¹Ú½º */
 body.activity-record .modal-container {
   width: 92%;
   max-width: 520px;
@@ -32,7 +33,7 @@ body.activity-record .activity-list-modal {
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* í—¤ë”/í‘¸í„° */
+/* Çì´õ/ÇªÅÍ */
 body.activity-record .modal-header,
 body.activity-record .modal-footer {
   padding: 16px 20px;
@@ -57,7 +58,7 @@ body.activity-record .header-actions {
   gap: 8px;
 }
 
-/* ëª¨ë‹¬ ë³¸ë¬¸ */
+/* ¸ğ´Ş º»¹® */
 body.activity-record .modal-body {
   padding: 18px 20px;
   max-height: 60vh;
@@ -75,7 +76,7 @@ body.activity-record .close-btn {
   color: #4b5563;
 }
 
-/* ë²„íŠ¼ */
+/* ¹öÆ° */
 body.activity-record .primary-btn,
 body.activity-record .ghost-btn,
 body.activity-record .activity-list .add-btn {
@@ -103,7 +104,7 @@ body.activity-record .ghost-btn:hover {
   background: #e8f2ff;
 }
 
-/* ê²€ìƒ‰ ì˜ì—­ */
+/* °Ë»ö ¿µ¿ª */
 body.activity-record .activity-search {
   display: flex;
   gap: 10px;
@@ -124,7 +125,7 @@ body.activity-record .activity-search input {
   background: #f9fafb;
 }
 
-/* í™œë™ ë¦¬ìŠ¤íŠ¸ */
+/* È°µ¿ ¸®½ºÆ® */
 body.activity-record .activity-list {
   list-style: none;
   margin: 0;
@@ -148,11 +149,11 @@ body.activity-record .activity-item:hover {
   border-color: #0a84ff;
   box-shadow: 0 8px 18px rgba(59, 130, 246, 0.12);
 }
-body.activity-record .activity-item .food-name {
+body.activity-record .activity-item .activit-name {
   font-weight: 700;
   color: #111827;
 }
-body.activity-record .activity-item .food-kcal {
+body.activity-record .activity-item .activit-kcal {
   font-size: 13px;
   color: #6b7280;
 }
@@ -180,7 +181,7 @@ body.activity-record .activity-list .add-btn:hover {
   color: #0a84ff;
 }
 
-/* ì„ íƒëœ í™œë™ */
+/* ¼±ÅÃµÈ È°µ¿ */
 body.activity-record .selected-wrap {
   display: flex;
   flex: 1;
@@ -224,7 +225,7 @@ body.activity-record .footer-actions {
   gap: 10px;
 }
 
-/* ëª¨ë°”ì¼ ëŒ€ì‘ */
+/* ¸ğ¹ÙÀÏ ´ëÀÀ */
 @media (max-width: 640px) {
   body.activity-record .modal-backdrop {
     align-items: flex-end;

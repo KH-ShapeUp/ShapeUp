@@ -2,8 +2,8 @@
 <div class="modal-backdrop" id="modal-backdrop" style="display:none;">
   <div class="food-modal diet-insert-modal" role="dialog" aria-modal="true">
     <div class="modal-title-bar">
-      <h3 class="food-name" id="foodName">선택된 음식 없음</h3>
-      <span class="modal-center-info">영양 정보</span>
+      <h3 class="food-name" id="foodName">선택된 음식 정보</h3>
+      <span class="modal-center-info">기본 1회 기준</span>
     </div>
     <p class="food-kcal" id="foodKcal">0 kcal</p>
 
@@ -48,7 +48,7 @@
     protein: 0,
     fat: 0,
     kcal: 0,
-    name: '선택된 음식 없음',
+    name: '선택된 음식 정보',
   };
   const step = 0.5;
   let currentQuantity = 1.0;
@@ -57,7 +57,7 @@
     return Number(val.toFixed(digits));
   }
 
-  function updateModalValues() {
+  function currentFoodTotals() {
     const weight = modalState.servingSize * currentQuantity;
     const carbs = modalState.carb * currentQuantity;
     const protein = modalState.protein * currentQuantity;
@@ -65,15 +65,19 @@
     const kcal = modalState.kcal > 0
       ? modalState.kcal * currentQuantity
       : carbs * 4 + protein * 4 + fat * 9;
+    return { weight, carbs, protein, fat, kcal };
+  }
 
-    document.getElementById('foodName').textContent = modalState.name || '선택된 음식 없음';
-    document.getElementById('foodKcal').textContent = `\${formatNumber(kcal)} kcal`;
+  function updateModalValues() {
+    const totals = currentFoodTotals();
+    document.getElementById('foodName').textContent = modalState.name || '선택된 음식 정보';
+    document.getElementById('foodKcal').textContent = formatNumber(totals.kcal) + ' kcal';
     document.getElementById('currentQty').textContent = formatNumber(currentQuantity);
-    document.getElementById('portionDisplay').textContent = `\${formatNumber(currentQuantity)}회`;
-    document.getElementById('amountDisplay').textContent = `\${formatNumber(weight)} g`;
-    document.getElementById('carbVal').textContent = `\${formatNumber(carbs)} g`;
-    document.getElementById('proteinVal').textContent = `\${formatNumber(protein)} g`;
-    document.getElementById('fatVal').textContent = `\${formatNumber(fat)} g`;
+    document.getElementById('portionDisplay').textContent = formatNumber(currentQuantity) + '회';
+    document.getElementById('amountDisplay').textContent = formatNumber(totals.weight) + ' g';
+    document.getElementById('carbVal').textContent = formatNumber(totals.carbs) + ' g';
+    document.getElementById('proteinVal').textContent = formatNumber(totals.protein) + ' g';
+    document.getElementById('fatVal').textContent = formatNumber(totals.fat) + ' g';
   }
 
   function openModal() {
@@ -94,13 +98,29 @@
   function setDietModalData(food) {
     if (!food) return;
     modalState.name = food.name || '선택된 음식';
-    modalState.servingSize = Number(food.servingSize || food.weight || 100);
+    modalState.servingSize = Number(food.servingSize || food.weight || food.serving || 100) || 100;
     modalState.carb = Number(food.carb) || 0;
     modalState.protein = Number(food.protein) || 0;
     modalState.fat = Number(food.fat) || 0;
     modalState.kcal = Number(food.kcal) || 0;
     currentQuantity = 1.0;
     openModal();
+  }
+
+  function addCurrentFoodToList() {
+    const totals = currentFoodTotals();
+    const foodPayload = {
+      name: modalState.name || '선택된 음식',
+      kcal: formatNumber(totals.kcal),
+      carb: formatNumber(totals.carbs),
+      protein: formatNumber(totals.protein),
+      fat: formatNumber(totals.fat),
+      servingSize: formatNumber(totals.weight),
+    };
+    if (typeof receiveDietFromInsert === 'function') {
+      receiveDietFromInsert(foodPayload);
+    }
+    closeModal();
   }
 
   document.addEventListener('keydown', (e) => {
@@ -129,18 +149,10 @@
       updateModalValues();
     });
 
-    addBtn?.addEventListener('click', () => {
-      closeModal();
-    });
+    addBtn?.addEventListener('click', addCurrentFoodToList);
   });
 
   window.openModal = openModal;
   window.closeModal = closeModal;
   window.setDietModalData = setDietModalData;
 </script>
-
-
-
-
-
-

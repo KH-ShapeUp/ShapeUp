@@ -6,11 +6,11 @@
         <h3>음식 검색</h3>
         <div class="header-actions">
           <button type="button" class="ghost-btn" onclick="openCustomModalFromList()">직접 입력</button>
-          <button type="button" class="close-btn" onclick="closeDietListModal()">×</button>
+          <button type="button" class="close-btn" onclick="closeDietListModal()">✕</button>
         </div>
       </div>
       <form class="diet-search" id="diet-search-form">
-        <input type="text" id="diet-search-input" placeholder="음식명을 입력하세요" />
+        <input type="text" id="diet-search-input" placeholder="검색어를 입력하세요" />
         <button type="submit" class="primary-btn">검색</button>
       </form>
     </div>
@@ -24,7 +24,7 @@
       </div>
       <div class="footer-actions">
         <button type="button" class="ghost-btn" onclick="closeDietListModal()">닫기</button>
-        <button type="button" class="primary-btn" id="diet-list-submit">선택 저장</button>
+        <button type="button" class="primary-btn" id="diet-list-submit">선택 완료</button>
       </div>
     </div>
   </div>
@@ -45,7 +45,7 @@
       dietListState.listElement = document.getElementById('diet-list-container');
     }
     if (dietListState.listElement && !dietListState.listElement.childElementCount) {
-      renderFoodList([], '검색어를 입력해 주세요');
+      renderFoodList([], '검색어를 입력해주세요');
       renderSelectedList();
     }
   }
@@ -108,7 +108,7 @@
       addBtn.textContent = '+';
       addBtn.addEventListener('click', (event) => {
         event.preventDefault();
-        addSelectedFood({ ...food });
+        startInsertFood({ ...food });
       });
 
       li.appendChild(nameSpan);
@@ -131,33 +131,55 @@
     }
 
     dietListState.selectedFoods.forEach((food, index) => {
+      const displayName = (food && food.name) ? String(food.name) : '선택 음식';
+
       const chip = document.createElement('div');
       chip.className = 'selected-chip';
-      chip.textContent = `${food.name} (${food.kcal} kcal)`;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'chip-name';
+      nameSpan.textContent = displayName;
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'chip-remove';
-      removeBtn.textContent = '×';
+      removeBtn.textContent = '✕';
       removeBtn.addEventListener('click', () => {
         dietListState.selectedFoods.splice(index, 1);
         renderSelectedList();
       });
 
+      chip.appendChild(nameSpan);
       chip.appendChild(removeBtn);
       listEl.appendChild(chip);
     });
   }
 
-  function addSelectedFood(food) {
-    if (!food || !food.name) return;
-    dietListState.selectedFoods.push(food);
-    renderSelectedList();
+  function startInsertFood(food) {
+    if (!food) return;
     closeDietListModal();
     if (typeof setDietModalData === 'function') {
       setDietModalData(food);
     } else if (typeof openModal === 'function') {
       openModal();
+    }
+  }
+
+  function addSelectedFood(food, options = {}) {
+    if (!food || (!food.name && !food.foodName)) return;
+    const fromInsert = options.fromInsert === true;
+    const normalizedFood = {
+      name: food.name || food.foodName,
+      kcal: Number(food.kcal) || 0,
+      carb: Number(food.carb) || 0,
+      protein: Number(food.protein) || 0,
+      fat: Number(food.fat) || 0,
+      servingSize: Number(food.servingSize || food.weight || food.serving || 100) || 100,
+    };
+    dietListState.selectedFoods.push(normalizedFood);
+    renderSelectedList();
+    if (!fromInsert) {
+      closeDietListModal();
     }
   }
 
@@ -169,7 +191,7 @@
       const data = await res.json();
       renderFoodList(Array.isArray(data) ? data : [], '검색 결과가 없습니다');
     } catch (err) {
-      console.error('음식 검색 오류', err);
+      console.error('음식 검색 실패', err);
       renderFoodList([], '검색 결과가 없습니다');
     }
   }
@@ -177,7 +199,7 @@
   function searchFoodList() {
     const keyWord = document.getElementById('diet-search-input')?.value?.trim();
     if (!keyWord) {
-      renderFoodList([], '검색어를 입력해 주세요');
+      renderFoodList([], '검색어를 입력해주세요');
       renderSelectedList();
       return;
     }
@@ -194,13 +216,18 @@
         body: JSON.stringify({ items: dietListState.selectedFoods }),
       });
     } catch (err) {
-      console.error('선택 저장 실패', err);
+      console.error('선택 전송 실패', err);
     }
+  }
+
+  function receiveDietFromInsert(food) {
+    addSelectedFood(food, { fromInsert: true });
+    openDietListModal();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     dietListState.listElement = document.getElementById('diet-list-container');
-    renderFoodList([], '검색어를 입력해 주세요');
+    renderFoodList([], '검색어를 입력해주세요');
     renderSelectedList();
 
     document.getElementById('diet-search-form')?.addEventListener('submit', (event) => {
@@ -221,4 +248,5 @@
   window.openDietListModal = openDietListModal;
   window.closeDietListModal = closeDietListModal;
   window.openCustomModalFromList = openCustomModalFromList;
+  window.receiveDietFromInsert = receiveDietFromInsert;
 </script>

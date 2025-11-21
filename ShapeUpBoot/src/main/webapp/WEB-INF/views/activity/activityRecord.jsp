@@ -7,6 +7,7 @@
   <title>오늘의 운동</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityRecord.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityList.css">
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 </head>
 <body class="activity-record">

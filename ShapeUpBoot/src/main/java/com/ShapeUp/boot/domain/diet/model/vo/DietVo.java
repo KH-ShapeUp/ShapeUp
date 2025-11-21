@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import lombok.Data;
 @Data
-public class Diet {
+public class DietVo {
 	
 	private int dietNo;
 	private int userNo;
