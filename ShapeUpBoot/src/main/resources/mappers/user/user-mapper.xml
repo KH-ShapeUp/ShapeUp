@@ -22,7 +22,27 @@
         <result property="status" column="STATUS"/>
     </resultMap>
 
-
+	<select id="countEmail" parameterType="string" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM USERS 
+	    WHERE EMAIL = #{email}
+	</select>
+	
+	<select id="findUserByNameEmailPhone" parameterType="map" resultType="UserVO">
+	    SELECT 
+	        USER_NO as userNo,
+	        USER_ID as userId,
+	        USER_NAME as userName,
+	        USER_EMAIL as userEmail,
+	        USER_PHONE as userPhone,
+	        CREATED_AT as createdAt
+	    FROM USER_TBL
+	    WHERE USER_NAME = #{name}
+	      AND USER_EMAIL = #{email}
+	      AND USER_PHONE = #{phone}
+	      AND STATUS = '정상'
+	</select>
+	
     <!-- 회원가입 (두 번째 XML 버전 사용) -->
     <insert id="insertUser" parameterType="UserVO">
         INSERT INTO USER_TBL

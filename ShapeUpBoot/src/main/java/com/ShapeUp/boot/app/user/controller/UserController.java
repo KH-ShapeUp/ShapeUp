@@ -139,7 +139,61 @@ public class UserController {
     public String signupInsertInfo() {
         return "user/signupInsertInfo";
     }
+    
+ // 아이디 찾기 페이지
+    @GetMapping("/user/searchId")
+    public String searchIdForm() {
+        return "user/searchId";
+    }
 
+    // 아이디 찾기 처리 (AJAX)
+    @PostMapping("/user/searchId")
+    @ResponseBody
+    public Map<String, Object> searchId(
+            @RequestParam String name,
+            @RequestParam String emailId,
+            @RequestParam String emailDomain,
+            @RequestParam String phone) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String email = emailId + "@" + emailDomain;
+            
+            // 이름, 이메일, 전화번호로 사용자 조회
+            UserVO user = userService.findUserByNameEmailPhone(name, email, phone);
+            
+            if (user != null) {
+                // 아이디 마스킹 처리 (앞 3자리만 보여주고 나머지 *)
+                String maskedId = maskUserId(user.getUserId());
+                
+                response.put("success", true);
+                response.put("userId", maskedId);
+                response.put("enrollDate", user.getCreatedAt()); // 가입일
+            } else {
+                response.put("success", false);
+                response.put("message", "일치하는 회원 정보가 없습니다.");
+            }
+        } catch (Exception e) {
+            log.error("아이디 찾기 오류", e);
+            response.put("success", false);
+            response.put("message", "오류가 발생했습니다.");
+        }
+        
+        return response;
+    }
+
+    // 아이디 마스킹 처리
+    private String maskUserId(String userId) {
+        if (userId == null || userId.length() <= 3) {
+            return userId;
+        }
+        
+        String visible = userId.substring(0, 3);
+        String masked = "*".repeat(userId.length() - 3);
+        return visible + masked;
+    }
+    
     // 정보 입력 처리
     @PostMapping("/user/signupInsertInfo")
     public String signupInsertInfoProcess(

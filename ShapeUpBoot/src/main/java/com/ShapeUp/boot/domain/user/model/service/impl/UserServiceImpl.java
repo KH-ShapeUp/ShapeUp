@@ -1,6 +1,10 @@
 package com.ShapeUp.boot.domain.user.model.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.ShapeUp.boot.domain.user.model.mapper.UserMapper;
@@ -89,5 +93,19 @@ public class UserServiceImpl implements UserService {
             return user; // 로그인 성공
         }
         return null; // 로그인 실패
+    }
+    
+    @Override
+    public boolean isEmailExists(String email) {
+        return userMapper.countEmail(email) > 0;
+    }
+    
+    @Override
+    public UserVO findUserByNameEmailPhone(String name, String email, String phone) {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", name);
+        params.put("email", email);
+        params.put("phone", phone);
+        return userMapper.findUserByNameEmailPhone(params);
     }
 }
