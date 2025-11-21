@@ -7,9 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
-import com.ShapeUp.boot.domain.activity.model.vo.Activity;
-import com.ShapeUp.boot.domain.matching.model.vo.ActivityVO;
-import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
+import com.ShapeUp.boot.domain.activity.model.vo.ActivityVo;
 
 @Mapper
 public interface matchingMapper{
@@ -17,10 +15,10 @@ public interface matchingMapper{
 	int matchingInsert(matchingInsertDTO mDTO);
 
 	/* 매칭 카테고리 */
-	List<ActivityVO> matchingCategory();
+	List<ActivityVo> matchingCategory();
 
 	/* 매칭 삽입 */
-	List<ActivityVO> searchCategory(String keyword);
+	List<ActivityVo> searchCategory(String keyword);
 	
 	/* 매칭 리스트 */
 	List<matchingListDTO> matchingList(RowBounds rowBounds);

@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
-import com.ShapeUp.boot.domain.activity.model.vo.Activity;
+import com.ShapeUp.boot.domain.activity.model.vo.ActivityVo;
 import com.ShapeUp.boot.domain.matching.model.service.matchingService;
-import com.ShapeUp.boot.domain.matching.model.vo.ActivityVO;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -39,7 +38,7 @@ public class matchingController {
 	// 매칭 글 작성 페이지 이동
 	@GetMapping("/matching/insert")
 	public String matchingInsertPage(Model model) {
-		List<ActivityVO> aList = mService.matchingCategory();
+		List<ActivityVo> aList = mService.matchingCategory();
 		System.out.println("가져온 카테고리" + aList);
 		model.addAttribute("aList", aList);
 		return "matching/matchingInsert";
@@ -59,8 +58,8 @@ public class matchingController {
 	// 카테고리 검색
 	@GetMapping("/matching/search")
 	@ResponseBody
-	public List<ActivityVO> searchCategory(@RequestParam String keyword) {
-		List<ActivityVO> aList = mService.searchCategory(keyword);
+	public List<ActivityVo> searchCategory(@RequestParam String keyword) {
+		List<ActivityVo> aList = mService.searchCategory(keyword);
 	
 		System.out.println("검색 카테고리 : "+aList + "\n" + "넘어온 키워드 : " + keyword);
 		return aList;

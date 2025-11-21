@@ -224,6 +224,18 @@
                 matchingList.innerHTML = "";
 
                 result.mList.forEach(match => {
+                    // ★ [NEW] 상태별 CSS 클래스 정하기 로직
+                    let badgeClass = '';
+                    let statusText = match.matchingStatus;
+
+                    if (match.matchingStatus === '모집중') {
+                        badgeClass = 'ing';      // 초록색 (모집중)
+                    } else if (match.matchingStatus === '마감임박') {
+                        badgeClass = 'imminent';     // 빨간색 (마감임박)
+                    } else {
+                        badgeClass = 'finish';      // 회색 (마감)
+                    }
+
                     matchingList.innerHTML += `
                         <div class="matching-card" onclick="location.href='/matching/detail?matchNo=\${match.matchingNo}">
                             <div class="matching-card-header">
@@ -235,7 +247,7 @@
                                         <span class="user-name">\${match.userNickName}</span>
                                         <span class="user-category">\${match.activityName}</span>
                                     </div>
-                                    <div class="card-state-ing">모집중</div>
+                                    <div class="card-state-\${badgeClass}">\${statusText}</div>
                                 </div>
                             </div>
                             <div class="mathcing-card-main">
@@ -258,7 +270,7 @@
                                     </div>
                                     <div class="matching-money">
                                         <i class="fa-solid fa-wallet"></i>
-                                        <span>없음</span>
+                                        <span>\${match.matchingPrice}</span>
                                     </div>
                                     <div class="matching-user">
                                         <i class="fa-solid fa-users"></i>
