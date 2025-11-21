@@ -1,19 +1,12 @@
-package com.ShapeUp.boot.domain.matching.model.vo;
+package com.ShapeUp.boot.app.matching.dto;
 
 import java.sql.Timestamp;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import lombok.ToString;
-
-@Getter
-@Setter
+@Data
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
-public class matchingVO {
+public class matchingListDTO {
 	private int matchingNo;				// 매칭 구분 번호
 	private String matchingTitle;		// 매칭 제목
 	private String matchingContent;		// 매칭 내용
@@ -28,5 +21,7 @@ public class matchingVO {
 	private String matchingType; 		// 매칭 타입
 	private int userNo;					// 작성자
 	private int matchingUserCount;		// 모집인원
-	private int activityId;				// 활동 카테고리 id
+	private String activityName;		// 활동 카테고리 이름
+	private int activityId;				// 활동 카테고리 ID
+	private String userNickName;		// 유저 닉네임
 }

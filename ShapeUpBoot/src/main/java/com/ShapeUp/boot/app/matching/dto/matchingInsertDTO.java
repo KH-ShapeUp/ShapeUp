@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class matchingInsertDTO {
 	private int matchingNo;				// 매칭 구분 번호
-	private String boardTitle;			// 매칭 제목
-	private String boardContent;		// 매칭 내용
+	private String matchingTitle;			// 매칭 제목
+	private String matchingContent;		// 매칭 내용
 	private Timestamp createdAt;		// 생성일
 	private Timestamp updateAt;			// 수정일
 	private String deleteYn;			// 삭제 기본값 N
@@ -18,6 +18,7 @@ public class matchingInsertDTO {
 	private String matchingTime;		// 매칭 시간
 	private String partnerType;			// 파트너 타입
 	private String matchingType; 		// 매칭 타입
-	private int userNo;					// 작성자
+	private int userNo;					// 작성자 번호
 	private int matchingUserCount;		// 모집인원
+	private int activityId;				// 활동 카테고리
 }

@@ -261,7 +261,8 @@
 }
 
 /* 드롭다운 안 버튼 */
-.filter-btn {
+.filter-btn,
+.location-filter-btn {
     background: #fff;
     border: none;
     text-align: left;
@@ -272,12 +273,14 @@
 }
 
 /* hover */
-.filter-btn:hover {
+.filter-btn:hover,
+.location-filter-btn:hover {
     background: #f1f1f1;
 }
 
 /* 선택(active) 표시 */
-.filter-btn.active {
+.filter-btn.active,
+.location-filter-btn.active {
     background: #e9f4ff;
     font-weight: 600;
 }

@@ -16,7 +16,7 @@
             <li class="has-submenu">
                 <a>매칭 찾기</a>
                 <ul class="sub-menu">
-                    <li><a href="/matching">일반 매칭</a></li>
+                    <li><a href="/matching/board">일반 매칭</a></li>
                     <li><a href="#">트레이너 매칭</a></li>
                 </ul>
             </li>
@@ -40,7 +40,7 @@
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
             <span class="user-nickname"><%= loginUserNickname %>님</span>
-            <a href="/user/logout" id="singnBtn"" class="btn logout-btn">로그아웃</a>
+            <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
             <a href="/user/login" id="loginBtn" class="btn login-btn">로그인</a>
@@ -92,7 +92,7 @@
         <% if(isLogin) { %>
             <hr style="border: 0.3px solid #f1f1f1;">
             <div class="list-item" id="logOut-item">
-                <button type="button" onclick="location.href='/user/logout'">
+                <button type="button" onclick="location.href='/logout'">
                     <span class="material-symbols-outlined">logout</span>
                     <span>로그아웃</span>
                 </button>
