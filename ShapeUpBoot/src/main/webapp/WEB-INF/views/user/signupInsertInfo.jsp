@@ -41,7 +41,7 @@
       <h2>정보 입력</h2>
       <p class="sub-text">필수 정보를 입력해주세요</p>
 
-      <!-- 에러 메시지 표시 -->
+      <%-- 에러 메시지 표시 --%>
       <% 
         String error = request.getParameter("error");
         if (error != null) {
@@ -50,6 +50,8 @@
             case "password": errorMsg = "비밀번호가 일치하지 않습니다."; break;
             case "duplicateId": errorMsg = "이미 사용 중인 아이디입니다."; break;
             case "duplicateNickname": errorMsg = "이미 사용 중인 닉네임입니다."; break;
+            case "emailNotVerified": errorMsg = "이메일 인증을 완료해주세요."; break;
+            case "session": errorMsg = "세션이 만료되었습니다. 다시 시도해주세요."; break;
             case "exception": errorMsg = "오류가 발생했습니다. 다시 시도해주세요."; break;
           }
           if (!errorMsg.isEmpty()) {
@@ -64,13 +66,13 @@
 
       <form id="signupForm" action="<%=request.getContextPath()%>/user/signupInsertInfo" method="post">
 
-        <!-- 이름 -->
+        <%-- 이름 --%>
         <div class="form-group">
           <label>이름</label>
           <input type="text" name="name" required>
         </div>
 
-        <!-- 닉네임 -->
+        <%-- 닉네임 --%>
         <div class="form-group">
           <label>닉네임</label>
           <div class="field-inline">
@@ -80,7 +82,7 @@
           <span id="nicknameMsg" class="validation-msg"></span>
         </div>
 
-        <!-- 아이디 -->
+        <%-- 아이디 --%>
         <div class="form-group">
           <label>아이디</label>
           <div class="field-inline">
@@ -90,11 +92,13 @@
           <span id="useridMsg" class="validation-msg"></span>
         </div>
 
-        <!-- 비밀번호 -->
+        <%-- 비밀번호 --%>
         <div class="form-group">
           <label>비밀번호</label>
           <input type="password" name="password" id="passwordInput" required>
-          <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합</p>
+          <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합<br>
+          사용 가능한 특수문자: <strong>@ $ ! % * # ? &</strong></p>
+          <span id="passwordSpecialMsg" class="validation-msg"></span>
         </div>
         <div class="form-group">
           <label>비밀번호 확인</label>
@@ -102,11 +106,11 @@
           <span id="passwordMsg" class="validation-msg"></span>
         </div>
 
-        <!-- 이메일 -->
+        <%-- 이메일 --%>
         <div class="form-group">
           <label>이메일</label>
           <div class="field-inline email-box">
-            <input type="text" name="emailId" placeholder="이메일 아이디" required>
+            <input type="text" name="emailId" id="emailIdInput" placeholder="이메일 아이디" required>
             <span>@</span>
             <input type="text" name="emailDomain" id="emailDomainInput" placeholder="직접 입력" required>
 
@@ -118,11 +122,17 @@
               <option value="kakao.com">kakao.com</option>
             </select>
 
-            <button type="button" class="check-btn">인증번호 발송</button>
+            <button type="button" id="sendEmailBtn" class="check-btn">인증번호 발송</button>
+          </div>
+
+          <div class="email-verify-area" style="margin-top:8px;">
+            <input type="text" id="emailCodeInput" placeholder="인증번호 입력" style="width:160px;">
+            <button type="button" id="verifyEmailBtn" class="check-btn">인증 확인</button>
+            <span id="emailVerifyMsg" class="validation-msg"></span>
           </div>
         </div>
 
-        <!-- 생년월일 + 성별 -->
+        <%-- 생년월일 + 성별 --%>
         <div class="form-group">
           <label>생년월일 및 성별</label>
           <div class="birth-box">
@@ -134,7 +144,7 @@
           <p class="hint-text">생년월일 6자리와 주민등록번호 뒷자리 첫 번째 숫자를 입력하세요 (1,2,3,4)</p>
         </div>
 
-        <!-- 전화번호 -->
+        <%-- 전화번호 --%>
         <div class="form-group">
           <label>전화번호</label>
           <div class="field-inline">
@@ -156,15 +166,45 @@
 <script>
 const contextPath = '<%=request.getContextPath()%>';
 
-// 중복 체크 완료 여부
+// 상태 변수들
 let isUserIdChecked = false;
 let isNicknameChecked = false;
 let isUserIdAvailable = false;
 let isNicknameAvailable = false;
+let isEmailVerified = false;        // 이메일 인증 상태 추가
+let verifiedEmail = '';             // 인증된 이메일 주소 저장
+
+function getFullEmail() {
+  const id = document.getElementById('emailIdInput').value.trim();
+  const domain = document.getElementById('emailDomainInput').value.trim();
+  return id && domain ? id + '@' + domain : '';
+}
+
+// 이메일 인증 상태 초기화 함수
+function resetEmailVerification() {
+  isEmailVerified = false;
+  verifiedEmail = '';
+  document.getElementById('emailVerifyMsg').textContent = '';
+  document.getElementById('emailCodeInput').value = '';
+}
+
+// 이메일 아이디 입력 변경 시 인증 상태 초기화
+document.getElementById('emailIdInput').addEventListener('input', function() {
+  resetEmailVerification();
+});
+
+// 이메일 도메인 직접 입력 변경 시 인증 상태 초기화
+document.getElementById('emailDomainInput').addEventListener('input', function() {
+  resetEmailVerification();
+});
 
 // 이메일 도메인 선택
 document.getElementById("emailDomainSelect").addEventListener("change", function() {
   const domainInput = document.getElementById("emailDomainInput");
+  
+  // 인증 상태 초기화
+  resetEmailVerification();
+  
   if (this.value === "") {
     domainInput.value = "";
     domainInput.readOnly = false;
@@ -174,44 +214,137 @@ document.getElementById("emailDomainSelect").addEventListener("change", function
   }
 });
 
-// 생년월일 숫자만 입력
-document.getElementById('birthDateInput').addEventListener('input', function() {
-  this.value = this.value.replace(/[^0-9]/g, '');
+// 이메일 인증번호 발송
+document.getElementById('sendEmailBtn').addEventListener('click', function() {
+  const email = getFullEmail();
+  const msgSpan = document.getElementById('emailVerifyMsg');
+  msgSpan.textContent = '';
+
+  if (!email) { 
+    alert('이메일을 정확히 입력해주세요.'); 
+    return; 
+  }
+
+  // 이메일 형식 검증
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    alert('올바른 이메일 형식이 아닙니다.');
+    return;
+  }
+
+  // 인증 상태 초기화 (새로 발송하므로)
+  isEmailVerified = false;
+  verifiedEmail = '';
+
+  fetch(contextPath + '/user/sendEmailCode', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'email=' + encodeURIComponent(email)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert('인증번호를 발송했습니다. 이메일을 확인해주세요.');
+      msgSpan.textContent = '인증번호가 발송되었습니다. (5분 내 입력)';
+      msgSpan.style.color = '#666';
+    } else {
+      alert(data.message || '인증번호 발송에 실패했습니다.');
+    }
+  })
+  .catch(err => { 
+    console.error(err); 
+    alert('메일 전송 중 오류가 발생했습니다.'); 
+  });
 });
 
-// 주민번호 뒷자리 숫자 제한 (1,2,3,4만 허용)
-document.getElementById('genderDigitInput').addEventListener('input', function() {
-  this.value = this.value.replace(/[^1-4]/g, '');
+// 이메일 인증번호 확인
+document.getElementById('verifyEmailBtn').addEventListener('click', function() {
+  const email = getFullEmail();
+  const code = document.getElementById('emailCodeInput').value.trim();
+  const msgSpan = document.getElementById('emailVerifyMsg');
+
+  if (!email) { 
+    alert('이메일을 입력해주세요.'); 
+    return; 
+  }
+  if (!code) { 
+    alert('인증번호를 입력해주세요.'); 
+    return; 
+  }
+
+  fetch(contextPath + '/user/verifyEmailCode', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      isEmailVerified = true;
+      verifiedEmail = email;
+      msgSpan.style.color = 'green';
+      msgSpan.textContent = '✓ 이메일 인증이 완료되었습니다.';
+    } else {
+      isEmailVerified = false;
+      verifiedEmail = '';
+      msgSpan.style.color = 'red';
+      msgSpan.textContent = '✗ ' + (data.message || '인증에 실패했습니다.');
+    }
+  })
+  .catch(err => { 
+    console.error(err); 
+    alert('인증 확인 중 오류가 발생했습니다.'); 
+  });
+});
+
+// 비밀번호 특수문자 체크
+document.getElementById('passwordInput').addEventListener('input', function() {
+  const allowedSpecial = /[@$!%*#?&]/;
+  const allSpecial = /[^A-Za-z0-9]/g;
+  const specials = this.value.match(allSpecial);
+  const msgSpan = document.getElementById('passwordSpecialMsg');
+  
+  if (!specials) { 
+    msgSpan.textContent = ''; 
+    return; 
+  }
+  
+  const invalid = specials.filter(ch => !allowedSpecial.test(ch));
+  if (invalid.length > 0) {
+    msgSpan.textContent = '✗ 사용할 수 없는 특수문자가 포함되어 있습니다: ' + invalid.join(' ');
+    msgSpan.style.color = 'red';
+  } else {
+    msgSpan.textContent = '';
+  }
 });
 
 // 비밀번호 확인 실시간 체크
 document.getElementById('password2Input').addEventListener('input', function() {
   const password = document.getElementById('passwordInput').value;
-  const password2 = this.value;
   const msgSpan = document.getElementById('passwordMsg');
   
-  if (password2 === '') {
-    msgSpan.textContent = '';
-    return;
+  if (this.value === '') { 
+    msgSpan.textContent = ''; 
+    return; 
   }
   
-  if (password === password2) {
-    msgSpan.textContent = '✓ 비밀번호가 일치합니다';
-    msgSpan.style.color = 'green';
-  } else {
-    msgSpan.textContent = '✗ 비밀번호가 일치하지 않습니다';
-    msgSpan.style.color = 'red';
+  if (password === this.value) { 
+    msgSpan.textContent = '✓ 비밀번호가 일치합니다.'; 
+    msgSpan.style.color = 'green'; 
+  } else { 
+    msgSpan.textContent = '✗ 비밀번호가 일치하지 않습니다.'; 
+    msgSpan.style.color = 'red'; 
   }
 });
 
-// 아이디 입력 시 중복체크 초기화
+// 아이디 입력 시 중복확인 상태 초기화
 document.getElementById('useridInput').addEventListener('input', function() {
   isUserIdChecked = false;
   isUserIdAvailable = false;
   document.getElementById('useridMsg').textContent = '';
 });
 
-// 닉네임 입력 시 중복체크 초기화
+// 닉네임 입력 시 중복확인 상태 초기화
 document.getElementById('nicknameInput').addEventListener('input', function() {
   isNicknameChecked = false;
   isNicknameAvailable = false;
@@ -223,19 +356,18 @@ function checkUserId() {
   const userid = document.getElementById('useridInput').value.trim();
   const msgSpan = document.getElementById('useridMsg');
   
-  if (!userid) {
-    alert('아이디를 입력해주세요.');
-    return;
+  if (!userid) { 
+    alert('아이디를 입력해주세요.'); 
+    return; 
   }
   
-  // 아이디 유효성 검사 (4~20자, 영문/숫자)
   const idPattern = /^[a-zA-Z0-9]{4,20}$/;
-  if (!idPattern.test(userid)) {
-    msgSpan.textContent = '✗ 아이디는 4~20자의 영문, 숫자만 사용 가능합니다';
-    msgSpan.style.color = 'red';
-    return;
+  if (!idPattern.test(userid)) { 
+    msgSpan.textContent = '✗ 4~20자의 영문, 숫자만 사용 가능합니다.'; 
+    msgSpan.style.color = 'red'; 
+    return; 
   }
-  
+
   fetch(contextPath + '/user/checkUserId', {
     method: 'POST',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
@@ -244,19 +376,19 @@ function checkUserId() {
   .then(res => res.json())
   .then(isDuplicate => {
     isUserIdChecked = true;
-    if (isDuplicate) {
-      msgSpan.textContent = '✗ 이미 사용 중인 아이디입니다';
-      msgSpan.style.color = 'red';
-      isUserIdAvailable = false;
-    } else {
-      msgSpan.textContent = '✓ 사용 가능한 아이디입니다';
-      msgSpan.style.color = 'green';
-      isUserIdAvailable = true;
+    if (isDuplicate) { 
+      msgSpan.textContent = '✗ 이미 사용 중인 아이디입니다.'; 
+      msgSpan.style.color = 'red'; 
+      isUserIdAvailable = false; 
+    } else { 
+      msgSpan.textContent = '✓ 사용 가능한 아이디입니다.'; 
+      msgSpan.style.color = 'green'; 
+      isUserIdAvailable = true; 
     }
   })
   .catch(err => {
-    console.error(err);
-    alert('중복 확인 중 오류가 발생했습니다.');
+    console.error(err); 
+    alert('중복 확인 중 오류가 발생했습니다.'); 
   });
 }
 
@@ -265,19 +397,18 @@ function checkNickname() {
   const nickname = document.getElementById('nicknameInput').value.trim();
   const msgSpan = document.getElementById('nicknameMsg');
   
-  if (!nickname) {
-    alert('닉네임을 입력해주세요.');
-    return;
+  if (!nickname) { 
+    alert('닉네임을 입력해주세요.'); 
+    return; 
   }
   
-  // 닉네임 유효성 검사 (2~20자, 한글/영문/숫자)
   const nicknamePattern = /^[가-힣a-zA-Z0-9]{2,20}$/;
-  if (!nicknamePattern.test(nickname)) {
-    msgSpan.textContent = '✗ 닉네임은 2~20자의 한글, 영문, 숫자만 사용 가능합니다';
-    msgSpan.style.color = 'red';
-    return;
+  if (!nicknamePattern.test(nickname)) { 
+    msgSpan.textContent = '✗ 2~20자의 한글, 영문, 숫자만 사용 가능합니다.'; 
+    msgSpan.style.color = 'red'; 
+    return; 
   }
-  
+
   fetch(contextPath + '/user/checkNickname', {
     method: 'POST',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
@@ -286,90 +417,104 @@ function checkNickname() {
   .then(res => res.json())
   .then(isDuplicate => {
     isNicknameChecked = true;
-    if (isDuplicate) {
-      msgSpan.textContent = '✗ 이미 사용 중인 닉네임입니다';
-      msgSpan.style.color = 'red';
-      isNicknameAvailable = false;
-    } else {
-      msgSpan.textContent = '✓ 사용 가능한 닉네임입니다';
-      msgSpan.style.color = 'green';
-      isNicknameAvailable = true;
+    if (isDuplicate) { 
+      msgSpan.textContent = '✗ 이미 사용 중인 닉네임입니다.'; 
+      msgSpan.style.color = 'red'; 
+      isNicknameAvailable = false; 
+    } else { 
+      msgSpan.textContent = '✓ 사용 가능한 닉네임입니다.'; 
+      msgSpan.style.color = 'green'; 
+      isNicknameAvailable = true; 
     }
   })
   .catch(err => {
-    console.error(err);
-    alert('중복 확인 중 오류가 발생했습니다.');
+    console.error(err); 
+    alert('중복 확인 중 오류가 발생했습니다.'); 
   });
 }
 
-// 취소 버튼 클릭
+// 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
   if (confirm('회원가입을 취소하시겠습니까?')) {
     window.location.href = contextPath + '/';
   }
 });
 
-// Form 제출 시 유효성 검사
-document.getElementById("signupForm").addEventListener("submit", function(e) {
+// Form 제출 검증
+document.getElementById('signupForm').addEventListener('submit', function(e) {
   
-  // 아이디 중복 체크 확인
-  if (!isUserIdChecked || !isUserIdAvailable) {
-    e.preventDefault();
-    alert('아이디 중복 확인을 해주세요.');
-    return false;
+  // 1. 아이디 중복 확인 체크
+  if (!isUserIdChecked || !isUserIdAvailable) { 
+    e.preventDefault(); 
+    alert('아이디 중복 확인을 해주세요.'); 
+    return false; 
   }
   
-  // 닉네임 중복 체크 확인
-  if (!isNicknameChecked || !isNicknameAvailable) {
-    e.preventDefault();
-    alert('닉네임 중복 확인을 해주세요.');
-    return false;
+  // 2. 닉네임 중복 확인 체크
+  if (!isNicknameChecked || !isNicknameAvailable) { 
+    e.preventDefault(); 
+    alert('닉네임 중복 확인을 해주세요.'); 
+    return false; 
   }
-  
-  // 비밀번호 확인
+
+  // 3. 비밀번호 일치 체크
   const password = document.getElementById('passwordInput').value;
   const password2 = document.getElementById('password2Input').value;
-  
-  if (password !== password2) {
-    e.preventDefault();
-    alert('비밀번호가 일치하지 않습니다.');
-    return false;
+  if (password !== password2) { 
+    e.preventDefault(); 
+    alert('비밀번호가 일치하지 않습니다.'); 
+    return false; 
   }
-  
-  // 비밀번호 유효성 검사 (8자 이상, 영문/숫자/특수문자 포함)
+
+  // 4. 비밀번호 규칙 체크
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-  if (!passwordPattern.test(password)) {
-    e.preventDefault();
-    alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 포함해야 합니다.');
-    return false;
+  if (!passwordPattern.test(password)) { 
+    e.preventDefault(); 
+    alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 모두 포함해야 합니다.'); 
+    return false; 
+  }
+
+  // 5. 이메일 인증 체크
+  if (!isEmailVerified) { 
+    e.preventDefault(); 
+    alert('이메일 인증을 완료해주세요.'); 
+    return false; 
   }
   
-  // 생년월일 검증
+  // 6. 인증된 이메일과 현재 입력된 이메일이 같은지 확인
+  const currentEmail = getFullEmail();
+  if (verifiedEmail !== currentEmail) {
+    e.preventDefault();
+    alert('이메일이 변경되었습니다. 다시 인증해주세요.');
+    return false;
+  }
+
+  // 7. 생년월일 체크
   const birthDate = document.getElementById('birthDateInput').value;
-  if (birthDate.length !== 6) {
-    e.preventDefault();
-    alert('생년월일 6자리를 정확히 입력해주세요.');
-    return false;
+  if (birthDate.length !== 6 || !/^\d{6}$/.test(birthDate)) { 
+    e.preventDefault(); 
+    alert('생년월일 6자리를 정확히 입력해주세요.'); 
+    return false; 
   }
-  
-  // 성별 숫자 검증
+
+  // 8. 성별 숫자 체크
   const genderDigit = document.getElementById('genderDigitInput').value;
-  if (!/^[1-4]$/.test(genderDigit)) {
-    e.preventDefault();
-    alert('성별 숫자는 1, 2, 3, 4 중 하나여야 합니다.');
-    return false;
+  if (!/^[1-4]$/.test(genderDigit)) { 
+    e.preventDefault(); 
+    alert('주민등록번호 뒷자리 첫 번째 숫자(1~4)를 입력해주세요.'); 
+    return false; 
   }
-  
+
   return true;
 });
 </script>
 
 <style>
-.validation-msg {
-  display: block;
-  font-size: 0.85em;
-  margin-top: 5px;
-  font-weight: 500;
+.validation-msg { 
+  display: block; 
+  font-size: 0.85em; 
+  margin-top: 5px; 
+  font-weight: 500; 
 }
 </style>
 

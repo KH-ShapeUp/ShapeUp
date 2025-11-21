@@ -40,7 +40,8 @@
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
             <span class="user-nickname"><%= loginUserNickname %>님</span>
-            <a href="/logout" id="singnBtn"" class="btn logout-btn">로그아웃</a>
+
+            <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
             <a href="/user/login" id="loginBtn" class="btn login-btn">로그인</a>
