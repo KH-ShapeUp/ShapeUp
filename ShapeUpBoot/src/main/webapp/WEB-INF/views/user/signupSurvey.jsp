@@ -108,7 +108,7 @@
             <p class="question-sub">활동 지역을 선택해주세요</p>
             <div class="dropdown-section">
               <select id="memberAddressDropdown" class="dropdown-toggle">
-                <option value="">모든 지역</option>
+                <option value="">지역 선택</option>
                 <option value="서울">서울</option>
                 <option value="경기">경기</option>
                 <option value="인천">인천</option>

@@ -1,5 +1,9 @@
 package com.ShapeUp.boot.app.user.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.ShapeUp.boot.app.user.mail.MailService;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
@@ -19,14 +25,56 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
-
+	private final MailService mailService;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     /* ================================
         0. 중복 체크 API
     ================================ */
+    
+    
+    /* ================================
+    이메일 인증 (InsertInfo 단계)
+================================ */
+    @ResponseBody
+    @PostMapping("/user/sendEmailCode")
+    public Map<String, Object> sendEmailCode(@RequestParam String email, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        String code = mailService.generateCode();
+        boolean sent = mailService.sendVerificationCode(email, code);
 
+        if (sent) {
+            mailService.storeCodeInSession(session, email, code, 5); // 5분 유효
+            response.put("success", true);
+            response.put("message", "인증번호를 발송했습니다. 이메일을 확인하세요.");
+        } else {
+            response.put("success", false);
+            response.put("message", "인증번호 발송 실패");
+        }
+
+        return response;
+    }
+    @ResponseBody
+    @PostMapping("/user/verifyEmailCode")
+    public Map<String, Object> verifyEmailCode(@RequestParam String email,
+                                               @RequestParam String code,
+                                               HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        boolean verified = mailService.verifyCode(session, email, code);
+
+        if (verified) {
+            response.put("success", true);
+            response.put("message", "이메일 인증이 완료되었습니다.");
+        } else {
+            response.put("success", false);
+            response.put("message", "인증번호가 일치하지 않거나 만료되었습니다.");
+        }
+
+        return response;
+    }
+
+    
     /**
      * 아이디 중복 체크
      * @param userid 확인할 아이디
@@ -108,26 +156,27 @@ public class UserController {
             HttpSession session
     ) {
         log.info("회원가입 정보 입력 - 아이디: {}, 닉네임: {}", userid, nickname);
-        
-        // 비밀번호 확인
+
+        // 1) 비밀번호 일치 확인
         if (!password.equals(password2)) {
-            log.warn("비밀번호 불일치");
             return "redirect:/user/signupInsertInfo?error=password";
         }
 
-        // 아이디 중복 체크
+        // 🔥 2) 이메일 인증 여부 체크 — 여기 추가됨!
+        Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
+        if (emailVerified == null || !emailVerified) {
+            return "redirect:/user/signupInsertInfo?error=emailNotVerified";
+        }
+
+        // 3) 아이디 중복 체크
         int userIdCount = userService.checkUserIdDuplicate(userid);
-        log.info("아이디 중복 체크 결과: {}", userIdCount);
         if (userIdCount > 0) {
-            log.warn("아이디 중복: {}", userid);
             return "redirect:/user/signupInsertInfo?error=duplicateId";
         }
 
-        // 닉네임 중복 체크
+        // 4) 닉네임 중복 체크
         int nicknameCount = userService.checkNicknameDuplicate(nickname);
-        log.info("닉네임 중복 체크 결과: {}", nicknameCount);
         if (nicknameCount > 0) {
-            log.warn("닉네임 중복: {}", nickname);
             return "redirect:/user/signupInsertInfo?error=duplicateNickname";
         }
 
@@ -147,17 +196,17 @@ public class UserController {
 
             int age = java.time.Year.now().getValue() - birthYear + 1;
 
-            // 입력 정보 세션 저장
+            // 🔥 이메일도 세션에 저장
+            session.setAttribute("email", email);
+
+            // 나머지 입력 정보 세션에 저장
             session.setAttribute("userId", userid);
             session.setAttribute("password", password);
             session.setAttribute("name", name);
             session.setAttribute("nickname", nickname);
-            session.setAttribute("email", email);
             session.setAttribute("phone", phone);
             session.setAttribute("userSerialNo", userSerialNo);
             session.setAttribute("age", age);
-
-            log.info("세션 저장 완료 - userId: {}, age: {}, nickname: {}", userid, age, nickname);
 
             return "redirect:/user/signupSurvey";
 

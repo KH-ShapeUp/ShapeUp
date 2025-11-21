@@ -11,16 +11,15 @@
 
   <main class="signup-container">
 
-
     <!-- 오른쪽 영역 -->
     <section class="right-panel">
       <div class="logo">
-            <img src="../../../../resources/img/main_logo.png" alt="" width="180px"></a>
-        </div>
+        <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="ShapeUp 로고" width="180px">
+      </div>
 
       <!-- 상단 탭 -->
       <div class="tab-menu">
-       <h3>회원가입</h3>
+        <h3>회원가입</h3>
       </div>
 
       <!-- 3단계 진행 바 -->
@@ -66,18 +65,19 @@
     </section>
   </main>
 
-</body>
-
 <script>
+const contextPath = '${pageContext.request.contextPath}';
+
 // 메인페이지로 이동
 function goToMain() {
-  window.location.href = '/';
+  window.location.href = contextPath + '/';
 }
 
 // 로그인 페이지로 이동
 function goToLogin() {
-  window.location.href = '/login';
+  window.location.href = contextPath + '/user/login';
 }
 </script>
 
+</body>
 </html>
