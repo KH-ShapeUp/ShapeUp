@@ -16,7 +16,7 @@
             <li class="has-submenu">
                 <a>매칭 찾기</a>
                 <ul class="sub-menu">
-                    <li><a href="/matching">일반 매칭</a></li>
+                    <li><a href="/matching/board">일반 매칭</a></li>
                     <li><a href="#">트레이너 매칭</a></li>
                 </ul>
             </li>
@@ -40,7 +40,6 @@
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
             <span class="user-nickname"><%= loginUserNickname %>님</span>
-
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
         <% } else { %>
             <!-- 비로그인 상태 -->

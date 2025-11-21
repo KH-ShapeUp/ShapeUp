@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,22 +38,10 @@
                                 <input type="text" name="categoryKeyword" id="categoryKeyword" placeholder="매칭할 카테고리를 선택해주세요..">
                             </div>
                             <div class="matching-category-list">
-                                <button class="filter-btn" value="전체">전체</button>
-                                <button class="filter-btn" value="서울">서울</button>
-                                <button class="filter-btn" value="인천">인천</button>
-                                <button class="filter-btn" value="강원">강원</button>
-                                <button class="filter-btn" value="대전/세종">대전/세종</button>
-                                <button class="filter-btn" value="충남">충남</button>
-                                <button class="filter-btn" value="충북">충북</button>
-                                <button class="filter-btn" value="대구">대구</button>
-                                <button class="filter-btn" value="경북">경북</button>
-                                <button class="filter-btn" value="부산">부산</button>
-                                <button class="filter-btn" value="울산">울산</button>
-                                <button class="filter-btn" value="경남">경남</button>
-                                <button class="filter-btn" value="광주">광주</button>
-                                <button class="filter-btn" value="전남">전남</button>
-                                <button class="filter-btn" value="전북">전북</button>
-                                <button class="filter-btn" value="제주">제주</button>
+                            <c:forEach var="aList" items="${aList}">
+                            	<input type="hidden" name="activityId" id="activityId" value="${aList.activityId }">
+                                <button class="filter-btn" value="${aList.activityName}">${aList.activityName}</button>                      
+                            </c:forEach>
                             </div>
                         </div>
                         
@@ -109,22 +98,22 @@
                         </button>
                         
                         <div class="filter-btn-wrapper hidden" id="location-filter">
-                            <button class="filter-btn" value="전체">전체</button>
-                            <button class="filter-btn" value="서울">서울</button>
-                            <button class="filter-btn" value="인천">인천</button>
-                            <button class="filter-btn" value="강원">강원</button>
-                            <button class="filter-btn" value="대전/세종">대전/세종</button>
-                            <button class="filter-btn" value="충남">충남</button>
-                            <button class="filter-btn" value="충북">충북</button>
-                            <button class="filter-btn" value="대구">대구</button>
-                            <button class="filter-btn" value="경북">경북</button>
-                            <button class="filter-btn" value="부산">부산</button>
-                            <button class="filter-btn" value="울산">울산</button>
-                            <button class="filter-btn" value="경남">경남</button>
-                            <button class="filter-btn" value="광주">광주</button>
-                            <button class="filter-btn" value="전남">전남</button>
-                            <button class="filter-btn" value="전북">전북</button>
-                            <button class="filter-btn" value="제주">제주</button>
+                            <button class="location-filter-btn" value="전체">전체</button>
+                            <button class="location-filter-btn" value="서울">서울</button>
+                            <button class="location-filter-btn" value="인천">인천</button>
+                            <button class="location-filter-btn" value="강원">강원</button>
+                            <button class="location-filter-btn" value="대전/세종">대전/세종</button>
+                            <button class="location-filter-btn" value="충남">충남</button>
+                            <button class="location-filter-btn" value="충북">충북</button>
+                            <button class="location-filter-btn" value="대구">대구</button>
+                            <button class="location-filter-btn" value="경북">경북</button>
+                            <button class="location-filter-btn" value="부산">부산</button>
+                            <button class="location-filter-btn" value="울산">울산</button>
+                            <button class="location-filter-btn" value="경남">경남</button>
+                            <button class="location-filter-btn" value="광주">광주</button>
+                            <button class="location-filter-btn" value="전남">전남</button>
+                            <button class="location-filter-btn" value="전북">전북</button>
+                            <button class="location-filter-btn" value="제주">제주</button>
                         </div>
                     </div>
 
@@ -157,7 +146,8 @@
         const locationHeader = document.querySelector("#locationHeader");
         const locationSpan = document.querySelector("#locationHeader span");
         const locationFilterBox = locationHeader.nextElementSibling;
- 
+
+        // 1. 헤더 클릭 시 토글
         locationHeader.addEventListener("click", () => {
             locationFilterBox.classList.toggle("hidden");
             locationHeader.classList.toggle("active");
@@ -165,13 +155,23 @@
 
         let locationBtn = ""; // 지역 저장 변수
 
-        document.querySelectorAll("#location-filter-btn").forEach(btn => {
+        // 2. 리스트 아이템 클릭 시 선택 및 닫기
+        document.querySelectorAll(".location-filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 locationBtn = btn.value;
                 locationSpan.innerText = btn.innerText;
                 locationFilterBox.classList.add("hidden");
                 locationHeader.classList.remove("active");
             });
+        });
+
+        // 외부 영역 클릭 시 닫기 
+        document.addEventListener("click", (e) => {
+            // 클릭한 곳이 헤더 내부도 아니고, 박스 내부도 아니라면 닫기
+            if (!locationHeader.contains(e.target) && !locationFilterBox.contains(e.target)) {
+                locationFilterBox.classList.add("hidden");
+                locationHeader.classList.remove("active");
+            }
         });
 
         /* ============================== */
@@ -197,6 +197,14 @@
             });
         });
 
+        document.addEventListener("click", (e) => {
+            // 클릭한 곳이 헤더 내부도 아니고, 박스 내부도 아니라면 닫기
+            if (!categoryHeader.contains(e.target) && !categoryFilterBox.contains(e.target)) {
+                categoryFilterBox.classList.add("hidden");
+                categoryHeader.classList.remove("active");
+            }
+        });
+
         /* ============================== */
         /*          카테고리 검색         */
         /* ============================== */   
@@ -205,55 +213,73 @@
             if(e.key == "Enter") {
                 e.preventDefault();
                 console.log(keyword)
-                category(keyword);
+                searchCategory(keyword);
                 keyword.value = "";
             }
         });
 
-        function category(keyword="") {
-            // const url;
-            // const 
-            if(categoryKeyword) {
-                
-            }
-            fetch("/matching", {
-                method: 'get',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSon.stringify()
+        function searchCategory(keyword) {
+            console.log("키워드 : " + keyword);
+            fetch("/matching/search?keyword=" + keyword, {
+                method : "get",
+                headers : {"Content-Type":"application/json"},
             })
             .then(res => res.json())
             .then(result => {
-                const category = document.querySelector(".matching-category-list")
-                category.innerHTML = "";
+                const categoryList = document.querySelector(".matching-category-list")
+                categoryList.innerHTML = "";
 
-                result.forEach((cList) => {
-                    category.innerHTML += `
-                        <button class="filter-btn" value="\${cList.ACTIVITY_NAVE}">\${cList.ACTIVITY_NAVE}</button>
+                if(result.length === 0) {
+                    categoryList.innerHTML = "<p style='text-align : center; padding:20px; font-size:.9rem; font-weight:500; color:#666;'>해당 검색 결과가 없습니다.</p>";
+                    return;
+                }
+       
+                result.forEach(aList => {
+                    categoryList.innerHTML += `
+                        <button type="button" 
+                            class="filter-btn"
+                            data-id ="\${aList.activityId}" 
+                            value="\${aList.activityName}">
+                            \${aList.activityName}
+                        </button>
                     `;
                 })
             })
-            .catch(error => console.log(error));
+            .catch(err => console.log(err))
         }
 
-
+        /* ============================== */
+        /*         선택한 카테고리        */
+        /* ============================== */
+        let categorySelect = " ";
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+               categorySelect = btn.value;
+               const searchInput = document.querySelector("#CategoryHeader span");
+                searchInput.innerText = categorySelect;
+            })
+        })
 
         /* ============================== */
-        /*        매칭 게시글 삽입       */
+        /*         매칭 게시글 삽입       */
         /* ============================== */
         function saveFun() {
             const level = document.querySelector("input[name='matchingLevel']:checked").value;
-    
             const matchingData = {
-                boardTitle : document.querySelector("#matchingTitle").value,
-                boardContent : document.querySelector("#matchingContent").value,
+                matchingTitle : document.querySelector("#matchingTitle").value,
+                matchingContent : document.querySelector("#matchingContent").value,
                 matchingLevel : level,
+                matchingCategory : categorySelect,
                 matchingDate : document.querySelector("#matchingDay").value,
                 matchingTime : document.querySelector("#matchingTime").value,
                 matchingLocation : locationBtn,
+                activityId : document.querySelector("#activityId").value,
                 partnerType : document.querySelector("#partnerType").value,
-                matchingUserCount : document.querySelector("#userCount").value
+                matchingUserCount : document.querySelector("#userCount").value,
             }
-            
+
+            console.log(matchingData)
+        
             fetch("/matching", {
                 method: 'post',
                 headers:{"Content-Type" : "application/json"},
@@ -290,7 +316,7 @@
                             confirmButton: 'success-button'
                         },
                         didClose: () => {
-                            location.href="/matching"
+                            location.href="/matching/board"
                         }
                     });                 
                 } else {
