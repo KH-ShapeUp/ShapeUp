@@ -5,9 +5,11 @@ import java.util.List;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
+
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
 
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
+
 
 public interface matchingService {
 	/* 매칭 삽입 */

@@ -145,19 +145,22 @@
     position: relative;
 }
  
-#form-user {
+#form-user, 
+#form-price {
     position: relative;
     width: 100%;
 }
 
-#form-user i {
+#form-user i,
+ #form-price i {
     position: absolute;
     left: 10px;
     top: 52%;
     transform: translateY(-50%);
 }
 
-#form-user input {
+#form-user input,
+#form-price input {
     padding-left: 35px;
 }
 

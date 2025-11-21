@@ -6,7 +6,7 @@
  	<!-- 매칭 삽입 -->
  	<insert id="matchingInsert">
  		INSERT INTO MATCHING_TBL VALUES (SEQ_MATCH_NO.NEXTVAL, #{userNo}, #{matchingTitle}, #{matchingContent}, DEFAULT, NULL, DEFAULT,
- 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, #{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId})
+ 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, #{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice})
  	</insert>
  	
  	<!-- 매칭 카테고리 리스트 -->
@@ -21,32 +21,57 @@
  	
  	<!-- 매칭 리스트 -->
  	<select id="matchingList">
-        SELECT
-        	M.ACTIVITY_ID,
-            M.MATCHING_NO,
-            M.USER_NO,
-            M.MATCHING_TITLE,
-            M.MATCHING_CONTENT,
-            M.CREATED_AT,
-            M.UPDATED_AT,
-            M.MATCHING_LOCATION,
-            M.MATCHING_DATE,
-            M.MATCHING_LEVEL,
-            M.MATCHING_TIME,
-            M.PARTNER_TYPE,
-            M.MATCHING_TYPE,
-            M.MATCHING_USER_COUNT,
-			A.ACTIVITY_NAME,
-			U.USER_NICKNAME
-		FROM 
-			MATCHING_TBL M
-			JOIN 
-			ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
-			JOIN
-			USER_TBL U ON M.USER_NO = U.USER_NO
-		 WHERE A.USE_YN = 'Y' AND M.DELETE_YN = 'N'
-		 ORDER BY M.CREATED_AT DESC
- 	</select>
+ 	<![CDATA[
+	    SELECT
+	        M.ACTIVITY_ID,
+	        M.MATCHING_NO,
+	        M.USER_NO,
+	        M.MATCHING_TITLE,
+	        M.MATCHING_CONTENT,
+	        M.CREATED_AT,
+	        M.UPDATED_AT,
+	        M.MATCHING_LOCATION,
+	        M.MATCHING_DATE,
+	        M.MATCHING_LEVEL,
+	        M.MATCHING_TIME,
+	        M.PARTNER_TYPE,
+	        M.MATCHING_TYPE,
+	        M.MATCHING_PRICE,					
+	        M.MATCHING_USER_COUNT,
+	        A.ACTIVITY_NAME,
+	        U.USER_NICKNAME,
+	
+			CASE
+			    WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') < TRUNC(SYSDATE) 
+			    THEN '마감'
+			    
+			    
+			    WHEN M.MATCHING_DATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+			         AND M.MATCHING_TIME <= TO_CHAR(SYSDATE, 'HH24:MI')
+			    THEN '마감'
+			    
+			    
+			    WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') - TRUNC(SYSDATE) BETWEEN 0 AND 2
+			    THEN '마감임박'
+			         
+			    
+			    ELSE '모집중'
+	        END AS MATCHING_STATUS
+	
+	    FROM 
+	        MATCHING_TBL M
+	        JOIN ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
+	        JOIN USER_TBL U ON M.USER_NO = U.USER_NO
+	
+	    WHERE 
+	        A.USE_YN = 'Y'
+	        AND M.DELETE_YN = 'N'
+	
+	    ORDER BY 
+	        M.CREATED_AT DESC
+	        ]]>
+	</select>
+
  	
  	<!-- 매칭 게시판 카운트 -->
  	<select id="getTotalCount">

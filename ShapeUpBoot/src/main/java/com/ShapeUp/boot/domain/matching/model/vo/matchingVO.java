@@ -24,6 +24,7 @@ public class matchingVO {
 	private String matchingDate;		// 매칭 날짜
 	private int matchingLevel;			// 매칭 난이도
 	private String matchingTime;		// 매칭 시간
+	private String matchingPrice;		// 매칭 가격
 	private String partnerType;			// 파트너 타입
 	private String matchingType; 		// 매칭 타입
 	private int userNo;					// 작성자

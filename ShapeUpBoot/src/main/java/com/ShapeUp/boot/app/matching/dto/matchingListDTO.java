@@ -18,10 +18,13 @@ public class matchingListDTO {
 	private int matchingLevel;			// 매칭 난이도
 	private String matchingTime;		// 매칭 시간
 	private String partnerType;			// 파트너 타입
+	private String matchingPrice;		// 매칭 가격
 	private String matchingType; 		// 매칭 타입
 	private int userNo;					// 작성자
 	private int matchingUserCount;		// 모집인원
 	private String activityName;		// 활동 카테고리 이름
 	private int activityId;				// 활동 카테고리 ID
 	private String userNickName;		// 유저 닉네임
+	
+	private String matchingStatus; 		// ★ 이 줄을 추가해야 '마감/모집중' 값을 받을 수 있습니다.
 }

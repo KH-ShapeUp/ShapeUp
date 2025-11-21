@@ -117,6 +117,13 @@
                         </div>
                     </div>
 
+                    <div class="form-group" id="form-price">
+                        <i class="fa-solid fa-wallet"></i>
+                        <label for="matchingPrice">매칭 가격</label>
+                        <input type="text" name="matchingPrice" id="matchingPrice" min="0" max="1000000">
+                        <span class="errMsg"></span>
+                    </div>
+
                     <div class="form-group">
                         <label for="partnerType">파트너 조건</label>
                         <textarea name="partnerType" id="partnerType" placeholder="매칭 파트너의 조건 입력해주세요."></textarea>
@@ -139,6 +146,8 @@
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <script>
         /* ============================== */
         /*       지역 선택 드롭다운       */
@@ -270,6 +279,7 @@
                 matchingContent : document.querySelector("#matchingContent").value,
                 matchingLevel : level,
                 matchingCategory : categorySelect,
+                matchingPrice : document.querySelector("#matchingPrice").value,
                 matchingDate : document.querySelector("#matchingDay").value,
                 matchingTime : document.querySelector("#matchingTime").value,
                 matchingLocation : locationBtn,
