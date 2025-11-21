@@ -54,6 +54,7 @@ const mapUserToMember = (user) => ({
   age: user.userAge ?? deriveAgeFromRrn(user.userSerialNo) ?? 0,
   nickname: user.userNickname ?? "",
   joinedAt: user.createdAt?.slice(0, 10) ?? "",
+  updatedAt: user.updatedAt ?? "",
   createdAt: user.createdAt ?? "",
   userType: user.userType ?? "USER",
   status: user.status ?? "정상",
@@ -101,6 +102,7 @@ const MembersUser = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [inlineMessage, setInlineMessage] = useState(null);
+  const [banDuration, setBanDuration] = useState({ value: "", unit: "day" }); // unit: day/month/year
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
@@ -188,6 +190,14 @@ const MembersUser = () => {
   const currentPage = Math.min(page, totalPages);
   const pageStart = (currentPage - 1) * pageSize;
   const paginated = sorted.slice(pageStart, pageStart + pageSize);
+  const selected = useMemo(() => sorted.find((m) => m.id === selectedId) || null, [sorted, selectedId]);
+   useEffect(() => {
+     if (selected?.status === "정지") {
+       setBanDuration((prev) => ({ ...prev, value: prev.value || "" }));
+     } else {
+       setBanDuration({ value: "", unit: "day" });
+    }
+  }, [selected?.status]);
 
   useEffect(() => {
     setPage(1);
@@ -264,8 +274,6 @@ const MembersUser = () => {
     };
   }, [members]);
 
-  const selected = useMemo(() => sorted.find((m) => m.id === selectedId) || null, [sorted, selectedId]);
-
   useEffect(() => {
     if (selectedId == null) return;
     if (!members.some((member) => member.id === selectedId)) {
@@ -340,6 +348,14 @@ const MembersUser = () => {
     setMembers((prev) => (typeof updater === "function" ? updater(prev) : updater));
   };
 
+  const computeBanDays = () => {
+    if (selected?.status !== "정지") return null;
+    const num = Number(banDuration.value);
+    if (!Number.isFinite(num) || num <= 0) return null;
+    const factor = banDuration.unit === "month" ? 30 : banDuration.unit === "year" ? 365 : 1;
+    return Math.round(num * factor);
+  };
+
   const handleSelect = (id) => {
     setInlineMessage(null);
     setShowSaveModal(false);
@@ -376,6 +392,13 @@ const MembersUser = () => {
       setInlineMessage({ type: "error", text: "변동된 사항이 없습니다." });
       return;
     }
+    if (selected.status === "정지") {
+      const days = computeBanDays();
+      if (!days) {
+        setInlineMessage({ type: "error", text: "차단 기간을 입력하세요." });
+        return;
+      }
+    }
     setInlineMessage(null);
     setShowSaveModal(true);
   };
@@ -402,7 +425,12 @@ const MembersUser = () => {
       })
     );
     if (selected.status) {
-      tasks.push(fetch(`/api/admin/users/${selected.id}/status?status=${encodeURIComponent(selected.status)}`, { method: "PATCH" }));
+      let statusUrl = `/api/admin/users/${selected.id}/status?status=${encodeURIComponent(selected.status)}`;
+      if (selected.status === "정지") {
+        const banDays = computeBanDays();
+        if (banDays) statusUrl += `&banDays=${banDays}`;
+      }
+      tasks.push(fetch(statusUrl, { method: "PATCH" }));
     }
     if (selected.userType) {
       tasks.push(fetch(`/api/admin/users/${selected.id}/type?userType=${encodeURIComponent(selected.userType)}`, { method: "PATCH" }));
@@ -624,6 +652,50 @@ const MembersUser = () => {
                 className={dirtyFields.status ? "dirty-field" : ""}
               />
             </div>
+
+            {selected.status === "정지" && (
+              <>
+                <div className="detail-field">
+                  <label>해제 날짜</label>
+                  <input
+                    value={
+                      selected.updatedAt
+                        ? new Date(selected.updatedAt).toISOString().slice(0, 10)
+                        : ""
+                    }
+                    readOnly
+                    style={{ background: "#f5f6fb" }}
+                  />
+                </div>
+                <div className="detail-field">
+                  <label>차단 기간</label>
+                  <div className="ban-duration">
+                    <input
+                      type="number"
+                      min="1"
+                      value={banDuration.value}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setBanDuration((prev) => ({ ...prev, value: val }));
+                        if (val) setDirtyFields((prev) => ({ ...prev, status: true }));
+                      }}
+                      placeholder="기간"
+                    />
+                    <CustomSelect
+                      value={banDuration.unit}
+                      options={[
+                        { label: "일", value: "day" },
+                        { label: "달", value: "month" },
+                        { label: "년", value: "year" },
+                      ]}
+                      onChange={(val) => setBanDuration((prev) => ({ ...prev, unit: val }))}
+                      size="sm"
+                    />
+                    <span className="ban-text">차단</span>
+                  </div>
+                </div>
+              </>
+            )}
 
             <button className="update-btn" onClick={handleUpdate}>저장</button>
             {inlineMessage && (

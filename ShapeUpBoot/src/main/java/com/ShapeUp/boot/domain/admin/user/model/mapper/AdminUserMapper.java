@@ -14,7 +14,10 @@ public interface AdminUserMapper {
 
     AdminUserVO selectUserByNo(@Param("userNo") int userNo);
 
-    int updateUserStatus(@Param("userNo") int userNo, @Param("status") String status);
+    int updateUserStatus(@Param("userNo") int userNo,
+                         @Param("status") String status,
+                         @Param("updatedAt") java.sql.Timestamp updatedAt,
+                         @Param("banDays") Long banDays);
 
     int updateUserPassword(@Param("userNo") int userNo, @Param("userPw") String userPw);
 

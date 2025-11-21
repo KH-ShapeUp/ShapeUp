@@ -33,8 +33,14 @@ public class AdminUserController {
     @PatchMapping("/{userNo}/status")
     public ResponseEntity<Void> updateUserStatus(
             @PathVariable int userNo,
-            @RequestParam String status) {
-        adminUserService.changeUserStatus(userNo, status);
+            @RequestParam String status,
+            @RequestParam(required = false) Long banDays) {
+        java.sql.Timestamp until = null;
+        if (banDays != null) {
+            long millis = java.time.Instant.now().plus(java.time.Duration.ofDays(banDays)).toEpochMilli();
+            until = new java.sql.Timestamp(millis);
+        }
+        adminUserService.changeUserStatus(userNo, status, until, banDays);
         return ResponseEntity.ok().build();
     }
 

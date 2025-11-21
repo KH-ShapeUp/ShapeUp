@@ -338,6 +338,16 @@ public class UserController {
         UserVO user = userService.selectUserById(userId);
 
         if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
+            // 정지 상태 체크
+            if ("정지".equals(user.getStatus())) {
+                java.sql.Timestamp until = user.getUpdatedAt();
+                java.time.Instant now = java.time.Instant.now();
+                if (until == null || until.toInstant().isAfter(now)) {
+                    model.addAttribute("errorMsg", "해당 계정은 정지 상태입니다. 해제 예정일: " +
+                            (until != null ? until.toLocalDateTime().toLocalDate() : "미정"));
+                    return "user/login";
+                }
+            }
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
             session.setAttribute("userType", user.getUserType());

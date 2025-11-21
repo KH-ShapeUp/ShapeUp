@@ -3,7 +3,9 @@ package com.ShapeUp.boot.domain.matching.model.vo;
 import java.sql.Timestamp;
 
 import lombok.Data;
+import org.apache.ibatis.type.Alias;
 
+@Alias("MatchingActivityVO")
 @Data
 public class ActivityVO {
 	private int activityId;

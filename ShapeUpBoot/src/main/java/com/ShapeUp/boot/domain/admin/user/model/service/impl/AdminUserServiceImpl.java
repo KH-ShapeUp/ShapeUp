@@ -33,8 +33,8 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     @Transactional
-    public void changeUserStatus(int userNo, String status) {
-        adminUserMapper.updateUserStatus(userNo, status);
+    public void changeUserStatus(int userNo, String status, java.sql.Timestamp updatedAt, Long banDays) {
+        adminUserMapper.updateUserStatus(userNo, status, updatedAt, banDays);
     }
 
     @Override

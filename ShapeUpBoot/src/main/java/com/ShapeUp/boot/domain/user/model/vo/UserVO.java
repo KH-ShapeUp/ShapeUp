@@ -23,7 +23,7 @@ public class UserVO {
     private String userSerialNo;     // USER_SERIAL_NO (생년월일+뒷번호 첫자리)
     private String userType;         // USER_TYPE (기본값: USER)
     private Timestamp createdAt;     // CREATED_AT
-    private Timestamp updatedAt;     // UPDATED_AT
+    private Timestamp updatedAt;     // UPDATED_AT (정지 해제 예정일로 사용)
     private String userNickname;     // USER_NICKNAME
     private String status;           // STATUS (기본값: 정상)
 }
