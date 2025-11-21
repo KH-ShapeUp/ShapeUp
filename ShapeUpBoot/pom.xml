@@ -36,7 +36,11 @@
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.1</version>
         </dependency>
-
+        
+		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
@@ -50,7 +54,19 @@
             <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
-
+		
+		<!-- Spring Boot Mail -->
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<!-- (이미 있으면 생략) Jackson for @ResponseBody JSON 처리 -->
+		<dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-databind</artifactId>
+		</dependency>
+		
         <!-- ✅ Spring Boot Web (JSP는 여기에 포함된 Tomcat 사용) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
