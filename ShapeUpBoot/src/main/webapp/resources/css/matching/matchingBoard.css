@@ -384,13 +384,18 @@
 
 /* 매칭 신청하기 버튼 */
 .matching-application-btn {
+    position: relative; 
+    overflow: hidden;  
+    z-index: 1;
     padding: 8px 12px;
     border: none;
     background-color: var(--main-color);
     border-radius: 8px;
     color: #fff;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
+    transition: color 0.3s ease-in-out;
 }
 
 .matching-application-btn.finish,
@@ -401,6 +406,28 @@
     pointer-events: none;   
 }
 
+.matching-application-btn::before {
+    content: ''; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #007bff; 
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    z-index: -1;
+}
+
+.matching-application-btn:hover {
+    color: #fff;
+}
+
+.matching-application-btn:hover::before {
+    transform: scaleX(1); 
+    transform-origin: left;
+}
 
 /* 페이징네이션 */
 .matching-pagination-wrapper {

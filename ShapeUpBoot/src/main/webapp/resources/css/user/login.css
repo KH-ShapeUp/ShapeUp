@@ -172,11 +172,15 @@
     background-color: #0080ff;
     transform: translateY(-3px);
 }
-
+.login-form {
+    width: 70%;
+}
 /* 회원가입, 아이디, 비밀번호 */
 .login-form .account-list {
+    display: flex;
     margin: 25px 0px 25px 0px;
-    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
 .login-form .account-list ul {

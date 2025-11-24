@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.tags.shaded.org.apache.regexp.recompile;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
@@ -37,13 +39,15 @@ public class matchingController {
 
 	// 매칭 페이지 이동
 	@GetMapping("/matching/board")
-	public String matchingPage() {
+	public String matchingPage(HttpSession session, Model model) {
+		Integer userNo = (Integer)session.getAttribute("userNo");
+		model.addAttribute("userNo", userNo);
 		return "matching/matchingBoard";
 	}
 
 	// 매칭 글 작성 페이지 이동
 	@GetMapping("/matching/insert")
-	public String matchingInsertPage(Model model) {
+	public String matchingInsertPage(Model model, HttpSession session) {
 		List<ActivityVO> aList = mService.matchingCategory();
 		System.out.println("가져온 카테고리" + aList);
 		model.addAttribute("aList", aList);
@@ -75,15 +79,23 @@ public class matchingController {
 	// 매칭 리스트
 	@GetMapping("/matching/list")
 	@ResponseBody
-	public Map<String, Object> matchingList(matchingListDTO mDTO, @RequestParam("page") int currentPage) {
+	public Map<String, Object> matchingList(matchingListDTO mDTO, HttpSession session,
+			@RequestParam("page") int currentPage,
+			@RequestParam(required = false, defaultValue = "") String location,
+			@RequestParam(required = false, defaultValue = "") String time,
+			@RequestParam(required = false, defaultValue = "") String level,
+			@RequestParam(required = false, defaultValue = "") String sort) {
+		
 		int matchBoardLimit = 5;
 		int naviLimit = 5;
-		int getTotalCount = mService.getTotalCount();
+		
+		int getTotalCount = mService.getTotalCount(location, time, level);
+		
 		int maxPage = (int)Math.ceil((double)getTotalCount/matchBoardLimit);
 		int startNavi = ((currentPage - 1)/naviLimit) * naviLimit + 1;
 		int endNavi = (startNavi-1) + naviLimit;
 		if(endNavi > maxPage) {endNavi = maxPage;}
-		List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit);
+		List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit, location, time, level, sort);
 		System.out.println("가져온 매칭 리스트" + mList);
 		
 		// 매칭 신청 인원 카운트
@@ -96,20 +108,30 @@ public class matchingController {
 		result.put("startNavi", startNavi);
 		result.put("endNavi", endNavi);
 		
+		result.put("location", location);
+		result.put("time", time);
+		result.put("level", level);
+		result.put("sort", sort);
+		
 		return result;
 	}
 	
 	// 매칭 신청
 	@PostMapping("/matching/application")
 	@ResponseBody
-	public int matchApplication(@RequestBody matchingAppLiVo mAppDTO, HttpSession session) {
+	public int matchApplication(@RequestBody matchingApplicationDTO mAppDTO, HttpSession session) {
 		// 로그인한 사용자 유저 번호 가져오기
-		int loginUserNo = (int)session.getAttribute("userNo");
-
+		Integer loginUserNo = (Integer)session.getAttribute("userNo");
+		System.out.println(loginUserNo);
 		// 매칭 작성자 가져오기 mapper
 		int writerUserNo = mService.getWriterUserNo(mAppDTO.getMatchingNo());
 		System.out.println("매칭 작성자" + writerUserNo);
 
+		if(loginUserNo == null) {
+			System.out.println(loginUserNo);
+			return -10;
+		}
+		
 		if (loginUserNo == writerUserNo) {
 			return -1;
 		}
@@ -124,5 +146,15 @@ public class matchingController {
 		
 		mAppDTO.setMatchingAppliNo(loginUserNo);
 		return mService.matchApplication(mAppDTO);
+	}
+	
+	@GetMapping("/mypage")
+	public String mypage() {
+		return "user/real-estate-mypage";
+	}
+	
+	@GetMapping("/community")
+	public String freeBoard() {
+		return "community/communityMain";
 	}
 }

@@ -24,15 +24,15 @@
 					<h2>오늘의 칼로리</h2>
 					<span>오늘의 식단을 관리하세요.</span>
 				</div>
-				<div class="diet-content${empty sessionScope.loginUser ? ' locked' : ''}">
+				<div class="diet-content${empty sessionScope.userNo ? ' locked' : ''}">
 					<!-- 로그인 안했을 때 식단 표시-->
-					<!-- <c:if test="${empty sessionScope.loginUser}">
+					<c:if test="${empty sessionScope.userNo}">
 						<div class="diet-lock-overlay">
 							<span class="material-symbols-outlined">lock_person</span>
 							<p>칼로리를 입력하려면 로그인이 필요합니다.</p>
-							<a href="login"><button class="btn-login" type="button">로그인</button></a>
+							<a href="/user/login"><button class="btn-login" type="button">로그인</button></a>
 						</div>
-					</c:if> -->
+					</c:if>
 					<!-- 로그인 안했을 때 식단 표시 끝 -->
 					<!-- 아침 -->
 					<div class="user-diet-record" style="border-top: 4px solid #F2B84B;">
@@ -137,13 +137,14 @@
 						<span>회원님과 맞는 매칭을 찾아보세요.</span>
 					</div>
 					<div class="matching-all-btn">
-						<a href="/matching" class="all-page-btn" id="matching-all-list-btn">더보기
+						<a href="/matching/board" class="all-page-btn" id="matching-all-list-btn">더보기
 							<i class="fa-solid fa-arrow-right"></i>
 						</a>
 					</div>
 				</div>
 				<div class="matching-content">
-					<div class="matching-card" onclick="matchingDetail('${boardNo}');">
+				<c:forEach var="mList" items="${mList}">
+					<div class="matching-card">
 						<div class="matching-user">
 							<div class="user-profile">
 								<img src="../../resources/img/person.png" width="50">
@@ -151,151 +152,78 @@
 							<div class="user-profile-info">
 								<div class="user-profile-top">
 									<div class="user-info">
-										<span class="nick-name">윤태혁</span>
-										<span class="user-gender">(남)</span>
-									</div>
-									<div class="card-state-ing">모집중</div>
+										<span class="nick-name">${mList.userNickName}</span>
+									</div>									
+									<c:choose>
+										<c:when test="${mList.matchingStatus == '마감'}">
+											<div class="card-state-finish">${mList.matchingStatus }</div>
+										</c:when>
+										<c:when test="${mList.matchingStatus == '마감임박'}">
+											<div class="card-state-imminent">${mList.matchingStatus }</div>
+										</c:when>
+										<c:otherwise>
+											<div class="card-state-ing">${mList.matchingStatus }</div>
+										</c:otherwise>
+									</c:choose>
 								</div>
-								<span class="workout-category">런닝</span>
+								<div class="category-wrapper">
+									<span class="workout-category">${mList.activityName }</span>
+									<c:choose>
+										<c:when test="${mList.matchingLevel == 1 }">
+											<span class="user-level"># 초급</span>
+										</c:when>
+										<c:when test="${mList.matchingLevel == 2 }">
+											<span class="user-level middleClass"># 중급</span>
+										</c:when>
+										<c:otherwise>
+											<span class="user-level advanced"># 고급</span>
+										</c:otherwise>
+									</c:choose>
+								</div>
 							</div>
 						</div>
 						<div class="matching-title">
-							<span class="card-title">한강에서 런닝하실분</span>
-							<span class="card-content">
-								주 3회 저녁 7시~9시 운동하고 있습니다. 
-								다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.
-							</span>
+							<span class="card-title">${mList.matchingTitle }</span>
+							<span class="card-content">${mList.partnerType}</span>
 						</div>
 						<div class="matching-info">
 							<div class="matching-icon">
 								<div class="matching-location">
 									<i class="fa-solid fa-location-dot"></i>
-									<span>도봉산</span>
-								</div>
-								<div class="matching-day">
-									<i class="fa-solid fa-calendar-days"></i>
-									<span>2025.11.14</span>
+									<span>${mList.matchingLocation }</span>
 								</div>
 								<div class="matching-time">
 									<i class="fa-solid fa-clock"></i>
-									<span>22:00 ~ 23:00</span>
-								</div>
-								<div class="matching-money">
-									<i class="fa-solid fa-wallet"></i>
-									<span>없음</span>
-								</div>
-								<div class="matching-user-icon">
-									<i class="fa-solid fa-users"></i>
-									<span>0/1명</span>
-								</div>
-							</div>
-							<div class="matching-btn-wrapper">
-								<button class="matching-btn">매칭 신청</button>
-							</div>
-						</div>
-					</div>				
-					<div class="matching-card" onclick="matchingDetail('${boardNo}');">
-						<div class="matching-user">
-							<div class="user-profile">
-								<img src="../../resources/img/person.png">
-							</div>
-							<div class="user-profile-info">
-								<div class="user-profile-top">
-									<div class="user-info">
-										<span class="nick-name">윤태혁</span>
-										<span class="user-gender">(남)</span>
-									</div>
-									<div class="card-state-ing">모집중</div>
-								</div>
-								<span class="workout-category">런닝</span>
-							</div>
-						</div>
-						<div class="matching-title">
-							<span class="card-title">한강에서 런닝하실분</span>
-							<span class="card-content">
-								주 3회 저녁 7시~9시 운동하고 있습니다. 
-								다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.
-							</span>
-						</div>
-						<div class="matching-info">
-							<div class="matching-icon">
-								<div class="matching-location">
-									<i class="fa-solid fa-location-dot"></i>
-									<span>도봉산</span>
+									<span>${mList.matchingTime }</span>
 								</div>
 								<div class="matching-day">
 									<i class="fa-solid fa-calendar-days"></i>
-									<span>2025.11.14</span>
-								</div>
-								<div class="matching-time">
-									<i class="fa-solid fa-clock"></i>
-									<span>22:00 ~ 23:00</span>
+									<span>${mList.matchingDate }</span>
 								</div>
 								<div class="matching-money">
 									<i class="fa-solid fa-wallet"></i>
-									<span>없음</span>
+									<span>${mList.matchingPrice }</span>
 								</div>
 								<div class="matching-user-icon">
 									<i class="fa-solid fa-users"></i>
-									<span>0/1명</span>
+									<span>${mList.applicationCount} / ${mList.matchingUserCount} 명</span>
 								</div>
 							</div>
 							<div class="matching-btn-wrapper">
-								<button class="matching-btn">매칭 신청</button>
+								<input type="hidden" name="sessionLogin" id="">
+								<c:choose>
+									<c:when test="${mList.applicationCount >= mList.matchingUserCount or mList.matchingStatus == '마감'}">
+										<button class="matching-btn finish":disabled">마감</button>																	
+									</c:when>
+									<c:otherwise>
+										<button class="matching-btn" onclick="macthingApplyBtn('${mList.matchingNo}', '${mList.userNo}');">신청하기</button>
+									</c:otherwise>
+								</c:choose>
+
 							</div>
 						</div>
-					</div>				
-					<div class="matching-card" onclick="matchingDetail('${boardNo}');">
-						<div class="matching-user">
-							<div class="user-profile">
-								<img src="../../resources/img/person.png" width="50">
-							</div>
-							<div class="user-profile-info">
-								<div class="user-profile-top">
-									<div class="user-info">
-										<span class="nick-name">윤태혁</span>
-										<span class="user-gender">(남)</span>
-									</div>
-									<div class="card-state-ing">모집중</div>
-								</div>
-								<span class="workout-category">런닝</span>
-							</div>
-						</div>
-						<div class="matching-title">
-							<span class="card-title">한강에서 런닝하실분</span>
-							<span class="card-content">
-								주 3회 저녁 7시~9시 운동하고 있습니다. 
-								다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.
-							</span>
-						</div>
-						<div class="matching-info">
-							<div class="matching-icon">
-								<div class="matching-location">
-									<i class="fa-solid fa-location-dot"></i>
-									<span>도봉산</span>
-								</div>
-								<div class="matching-day">
-									<i class="fa-solid fa-calendar-days"></i>
-									<span>2025.11.14</span>
-								</div>
-								<div class="matching-time">
-									<i class="fa-solid fa-clock"></i>
-									<span>22:00 ~ 23:00</span>
-								</div>
-								<div class="matching-money">
-									<i class="fa-solid fa-wallet"></i>
-									<span>없음</span>
-								</div>
-								<div class="matching-user-icon">
-									<i class="fa-solid fa-users"></i>
-									<span>0/1명</span>
-								</div>
-							</div>
-							<div class="matching-btn-wrapper">
-								<button class="matching-btn">매칭 신청</button>
-							</div>
-						</div>
-					</div>				
+					</div>							
+				</c:forEach>
 				</div>
 			</div>
 			<!-- 최근 올라온 매칭 끝 -->
@@ -757,33 +685,123 @@
 		</div>
 		<jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 	</div>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	<script>
-		// 매칭 디테일 이동
-        function matchingDetail(boardNo) {
-            location.href="/matching/detail?matchingNo=" + 10;
-        }
-
-        // 매칭 신청 버튼
-        document.querySelectorAll(".matching-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation(); // 페이지 이동 막음
-                if(confirm("해당 매칭을 신청하시겠습니까?")) {
-                } else {
-                    alert("매칭 신청을 취소하셨습니다.");
-                    return;
-                }
-                location.href="/";
-            })
-        })
-		const boardNo = 100;
-        function matchingPage(boardNo) {
-			location.href="/matching=" + boardNo;
+		function macthingApplyBtn(matchingNo, userNo) {
+			Swal.fire({
+				title: '해당 매칭을 신청하시겠습니까?',
+				showCancelButton: true,
+				cancelButtonText: "취소하기",
+				confirmButtonText: "신청하기",
+				customClass: {
+					popup: 'success-popup',
+					title: 'success-title',
+					confirmButton: 'success-button',
+					cancelButton: 'cancel-button'
+				}
+			}).then((result) => {
+				if(result.isConfirmed) {
+					fetch('/home', {
+						method: "post",
+						headers: {"Content-Type":"application/json"},
+						body: JSON.stringify({ 
+							matchingNo: matchingNo,
+							userNo: userNo
+						})
+					})
+					.then(res => res.json())
+					.then(result => {
+						console.log(result);
+						if(result > 0) {
+							Swal.fire({
+								icon: 'success',
+								title: '매칭 신청완료!',
+								text: '승인전까지 기다려주세요!',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'success-popup',
+									title: 'success-title',
+									confirmButton: 'success-button',
+								}
+							}).then(() => {
+								// 새로고침
+								location.reload();
+							});
+						} else if (result == -1) {
+							Swal.fire({
+								icon:'warning',
+								title: '자기가 쓴 매칭을 \n 신청할 수 없습니다..ㅠ',
+								text: '다른 매칭을 신청해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							});
+						} else if (result == -2) {
+							Swal.fire({
+								icon:'warning',
+								title: '이미 신청한 매칭입니다.',
+								text: '다른 매칭을 신청해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							}); 
+						} else if (result == -10) {
+							Swal.fire({
+								icon:'warning',
+								title: '로그인이 필요한 서비스입니다.',
+								text: '로그인 후 이용해주세요.',
+								confirmButtonText: '로그인 하러가기',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}, 
+								didClose: () => {
+									location.href="/user/login";
+								}
+							});
+						} else {
+							Swal.fire({
+								icon:'error',
+								title: '매칭 신청 실패..ㅠ',
+								text: '다시 시도 해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							});
+						}
+					})
+					.catch(err => {
+						console.error(err);
+						Swal.fire({
+							icon:'error',
+							title: '매칭 신청 실패..ㅠ',
+							text: '다시 시도 해주세요.',
+							confirmButtonText: '확인',
+							customClass: {
+								popup: 'error-popup',
+								title: 'error-title',
+								text: 'error-text',
+								confirmButton: 'error-button'
+							}
+						});
+					});
+				}
+			});
 		}
-        
-        document.querySelector("#matching-btn").addEventListener("click", e => {
-			e.stopPropagation();
-            alert("a");
-        })
 	</script>
 </body>
 </html>

@@ -404,6 +404,7 @@
             .modal-content { padding: 28px; }
         }
     </style>
+    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 </head>
 <body>
     <jsp:include page="/WEB-INF/views/include/header.jsp"/>
@@ -819,7 +820,7 @@
         </div>
     </div>
     
-    <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 
     <script>
         // 탭 네비게이션

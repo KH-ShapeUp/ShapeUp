@@ -27,7 +27,7 @@
             <li class="has-submenu">
                 <a>커뮤니티</a>
                 <ul class="sub-menu">
-                    <li><a href="#">자유게시판</a></li>
+                    <li><a href="/community">자유게시판</a></li>
                     <li><a href="#">성공 인증 게시판</a></li>
                 </ul>
             </li>
@@ -108,9 +108,9 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="#"> 
+                <a href="/community"> 
                     <span class="material-symbols-outlined">forum</span>
-                    <span>커뮤니티</span>
+                    <span>자유 게시판</span>
                 </a>
             </div>
             <div class="list-item">

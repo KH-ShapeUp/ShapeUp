@@ -13,5 +13,4 @@ public class matchingActivityVO {
 	private String useYn;
 	private Timestamp createdAt;
 	private Timestamp updateAt;
-	private int weightLevel;
 }

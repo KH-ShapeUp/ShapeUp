@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.home.model.mapper.homeMapper">
+	<select id="getMatchingList">
+		SELECT * FROM (
+			SELECT
+				M.ACTIVITY_ID,
+		        M.MATCHING_NO,
+		        M.USER_NO,
+		        M.MATCHING_TITLE,
+		        M.MATCHING_CONTENT,
+		        M.CREATED_AT,
+		        M.UPDATED_AT,
+		        M.MATCHING_LOCATION,
+		        M.MATCHING_DATE,
+		        M.MATCHING_LEVEL,
+		        M.MATCHING_TIME,
+		        M.PARTNER_TYPE,
+		        M.MATCHING_TYPE,
+		        TO_CHAR(M.MATCHING_PRICE, '999,999,999') AS MATCHING_PRICE,					
+		        A.ACTIVITY_NAME,
+		        U.USER_NICKNAME,
+		        M.MATCHING_USER_COUNT,
+		        (SELECT COUNT(*) 
+		        FROM MATCHING_APPLI_TBL A
+		        WHERE A.MATCHING_NO = M.MATCHING_NO) AS APPLICATION_COUNT,
+		
+				CASE
+				 -- 1. [마감] 날짜가 지났을 경우
+		            WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') <![CDATA[ < ]]> TRUNC(SYSDATE) 
+		            THEN '마감'
+		            
+		            -- 2. [마감] 오늘 날짜지만 시간이 지났을 경우
+		            WHEN M.MATCHING_DATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		                 AND M.MATCHING_TIME <![CDATA[ <= ]]> TO_CHAR(SYSDATE, 'HH24:MI')
+		            THEN '마감'
+		            
+		            -- 3. [마감] 신청 인원이 모집 인원과 같거나 많을 경우 
+		            WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) 
+		                 <![CDATA[ >= ]]> M.MATCHING_USER_COUNT
+		            THEN '마감'
+		            
+		            -- 4. [마감임박] (날짜가 2일 이내) AND (남은 자리가 2자리 이하) 
+		            WHEN (TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') - TRUNC(SYSDATE) BETWEEN 0 AND 2)
+		                 OR (M.MATCHING_USER_COUNT - (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) <![CDATA[ <= ]]> 2)
+		            THEN '마감임박'
+		                 
+		            -- 5. [모집중] 그 외 나머지
+		            ELSE '모집중'
+		        END AS MATCHING_STATUS
+		
+		    FROM 
+		        MATCHING_TBL M
+		        JOIN ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
+		        JOIN USER_TBL U ON M.USER_NO = U.USER_NO
+		
+		    WHERE 
+		        A.USE_YN = 'Y'
+		        AND M.DELETE_YN = 'N'
+		    ORDER BY 
+		    	M.CREATED_AT DESC
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]> 5
+	       
+	</select>
+ </mapper>
