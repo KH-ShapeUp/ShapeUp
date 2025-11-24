@@ -37,7 +37,7 @@ const Sidebar = ({
   };
 
   const goHome = () => {
-    const target = homeHref || (variant === "stadium" ? "/" : homePath);
+    const target = homeHref || "/";
     const url = target.startsWith("http")
       ? target
       : `${window.location.protocol}//${window.location.hostname}:8080${target}`;

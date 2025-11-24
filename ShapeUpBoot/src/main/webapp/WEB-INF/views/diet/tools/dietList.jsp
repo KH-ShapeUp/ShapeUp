@@ -26,6 +26,7 @@
         <button type="button" class="ghost-btn" onclick="closeDietListModal()">닫기</button>
         <button type="button" class="primary-btn" id="diet-list-submit">저장</button>
       </div>
+      <div class="login-required-note" id="diet-login-note" style="display:none;">로그인이 필요합니다.</div>
     </div>
   </div>
 </div>
@@ -36,6 +37,19 @@
     listElement: null,
     dietType: '아침',
   };
+
+  function applyLoginStateToDietModal() {
+    const submitBtn = document.getElementById('diet-list-submit');
+    const note = document.getElementById('diet-login-note');
+    const loggedIn = !!window.isDietLoggedIn;
+    if (submitBtn) {
+      submitBtn.disabled = !loggedIn;
+      submitBtn.classList.toggle('disabled-action', !loggedIn);
+    }
+    if (note) {
+      note.style.display = loggedIn ? 'none' : 'block';
+    }
+  }
 
   function adaptFood(raw) {
     if (!raw) return null;
@@ -55,6 +69,7 @@
     if (!backdrop) return;
     backdrop.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    applyLoginStateToDietModal();
     if (!dietListState.listElement) {
       dietListState.listElement = document.getElementById('diet-list-container');
     }
@@ -251,6 +266,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    applyLoginStateToDietModal();
     dietListState.listElement = document.getElementById('diet-list-container');
     renderFoodList([], '검색어를 입력하세요');
     renderSelectedList();

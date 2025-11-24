@@ -278,7 +278,6 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-
     public String loginProcess(@RequestParam String userId,
                                @RequestParam String userPw,
                                HttpSession session,

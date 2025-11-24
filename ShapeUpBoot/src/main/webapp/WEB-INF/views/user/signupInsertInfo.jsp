@@ -99,6 +99,12 @@
           <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합<br>
           사용 가능한 특수문자: <strong>@ $ ! % * # ? &</strong></p>
           <span id="passwordSpecialMsg" class="validation-msg"></span>
+          <div class="password-strength" id="passwordStrength">
+            <div class="strength-label">강도: <span id="strengthText">-</span></div>
+            <div class="strength-bar">
+              <div class="strength-fill" id="strengthFill"></div>
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label>비밀번호 확인</label>
@@ -350,6 +356,69 @@ document.getElementById('nicknameInput').addEventListener('input', function() {
   document.getElementById('nicknameMsg').textContent = '';
 });
 
+let passwordStrengthLevel = 'none';
+
+function evaluatePasswordStrength(pw) {
+  const strengthBox = document.getElementById('passwordStrength');
+  const strengthText = document.getElementById('strengthText');
+  const strengthFill = document.getElementById('strengthFill');
+  if (!strengthBox || !strengthText || !strengthFill) return;
+
+  if (!pw) {
+    strengthBox.classList.remove('show');
+    passwordStrengthLevel = 'none';
+    return;
+  }
+
+  strengthBox.classList.add('show');
+
+  const hasLetter = /[A-Za-z]/.test(pw);
+  const hasNumber = /\d/.test(pw);
+  const hasSpecial = /[@$!%*#?&]/.test(pw);
+  const lengthOK = pw.length >= 8;
+  const varietyCount = [hasLetter, hasNumber, hasSpecial].filter(Boolean).length;
+
+  let level = 'very-low';
+  if (!lengthOK) {
+    level = 'very-low';
+  } else if (varietyCount === 1) {
+    level = 'low';
+  } else if (varietyCount === 2) {
+    level = 'medium';
+  } else if (varietyCount === 3) {
+    level = 'high';
+  }
+
+  passwordStrengthLevel = level;
+
+  const labels = {
+    'very-low': '매우 낮음',
+    'low': '낮음',
+    'medium': '보통',
+    'high': '높음'
+  };
+  const widths = {
+    'very-low': '25%',
+    'low': '50%',
+    'medium': '75%',
+    'high': '100%'
+  };
+  const colors = {
+    'very-low': '#a10000',
+    'low': '#ff5959',
+    'medium': '#f2b705',
+    'high': '#12d48a'
+  };
+
+  strengthText.textContent = labels[level] || '-';
+  strengthFill.style.width = widths[level] || '0%';
+  strengthFill.style.backgroundColor = colors[level] || '#ddd';
+}
+
+document.getElementById('passwordInput').addEventListener('input', function() {
+  evaluatePasswordStrength(this.value);
+});
+
 // 아이디 중복 확인
 function checkUserId() {
   const userid = document.getElementById('useridInput').value.trim();
@@ -471,6 +540,11 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     e.preventDefault(); 
     alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 모두 포함해야 합니다.'); 
     return false; 
+  }
+  if (passwordStrengthLevel !== 'high') {
+    e.preventDefault();
+    alert('비밀번호 강도가 \"높음\"이어야 가입이 가능합니다.');
+    return false;
   }
 
   // 5. 이메일 인증 체크
