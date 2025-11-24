@@ -76,4 +76,29 @@ public class MailService {
         // emailVerificationAddress는 남겨둘 수 있음
         return true;
     }
+    public boolean sendTempPassword(String email, String tempPw) {
+        String subject = "[ShapeUp] 임시 비밀번호 안내";
+        String text = "임시 비밀번호는 다음과 같습니다:\n\n"
+                + tempPw + "\n\n"
+                + "로그인 후 반드시 비밀번호를 변경해주세요.";
+
+        return sendEmail(email, subject, text);
+    }
+ // 공통 이메일 발송 메서드
+    public boolean sendEmail(String toEmail, String subject, String text) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject(subject);
+            message.setText(text);
+            message.setFrom("no-reply@shapeup.example");
+            mailSender.send(message);
+            return true;
+        } catch (Exception e) {
+            log.error("메일 전송 실패", e);
+            return false;
+        }
+    }
+
+    
 }

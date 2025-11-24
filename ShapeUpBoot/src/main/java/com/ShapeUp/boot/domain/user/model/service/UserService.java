@@ -29,11 +29,27 @@ public interface UserService {
     boolean sendPhoneVerification(String phone);
 
     boolean resetPassword(String userId, String name, String email);
-    
+
     boolean isEmailExists(String email);
 
-    // 🔹 로그인 메서드 추가
     UserVO login(String userId, String rawPassword);
-    
+
     UserVO findUserByNameEmailPhone(String name, String email, String phone);
+
+    int updateUserPassword(String userId, String encodedPw);
+
+    // 🔥 추가: 아이디로만 사용자 조회
+    UserVO findUserByUserId(String userId);
+    
+    UserVO selectUserByUserNo(int userNo);
+
+    int updateUserEmail(int userNo, String email);
+
+    int updateUserPhone(int userNo, String phone);
+
+    int updateUserPasswordByUserNo(int userNo, String encodedPassword);
+
+    int deleteUser(int userNo);
+    
+    int updateNickname(int userNo, String nickname);
 }
