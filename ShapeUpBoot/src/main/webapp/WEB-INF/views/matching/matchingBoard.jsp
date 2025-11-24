@@ -121,6 +121,7 @@
         </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         // 매칭 신청 버튼
         /*document.querySelectorAll(".matching-application-btn").forEach(btn => {
@@ -224,20 +225,54 @@
                 matchingList.innerHTML = "";
 
                 result.mList.forEach(match => {
-                    // ★ [NEW] 상태별 CSS 클래스 정하기 로직
+                    // 카테고리 날짜 기준 마감, 마감임박, 모집중
                     let badgeClass = '';
-                    let statusText = match.matchingStatus;
+                    let btnClass = '';
+                    let btnText = '신청 하기';
+                    let btnDis = '';
+                    let statusText = '';
+                    let matchingLevel = match.matchingLevel;
 
-                    if (match.matchingStatus === '모집중') {
-                        badgeClass = 'ing';      // 초록색 (모집중)
-                    } else if (match.matchingStatus === '마감임박') {
-                        badgeClass = 'imminent';     // 빨간색 (마감임박)
+                    // 매칭 난이도
+                    let levelText = '';
+                    let levelClass = '';
+
+                    if (matchingLevel == 1) {
+                        levelText = "# 초보";
+                    } else if (matchingLevel == 2) {
+                        levelText = "# 중급";
+                        levelClass = "middleClass";
                     } else {
-                        badgeClass = 'finish';      // 회색 (마감)
+                        levelText = "# 고급";
+                        levelClass = "advanced";
+                    }
+
+                    // 모집 인원 / 신청 인원 계산
+                    const matchUserCount = match.matchingUserCount;
+                    const applyCount = match.applicationCount;
+
+                    // 날짜 기반 마감 체크
+                    statusText = match.matchingStatus;
+
+                    // 인원 기반으로 재판단 (최우선 조건)
+                    if (applyCount >= matchUserCount) {
+                        statusText = "마감";
+                    }
+
+                    // final 상태 확정 후 CSS 결정
+                    if (statusText === '마감') {
+                        badgeClass = 'finish';
+                        btnClass = 'finish';
+                        btnText = '마감';
+                        btnDis = 'disabled';
+                    } else if (statusText === '마감임박') {
+                        badgeClass = 'imminent';
+                    } else {
+                        badgeClass = 'ing';
                     }
 
                     matchingList.innerHTML += `
-                        <div class="matching-card" onclick="location.href='/matching/detail?matchNo=\${match.matchingNo}">
+                        <div class="matching-card" data-id="\${match.matchingNo}">
                             <div class="matching-card-header">
                                 <div class="card-img">
                                     <img src="../../resources/img/person.png">
@@ -245,7 +280,10 @@
                                 <div class="card-user-wrapper">
                                     <div class="card-user-info">
                                         <span class="user-name">\${match.userNickName}</span>
-                                        <span class="user-category">\${match.activityName}</span>
+                                        <div class="category-wrapper">
+                                            <span class="user-category">\${match.activityName}</span>
+                                            <span class="user-level \${levelClass}">\${levelText}</span>
+                                        </div>
                                     </div>
                                     <div class="card-state-\${badgeClass}">\${statusText}</div>
                                 </div>
@@ -274,11 +312,11 @@
                                     </div>
                                     <div class="matching-user">
                                         <i class="fa-solid fa-users"></i>
-                                        <span>\${match.matchingUserCount}</span>
+                                        <span>\${match.applicationCount} / \${match.matchingUserCount}</span>
                                     </div>
                                 </div>
                                 <div class="matching-right">
-                                    <button class="matching-application-btn">신청하기</button>
+                                    <button class="matching-application-btn \${btnClass}" \${btnDis} onclick="applicationMatch(\${match.matchingNo}, \${match.userNo})">\${btnText}</button>
                                 </div>
                             </div>
                         </div>
@@ -310,6 +348,108 @@
             .catch(err => console.log(err));
         }
         matchinglist(1);
+
+        function applicationMatch(matchingNo, userNo) {
+            console.log(matchingNo);
+            console.log(userNo)
+            Swal.fire({
+                title: '해당 매칭을 신청하시겠습니까?',
+                showCancelButton: true,
+                cancelButtonText: "취소하기",
+                confirmButtonText: "신청하기",
+                customClass: {
+                    popup: 'success-popup',
+                    title: 'success-title',
+                    confirmButton: 'success-button',
+                    cancelButton: 'cancel-button'
+                }
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    fetch('/matching/application', {
+                        method: "post",
+                        headers: {"Content-Type":"application/json"},
+                        body: JSON.stringify({ 
+                            matchingNo: matchingNo,
+                            userNo: userNo
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        console.log(result);
+                        if(result > 0) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '매칭 신청완료!',
+                                text: '승인전까지 기다려주세요!',
+                                confirmButtonText: '확인',
+                                customClass: {
+                                    popup: 'success-popup',
+                                    title: 'success-title',
+                                    confirmButton: 'success-button',
+                                }
+                            }).then(() => {
+                                // 새로고침
+                                location.reload();
+                            });
+                        } else if (result == -1) {
+                            Swal.fire({
+                                icon:'error',
+                                title: '자기가 쓴 매칭을 \n 신청할 수 없습니다..ㅠ',
+                                text: '다른 매칭을 신청해주세요.',
+                                confirmButtonText: '확인',
+                                customClass: {
+                                    popup: 'error-popup',
+                                    title: 'error-title',
+                                    text: 'error-text',
+                                    confirmButton: 'error-button'
+                                }
+                            });
+                        } else if (result == -2) {
+                            Swal.fire({
+                                icon:'error',
+                                title: '이미 신청한 매칭입니다.',
+                                text: '다른 매칭을 신청해주세요.',
+                                confirmButtonText: '확인',
+                                customClass: {
+                                    popup: 'error-popup',
+                                    title: 'error-title',
+                                    text: 'error-text',
+                                    confirmButton: 'error-button'
+                                }
+                            });   
+                        } else {
+                            Swal.fire({
+                                icon:'error',
+                                title: '매칭 신청 실패..ㅠ',
+                                text: '다시 시도 해주세요.',
+                                confirmButtonText: '확인',
+                                customClass: {
+                                    popup: 'error-popup',
+                                    title: 'error-title',
+                                    text: 'error-text',
+                                    confirmButton: 'error-button'
+                                }
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire({
+                            icon:'error',
+                            title: '매칭 신청 실패..ㅠ',
+                            text: '다시 시도 해주세요.',
+                            confirmButtonText: '확인',
+                            customClass: {
+                                popup: 'error-popup',
+                                title: 'error-title',
+                                text: 'error-text',
+                                confirmButton: 'error-button'
+                            }
+                        });
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>

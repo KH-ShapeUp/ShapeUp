@@ -162,7 +162,14 @@
     font-weight: 500;
 }
 
+.user-nickname {
+    margin-left: 20px;
+    font-size: .9rem;
+}
 
+.welcome_txt {
+    font-weight: 600;
+}
 
 .sideBtn #loginBtn {
     border: 1.5px solid #0A84FF;

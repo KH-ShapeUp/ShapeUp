@@ -34,17 +34,21 @@ body {
     background-color: #fff !important;
     border-radius: 15px !important;
 }
+
 .success-title {
     font-size: 1.2rem !important;
     color: #111 !important;
+    margin-top: 20px !important;
 }
+
 .success-text {
     font-size: 1rem !important;
     font-weight: 600 !important;
     color: #666 !important;
 }
+
 .success-button {
-    width: 100% !important;
+    /* width: 100% !important; */
     background-color: var(--main-color) !important;
     border: none !important;
     color: white !important;
@@ -66,11 +70,17 @@ body {
     color: #666 !important;
 }
 .error-button {
-    width: 100% !important;
+    /* width: 100% !important; */
     background-color: #ff3b00 !important;
     border: none !important;
     color: white !important;
 }
+
+.cancel-button {
+    background-color: #d5d5d5 !important;
+    color: #666 !important;
+}
+
 
 @media screen and (max-width:768px) {
 	.container {
@@ -88,5 +98,9 @@ body {
         width: 85% !important;
         background-color: #fff !important;
         border-radius: 15px !important;
+    }
+
+    .success-text {
+        margin-top: 0px !important;
     }
 }

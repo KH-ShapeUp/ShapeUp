@@ -36,10 +36,13 @@
 	        M.MATCHING_TIME,
 	        M.PARTNER_TYPE,
 	        M.MATCHING_TYPE,
-	        M.MATCHING_PRICE,					
-	        M.MATCHING_USER_COUNT,
+	        TO_CHAR(M.MATCHING_PRICE, '999,999,999') AS MATCHING_PRICE,					
 	        A.ACTIVITY_NAME,
 	        U.USER_NICKNAME,
+	        M.MATCHING_USER_COUNT,
+	        (SELECT COUNT(*) 
+	        FROM MATCHING_APPLI_TBL A
+	        WHERE A.MATCHING_NO = M.MATCHING_NO) AS APPLICATION_COUNT,
 	
 			CASE
 			    WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') < TRUNC(SYSDATE) 
@@ -67,8 +70,7 @@
 	        A.USE_YN = 'Y'
 	        AND M.DELETE_YN = 'N'
 	
-	    ORDER BY 
-	        M.CREATED_AT DESC
+	    ORDER BY M.CREATED_AT DESC
 	        ]]>
 	</select>
 
@@ -76,5 +78,22 @@
  	<!-- 매칭 게시판 카운트 -->
  	<select id="getTotalCount">
  		SELECT COUNT(*) FROM MATCHING_TBL ORDER BY CREATED_AT DESC
+ 	</select>
+ 	
+ 	<!-- 매칭 신청 버튼(삽입) -->
+ 	<insert id="matchinApplication">
+ 		INSERT INTO MATCHING_APPLI_TBL VALUES (
+ 			#{matchingAppliNo}, #{userNo}, #{matchingNo}, DEFAULT, DEFAULT
+ 		)		
+ 	</insert>
+ 	
+ 	<!-- 매칭 작성자 유저 번호 가져오기 -->
+ 	<select id="getWriterUserNo">
+ 		SELECT USER_NO FROM MATCHING_TBL WHERE MATCHING_NO = #{matchingNo}
+ 	</select>
+ 	
+ 	<!-- 매칭 중복 선택 방지 -->
+ 	<select id="getMatchDedupe">
+ 		SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_APPLI_NO = #{loginUserNo} AND MATCHING_NO = #{matchingNo}
  	</select>
  </mapper>
