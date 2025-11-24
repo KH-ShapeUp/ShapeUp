@@ -102,6 +102,8 @@
     <jsp:include page="/WEB-INF/views/diet/tools/dietList.jsp"/>
   </body>
   <script>
+  let currentDietDate = null;
+
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
   function getTodayIso() {
@@ -220,6 +222,7 @@
     });
 
     const todayIso = setDietDates();
+    currentDietDate = todayIso;
     const picker = document.getElementById('diet-date-picker');
     if (picker) picker.value = todayIso;
     fetchDietSummary(todayIso);
@@ -230,6 +233,7 @@
       picker.addEventListener('change', (e) => {
         const val = sanitizeDateInput(e.target.value) || getTodayIso();
         setDietDates(val);
+        currentDietDate = val;
         fetchDietSummary(val);
       });
       picker.addEventListener('blur', (e) => {
@@ -237,10 +241,14 @@
           const today = getTodayIso();
           picker.value = today;
           setDietDates(today);
+          currentDietDate = today;
           fetchDietSummary(today);
         }
       });
     }
   });
+
+  window.getCurrentDietDate = () => currentDietDate || getTodayIso();
+  window.refreshDietSummary = () => fetchDietSummary(window.getCurrentDietDate());
   </script>
 </html>

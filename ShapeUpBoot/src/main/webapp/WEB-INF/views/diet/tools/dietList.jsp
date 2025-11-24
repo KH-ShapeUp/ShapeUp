@@ -217,12 +217,20 @@
     return `${d.getFullYear()}-${mm}-${dd}`;
   }
 
+
+  function getSelectedDietDate() {
+    if (typeof window.getCurrentDietDate === "function") {
+      return window.getCurrentDietDate() || getToday();
+    }
+    return getToday();
+  }
+
   async function submitSelectedFoods() {
     closeDietListModal();
     if (!dietListState.selectedFoods.length) return;
     const payload = {
       dietType: dietListState.dietType || '기타',
-      dietDate: getToday(),
+      dietDate: getSelectedDietDate(),
       items: dietListState.selectedFoods.map((f) => ({
         foodNames: f.name,
         name: f.name,
@@ -240,6 +248,9 @@
       if (!res.ok) throw new Error('저장 실패');
       dietListState.selectedFoods = [];
       renderSelectedList();
+      if (typeof refreshDietSummary === "function") {
+        refreshDietSummary();
+      }
     } catch (err) {
       console.error('식단 저장 실패', err);
     }

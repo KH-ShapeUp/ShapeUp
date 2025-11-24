@@ -1,17 +1,17 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <div id="activity-list-backdrop" class="modal-backdrop" style="display:none;">
-  <div class="modal-container" id="activity-list-modal">
+  <div class="modal-container activity-list-modal" id="activity-list-modal">
     <div class="modal-header">
       <div class="header-top">
-        <h3>운동 검색</h3>
+        <h3>활동 검색</h3>
         <div class="header-actions">
           <button type="button" class="ghost-btn direct-input-btn" onclick="openCustomModalFromList()">직접 입력하기</button>
           <button type="button" class="close-btn" onclick="closeListModal()">✕</button>
         </div>
       </div>
       <form class="activity-search" id="activity-search-form">
-        <input type="text" id="activity-search-input" placeholder="운동명을 입력하세요" />
+        <input type="text" id="activity-search-input" placeholder="활동명을 입력하세요" />
         <button type="submit" class="primary-btn">검색</button>
       </form>
     </div>
@@ -20,7 +20,7 @@
     </div>
     <div class="modal-footer">
       <div class="selected-wrap">
-        <div class="selected-name" id="selected-activity-name">선택한 운동:</div>
+        <div class="selected-name" id="selected-activity-name">선택된 활동:</div>
         <div class="selected-list" id="selected-activity-list"></div>
       </div>
       <div class="footer-actions">
@@ -31,31 +31,17 @@
   </div>
 </div>
 
-<style>
-  /* 리스트 영역 스크롤(ditetList와 동일한 UX를 위해 높이 제한) */
-  body.activity-record .activity-list {
-    max-height: 360px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-</style>
-
 <script>
   const activityListState = {
     selectedActivities: [],
     listElement: null,
   };
 
-  // 모달 열기
   function openActivityModal() {
     const backdrop = document.getElementById('activity-list-backdrop');
     const modal = document.getElementById('activity-list-modal');
-    if (backdrop) {
-      backdrop.style.display = 'flex';
-    }
-    if (modal) {
-      modal.style.display = 'block';
-    }
+    if (backdrop) backdrop.style.display = 'flex';
+    if (modal) modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
   }
 
@@ -74,12 +60,14 @@
   }
 
   function adaptActivity(raw) {
-    if (!raw) return null;
     return {
-      name: raw.activityName || raw.name || '이름 없음',
-      kcal: Number(raw.calPerMin || raw.kcalPerMin) || 0, // 1분 칼로리
-      type: raw.activityType || raw.type || '구분 없음',
-      level: raw.weightLevel || raw.level || '일반',
+      name: raw.activityName || raw.name || '???',
+      activityId: raw.activityId || raw.id || null,
+      kcal: Number(raw.calPerMin || raw.kcalPerMin || raw.kcal) || 0,
+      type: raw.activityType || raw.type || '?? ??',
+      weightLevel: Number(raw.weightLevel || raw.level) || 1,
+      intensityFactor: Number(raw.intensityFactor) || 1,
+      minutes: Number(raw.minutes) || 0,
     };
   }
 
@@ -90,7 +78,7 @@
     if (!activityListState.selectedActivities.length) {
       const empty = document.createElement('span');
       empty.className = 'selected-empty';
-      empty.textContent = '선택된 운동이 없습니다';
+      empty.textContent = '선택된 활동이 없습니다';
       listEl.appendChild(empty);
       return;
     }
@@ -101,12 +89,12 @@
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'chip-name';
-      nameSpan.textContent = act.name || '�̸� ����';
+      nameSpan.textContent = act.name || '이름 없음';
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'chip-remove';
-      removeBtn.textContent = '?';
+      removeBtn.textContent = '✕';
       removeBtn.addEventListener('click', () => {
         activityListState.selectedActivities.splice(index, 1);
         renderSelectedActivities();
@@ -168,7 +156,7 @@
       const data = await res.json();
       renderActivityList(Array.isArray(data) ? data : [], '검색 결과가 없습니다');
     } catch (err) {
-      console.error('운동 검색 실패', err);
+      console.error('활동 검색 실패', err);
       renderActivityList([], '검색 결과가 없습니다');
     }
   }
@@ -186,26 +174,10 @@
   function startInsertActivity(activity) {
     if (!activity) return;
     closeListModal();
-    activityListState.selectedActivities.push(activity);
-    renderSelectedActivities();
     if (typeof setActivityModalData === 'function') {
       setActivityModalData(activity);
     } else if (typeof openActivityDetailModal === 'function') {
       openActivityDetailModal(activity);
-    }
-  }
-
-  async function submitSelectedActivities() {
-    closeListModal();
-    if (!activityListState.selectedActivities.length) return;
-    try {
-      await fetch('/activity/selected', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: activityListState.selectedActivities }),
-      });
-    } catch (err) {
-      console.error('� ���� ����', err);
     }
   }
 
@@ -214,6 +186,40 @@
     activityListState.selectedActivities.push(activity);
     renderSelectedActivities();
     openActivityModal();
+  }
+
+  function buildActivityInsertPayload() {
+    const nowIso = new Date().toISOString();
+    return {
+      userNo: window.loginUserNo || null,
+      actionAt: nowIso,
+      sourceType: 'MANUAL',
+      items: activityListState.selectedActivities.map((item) => ({
+        activityName: item.name || item.activityName || '???',
+        activityId: item.activityId || null,
+        weightLevel: Number(item.weightLevel) || 1,
+        durationMin: Number(item.minutes) || 0,
+        calories: Number(item.kcal) || 0,
+        intensityFactor: Number(item.intensityFactor) || 1,
+      })),
+    };
+  }
+
+  async function submitSelectedActivities() {
+    closeListModal();
+    if (!activityListState.selectedActivities.length) return;
+    const payload = buildActivityInsertPayload();
+    console.log('Submitting activities payload =>', payload);
+    try {
+      const res = await fetch('/activity/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('저장 실패');
+    } catch (err) {
+      console.error('활동 저장 실패', err);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -238,6 +244,5 @@
 
   window.openActivityModal = openActivityModal;
   window.closeListModal = closeListModal;
-  window.openCustomModalFromList = openCustomModalFromList;
   window.receiveActivityFromInsert = receiveActivityFromInsert;
 </script>
