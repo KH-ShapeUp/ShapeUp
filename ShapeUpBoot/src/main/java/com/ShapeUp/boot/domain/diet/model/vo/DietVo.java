@@ -15,5 +15,6 @@ public class DietVo {
 	private Timestamp updatedAt;
 	private String foodCd;
 	private double amount;
+	private double kcal;
 	
 }

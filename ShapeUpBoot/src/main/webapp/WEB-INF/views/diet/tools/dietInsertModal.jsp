@@ -1,9 +1,9 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <div class="modal-backdrop" id="modal-backdrop" style="display:none;">
   <div class="food-modal diet-insert-modal" role="dialog" aria-modal="true">
     <div class="modal-title-bar">
-      <h3 class="food-name" id="foodName">선택된 음식 정보</h3>
-      <span class="modal-center-info">기본 1회 기준</span>
+      <h3 class="food-name" id="foodName">선택한 음식 없음</h3>
+      <span class="modal-center-info">기본 1회 섭취</span>
     </div>
     <p class="food-kcal" id="foodKcal">0 kcal</p>
 
@@ -48,7 +48,8 @@
     protein: 0,
     fat: 0,
     kcal: 0,
-    name: '선택된 음식 정보',
+    name: '선택한 음식 없음',
+    foodCd: null,
   };
   const step = 0.5;
   let currentQuantity = 1.0;
@@ -70,7 +71,7 @@
 
   function updateModalValues() {
     const totals = currentFoodTotals();
-    document.getElementById('foodName').textContent = modalState.name || '선택된 음식 정보';
+    document.getElementById('foodName').textContent = modalState.name || '선택한 음식 없음';
     document.getElementById('foodKcal').textContent = formatNumber(totals.kcal) + ' kcal';
     document.getElementById('currentQty').textContent = formatNumber(currentQuantity);
     document.getElementById('portionDisplay').textContent = formatNumber(currentQuantity) + '회';
@@ -97,7 +98,8 @@
 
   function setDietModalData(food) {
     if (!food) return;
-    modalState.name = food.name || '선택된 음식';
+    modalState.name = food.name || '선택한 음식';
+    modalState.foodCd = food.foodCd || null;
     modalState.servingSize = Number(food.servingSize || food.weight || food.serving || 100) || 100;
     modalState.carb = Number(food.carb) || 0;
     modalState.protein = Number(food.protein) || 0;
@@ -110,7 +112,8 @@
   function addCurrentFoodToList() {
     const totals = currentFoodTotals();
     const foodPayload = {
-      name: modalState.name || '선택된 음식',
+      name: modalState.name || '선택한 음식',
+      foodCd: modalState.foodCd || null,
       kcal: formatNumber(totals.kcal),
       carb: formatNumber(totals.carbs),
       protein: formatNumber(totals.protein),

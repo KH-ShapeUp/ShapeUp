@@ -91,6 +91,7 @@
   </main>
   <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
   <jsp:include page="/WEB-INF/views/activity/tools/activityList.jsp"/>
+  <jsp:include page="/WEB-INF/views/activity/tools/activityInsertModal.jsp"/>
 </body>
 
 
@@ -105,7 +106,6 @@
 	})
 </script>
 </html>
-
 
 
 

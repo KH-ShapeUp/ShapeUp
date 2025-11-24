@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!-- custom diet insert modal -->
 <div class="modal-backdrop" id="custom-backdrop" style="display: none;">
   <div class="food-modal custom-insert-modal" role="dialog" aria-modal="true">
@@ -11,26 +11,26 @@
     <form class="custom-form" onsubmit="return false;">
       <div class="form-row">
         <label for="customName">음식 이름</label>
-        <input type="text" id="customName" placeholder="예: 닭가슴살" />
+        <input type="text" id="customName" placeholder="예: 오트밀" />
       </div>
       <div class="macro-grid">
         <div class="form-row">
           <div class="label-with-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/rice-bowl--v1.png" alt="탄수화물 아이콘" />
+            <img src="https://img.icons8.com/ios-filled/50/000000/rice-bowl--v1.png" alt="탄수화물" />
             <label for="customCarb">탄수화물(g)</label>
           </div>
         <input type="number" id="customCarb" step="any" inputmode="decimal" min="0" value="" placeholder="0" />
         </div>
         <div class="form-row">
           <div class="label-with-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/steak.png" alt="단백질 아이콘" />
+            <img src="https://img.icons8.com/ios-filled/50/000000/steak.png" alt="단백질" />
             <label for="customProtein">단백질(g)</label>
           </div>
           <input type="number" id="customProtein" step="any" inputmode="decimal" min="0" value="" placeholder="0" />
         </div>
         <div class="form-row">
           <div class="label-with-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/milk-bottle--v1.png" alt="지방 아이콘" />
+            <img src="https://img.icons8.com/ios-filled/50/000000/milk-bottle--v1.png" alt="지방" />
             <label for="customFat">지방(g)</label>
           </div>
           <input type="number" id="customFat" step="any" inputmode="decimal" min="0" value="" placeholder="0" />
@@ -110,7 +110,7 @@
         const protein = parseFloat(document.getElementById('customProtein').value) || 0;
         const fat = parseFloat(document.getElementById('customFat').value) || 0;
         const kcal = Number((carb * 4 + protein * 4 + fat * 9).toFixed(1));
-        const foodPayload = { name, carb, protein, fat, kcal, servingSize: 100 };
+        const foodPayload = { name, carb, protein, fat, kcal, servingSize: 100, foodCd: null };
         if (typeof addSelectedFood === 'function') {
           addSelectedFood(foodPayload, { fromInsert: true });
         }

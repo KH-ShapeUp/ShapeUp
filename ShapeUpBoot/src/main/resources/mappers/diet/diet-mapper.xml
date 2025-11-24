@@ -9,4 +9,55 @@
  		WHERE FOOD_NAME LIKE '%'||#{keyword}||'%'
  		ORDER BY FOOD_NAME ASC
  	</select>
+
+	<insert id="insertDiet" parameterType="com.ShapeUp.boot.domain.diet.model.vo.DietVo">
+		INSERT INTO DIET_TBL (
+			DIET_NO,
+			USER_NO,
+			DIET_DATE,
+			DIET_TYPE,
+			FOOD_NAMES,
+			FOOD_CD,
+			AMOUNT,
+			KCAL
+		) VALUES (
+			SEQ_DIET_NONEXTVAL.NEXTVAL,
+			#{userNo},
+			NVL(#{dietDate}, TO_CHAR(SYSDATE, 'YYYY-MM-DD')),
+			#{dietType},
+			#{foodNames},
+			#{foodCd},
+			#{amount},
+			#{kcal}
+		)
+	</insert>
+
+	<select id="sumKcalByDate" resultType="map">
+		SELECT
+			DIET_TYPE AS "dietType",
+			COALESCE(SUM(KCAL),0) AS "totalKcal"
+		FROM DIET_TBL
+		WHERE DIET_DATE = #{dietDate}
+		GROUP BY DIET_TYPE
+	</select>
+
+	<select id="sumNutritionTotalsByDate" resultType="map">
+		SELECT
+			COALESCE(SUM(d.KCAL), 0) AS "totalKcal",
+			COALESCE(SUM(
+				NVL(f.CARB,0) *
+				(CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END)
+			), 0) AS "totalCarb",
+			COALESCE(SUM(
+				NVL(f.PROTEIN,0) *
+				(CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END)
+			), 0) AS "totalProtein",
+			COALESCE(SUM(
+				NVL(f.FAT,0) *
+				(CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END)
+			), 0) AS "totalFat"
+		FROM DIET_TBL d
+		LEFT JOIN FOOD_API_TBL f ON d.FOOD_CD = f.FOOD_CD
+		WHERE d.DIET_DATE = #{dietDate}
+	</select>
  </mapper>
