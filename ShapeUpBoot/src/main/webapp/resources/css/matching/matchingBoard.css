@@ -228,7 +228,7 @@
     border: 1px solid var(--border-color);
     box-shadow: var(--box-shadow);
     transition: all 0.15s ease;
-    cursor: pointer;
+    user-select: none;
 }
 
 .matching-card:hover {
@@ -335,7 +335,7 @@
 .matching-left {
     display: flex;
     flex-direction: row;
-    gap: 15px;
+    gap: 20px;
 }
 
 /* 매칭 카드 간단 정보 */
@@ -343,6 +343,35 @@
     font-size: .9rem;
     color: #666;
     font-weight: 500;
+}
+
+.category-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.category-wrapper span:nth-child(2) {
+    font-weight: 600;
+    font-size: .8rem;
+    padding: 1px 5px;
+    border-radius: 8px;
+}
+
+.user-level {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+}
+
+.user-level.middleClass {
+    color: #E65100;
+    background-color: #FFF3E0; 
+}
+
+.user-level.advanced {
+    color: #B71C1C;
+    background-color: #FFEBEE;
 }
 
 
@@ -362,6 +391,14 @@
     color: #fff;
     font-weight: 500;
     cursor: pointer;
+}
+
+.matching-application-btn.finish,
+.matching-application-btn:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;       
+    pointer-events: none;   
 }
 
 
@@ -395,6 +432,17 @@
 .pagination button.active {
     background-color: #0A84FF;
     color: #fff;
+}
+
+/***************/
+/* 알람 커스텀 */
+/***************/
+.success-button {
+    width: auto !important;
+}
+.cancel-button {
+    background-color: #d5d5d5 !important;
+    color: #666 !important;
 }
 
 @media screen and (max-width: 768px) {

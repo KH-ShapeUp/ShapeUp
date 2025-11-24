@@ -13,7 +13,7 @@ import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
 
 import com.ShapeUp.boot.domain.matching.model.mapper.matchingMapper;
 import com.ShapeUp.boot.domain.matching.model.service.matchingService;
-
+import com.ShapeUp.boot.domain.matching.model.vo.matchingAppLiVo;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
 
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class matchingServiceImpl implements matchingService{
 	/* 매칭 리스트 */
 	@Override
 	public List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit) {
-		int offset = ((currentPage) - 1 / matchBoardLimit);
+		int offset = (currentPage - 1) * matchBoardLimit;
 		RowBounds rowBounds = new RowBounds(offset, matchBoardLimit);
 		List<matchingListDTO> mList =  mMapper.matchingList(rowBounds);
 		return mList;
@@ -59,4 +59,23 @@ public class matchingServiceImpl implements matchingService{
 		int getTotalCount = mMapper.getTotalCount();
 		return getTotalCount;
 	}
+	
+	/* 매칭 신청 */
+	@Override
+	public int matchApplication(matchingAppLiVo mAppDTO) {
+		return mMapper.matchinApplication(mAppDTO);
+	}
+
+	/* 매칭 작성자 유저 번호 */
+	@Override
+	public int getWriterUserNo(int matchingNo) {
+		return mMapper.getWriterUserNo(matchingNo);
+	}
+
+	/* 매칭 중복 방지 */
+	@Override
+	public int matchDedupe(int loginUserNo, int matchingNo) {
+		return mMapper.getMatchDedupe(loginUserNo, matchingNo);
+	}
+
 }

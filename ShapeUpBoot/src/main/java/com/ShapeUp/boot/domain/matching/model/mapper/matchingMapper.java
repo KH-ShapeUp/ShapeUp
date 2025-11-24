@@ -9,7 +9,7 @@ import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
-
+import com.ShapeUp.boot.domain.matching.model.vo.matchingAppLiVo;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
 
 
@@ -29,4 +29,14 @@ public interface matchingMapper{
 
 	/* 매칭 게시판 카운트 */
 	int getTotalCount();
+
+	/* 매칭 신청 */
+	int matchinApplication(matchingAppLiVo mAppDSTO);
+
+	/* 매칭 작성자 가져오기 */
+	int getWriterUserNo(int matchingNo);
+
+	/* 매칭 중복 방지 */
+	int getMatchDedupe(int loginUserNo, int matchingNo);
+
 }
