@@ -356,10 +356,25 @@ const MembersUser = () => {
     return Math.round(num * factor);
   };
 
+  const computeReleaseDate = () => {
+    if (selected?.status !== "정지") return "";
+    const days = computeBanDays();
+    const base = new Date();
+    if (days) {
+      base.setDate(base.getDate() + days);
+      return base.toISOString().slice(0, 10);
+    }
+    if (selected.updatedAt) {
+      return new Date(selected.updatedAt).toISOString().slice(0, 10);
+    }
+    return "";
+  };
+
   const handleSelect = (id) => {
     setInlineMessage(null);
     setShowSaveModal(false);
     setSelectedId(id);
+    setBanDuration({ value: "", unit: "day" });
   };
   const updateMemberField = (name, value) => {
     if (!selected) return;
@@ -428,7 +443,7 @@ const MembersUser = () => {
       let statusUrl = `/api/admin/users/${selected.id}/status?status=${encodeURIComponent(selected.status)}`;
       if (selected.status === "정지") {
         const banDays = computeBanDays();
-        if (banDays) statusUrl += `&banDays=${banDays}`;
+        if (banDays) statusUrl += `&banDays=${encodeURIComponent(banDays)}`;
       }
       tasks.push(fetch(statusUrl, { method: "PATCH" }));
     }
@@ -658,11 +673,7 @@ const MembersUser = () => {
                 <div className="detail-field">
                   <label>해제 날짜</label>
                   <input
-                    value={
-                      selected.updatedAt
-                        ? new Date(selected.updatedAt).toISOString().slice(0, 10)
-                        : ""
-                    }
+                    value={computeReleaseDate()}
                     readOnly
                     style={{ background: "#f5f6fb" }}
                   />
@@ -673,22 +684,25 @@ const MembersUser = () => {
                     <input
                       type="number"
                       min="1"
-                      value={banDuration.value}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setBanDuration((prev) => ({ ...prev, value: val }));
-                        if (val) setDirtyFields((prev) => ({ ...prev, status: true }));
-                      }}
-                      placeholder="기간"
-                    />
-                    <CustomSelect
-                      value={banDuration.unit}
+                    value={banDuration.value}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setBanDuration((prev) => ({ ...prev, value: val }));
+                      if (val) setDirtyFields((prev) => ({ ...prev, status: true }));
+                    }}
+                    placeholder="기간"
+                  />
+                  <CustomSelect
+                    value={banDuration.unit}
                       options={[
                         { label: "일", value: "day" },
                         { label: "달", value: "month" },
                         { label: "년", value: "year" },
                       ]}
-                      onChange={(val) => setBanDuration((prev) => ({ ...prev, unit: val }))}
+                      onChange={(val) => {
+                        setBanDuration((prev) => ({ ...prev, unit: val }));
+                        setDirtyFields((prev) => ({ ...prev, status: true }));
+                      }}
                       size="sm"
                     />
                     <span className="ban-text">차단</span>

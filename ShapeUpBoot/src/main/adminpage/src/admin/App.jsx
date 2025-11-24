@@ -50,7 +50,7 @@ function App() {
         if (data.userType !== "SYSTEM_MANAGER") {
           if (data.userType === "STADIUM_MANAGER") {
             alert("잘못된 접근입니다.");
-            window.location.href = "http://localhost:5173/stadium";
+            window.location.href = "http://localhost:8080/stadium";
             return;
           }
           alert("잘못된 접근입니다.");

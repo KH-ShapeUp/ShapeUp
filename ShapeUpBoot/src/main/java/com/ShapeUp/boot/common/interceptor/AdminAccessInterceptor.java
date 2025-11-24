@@ -17,7 +17,7 @@ public class AdminAccessInterceptor implements HandlerInterceptor {
         }
 
         if ("STADIUM_MANAGER".equalsIgnoreCase(userType)) {
-            response.sendRedirect("http://localhost:5173/stadium");
+            response.sendRedirect("http://localhost:8080/stadium");
             response.getWriter().write("<script>alert('잘못된 접근입니다.');</script>");
         } else {
             response.sendRedirect("http://localhost:8080");
