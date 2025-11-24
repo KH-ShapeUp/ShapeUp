@@ -167,12 +167,16 @@
   </body>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+<<<<<<< HEAD
   let macroChart = null;
   let currentDietDate = null;
   const SAMPLE_DIET = {
     meals: { '아침': 320, '점심': 540, '저녁': 480, '기타': 150 },
     totals: { kcal: 1490, carb: 180, protein: 75, fat: 55 }
   };
+=======
+  let currentDietDate = null;
+>>>>>>> refs/remotes/origin/Donghyok2
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
@@ -375,15 +379,20 @@
       calendarBtn.addEventListener('click', () => picker.showPicker && picker.showPicker());
       picker.addEventListener('change', (e) => {
         const val = sanitizeDateInput(e.target.value) || getTodayIso();
-        currentDietDate = setDietDates(val);
-        fetchDietSummary(currentDietDate);
+
+        setDietDates(val);
+        currentDietDate = val;
+        fetchDietSummary(val);
+
       });
       picker.addEventListener('blur', (e) => {
         if (!sanitizeDateInput(e.target.value)) {
           const today = getTodayIso();
           picker.value = today;
-          currentDietDate = setDietDates(today);
-          fetchDietSummary(currentDietDate);
+          setDietDates(today);
+          currentDietDate = today;
+          fetchDietSummary(today);
+
         }
       });
     }
@@ -402,5 +411,8 @@
     if (prevBtn) prevBtn.addEventListener('click', () => moveDate(-1));
     if (nextBtn) nextBtn.addEventListener('click', () => moveDate(1));
   });
+
+  window.getCurrentDietDate = () => currentDietDate || getTodayIso();
+  window.refreshDietSummary = () => fetchDietSummary(window.getCurrentDietDate());
   </script>
 </html>

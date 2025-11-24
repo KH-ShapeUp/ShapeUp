@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ShapeUp.boot.app.diet.controller.dto.DietSaveRequest;
+import com.ShapeUp.boot.app.diet.controller.dto.Item;
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
@@ -32,6 +34,9 @@ public class DietController {
 
 	@GetMapping
 	public String dietPage() {
+		
+		//로그인 유저 정보 받아오기
+		
 		return "diet/dietRecord";
 	}
 
@@ -95,21 +100,7 @@ public class DietController {
 		);
 	}
 	
-	@Data
-	public static class DietSaveRequest {
-		private String dietType;
-		private String dietDate;
-		private List<Item> items;
-	}
-	
-	@Data
-	public static class Item {
-		private String name;
-		private String foodNames;
-		private String foodCd;
-		private double amount;
-		private double kcal;
-	}
+
 	
 	private String normalizeMealKey(String raw) {
 		if (raw == null) return null;
