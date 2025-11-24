@@ -405,6 +405,7 @@ public class UserController {
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
             session.setAttribute("userType", user.getUserType());
+            session.setAttribute("loginUserEmail", user.getUserEmail());
 
             // 권한별 리다이렉트
             if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {

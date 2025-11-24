@@ -78,13 +78,13 @@
                 <div class="matching-wrapper-right">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="matchingDay">매칭 일자</label>
-                            <input type="date" name="matchingDate" id="matchingDay" placeholder="매칭 제목을 입력해주세요.">
+                            <label for="datePicker">매칭 일자</label>
+                            <input type="date" name="matchingDate" id="matchingDay" placeholder="매칭 날짜를 선택해주세요.">
                             <span class="errMsg"></span>
                         </div>
                         <div class="form-group">
-                            <label for="matchingTime">매칭 시간</label>
-                            <input type="time" name="matchingTime" id="matchingTime" placeholder="매칭 제목을 입력해주세요.">
+                            <label for="timePicker">매칭 시간</label>
+                            <input type="time" name="matchingTime" id="matchingTime" placeholder="매칭 시간을 선택해주세요.">
                             <span class="errMsg"></span>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                     <div class="form-group" id="form-user">
                         <i class="fa-solid fa-users"></i>
                         <label for="userCount">매칭 인원 수</label>
-                        <input type="number" name="partnerType" id="userCount" min="0">
+                        <input type="number" name="userCount" id="userCount" min="0">
                         <span class="errMsg"></span>
                     </div>
                 </div>
@@ -146,6 +146,8 @@
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <script>
@@ -156,7 +158,7 @@
         const locationSpan = document.querySelector("#locationHeader span");
         const locationFilterBox = locationHeader.nextElementSibling;
 
-        // 1. 헤더 클릭 시 토글
+        /* 헤더 클릭 시 토글 */
         locationHeader.addEventListener("click", () => {
             locationFilterBox.classList.toggle("hidden");
             locationHeader.classList.toggle("active");
@@ -164,7 +166,7 @@
 
         let locationBtn = ""; // 지역 저장 변수
 
-        // 2. 리스트 아이템 클릭 시 선택 및 닫기
+        /* 리스트 아이템 클릭 시 선택 및 닫기 */
         document.querySelectorAll(".location-filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 locationBtn = btn.value;
@@ -174,14 +176,13 @@
             });
         });
 
-        // 외부 영역 클릭 시 닫기 
-        document.addEventListener("click", (e) => {
-            // 클릭한 곳이 헤더 내부도 아니고, 박스 내부도 아니라면 닫기
-            if (!locationHeader.contains(e.target) && !locationFilterBox.contains(e.target)) {
+         /* 매칭 지역 리스트 버튼 클릭시 드롭다운 닫기 */
+        document.querySelectorAll(".location-filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
                 locationFilterBox.classList.add("hidden");
                 locationHeader.classList.remove("active");
-            }
-        });
+            })
+        })
 
         /* ============================== */
         /*     매칭 카테고리 드롭다운     */
@@ -205,14 +206,31 @@
                 categoryHeader.classList.remove("active");
             });
         });
-
-        document.addEventListener("click", (e) => {
-            // 클릭한 곳이 헤더 내부도 아니고, 박스 내부도 아니라면 닫기
-            if (!categoryHeader.contains(e.target) && !categoryFilterBox.contains(e.target)) {
+        /* 매칭 카테고리 리스트 버튼 클릭시 드롭다운 닫기 */
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
                 categoryFilterBox.classList.add("hidden");
                 categoryHeader.classList.remove("active");
-            }
-        });
+            })
+        })
+        /* ============================== */
+        /*     매칭 날짜, 시간 커스텀     */
+        /* ============================== */
+        flatpickr("#matchingDay", {
+            locale: "ko",
+            dateFormat: "Y-m-d",  // 데이터베이스 저장 형식 (2024-11-21)
+            minDate: "today",     // 오늘 이전 날짜 선택 불가 (여행이니까!)
+            disableMobile: "true" // 모바일에서도 커스텀 디자인 유지
+        })
+
+        flatpickr("#matchingTime", {
+            enableTime: true,     // 시간 기능 켜기
+            noCalendar: true,     // 달력은 끄기
+            dateFormat: "H:i",    // 24시간 형식 (14:30)
+            time_24hr: true,      // AM/PM 대신 24시간제 사용
+            minuteIncrement: 10,  // 분 단위 10분씩 끊기 (옵션)
+            disableMobile: "true"
+        })
 
         /* ============================== */
         /*          카테고리 검색         */
@@ -270,9 +288,52 @@
         })
 
         /* ============================== */
+        /*        삽입 오류 메세지        */
+        /* ============================== */
+        
+        /* ============================== */
         /*         매칭 게시글 삽입       */
         /* ============================== */
         function saveFun() {
+            const inputs = [
+                {el: document.querySelector("#matchingTitle"), msg : "매칭 제목을 입력해주세요."},
+                {el: document.querySelector("#matchingContent"), msg : "매칭 내용을 입력해주세요."},
+                {el: document.querySelector("#matchingDay"), msg : "매칭 날짜를 입력해주세요."},
+                {el: document.querySelector("#matchingTime"), msg : "매칭 시간을 입력해주세요."},
+                {el: document.querySelector("#matchingPrice"), msg : "매칭 가격을 입력해주세요."},
+                {el: document.querySelector("#partnerType"), msg : "파트너 타입을 입력해주세요."},
+                {el: document.querySelector("#userCount"), msg : "모집 인원 수를 입력해주세요."}
+            ]
+
+            document.querySelectorAll(".errMsg").forEach(span => {
+                span.innerText = '';
+            });
+
+            for(let i = 0; i < inputs.length; i++) {
+                const input  = inputs[i];
+                const value = input.el.value.trim();
+                const errSpan = document.querySelectorAll(".errMsg")[i];
+
+                input.el.style.border = ''; 
+                errSpan.innerText = '';
+
+                if(value === '') {
+                    const price = document.querySelector(".fa-wallet");
+                    input.el.style.border = '1.5px solid #ff3b00';
+                    errSpan.innerText = input.msg;
+                    price.style.top = 43 + "%";
+                    input.el.focus(); // 오류난 input에 포커스
+                    return; 
+                }
+            }
+    
+            if(matchingTitle.value.trim() === '') {
+                matchingTitle.style.border = '1.5px solid #ff3b00';
+                errMsg.innerText = '매칭 제목을 입력해주세요.';
+                return;
+            }
+
+
             const level = document.querySelector("input[name='matchingLevel']:checked").value;
             const matchingData = {
                 matchingTitle : document.querySelector("#matchingTitle").value,
@@ -326,7 +387,7 @@
                             confirmButton: 'success-button'
                         },
                         didClose: () => {
-                            location.href="/matching/board"
+                            location.href="/matching/board?ts=" + new Date().getTime();
                         }
                     });                 
                 } else {

@@ -26,5 +26,6 @@ public class matchingListDTO {
 	private int activityId;				// 활동 카테고리 ID
 	private String userNickName;		// 유저 닉네임
 	
-	private String matchingStatus; 		// ★ 이 줄을 추가해야 '마감/모집중' 값을 받을 수 있습니다.
+	private String matchingStatus; 		// SQL에서 날짜로 마감/모집중
+	private int applicationCount;		// 신청 인원 수
 }

@@ -4,6 +4,9 @@
     // 세션에서 로그인 정보 가져오기 (한 번만 선언)
     String loginUserNickname = (String) session.getAttribute("userNickname");
     boolean isLogin = loginUserNickname != null;
+
+    String loginUserEmail = (String)session.getAttribute("loginUserEmail");
+
 %>
 
 <div class="header">
@@ -39,7 +42,7 @@
     <div class="sideBtn">
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
-            <span class="user-nickname"><%= loginUserNickname %>님</span>
+            <span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span>
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
@@ -63,23 +66,22 @@
             <span class="material-symbols-outlined">close</span>
         </button>
 
+        <% if(isLogin) { %>
         <div class="userInfo">
             <div class="profile-img">
                 <img src="../../../resources/img/person.png">
             </div>
             <div class="profile-info">
-                <% if(isLogin) { %>
-                    <span class="name"><%= loginUserNickname %>님</span>
-                <% } else { %>
-                    <span class="name">게스트</span>
-                <% } %>
+                    <span class="name"><%= loginUserNickname %></span>
+                    <span class="email"><%= loginUserEmail %></span>
+                </div>
             </div>
-        </div>
+        <% } %>
 
         <% if(!isLogin) { %>
-            <div class="notLogin-warning-view">
+            <div class="notLogin-warning-view" style="margin-top: 25px;">
                 <span class="material-symbols-outlined">lock_person</span>
-                <a href="/login" id="notLogin-warning">로그인을 해주세요</a>
+                <a href="/user/login" id="notLogin-warning">로그인을 해주세요</a>
             </div>
         <% } %>
 
@@ -87,6 +89,48 @@
 
         <div class="sideBar-List">
             <!-- 메뉴 리스트 동일 -->
+            <div class="list-item">
+                <a href="/">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>홈</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/matching"> 
+                    <span class="material-symbols-outlined">group_search</span>
+                    <span>일반 매칭</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="#">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span>트레이너 매칭</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="#"> 
+                    <span class="material-symbols-outlined">forum</span>
+                    <span>커뮤니티</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="#">
+                    <span class="material-symbols-outlined">rewarded_ads</span>
+                    <span>성공 인증 게시판</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/map">
+                    <span class="material-symbols-outlined">map_search</span>
+                    <span>시설 지도</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="#">
+                    <span class="material-symbols-outlined">settings_account_box</span>
+                    <span>설정</span>
+                </a>
+            </div>
         </div>
 
         <% if(isLogin) { %>

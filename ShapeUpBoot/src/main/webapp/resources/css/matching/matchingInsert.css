@@ -115,7 +115,7 @@
     background-color: #fff;
     justify-content: center;
     border-radius: 12px;
-    flex: 0 0 350px;
+    flex: 0 0 400px;
     padding: 20px;
     border: 1px solid var(--border-color);
     box-shadow: var(--box-shadow);
@@ -152,10 +152,10 @@
 }
 
 #form-user i,
- #form-price i {
+#form-price i {
     position: absolute;
     left: 10px;
-    top: 52%;
+    top: 50%;
     transform: translateY(-50%);
 }
 
@@ -315,6 +315,15 @@
     background-color: var(--border-color);
     color: #666;
 }
+
+.errMsg {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #ff3b00;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 
 @media screen and (max-width: 768px) {
     .mobile-searchInput {display:none;}
