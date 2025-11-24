@@ -78,7 +78,7 @@
           <div class="link-area">
             <a href="${pageContext.request.contextPath}/user/searchPw">비밀번호 찾기</a>
             <span class="divider">|</span>
-            <a href="${pageContext.request.contextPath}/login">로그인</a>
+            <a href="${pageContext.request.contextPath}/user/login">로그인</a>
           </div>
 
         </form>
@@ -116,7 +116,7 @@ document.querySelector('.btn.cancel').addEventListener('click', function() {
 document.getElementById('findBtn').addEventListener('click', function() {
     // 이미 찾은 상태면 로그인 페이지로 이동
     if (isFound) {
-        window.location.href = contextPath + '/login';
+        window.location.href = contextPath + '/user/login';
         return;
     }
     
@@ -207,6 +207,21 @@ document.getElementById('findUseridForm').addEventListener('keypress', function(
         document.getElementById('findBtn').click();
     }
 });
+
+function resetSearchState() {
+    if (isFound) {
+        isFound = false;
+        document.getElementById('findBtn').textContent = '아이디 찾기';
+        document.getElementById('resultBox').style.display = 'none';
+        document.getElementById('errorBox').style.display = 'none';
+    }
+}
+
+['nameInput', 'emailIdInput', 'emailDomainInput', 'emailDomainSelect', 'phoneInput']
+    .forEach(id => {
+        document.getElementById(id).addEventListener('input', resetSearchState);
+        document.getElementById(id).addEventListener('change', resetSearchState);
+    });
 </script>
 
 
