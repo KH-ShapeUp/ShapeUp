@@ -2,13 +2,12 @@ package com.ShapeUp.boot.domain.matching.model.service;
 
 import java.util.List;
 
+import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
 
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
-import com.ShapeUp.boot.domain.matching.model.vo.matchingAppLiVo;
-import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
 
 
 public interface matchingService {
@@ -22,13 +21,14 @@ public interface matchingService {
 	List<ActivityVO> searchCategory(String keyword);
 
 	/* 매칭 리스트 */
-	List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit);
+	List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit, String location, String time, 
+			String level, String sort);
 	
 	/* 매칭 게시판 카운트 */
-	int getTotalCount();
+	int getTotalCount(String location, String time, String level);
 
 	/* 매칭 신청 */
-	int matchApplication(matchingAppLiVo mAppDTO);
+	int matchApplication(matchingApplicationDTO mAppDTO);
 
 	/* 매칭 작성자 유저 번호 가져오기 */
 	int getWriterUserNo(int matchingNo);

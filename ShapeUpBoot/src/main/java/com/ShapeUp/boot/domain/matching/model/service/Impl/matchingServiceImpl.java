@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 
+import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
@@ -46,23 +47,24 @@ public class matchingServiceImpl implements matchingService{
 
 	/* 매칭 리스트 */
 	@Override
-	public List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit) {
+	public List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit, 
+			String location, String time, String level, String sort) {
 		int offset = (currentPage - 1) * matchBoardLimit;
 		RowBounds rowBounds = new RowBounds(offset, matchBoardLimit);
-		List<matchingListDTO> mList =  mMapper.matchingList(rowBounds);
+		List<matchingListDTO> mList =  mMapper.matchingList(rowBounds, location, time, level, sort);
 		return mList;
 	}
 	
 	/* 매칭 게시판 카운트 */
 	@Override
-	public int getTotalCount() {
-		int getTotalCount = mMapper.getTotalCount();
+	public int getTotalCount(String location, String time, String level) {
+		int getTotalCount = mMapper.getTotalCount(location, time, level);
 		return getTotalCount;
 	}
 	
 	/* 매칭 신청 */
 	@Override
-	public int matchApplication(matchingAppLiVo mAppDTO) {
+	public int matchApplication(matchingApplicationDTO mAppDTO) {
 		return mMapper.matchinApplication(mAppDTO);
 	}
 

@@ -11,7 +11,7 @@
  	
  	<!-- 매칭 카테고리 리스트 -->
  	<select id="matchingCategory">
- 		SELECT ACTIVITY_NAME, ACTIVITY_ID, USE_YN FROM ACTIVITY_TBL WHERE WEIGHT_LEVEL = 1 AND USE_YN = 'Y'
+ 		SELECT ACTIVITY_NAME, ACTIVITY_ID, USE_YN FROM ACTIVITY_TBL WHERE USE_YN = 'Y'
  	</select>
  	
  	<!-- 매칭 카테고리 검색 -->
@@ -20,8 +20,8 @@
  	</select>
  	
  	<!-- 매칭 리스트 -->
- 	<select id="matchingList">
- 	<![CDATA[
+ 	<select id="matchingList" resultType="matchingListDTO" >
+ 	
 	    SELECT
 	        M.ACTIVITY_ID,
 	        M.MATCHING_NO,
@@ -45,20 +45,27 @@
 	        WHERE A.MATCHING_NO = M.MATCHING_NO) AS APPLICATION_COUNT,
 	
 			CASE
-			    WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') < TRUNC(SYSDATE) 
-			    THEN '마감'
-			    
-			    
-			    WHEN M.MATCHING_DATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
-			         AND M.MATCHING_TIME <= TO_CHAR(SYSDATE, 'HH24:MI')
-			    THEN '마감'
-			    
-			    
-			    WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') - TRUNC(SYSDATE) BETWEEN 0 AND 2
-			    THEN '마감임박'
-			         
-			    
-			    ELSE '모집중'
+			    -- 1. [마감] 날짜가 지났을 경우
+	            WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') <![CDATA[ < ]]> TRUNC(SYSDATE) 
+	            THEN '마감'
+	            
+	            -- 2. [마감] 오늘 날짜지만 시간이 지났을 경우
+	            WHEN M.MATCHING_DATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	                 AND M.MATCHING_TIME <![CDATA[ <= ]]> TO_CHAR(SYSDATE, 'HH24:MI')
+	            THEN '마감'
+	            
+	            -- 3. [마감] 신청 인원이 모집 인원과 같거나 많을 경우 
+	            WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) 
+	                 <![CDATA[ >= ]]> M.MATCHING_USER_COUNT
+	            THEN '마감'
+	            
+	            -- 4. [마감임박] (날짜가 2일 이내) AND (남은 자리가 2자리 이하) 
+	            WHEN (TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') - TRUNC(SYSDATE) BETWEEN 0 AND 2)
+	                 OR (M.MATCHING_USER_COUNT - (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) <![CDATA[ <= ]]> 2)
+	            THEN '마감임박'
+	                 
+	            -- 5. [모집중] 그 외 나머지
+	            ELSE '모집중'
 	        END AS MATCHING_STATUS
 	
 	    FROM 
@@ -69,15 +76,66 @@
 	    WHERE 
 	        A.USE_YN = 'Y'
 	        AND M.DELETE_YN = 'N'
-	
-	    ORDER BY M.CREATED_AT DESC
-	        ]]>
+	       
+		    <if test="location != null and location != ''">
+		        AND M.MATCHING_LOCATION = #{location}
+		    </if>
+		
+		    
+		    <if test="time != null and time != ''">
+		        AND M.MATCHING_TIME = #{time}
+		    </if>
+		
+		    
+		    <if test="level != null and level != ''">
+		        AND M.MATCHING_LEVEL = #{level}
+		    </if>
+		
+		    
+		    <choose>
+		        <when test="sort == 'latest'">
+		            ORDER BY M.CREATED_AT DESC
+		        </when>
+		        <when test="sort == 'deadline'">
+			        ORDER BY
+				        CASE
+				            WHEN (TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') - TRUNC(SYSDATE) BETWEEN 0 AND 2)
+				                 AND (M.MATCHING_USER_COUNT - (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) <![CDATA[ <= ]]> 2)
+				                 AND (M.MATCHING_USER_COUNT > (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO))
+				            THEN 1
+				            
+				            WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') <![CDATA[ < ]]> TRUNC(SYSDATE) THEN 3
+				            WHEN M.MATCHING_DATE = TO_CHAR(SYSDATE, 'YYYY-MM-DD') AND M.MATCHING_TIME <![CDATA[ <= ]]> TO_CHAR(SYSDATE, 'HH24:MI') THEN 3
+				            WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) <![CDATA[ >= ]]> M.MATCHING_USER_COUNT THEN 3
+				
+				            ELSE 2
+				        END ASC,
+				        
+				        M.MATCHING_DATE ASC, M.MATCHING_TIME ASC
+			    </when>
+		        <otherwise>
+		            ORDER BY M.CREATED_AT DESC
+		        </otherwise>
+		    </choose>
+	    
 	</select>
 
  	
  	<!-- 매칭 게시판 카운트 -->
  	<select id="getTotalCount">
- 		SELECT COUNT(*) FROM MATCHING_TBL ORDER BY CREATED_AT DESC
+ 		SELECT COUNT(*) FROM MATCHING_TBL 
+ 		<where>
+	        <if test="location != null and location != ''">
+	            AND MATCHING_LOCATION LIKE '%' || #{location} || '%'
+	        </if>
+	        <if test="time != null and time != ''">
+	            AND MATCHING_TIME = #{time}
+	        </if>
+	        <if test="level != null and level != ''">
+	            AND MATCHING_LEVEL = #{level}
+	        </if>
+	    </where>
+	    ORDER BY CREATED_AT DESC
  	</select>
  	
  	<!-- 매칭 신청 버튼(삽입) -->

@@ -402,6 +402,7 @@ public class UserController {
                     return "user/login";
                 }
             }
+            session.setAttribute("loginUser", user);
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
             session.setAttribute("userType", user.getUserType());

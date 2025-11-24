@@ -207,7 +207,7 @@
             });
         });
         /* 매칭 카테고리 리스트 버튼 클릭시 드롭다운 닫기 */
-        document.querySelectorAll(".filter-btn").forEach(btn => {
+        document.querySelectorAll(".matching-category-list .filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 categoryFilterBox.classList.add("hidden");
                 categoryHeader.classList.remove("active");
@@ -287,9 +287,6 @@
             })
         })
 
-        /* ============================== */
-        /*        삽입 오류 메세지        */
-        /* ============================== */
         
         /* ============================== */
         /*         매칭 게시글 삽입       */

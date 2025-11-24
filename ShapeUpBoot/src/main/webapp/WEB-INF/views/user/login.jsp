@@ -68,10 +68,12 @@
                         <button type="submit" id="login-btn">로그인</button>
 
                         <% if(request.getAttribute("errorMsg") != null) { %>
-                            <div class="error-msg" style="color:red; margin-top:10px;">
+                            <div class="error-msg" style="color:#ff3b00; margin-top:10px; font-weight: 500; font-size: .8rem; text-align: center;">
                                 <%= request.getAttribute("errorMsg") %>
                             </div>
                         <% } %>
+
+                        
                     </form>
 
                     <div class="account-list">
@@ -102,12 +104,12 @@
             icon.addEventListener("click", () => {
                 if (userPw.type === "password") {
                     userPw.type = "text";
-                    visiblePw.style.display = "inline";
+                    visiblePw.style.display = "flex";
                     hiddenPw.style.display = "none";
                 } else {
                     userPw.type = "password";
                     visiblePw.style.display = "none";
-                    hiddenPw.style.display = "inline";
+                    hiddenPw.style.display = "flex";
                 }
             });
         });

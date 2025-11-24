@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.RowBounds;
 
+import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
@@ -25,13 +26,13 @@ public interface matchingMapper{
 	List<ActivityVO> searchCategory(String keyword);
 	
 	/* 매칭 리스트 */
-	List<matchingListDTO> matchingList(RowBounds rowBounds);
+	List<matchingListDTO> matchingList(RowBounds rowBounds, String location, String time, String level, String sort);
 
 	/* 매칭 게시판 카운트 */
-	int getTotalCount();
+	int getTotalCount(String location, String time, String level);
 
 	/* 매칭 신청 */
-	int matchinApplication(matchingAppLiVo mAppDSTO);
+	int matchinApplication(matchingApplicationDTO mAppDSTO);
 
 	/* 매칭 작성자 가져오기 */
 	int getWriterUserNo(int matchingNo);
