@@ -12,7 +12,9 @@
   <main class="signup-container">
     <section class="right-panel">
       <div class="logo">
-        <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="Logo" width="180px">
+      	<a href ="/">
+	        <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="Logo" width="180px">
+      	</a>
       </div>
 
       <div class="tab-menu"><h3>회원가입</h3></div>

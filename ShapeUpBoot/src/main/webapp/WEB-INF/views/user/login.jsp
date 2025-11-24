@@ -82,7 +82,7 @@
                             <li>&#8739;</li>
                             <li><a href="/user/searchId">아이디 찾기</a></li>
                             <li>&#8739;</li>
-                            <li><a href="#">비밀번호 찾기</a></li>
+                            <li><a href="/user/searchPw">비밀번호 찾기</a></li>
                         </ul>
                     </div>
 
