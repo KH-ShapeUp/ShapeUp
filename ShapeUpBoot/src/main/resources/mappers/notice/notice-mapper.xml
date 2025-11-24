@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.notice.model.mapper.NoticeMapper">
+
+	<select id="getTotalCount" resultType="_int">
+		SELECT COUNT(*) FROM NOTICE_TBL
+	</select>
+	
+	<select id="selectNoticeList" resultType="Notice">
+		SELECT * FROM NOTICE_TBL
+		ORDER BY NOTICE_NO DESC
+	</select>
+	
+	<insert id="insertNotice" parameterType="com.ShapeUp.boot.app.notice.dto.NoticeInsertDto">
+		<selectKey keyProperty="noticeNo" resultType="_int" order="BEFORE">
+			SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		
+		INSERT INTO NOTICE_TBL (
+			NOTICE_NO, NOTICE_TITLE, NOTICE_CONTENT, CATEGORY, USER_NO, CREATE_AT, VIEW_COUNT
+		)
+		VALUES(
+			#{noticeNo}, #{noticeTitle}, #{noticeContent}, #{category}
+			, #{userNo}, SYSDATE, 0
+		)
+	</insert>
+</mapper>

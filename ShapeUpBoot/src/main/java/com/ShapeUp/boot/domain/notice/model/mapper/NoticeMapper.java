@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.RowBounds;
 
+import com.ShapeUp.boot.app.notice.dto.NoticeInsertDto;
 import com.ShapeUp.boot.domain.notice.model.vo.Notice;
 
 @Mapper
@@ -14,6 +15,6 @@ public interface NoticeMapper {
 	
 	List<Notice> selectNoticeList(RowBounds rowBounds);
 
-	int insertNotice(Notice notice);
+	int insertNotice(NoticeInsertDto noticeInsertDto);
 
 }
