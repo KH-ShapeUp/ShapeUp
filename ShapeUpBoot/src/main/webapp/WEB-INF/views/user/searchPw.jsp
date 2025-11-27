@@ -13,7 +13,7 @@
   <main class="find-container">
     <section class="right-panel">
       <div class="logo">
-        <img src="../../../../resources/img/main_logo.png" alt="" width="180px">
+        <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="ShapeUp 로고" width="180px">
       </div>
 
       <!-- 상단 탭 -->
@@ -24,190 +24,163 @@
       <!-- 비밀번호 찾기 박스 -->
       <div class="find-box">
         <h2>비밀번호 찾기</h2>
-        <p class="sub-text">가입 시 등록한 정보를 입력해주세요</p>
+        <p class="sub-text">아이디를 입력하면 등록된 이메일로 임시 비밀번호를 보내드립니다</p>
 
         <form id="findPasswordForm">
 
           <div class="form-group">
             <label>아이디</label>
-            <input type="text" name="userid" placeholder="아이디를 입력하세요" required>
+            <input type="text" name="userId" id="userIdInput" placeholder="아이디를 입력하세요" required>
           </div>
 
-          
-
-          <div class="form-group">
-            <label>이메일</label>
-            <div class="field-inline email-box">
-              <input type="text" name="emailId" placeholder="이메일 아이디" required>
-              <span>@</span>
-              <input type="text" name="emailDomain" id="emailDomainInput" placeholder="직접 입력" required>
-              <select id="emailDomainSelect" class="email-domain-select">
-                <option value="">직접 입력</option>
-                <option value="naver.com">naver.com</option>
-                <option value="gmail.com">gmail.com</option>
-                <option value="daum.net">daum.net</option>
-                <option value="kakao.com">kakao.com</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" id="verificationGroup" style="display: none;">
-            <label>인증번호</label>
-            <div class="field-inline">
-              <input type="text" name="verificationCode" placeholder="인증번호 6자리 입력">
-              <button type="button" class="check-btn verify-btn">확인</button>
-            </div>
-          </div>
-
-          <!-- 결과 표시 영역 -->
-          <div class="result-box success" id="resultBox" style="display: none;">
+          <!-- 성공 결과 표시 영역 -->
+          <div class="result-box success" id="successBox" style="display: none;">
             <div class="result-content">
               <div class="result-icon">✓</div>
               <p class="result-title">임시 비밀번호가 발송되었습니다</p>
-              <p class="result-email" id="resultEmail">user****@naver.com</p>
-              <p class="result-desc">위 이메일로 임시 비밀번호를 발송했습니다.<br>로그인 후 비밀번호를 변경해주세요.</p>
+              <p class="result-email" id="resultEmail"></p>
+              <p class="result-desc">이메일로 임시 비밀번호를 보내드렸습니다.<br>로그인 후 반드시 비밀번호를 변경해주세요.</p>
+            </div>
+          </div>
+
+          <!-- 에러 메시지 영역 -->
+          <div class="result-box error" id="errorBox" style="display: none;">
+            <div class="result-content">
+              <div class="result-icon">✕</div>
+              <p class="result-title" id="errorTitle">일치하는 회원 정보가 없습니다</p>
+              <p class="result-desc" id="errorDesc">입력하신 아이디를 다시 확인해주세요.</p>
             </div>
           </div>
 
           <!-- 버튼 영역 -->
           <div class="button-area">
             <button type="button" class="btn cancel">취소</button>
-            <button type="button" class="btn find">임시 비밀번호 발송</button>
+            <button type="button" class="btn find" id="findBtn">임시 비밀번호 발송</button>
           </div>
 
           <!-- 추가 링크 -->
           <div class="link-area">
-            <a href="/user/searchId">아이디 찾기</a>
+            <a href="${pageContext.request.contextPath}/user/searchId">아이디 찾기</a>
             <span class="divider">|</span>
-            <a href="/login">로그인</a>
+            <a href="${pageContext.request.contextPath}/user/login">로그인</a>
           </div>
 
         </form>
       </div>
     </section>
   </main>
-	
+
 </body>
 <script>
-// 인증 완료 여부
-let isVerified = false;
-
-// 이메일 도메인 선택
-document.getElementById("emailDomainSelect").addEventListener("change", function() {
-    const domainInput = document.getElementById("emailDomainInput");
-
-    if (this.value === "") {
-        domainInput.value = "";
-        domainInput.readOnly = false;
-        domainInput.placeholder = "직접 입력";
-    } else {
-        domainInput.value = this.value;
-        domainInput.readOnly = true;
-    }
-});
-
-// 인증번호 발송 버튼
-document.querySelector('.check-btn').addEventListener('click', function() {
-    const phone = document.querySelector('input[name="phone"]').value;
-    
-    if (!phone) {
-        alert('전화번호를 입력해주세요.');
-        return;
-    }
-    
-    // 전화번호 형식 검증
-    if (phone.length < 10) {
-        alert('올바른 전화번호를 입력해주세요.');
-        return;
-    }
-    
-    alert('인증번호가 발송되었습니다.');
-    document.getElementById('verificationGroup').style.display = 'block';
-});
-
-// 인증번호 확인 버튼
-document.querySelector('.verify-btn')?.addEventListener('click', function() {
-    const code = document.querySelector('input[name="verificationCode"]').value;
-    
-    if (!code) {
-        alert('인증번호를 입력해주세요.');
-        return;
-    }
-    
-    if (code.length !== 6) {
-        alert('6자리 인증번호를 입력해주세요.');
-        return;
-    }
-    
-    // 실제로는 서버에서 인증번호 검증
-    alert('인증이 완료되었습니다.');
-    isVerified = true;
-    
-    // 인증 완료 표시
-    this.textContent = '인증완료';
-    this.style.background = '#4CAF50';
-    this.style.color = '#fff';
-    this.disabled = true;
-});
+const contextPath = '${pageContext.request.contextPath}';
+let isSent = false;
 
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
     if (confirm('비밀번호 찾기를 취소하시겠습니까?')) {
-        window.location.href = '/';
+        window.location.href = contextPath + '/user/login';
     }
 });
 
-// 임시 비밀번호 발송 버튼
-document.querySelector('.btn.find').addEventListener('click', function() {
-    const form = document.getElementById('findPasswordForm');
-    
-    // 폼 유효성 검사
-    if (!form.checkValidity()) {
-        form.reportValidity();
+// 비밀번호 찾기 버튼
+document.getElementById('findBtn').addEventListener('click', function() {
+    // 이미 발송된 상태면 로그인 페이지로 이동
+    if (isSent) {
+        window.location.href = contextPath + '/user/login';
         return;
     }
     
-    const userid = document.querySelector('input[name="userid"]').value;
-    const name = document.querySelector('input[name="name"]').value;
-    const emailId = document.querySelector('input[name="emailId"]').value;
-    const emailDomain = document.querySelector('input[name="emailDomain"]').value;
-    const phone = document.querySelector('input[name="phone"]').value;
+    const userId = document.getElementById('userIdInput').value.trim();
     
-    if (!userid || !name || !emailId || !emailDomain || !phone) {
-        alert('모든 정보를 입력해주세요.');
+    // 유효성 검사
+    if (!userId) {
+        alert('아이디를 입력해주세요.');
+        document.getElementById('userIdInput').focus();
         return;
     }
     
-    // 인증번호 확인 여부 체크
-    if (!isVerified) {
-        alert('전화번호 인증을 완료해주세요.');
-        return;
-    }
+    // 결과/에러 영역 초기화
+    document.getElementById('successBox').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'none';
     
-    // 실제로는 서버에 요청을 보내야 함
-    // 서버에서 사용자 정보 확인 후 임시 비밀번호 생성 및 이메일 발송
+    // 버튼 비활성화 및 로딩 표시
+    const findBtn = document.getElementById('findBtn');
+    findBtn.disabled = true;
+    findBtn.textContent = '처리중...';
     
-    const fullEmail = emailId + '@' + emailDomain;
-    const maskedEmail = emailId.substring(0, 4) + '****@' + emailDomain;
-    
-    // 결과 표시
-    const resultBox = document.getElementById('resultBox');
-    const resultEmail = document.getElementById('resultEmail');
-    
-    resultEmail.textContent = maskedEmail;
-    resultBox.style.display = 'block';
-    
-    // 버튼 텍스트 변경
-    this.textContent = '로그인하기';
-    this.onclick = function() {
-        window.location.href = '/user/login';
-    };
-    
-    // 폼 비활성화
-    const inputs = form.querySelectorAll('input, select, button.check-btn');
-    inputs.forEach(input => {
-        input.disabled = true;
+    // 서버에 비밀번호 찾기 요청
+    fetch(contextPath + '/user/searchPw', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'userId=' + encodeURIComponent(userId)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // 성공: 결과 표시
+            document.getElementById('resultEmail').textContent = data.email;
+            document.getElementById('successBox').style.display = 'block';
+            
+            // 입력 필드 비활성화
+            document.getElementById('userIdInput').disabled = true;
+            
+            // 버튼 텍스트 변경
+            isSent = true;
+            findBtn.textContent = '로그인하기';
+            findBtn.disabled = false;
+            
+        } else {
+            // 실패: 에러 메시지 표시
+            document.getElementById('errorTitle').textContent = data.message || '일치하는 회원 정보가 없습니다';
+            if (data.message === '일치하는 회원 정보가 없습니다.') {
+                document.getElementById('errorDesc').textContent = '입력하신 아이디를 다시 확인해주세요.';
+            } else {
+                document.getElementById('errorDesc').textContent = '잠시 후 다시 시도해주세요.';
+            }
+            document.getElementById('errorBox').style.display = 'block';
+            
+            // 버튼 재활성화
+            findBtn.disabled = false;
+            findBtn.textContent = '임시 비밀번호 발송';
+        }
+    })
+    .catch(err => {
+        console.error('비밀번호 찾기 오류:', err);
+        document.getElementById('errorTitle').textContent = '오류가 발생했습니다';
+        document.getElementById('errorDesc').textContent = '잠시 후 다시 시도해주세요.';
+        document.getElementById('errorBox').style.display = 'block';
+        
+        // 버튼 재활성화
+        findBtn.disabled = false;
+        findBtn.textContent = '임시 비밀번호 발송';
     });
+});
+
+// Enter 키로 검색
+document.getElementById('findPasswordForm').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('findBtn').click();
+    }
+});
+
+// 입력 필드 변경 시 상태 초기화
+function resetSearchState() {
+    if (isSent) {
+        isSent = false;
+        document.getElementById('findBtn').textContent = '임시 비밀번호 발송';
+        document.getElementById('successBox').style.display = 'none';
+        document.getElementById('errorBox').style.display = 'none';
+        document.getElementById('userIdInput').disabled = false;
+    }
+}
+
+document.getElementById('userIdInput').addEventListener('input', function() {
+    resetSearchState();
+    // 에러 박스가 표시되어 있으면 숨김
+    document.getElementById('errorBox').style.display = 'none';
 });
 </script>
 

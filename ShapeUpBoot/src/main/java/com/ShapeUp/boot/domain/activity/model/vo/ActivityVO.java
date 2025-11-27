@@ -13,5 +13,5 @@ public class ActivityVO {
 	private String useYn;
 	private Timestamp createdAt;
 	private Timestamp updateAt;
-	private int weightLevel;
+
 }

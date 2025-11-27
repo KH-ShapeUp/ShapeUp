@@ -33,14 +33,14 @@
 }
 
 /* 로그인 상태가 아닐 때 .diet-content 만 블러 처리하고 클릭을 차단합니다 */
-/* .diet-content.locked .user-diet-record {
+.diet-content.locked .user-diet-record {
     filter: blur(6px);
     pointer-events: none;
     user-select: none;
     transform: scale(1.0);
-} */
+}
 
-/* .diet-lock-overlay {
+.diet-lock-overlay {
     position: absolute;
     inset: 0;
     display: flex;
@@ -76,7 +76,7 @@
 .btn-login:hover {
     background-color: #007bff;
     transform: scale(1.02);
-} */
+}
 /* 로그인 상태가 아닐 때 .diet-content 만 블러 처리하고 클릭을 차단합니다 */
 
 .diet-wrapper-title span{
@@ -261,7 +261,6 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
     border: 1px solid #ddd;
     gap: 15px;
-    cursor: pointer;
     transition: background-color 0.15s ease;
 }
 
@@ -326,12 +325,12 @@
 }
 
 .matching-info {
+    justify-content: space-between;
     display: flex;
     align-items: center;
 }
 
 .matching-icon {
-    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -386,13 +385,12 @@
     position: relative; 
     overflow: hidden;  
     z-index: 1;
-    width: 90px;
-    height: 40px;
+    padding: 8px 15px;
     border: none;
     border-radius: 8px;
     color: #fff;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
     background-color: #0A84FF;
     cursor: pointer;
     transition: color 0.3s ease-in-out;
@@ -815,8 +813,40 @@
     color: #0A84FF;
     font-weight: 500;
 }
+.category-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
 
+.category-wrapper span:nth-child(2) {
+    font-weight: 600;
+    font-size: .8rem;
+    padding: 1px 5px;
+    border-radius: 8px;
+}
+.user-level {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+}
 
+.user-level.middleClass {
+    color: #E65100;
+    background-color: #FFF3E0; 
+}
+
+.user-level.advanced {
+    color: #B71C1C;
+    background-color: #FFEBEE;
+}
+
+.matching-btn.finish, .matching-btn:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 
 
 @media screen and (max-width: 768px) {

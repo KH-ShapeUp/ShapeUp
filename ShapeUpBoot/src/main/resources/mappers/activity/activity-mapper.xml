@@ -11,11 +11,32 @@
 			CAL_PER_MIN   AS calPerMin,
 			USE_YN        AS useYn,
 			CREATED_AT    AS createdAt,
-			UPDATED_AT    AS updateAt,
-			WEIGHT_LEVEL  AS weightLevel
+			UPDATED_AT    AS updateAt
 		FROM ACTIVITY_TBL
 		WHERE ACTIVITY_NAME LIKE '%'||#{keyword}||'%'
 			AND USE_YN = 'Y'
 		ORDER BY ACTIVITY_NAME ASC
  	</select>
+    <insert id="insertActivityVO"
+            parameterType="com.ShapeUp.boot.domain.activity.model.vo.ActivityLogVO">
+        INSERT INTO ACTIVITY_LOG_TBL (
+            LOG_ID,
+            USER_NO,
+            ACTIVITY_ID,
+            DURATION_MIN,
+            CALORIES,
+            SOURCE_TYPE,
+            WEIGHT_LEVEL,
+            INTENSITY_FACTOR
+        ) VALUES (
+            SEQ_ACTIVITY_LOG_NO.NEXTVAL,
+            #{userNo},
+            #{activityId},
+            #{durationMin},
+            #{calories},
+            #{sourceType},
+            #{weightLevel},
+            #{intensityLevel}
+        )
+    </insert>
  </mapper>
