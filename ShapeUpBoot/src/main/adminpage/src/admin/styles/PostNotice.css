@@ -266,6 +266,7 @@
   border-bottom: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  white-space: nowrap;
 }
 .posts-table th.sortable {
   cursor: pointer;
@@ -273,6 +274,14 @@
 }
 .posts-table th.sortable:hover {
   color: #0a74ff;
+}
+.sortable-header .header-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sortable-header .sort-mark {
+  display: inline-flex;
 }
 .posts-table tr:hover {
   background: #f7f9fc;
@@ -387,6 +396,47 @@ textarea { resize: none; height: 120px; }
   min-height: 120px;
   background: #fdfefe;
   white-space: pre-wrap;
+}
+
+.detail-content-block.tall {
+  min-height: 220px;
+}
+
+.matching-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.matching-detail .grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.matching-detail .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.matching-detail .field.full {
+  width: 100%;
+  grid-column: 1 / -1;
+}
+
+.matching-detail label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.matching-detail .detail-text {
+  min-height: 38px;
+  background: #fafbff;
+}
+
+.matching-detail .detail-content-block {
+  background: #fafbff;
 }
 
 .image-gallery {

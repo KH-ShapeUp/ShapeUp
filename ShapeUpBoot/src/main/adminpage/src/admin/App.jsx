@@ -10,6 +10,7 @@ import PostsNotice from "./pages/PostNotice";
 import PostFreeBoard from "./pages/PostFreeBoard";
 import PostSuccessBoard from "./pages/PostSuccessBoard";
 import PostQnaBoard from "./pages/PostQnaBoard";
+import PostMatchingBoard from "./pages/PostMatchingBoard";
 import SendGuideline from "./pages/SendGuideline";
 import MembersReport from "./pages/ReportManagement";
 import TrainerReport from "./pages/TrainerReport";
@@ -88,6 +89,7 @@ function App() {
                 "/admin/posts/submenu2": <PostFreeBoard />,
                 "/admin/posts/submenu3": <PostSuccessBoard />,
                 "/admin/posts/submenu4": <PostQnaBoard />,
+                "/admin/posts/matching": <PostMatchingBoard />,
                 "/admin/feeds/send-guideline": <SendGuideline />,
               };
               const element = routeElements[sub.path] ?? (

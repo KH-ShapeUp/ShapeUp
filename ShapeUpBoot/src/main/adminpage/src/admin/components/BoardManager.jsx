@@ -20,6 +20,8 @@ const BoardManager = ({
   onUpdatePost = null,
   onDeletePost = null,
   onUploadImages = null,
+  columns = null,
+  detailRenderer = null,
 }) => {
   const loadStoredPosts = () => {
     const fallback = Array.isArray(initialPosts) ? initialPosts : [];
@@ -83,6 +85,19 @@ const BoardManager = ({
 
   const advancedOptions = useMemo(() => ["전체", "날짜", "제목", "작성자"], []);
   const pageSizeOptions = useMemo(() => ["5", "10", "30", "50"], []);
+
+  const defaultColumns = useMemo(
+    () => [
+      { key: "id", label: "번호", sortable: "id" },
+      { key: "date", label: "날짜", sortable: "date" },
+      { key: "author", label: "작성자", sortable: "author" },
+      { key: "category", label: "카테고리", sortable: "category" },
+      { key: "title", label: "제목", sortable: "title" },
+      { key: "actions", label: "삭제" },
+    ],
+    []
+  );
+  const columnsToUse = columns && columns.length ? columns : defaultColumns;
 
   const getDisplayDate = (post) => {
     if (post.category === "이벤트") {
@@ -160,6 +175,14 @@ const BoardManager = ({
           return post.category ?? "";
         case "title":
           return post.title ?? "";
+        case "activityName":
+          return post.activityName ?? "";
+        case "location":
+          return post.location ?? "";
+        case "level":
+          return post.level ?? "";
+        case "status":
+          return post.status ?? "";
         default:
           return "";
       }
@@ -289,56 +312,62 @@ const BoardManager = ({
         <table className="posts-table">
           <thead>
             <tr>
-              <th onClick={() => toggleSort("id")} style={{ cursor: "pointer" }}>
-                번호{sortMark("id")}
-              </th>
-              <th onClick={() => toggleSort("date")} style={{ cursor: "pointer" }}>
-                날짜{sortMark("date")}
-              </th>
-              <th onClick={() => toggleSort("author")} style={{ cursor: "pointer" }}>
-                작성자{sortMark("author")}
-              </th>
-              <th onClick={() => toggleSort("category")} style={{ cursor: "pointer" }}>
-                카테고리{sortMark("category")}
-              </th>
-              <th onClick={() => toggleSort("title")} style={{ cursor: "pointer" }}>
-                제목{sortMark("title")}
-              </th>
-              <th>이동</th>
-              <th>삭제</th>
+              {columnsToUse.map((col) => {
+                const style = {
+                  cursor: col.sortable ? "pointer" : "default",
+                  ...(col.width ? { width: col.width } : {}),
+                };
+                return (
+                  <th
+                    key={col.key}
+                    onClick={() => col.sortable && toggleSort(col.sortable)}
+                    style={style}
+                    className={col.sortable ? "sortable-header" : undefined}
+                  >
+                    <span className="header-label">
+                      {col.label}
+                      {col.sortable ? <span className="sort-mark">{sortMark(col.sortable)}</span> : null}
+                    </span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
             {paginatedPosts.map((post, idx) => (
               <tr key={post.id} onClick={() => handleSelectPost(post)}>
-                <td>{pageStart + idx + 1}</td>
-                <td>{getDisplayDate(post)}</td>
-                <td>{post.author}</td>
-                <td>{post.category}</td>
-                <td>{post.title}</td>
-                <td>
-                  <button
-                    className="move-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.href = `/notice/detail/${post.id}`;
-                    }}
-                  >
-                    보기
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="delete-btn small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectPost(post);
-                      setActionModal({ open: true, mode: "delete", status: "confirm" });
-                    }}
-                  >
-                    삭제
-                  </button>
-                </td>
+                {columnsToUse.map((col) => {
+                  if (col.key === "actions") {
+                    return (
+                      <td key={`${post.id}-actions`} style={col.width ? { width: col.width } : undefined}>
+                        <button
+                          className="delete-btn small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectPost(post);
+                            setActionModal({ open: true, mode: "delete", status: "confirm" });
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </td>
+                    );
+                  }
+                  const value =
+                    typeof col.render === "function"
+                      ? col.render(post, pageStart + idx + 1)
+                      : col.key === "id"
+                      ? pageStart + idx + 1
+                      : post[col.key] ?? "";
+                  return (
+                    <td
+                      key={`${post.id}-${col.key}`}
+                      style={col.width ? { width: col.width } : undefined}
+                    >
+                      {value}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -388,6 +417,9 @@ const BoardManager = ({
           {boardTitle} {isEditable ? "게시물 상태 수정" : "상세 정보"}
         </div>
         {selectedPost ? (
+          detailRenderer ? (
+            detailRenderer({ post: selectedPost, onDelete: handleDeletePost })
+          ) : (
           <div className="detail-body">
             <label>게시글 번호</label>
             {isEditable ? (
@@ -573,6 +605,7 @@ const BoardManager = ({
               </button>
             )}
           </div>
+          )
         ) : (
           <p className="empty">게시물을 선택하세요.</p>
         )}

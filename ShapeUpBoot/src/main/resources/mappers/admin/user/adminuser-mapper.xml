@@ -45,10 +45,7 @@
   <update id="updateUserStatus">
     UPDATE USER_TBL
     SET STATUS = #{status},
-        UPDATED_AT = CASE
-          WHEN #{banDays} IS NOT NULL THEN SYSTIMESTAMP + #{banDays}
-          ELSE NVL(#{updatedAt}, SYSTIMESTAMP)
-        END
+        UPDATED_AT = COALESCE(#{updatedAt,jdbcType=TIMESTAMP}, SYSTIMESTAMP)
     WHERE USER_NO = #{userNo}
   </update>
 

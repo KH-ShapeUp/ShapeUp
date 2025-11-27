@@ -212,7 +212,7 @@ const PostNotice = () => {
       <BoardManager
         boardTitle="공지사항"
         initialPosts={posts}
-        categories={["공지", "업데이트", "이벤트"]}
+        categories={["공지", "업데이트", "이벤트", "제휴"]}
         chartLabels={["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"]}
         chartData={chartData}
         chartDatasetLabel="공지 등록 수"
