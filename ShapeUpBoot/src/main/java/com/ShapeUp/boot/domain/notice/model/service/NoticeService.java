@@ -9,8 +9,10 @@ public interface NoticeService{
 
 	int insertNotice(NoticeInsertDto noticeInsertDto);
 
-	int getTotalCount();
+	int getTotalCount(String category, String searchType, String searchKeyword);
+	
+	List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType, String searchKeyword);
 
-	List<Notice> selectNoticeList(int currentPage, int boardCountPerPage);
+	Notice selectNoticeDetail(int noticeNo);
 
 }

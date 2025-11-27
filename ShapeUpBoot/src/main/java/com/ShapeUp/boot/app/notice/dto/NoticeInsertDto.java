@@ -16,8 +16,10 @@ public class NoticeInsertDto {
 	private Integer noticeNo;
 	private String noticeTitle;
 	private String noticeContent;
-	private String category;
+	private String noticeCategory;
 	private int userNo;
-	private Timestamp createAt;
+	private Timestamp createdAt;
+	private String eventStart;
+	private String eventEnd;
 	private MultipartFile uploadFile;
 }

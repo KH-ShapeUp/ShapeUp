@@ -32,8 +32,27 @@ pageEncoding="UTF-8"%>
               required
             />
 
+            <div
+              class="form-group event-period-group"
+              id="eventPeriodGroup"
+              style="display: none"
+            >
+              <label for="evStartAt">시작일</label>
+              <input type="date" id="eventStart" name="eventStart" />
+
+              <label for="evEndDate">마감일</label>
+              <input type="date" id="eventEnd" name="eventEnd" />
+            </div>
+
+            <div
+              class="form-group notice-list-group"
+              id="noticeListGroup"
+              style="display: none"
+            >
+            </div>
+
             <label for="noticeCategory">분류</label>
-            <select id="noticeCategory" name="category">
+            <select id="noticeCategory" name="noticeCategory">
               <option value="공지">공지사항</option>
               <option value="이벤트">이벤트</option>
               <option value="징계">징계</option>
@@ -90,6 +109,54 @@ pageEncoding="UTF-8"%>
             filePathInput.value = "파일 선택";
           }
         });
+
+      // -----------------------------------------------------------
+      // 2. 💡 [추가] 분류에 따른 이벤트 기간/목록 표시 기능
+      const categorySelect = document.getElementById("noticeCategory");
+      const periodGroup = document.getElementById("eventPeriodGroup");
+      const startAtInput = document.getElementById("eventStart");
+      const endDateInput = document.getElementById("eventEnd");
+      const listGroup = document.getElementById("noticeListGroup");
+      const listContainer = document.getElementById("noticeListContainer");
+
+      // AJAX를 이용해 공지사항 목록을 불러와 표시하는 함수
+      function loadNoticeList() {
+
+        fetch("ajaxList?page=1") // Controller의 @GetMapping("/ajaxList") 호출
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("HTTP status " + response.status);
+            }
+            return response.json();
+          })
+          .catch((error) => {
+            console.error("공지사항 목록 불러오기 실패:", error);
+          });
+      }
+
+      // 분류 변경 이벤트 리스너
+      categorySelect.addEventListener("change", function () {
+        const selectedValue = this.value;
+
+        // 모든 그룹 초기화
+        periodGroup.style.display = "none";
+        listGroup.style.display = "none";
+        startAtInput.removeAttribute("required");
+        endDateInput.removeAttribute("required");
+        startAtInput.value = "";
+        endDateInput.value = "";
+
+        if (selectedValue === "이벤트") {
+          // 이벤트 선택 시: 이벤트 기간 표시
+          periodGroup.style.display = "flex";
+          startAtInput.setAttribute("required", "required");
+          endDateInput.setAttribute("required", "required");
+        } else if (selectedValue === "공지") {
+          // 공지사항 선택 시: 목록 표시 및 데이터 로드
+          listGroup.style.display = "block";
+          loadNoticeList(); // AJAX 호출
+        }
+      });
     </script>
   </body>
 </html>

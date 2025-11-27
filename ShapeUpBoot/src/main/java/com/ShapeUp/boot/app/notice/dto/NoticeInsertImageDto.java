@@ -13,6 +13,6 @@ public class NoticeInsertImageDto {
 	private int noticeNo;
 	private String imgPath;
 	private String imgRename;
-	private String imgOriginalPath;
-	private String imgMain;
+	private String imgOriginalName;
+	private String imgMainYn;
 }

@@ -7,18 +7,17 @@
 	<insert id="insertNoticeImage" parameterType="com.ShapeUp.boot.app.notice.dto.NoticeInsertImageDto">
         
         <selectKey keyProperty="imgNo" resultType="_int" order="BEFORE">
-            SELECT SEQ_IMG_NO.NEXTVAL FROM DUAL
+            SELECT SEQ_NOTICE_IMG_NO.NEXTVAL FROM DUAL
         </selectKey>
         
-        INSERT INTO NOTICE_IMAGE_TBL (
-            IMG_NO, NOTICE_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_PATH, IMG_MAIN ) 
+        INSERT INTO NOTICE_IMG_TBL (
+            IMG_NO, NOTICE_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME) 
             VALUES (
             #{imgNo},
             #{noticeNo},
             #{imgPath},
             #{imgRename},
-            #{imgOriginalPath},
-            #{imgMain}
+            #{imgOriginalName}
         )
     </insert>
     

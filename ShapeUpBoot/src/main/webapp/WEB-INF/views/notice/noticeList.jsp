@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,17 +27,35 @@
 		</div>
 
 		<form class="search-section">
-			<input type="text" placeholder="검색어를 입력하세요" />        
+			<select name="searchType" class="search-select">
+				<option value="T" ${param.searchType eq 'T' ? 'selected' : ''}>제목</option>
+				<option value="C" ${param.searchType eq 'C' ? 'selected' : ''}>내용</option>
+				<option value="TC" ${param.searchType eq 'TC' ? 'selected' : ''}>제목+내용</option>
+			</select> <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요"
+				value="${param.searchKeyword}" />
+
+			<c:if test="${not empty currentCategory}">
+				<input type="hidden" name="category" value="${currentCategory}" />
+			</c:if>
+
 			<button class="search-btn" type="submit">검색</button>
-			     
 		</form>
 
 		<div class="category-section">
 			<div class="left-content">
 				<span class="total-count">총 ${totalCount}건</span>
+				<c:set var="currentCategory" value="${param.category }" />
 				<div class="category-list">
-					<a href="#" class="active">전체</a> <a href="#">공지</a> <a href="#">이벤트</a>
-					<a href="#">제휴</a> <a href="#">징계</a>
+					<a href="/notice/list"
+						class="${empty currentCategory ? 'active' : ''}">전체</a> <a
+						href="/notice/list?category=공지"
+						class="${currentCategory eq '공지' ? 'active' : ''}">공지</a> <a
+						href="/notice/list?category=이벤트"
+						class="${currentCategory eq '이벤트' ? 'active' : ''}">이벤트</a> <a
+						href="/notice/list?category=제휴"
+						class="${currentCategory eq '제휴' ? 'active' : ''}">제휴</a> <a
+						href="/notice/list?category=징계"
+						class="${currentCategory eq '징계' ? 'active' : ''}">징계</a>
 				</div>
 			</div>
 
@@ -56,12 +75,16 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach var="notice" items="${nList }">
-						<tr>
-							<td>${notice.noticeNo }</td>
-							<td><span class="badge ${notice.category }">${notice.category }</span></td>
-							<td class="title-col">{notice.noticeTitle }</td>
-							<td>${notice.createAt }</td>
+					<c:set var="pageStart"
+						value="${totalCount - (currentPage - 1) * 5}" />
+
+					<c:forEach var="notice" items="${nList}" varStatus="status">
+						<tr onclick="location.href='/notice/detail?noticeNo=${notice.noticeNo}'">
+							<td>${pageStart - status.index}</td>
+							<td><span class="badge ${notice.noticeCategory }">${notice.noticeCategory }</span></td>
+							<td class="title-col">${notice.noticeTitle }</td>
+							<td><fmt:formatDate value="${notice.createdAt }"
+									pattern="yyyy-MM-dd" /></td>
 							<td>관리자</td>
 							<td>${notice.viewCount }</td>
 						</tr>
@@ -76,10 +99,28 @@
 		</div>
 
 		<div class="pagination">
-			<a href="#">&lt;</a> <a href="#" class="current">1</a> <a href="#">2</a>
-			<a href="#">3</a> <a href="#">4</a> <a href="#">5</a> <a href="#">6</a>
-			<a href="#">7</a> <a href="#">8</a> <a href="#">9</a> <a href="#">10</a>
-			<a href="#">&gt;</a>
+			<c:set var="categoryParam" value="" />
+			<c:if test="${not empty currentCategory }">
+				<c:set var="categoryParam"
+					value="${categoryParam }&category=${currentCategory }" />
+			</c:if>
+
+			<c:if test="${startNavi > 1 }">
+				<a href="/notice/list?page=${startNavi - 1 }${categoryParam}">&lt;</a>
+			</c:if>
+
+			<c:if test="${not empty param.searchKeyword}">
+				<c:set var="categoryParam"
+					value="${categoryParam}&searchType=${param.searchType}&searchKeyword=${param.searchKeyword}" />
+			</c:if>
+			<c:forEach begin="${startNavi }" end="${endNavi }" var="n">
+				<a href="/notice/list?page=${n }${categoryParam}"
+					class="page-btn <c:if test="${currentPage eq n }">active</c:if>">${n }</a>
+			</c:forEach>
+
+			<c:if test="${endNavi < maxPage }">
+				<a href="/notice/list?page=${endNavi + 1 }${categoryParam }">&gt;</a>
+			</c:if>
 		</div>
 	</div>
 

@@ -28,8 +28,12 @@ body {
   box-sizing: border-box;
   flex-shrink: 0;
 }
-.header-placeholder { border-bottom: 1px solid #ddd; }
-.footer-placeholder { border-top: 1px solid #ddd; }
+.header-placeholder {
+  border-bottom: 1px solid #ddd;
+}
+.footer-placeholder {
+  border-top: 1px solid #ddd;
+}
 
 /* ========================================================= */
 /* 2. 상단 섹션 (공지 + 로고) */
@@ -81,7 +85,16 @@ body {
   justify-content: center;
   align-items: center;
   margin-bottom: 10px;
-  
+}
+
+.search-section .search-select {
+  height: 40px;
+  padding: 0 10px;
+  margin-right: -1px; /* 검색 입력창과 겹치게 하여 연결된 느낌을 줌 */
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  border-radius: 0; /* 통일성 유지 */
+  font-size: 14px;
 }
 
 .search-section input[type="text"] {
@@ -131,10 +144,17 @@ body {
   font-size: 16px;
 }
 
+.category-list a:hover {
+  /* 마우스 오버 시 스타일 */
+  background-color: #f0f0f0;
+}
+
 .category-list a.active {
+  /* 강조 스타일 */
+  background-color: #007bff; /* 메인 색상 (파란색 계열) */
+  color: white; /* 글자색을 흰색으로 변경 */
+  border-color: #007bff; /* 테두리 색상도 변경 */
   font-weight: bold;
-  color: #1900ff;
-  text-decoration: underline;
 }
 
 .write-btn {
@@ -185,11 +205,20 @@ body {
   padding: 3px 8px;
   font-size: 12px;
   border-radius: 3px;
-  color: white;
+  color: rgb(255, 255, 255);
 }
-.badge.notice { background-color: #ff7300; }
-.badge.event { background-color: #003cff; }
-.badge.campaign { background-color: #65cc65; }
+.badge.공지 {
+  background-color: #ff7300;
+}
+.badge.이벤트 {
+  background-color: #003cff;
+}
+.badge.제휴 {
+  background-color: #65cc65;
+}
+.badge.징계 {
+  background-color: #dc3545;
+}
 
 /* ========================================================= */
 /* 6. 페이지네이션 */
@@ -224,81 +253,88 @@ body {
     padding: 0; /* ⬅️ 컨테이너의 좌우 패딩 제거 */
     box-sizing: border-box;
   }
-  
+
   /* 상단 섹션 조정: 좌우 정렬을 위해 padding 추가 */
-  .top-section { 
-    height: 70px; 
+  .top-section {
+    height: 70px;
     padding: 15px 10px; /* ⬅️ 좌우 10px 패딩 추가 */
-    margin-top: 10px; 
+    margin-top: 10px;
     border-radius: 10px; /* 둥근 모서리 유지 */
   }
-  .page-title { 
-    font-size: 28px; 
-    left: 20px; 
+  .page-title {
+    font-size: 28px;
+    left: 20px;
     transform: translateY(-50%);
   }
-  .logo-area { 
-    width: 150px; 
-    right: 15px; 
+  .logo-area {
+    width: 150px;
+    right: 15px;
   }
-
 
   /* 2. 검색 섹션: 검색창 길게, 버튼 정렬 */
   .search-section {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-bottom: 10px; 
-    border-top: none; 
+    margin-bottom: 10px;
+    border-top: none;
     border-bottom: none;
     padding: 10px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-  
+
+  .search-section .search-select {
+    height: 40px;
+    flex-shrink: 0; /* 너비가 내용에 맞춰 유지되도록 설정 */
+    font-size: 12px;
+    padding: 0 5px;
+    margin-right: -1px;
+  }
+
   .search-section input[type="text"] {
     flex-grow: 1; /* ⬅️ 최대한 길게 늘어남 */
     height: 40px;
     font-size: 14px;
     margin-right: 5px;
-    width: auto; 
+    width: auto;
     border-radius: 0;
-    padding: 0 10px; 
+    padding: 0 10px;
   }
 
   .search-btn {
     height: 40px;
-    width: 70px; 
+    width: 70px;
     padding: 0;
     font-size: 14px;
     flex-shrink: 0;
     border-radius: 0;
   }
-  
+
   /* 3. 카테고리 섹션: 글쓰기 버튼 정렬 및 스크롤 개선 */
   .category-section {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none; 
+    border-bottom: none;
     padding-bottom: 0;
     margin-bottom: 10px;
     padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-  
+
   .left-content {
     display: flex;
     align-items: center;
     padding-left: 0;
     gap: 10px;
-    
+
     overflow-x: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    max-width: calc(100% - 100px); 
+    max-width: calc(100% - 100px);
     white-space: nowrap;
-    padding-bottom: 0; 
+    padding-bottom: 0;
   }
-  
+
   .left-content::-webkit-scrollbar {
     display: none;
   }
@@ -316,50 +352,77 @@ body {
     padding: 5px 10px;
     font-size: 14px;
   }
-  
+
   .write-btn {
     width: 80px;
     height: 40px;
     flex-shrink: 0;
-    margin-bottom: 0; 
+    margin-bottom: 0;
   }
 
   /* 4. 공지 리스트 테이블 조정: 좌우 10px 패딩 적용 */
   .notice-table-wrapper {
     padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-  .notice-table { 
-    font-size: 12px; 
-    margin-top: 0; 
+  .notice-table {
+    font-size: 12px;
+    margin-top: 0;
   }
-  
-  .notice-table th, .notice-table td { 
-    padding: 8px 3px; 
+
+  .notice-table th,
+  .notice-table td {
+    padding: 8px 3px;
   }
 
   /* 테이블 열 표시/숨김 설정 (유지) */
-  .notice-table th:nth-child(1), .notice-table td:nth-child(1) { display: table-cell; width: 30px; min-width: 30px; } 
-  .notice-table th:nth-child(2), .notice-table td:nth-child(2) { display: table-cell; width: 70px; min-width: 70px; }
-  .notice-table th:nth-child(4), .notice-table td:nth-child(4) { display: none; }
-  .notice-table th:nth-child(5), .notice-table td:nth-child(5) { display: table-cell; width: 50px; min-width: 50px; } 
-  .notice-table th:nth-child(6), .notice-table td:nth-child(6) { display: table-cell; width: 40px; min-width: 40px; }
-  
+  .notice-table th:nth-child(1),
+  .notice-table td:nth-child(1) {
+    display: table-cell;
+    width: 30px;
+    min-width: 30px;
+  }
+  .notice-table th:nth-child(2),
+  .notice-table td:nth-child(2) {
+    display: table-cell;
+    width: 70px;
+    min-width: 70px;
+  }
+  .notice-table th:nth-child(4),
+  .notice-table td:nth-child(4) {
+    display: none;
+  }
+  .notice-table th:nth-child(5),
+  .notice-table td:nth-child(5) {
+    display: table-cell;
+    width: 50px;
+    min-width: 50px;
+  }
+  .notice-table th:nth-child(6),
+  .notice-table td:nth-child(6) {
+    display: table-cell;
+    width: 40px;
+    min-width: 40px;
+  }
+
   /* 제목 줄바꿈 방지 (유지) */
   .notice-table td.title-col {
     max-width: 1px;
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     text-align: left;
     padding-left: 10px;
   }
-  
+
   /* 5. 페이지네이션: 좌우 10px 패딩 적용 */
-  .pagination { 
+  .pagination {
     padding-top: 15px;
     padding: 15px 10px 20px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
   }
-  .pagination a { padding: 3px 8px; font-size: 12px; }
+  .pagination a {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
 }
 
 /* 추가 스타일 (미디어 쿼리 밖) */

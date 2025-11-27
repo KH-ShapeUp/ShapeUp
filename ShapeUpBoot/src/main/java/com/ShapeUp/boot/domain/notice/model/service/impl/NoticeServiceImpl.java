@@ -26,20 +26,6 @@ public class NoticeServiceImpl implements NoticeService{
 	private final NoticeImageMapper noticeImageMapper;
 
 	@Override
-	public int getTotalCount() {
-		int totalCount = noticeMapper.getTotalCount();
-		return totalCount;
-	}
-
-	@Override
-	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
-		int offset = (currentPage - 1) * boardCountPerPage;
-		RowBounds rowBounds = new RowBounds(offset, boardCountPerPage);
-		List<Notice> nList = noticeMapper.selectNoticeList(rowBounds);
-		return nList;
-	}
-
-	@Override
 	@Transactional // DB 작업의 원자성(Atomicity)을 보장합니다.
 	public int insertNotice(NoticeInsertDto noticeInsertDto) {
 		int result = noticeMapper.insertNotice(noticeInsertDto);
@@ -57,8 +43,8 @@ public class NoticeServiceImpl implements NoticeService{
 			
 			imageDto.setImgRename(savedFileName);
 			imageDto.setImgPath("/resources/upload/notice/"); // 웹 경로 설정
-			imageDto.setImgOriginalPath(file.getOriginalFilename()); // 원본 파일명 저장
-			imageDto.setImgMain("Y");
+			imageDto.setImgOriginalName(file.getOriginalFilename()); // 원본 파일명 저장
+			imageDto.setImgMainYn("Y");
 			
 			int imageResult = noticeImageMapper.insertNoticeImage(imageDto);
 			if(imageResult == 0) {
@@ -66,6 +52,31 @@ public class NoticeServiceImpl implements NoticeService{
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	public int getTotalCount(String category, String searchType, String searchKeyword) {
+		int totalCount = noticeMapper.getTotalCount(category, searchType, searchKeyword);
+		return totalCount;
+	}
+
+	@Override
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
+			String searchKeyword) {
+		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+		int endRow = currentPage * boardCountPerPage;
+		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
+		return nList;
+	}
+
+	@Override
+	public Notice selectNoticeDetail(int noticeNo) {
+		int result = noticeMapper.increaseViewCount(noticeNo);
+		Notice notice = null;
+		if(result > 0) {
+			notice = noticeMapper.selectNoticeDetail(noticeNo);
+		}
+		return notice;
 	}
 
 }
