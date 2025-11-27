@@ -3,6 +3,10 @@ package com.ShapeUp.boot.app.user.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Base64;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -10,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,24 +80,38 @@ public class UserController {
     /* ================================
         중복 체크
     ================================ */
-    @PostMapping("/user/checkUserId")
+    @GetMapping("/user/checkNickname")
     @ResponseBody
-    public boolean checkUserId(@RequestParam String userid) {
-        log.info("🔍 아이디 중복 체크 요청: {}", userid);
-        int count = userService.checkUserIdDuplicate(userid);
-        boolean result = count > 0;
-        log.info("✅ 최종 반환값 (true=중복, false=사용가능): {}", result);
-        return result;
+    public Map<String, Object> checkNickname(@RequestParam String nickname) {
+        log.info("🔍 닉네임 중복 체크 요청: {}", nickname);
+        
+        Map<String, Object> response = new HashMap<>();
+        int count = userService.checkNicknameDuplicate(nickname);
+        boolean isDuplicate = count > 0;
+        
+        response.put("available", !isDuplicate);  // true면 사용 가능
+        response.put("message", isDuplicate ? "이미 사용 중인 닉네임입니다." : "사용 가능한 닉네임입니다.");
+        
+        log.info("✅ 닉네임 사용 가능 여부: {}", !isDuplicate);
+        
+        return response;
     }
 
-    @PostMapping("/user/checkNickname")
+    @GetMapping("/user/checkUserId")
     @ResponseBody
-    public boolean checkNickname(@RequestParam String nickname) {
-        log.info("🔍 닉네임 중복 체크 요청: {}", nickname);
-        int count = userService.checkNicknameDuplicate(nickname);
-        boolean result = count > 0;
-        log.info("✅ 최종 반환값 (true=중복, false=사용가능): {}", result);
-        return result;
+    public Map<String, Object> checkUserId(@RequestParam String userid) {
+        log.info("🔍 아이디 중복 체크 요청: {}", userid);
+        
+        Map<String, Object> response = new HashMap<>();
+        int count = userService.checkUserIdDuplicate(userid);
+        boolean isDuplicate = count > 0;
+        
+        response.put("available", !isDuplicate);  // true면 사용 가능
+        response.put("message", isDuplicate ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
+        
+        log.info("✅ 아이디 사용 가능 여부: {}", !isDuplicate);
+        
+        return response;
     }
 
     /* ================================
@@ -117,15 +137,28 @@ public class UserController {
         회원가입 - 정보 입력
     ================================ */
     @GetMapping("/user/signupInsertInfo")
-    public String signupInsertInfo() {
+    public String signupInsertInfo(HttpSession session, Model model) {
+        // ✅ 소셜 로그인 여부 확인
+        Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
+        
+        if (isSocialLogin != null && isSocialLogin) {
+            // 소셜 로그인 정보를 모델에 추가
+            model.addAttribute("isSocialLogin", true);
+            model.addAttribute("socialName", session.getAttribute("socialName"));
+            model.addAttribute("socialEmail", session.getAttribute("socialEmail"));
+        } else {
+            // 일반 회원가입
+            model.addAttribute("isSocialLogin", false);
+        }
+        
         return "user/signupInsertInfo";
     }
 
     @PostMapping("/user/signupInsertInfo")
     public String signupInsertInfoProcess(
-            @RequestParam String userid,
-            @RequestParam String password,
-            @RequestParam String password2,
+            @RequestParam(required = false) String userid,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String password2,
             @RequestParam String name,
             @RequestParam String nickname,
             @RequestParam String emailId,
@@ -135,20 +168,27 @@ public class UserController {
             @RequestParam String genderDigit,
             HttpSession session
     ) {
-        log.info("회원가입 정보 입력 - 아이디: {}, 닉네임: {}", userid, nickname);
+        log.info("회원가입 정보 입력 - 닉네임: {}", nickname);
 
-        if (!password.equals(password2)) {
-            return "redirect:/user/signupInsertInfo?error=password";
-        }
+        // ✅ 소셜 로그인 여부 확인
+        Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
+        boolean socialLogin = (isSocialLogin != null && isSocialLogin);
 
-        Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
-        if (emailVerified == null || !emailVerified) {
-            return "redirect:/user/signupInsertInfo?error=emailNotVerified";
-        }
+        if (!socialLogin) {
+            // 일반 회원 검증
+            if (!password.equals(password2)) {
+                return "redirect:/user/signupInsertInfo?error=password";
+            }
 
-        int userIdCount = userService.checkUserIdDuplicate(userid);
-        if (userIdCount > 0) {
-            return "redirect:/user/signupInsertInfo?error=duplicateId";
+            Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
+            if (emailVerified == null || !emailVerified) {
+                return "redirect:/user/signupInsertInfo?error=emailNotVerified";
+            }
+
+            int userIdCount = userService.checkUserIdDuplicate(userid);
+            if (userIdCount > 0) {
+                return "redirect:/user/signupInsertInfo?error=duplicateId";
+            }
         }
 
         int nicknameCount = userService.checkNicknameDuplicate(nickname);
@@ -185,7 +225,114 @@ public class UserController {
             return "redirect:/user/signupInsertInfo?error=exception";
         }
     }
-
+    
+    @PostMapping("/user/updateSocialUserInfo")
+    public String updateSocialUserInfo(
+            @RequestParam String name,
+            @RequestParam String nickname,
+            @RequestParam String birthDate,
+            @RequestParam String phone,
+            @RequestParam String genderDigit,  // ✅ 주민등록번호 뒷자리 첫 번째 숫자 (1~4)
+            HttpSession session,
+            Model model) {
+        
+        try {
+            log.info("✅ 소셜 로그인 추가 정보 업데이트 시작 - 닉네임: {}", nickname);
+            
+            // 세션에서 사용자 정보 가져오기
+            UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+            
+            if (loginUser == null) {
+                log.error("❌ 세션에 loginUser가 없음");
+                model.addAttribute("errorMsg", "로그인 정보가 없습니다.");
+                return "redirect:/user/login";
+            }
+            
+            log.info("✅ 세션 사용자 확인 - userNo: {}, userId: {}", loginUser.getUserNo(), loginUser.getUserId());
+            
+            // 닉네임 중복 체크 (본인 제외)
+            if (!nickname.equals(loginUser.getUserNickname())) {
+                int nicknameCount = userService.checkNicknameDuplicate(nickname);
+                if (nicknameCount > 0) {
+                    log.warn("❌ 닉네임 중복: {}", nickname);
+                    model.addAttribute("errorMsg", "이미 사용 중인 닉네임입니다.");
+                    return "redirect:/user/signupInsertInfo";
+                }
+            }
+            
+            // 생년월일 처리 (YYMMDD-G 형식으로 저장)
+            String userSerialNo = birthDate + "-" + genderDigit;
+            int birthYear = Integer.parseInt(birthDate.substring(0, 2));
+            
+            // 주민등록번호 뒷자리로 1900년대생/2000년대생 구분
+            if (genderDigit.equals("1") || genderDigit.equals("2")) {
+                birthYear += 1900;
+            } else if (genderDigit.equals("3") || genderDigit.equals("4")) {
+                birthYear += 2000;
+            } else {
+                birthYear += 2000; // 기본값
+            }
+            
+            int age = java.time.Year.now().getValue() - birthYear + 1;
+            
+            log.info("✅ 계산된 나이: {}, 주민번호: {}", age, userSerialNo);
+            
+            // 사용자 정보 업데이트
+            UserVO updateUser = new UserVO();
+            updateUser.setUserNo(loginUser.getUserNo());
+            updateUser.setUserName(name);
+            updateUser.setUserNickname(nickname);
+            updateUser.setUserAge(age);
+            updateUser.setUserPhone(phone);
+            updateUser.setUserSerialNo(userSerialNo);
+            
+            // DB 업데이트
+            int result = userService.updateSocialUserInfo(updateUser);
+            
+            log.info("✅ DB 업데이트 결과: {}", result);
+            
+            if (result > 0) {
+                log.info("✅ 소셜 로그인 사용자 정보 업데이트 성공");
+                
+                // 세션의 loginUser 업데이트
+                loginUser.setUserName(name);
+                loginUser.setUserNickname(nickname);
+                loginUser.setUserAge(age);
+                loginUser.setUserPhone(phone);
+                loginUser.setUserSerialNo(userSerialNo);
+                
+                session.setAttribute("loginUser", loginUser);
+                session.setAttribute("userNickname", nickname);
+                
+                // ✅ 설문조사 페이지를 위한 세션 설정
+                session.setAttribute("userId", loginUser.getUserId());
+                session.setAttribute("email", loginUser.getUserEmail());
+                session.setAttribute("name", name);
+                session.setAttribute("nickname", nickname);
+                session.setAttribute("phone", phone);
+                session.setAttribute("userSerialNo", userSerialNo);
+                session.setAttribute("age", age);
+                
+                // 소셜 로그인 플래그는 유지 (설문 페이지에서 구분 필요)
+                // session.removeAttribute("isSocialLogin"); // 제거하지 않음
+                session.removeAttribute("socialName");
+                session.removeAttribute("socialEmail");
+                
+                log.info("✅ 설문조사 페이지로 리다이렉트");
+                return "redirect:/user/signupSurvey";
+            } else {
+                log.error("❌ DB 업데이트 실패");
+                model.addAttribute("errorMsg", "정보 업데이트에 실패했습니다.");
+                return "redirect:/user/signupInsertInfo";
+            }
+            
+        } catch (Exception e) {
+            log.error("❌ 소셜 로그인 정보 업데이트 중 오류 발생", e);
+            e.printStackTrace();
+            model.addAttribute("errorMsg", "정보 업데이트 중 오류가 발생했습니다.");
+            return "redirect:/user/signupInsertInfo";
+        }
+    }
     /* ================================
         회원가입 - 설문조사
     ================================ */
@@ -216,15 +363,57 @@ public class UserController {
             String userSerialNo = (String) session.getAttribute("userSerialNo");
             Integer age = (Integer) session.getAttribute("age");
 
+            // ✅ 소셜 로그인 사용자는 이미 DB에 있으므로 관심사만 업데이트
+            UserVO existingUser = (UserVO) session.getAttribute("loginUser");
+            Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
+            
+            if (existingUser != null && isSocialLogin != null && isSocialLogin) {
+                // 소셜 로그인 사용자 - 관심사만 추가
+                int userNo = existingUser.getUserNo();
+                
+                // ✅ 관심사가 모두 입력된 경우만 INSERT
+                if (interests != null && !interests.isBlank() && 
+                    times != null && !times.isBlank() && 
+                    addresses != null && !addresses.isBlank()) {
+                    userService.insertUserInterest(
+                        userNo, 
+                        interests, 
+                        times, 
+                        addresses
+                    );
+                    log.info("✅ 소셜 로그인 사용자 관심사 등록 완료");
+                } else {
+                    log.info("⚠️ 소셜 로그인 사용자가 관심사를 입력하지 않음 - 스킵");
+                }
+                
+                // 세션 정리
+                session.removeAttribute("email");
+                session.removeAttribute("userId");
+                session.removeAttribute("name");
+                session.removeAttribute("nickname");
+                session.removeAttribute("phone");
+                session.removeAttribute("userSerialNo");
+                session.removeAttribute("age");
+                session.removeAttribute("isSocialLogin");
+                
+                log.info("✅ 소셜 로그인 회원가입 완료");
+                return "redirect:/user/signupSuccess";
+            }
+
+            // ✅ 일반 회원가입 - 설문조사 완료 후 DB INSERT
             if (userId == null || password == null || name == null || 
                 nickname == null || email == null || phone == null || 
                 userSerialNo == null || age == null) {
-                log.error("세션 데이터 누락");
+                log.error("❌ 세션 데이터 누락");
                 return "redirect:/user/signupInsertInfo?error=session";
             }
 
+            log.info("✅ 일반 회원 설문조사 완료 - DB INSERT 시작");
+
+            // 비밀번호 암호화
             String encodedPassword = passwordEncoder.encode(password);
 
+            // UserVO 생성
             UserVO user = new UserVO();
             user.setUserId(userId);
             user.setUserPw(encodedPassword);
@@ -237,22 +426,34 @@ public class UserController {
             user.setUserType("USER");
             user.setStatus("정상");
 
+            // ✅ 회원 정보 INSERT
             int result = userService.insertUser(user);
 
             if (result > 0) {
+                log.info("✅ 일반 회원 정보 INSERT 성공");
+                
                 int userNo = userService.selectUserNoByUserId(userId);
                 
                 if (userNo > 0) {
-                    if (interests != null || times != null || addresses != null) {
+                    // ✅ 관심사가 모두 입력된 경우만 INSERT (선택 사항)
+                    if (interests != null && !interests.isBlank() && 
+                        times != null && !times.isBlank() && 
+                        addresses != null && !addresses.isBlank()) {
                         userService.insertUserInterest(
                             userNo, 
-                            interests != null ? interests : "", 
-                            times != null ? times : "", 
-                            addresses != null ? addresses : ""
+                            interests, 
+                            times, 
+                            addresses
                         );
+                        log.info("✅ 일반 회원 관심사 등록 완료");
+                    } else {
+                        log.info("⚠️ 일반 회원이 관심사를 입력하지 않음 - 스킵");
                     }
                     
+                    // 세션 무효화
                     session.invalidate();
+                    
+                    log.info("✅ 일반 회원가입 완료");
                     return "redirect:/user/signupSuccess";
                 } else {
                     log.error("❌ USER_NO 조회 실패");
@@ -265,6 +466,7 @@ public class UserController {
 
         } catch (Exception e) {
             log.error("❌ 회원가입 처리 중 오류 발생", e);
+            e.printStackTrace();
             return "redirect:/user/signupSurvey?error=exception";
         }
     }
@@ -278,14 +480,18 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    public String loginProcess(@RequestParam String userId,
-                               @RequestParam String userPw,
-                               HttpSession session,
-                               Model model) {
-
+    public String loginProcess(
+            @RequestParam String userId,
+            @RequestParam String userPw,
+            @RequestParam(required = false) String autoLogin,  // ⭐ 추가
+            HttpSession session,
+            HttpServletResponse response,  // ⭐ 추가
+            Model model
+    ) {
         UserVO user = userService.selectUserById(userId);
 
         if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
+            // 계정 정지 상태 체크
             if ("정지".equals(user.getStatus())) {
                 java.sql.Timestamp until = user.getUpdatedAt();
                 java.time.Instant now = java.time.Instant.now();
@@ -296,12 +502,33 @@ public class UserController {
                 }
             }
             
+            // 세션에 사용자 정보 저장
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
             session.setAttribute("loginUser", user);
             session.setAttribute("userType", user.getUserType());
             session.setAttribute("loginUserEmail", user.getUserEmail());
 
+            // ⭐⭐⭐ 자동 로그인 처리 (여기부터 추가)
+            if ("on".equals(autoLogin)) {
+                // userId를 Base64로 인코딩
+                String encodedUserId = Base64.getEncoder()
+                        .encodeToString(userId.getBytes());
+
+                // 쿠키 생성 (30일 유지)
+                Cookie cookie = new Cookie("rememberId", encodedUserId);
+                cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+                cookie.setPath("/");
+                cookie.setHttpOnly(true); // JavaScript 접근 차단
+                // cookie.setSecure(true); // HTTPS 환경에서만 사용
+
+                response.addCookie(cookie);
+                
+                log.info("✅ 자동 로그인 쿠키 생성: {}", userId);
+            }
+            // ⭐⭐⭐ 여기까지 추가
+
+            // 사용자 타입에 따른 리다이렉트
             if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
                 return "redirect:http://localhost:5173/admin";
             } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
@@ -316,8 +543,17 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {  // ⭐ response 추가
+        // 세션 무효화
         session.invalidate();
+
+        // ⭐⭐⭐ 자동 로그인 쿠키 삭제 (여기 추가)
+        Cookie cookie = new Cookie("rememberId", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        log.info("✅ 로그아웃 완료 (자동 로그인 쿠키 삭제)");
         return "redirect:/";
     }
 

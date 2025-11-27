@@ -57,4 +57,11 @@ public interface UserMapper {
     int deleteUser(@Param("userNo") int userNo);
     
     int updateNickname(@Param("userNo") int userNo, @Param("nickname") String nickname);
+    
+    UserVO findByUserId(String userId);
+    
+    int insertSocialUser(UserVO user);
+    
+    void updateSocialUserInfo(UserVO user);
+
 }

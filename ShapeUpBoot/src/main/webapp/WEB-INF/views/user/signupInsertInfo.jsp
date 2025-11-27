@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,9 +13,9 @@
 <main class="signup-container">
 
   <section class="right-panel">
-   		<a href ="/">
-	        <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="Logo" width="180px">
-      	</a>
+    <a href ="/">
+      <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="Logo" width="180px">
+    </a>
 
     <div class="tab-menu">
       <h3>회원가입</h3>
@@ -42,34 +43,25 @@
       <p class="sub-text">필수 정보를 입력해주세요</p>
 
       <%-- 에러 메시지 표시 --%>
-      <% 
-        String error = request.getParameter("error");
-        if (error != null) {
-          String errorMsg = "";
-          switch(error) {
-            case "password": errorMsg = "비밀번호가 일치하지 않습니다."; break;
-            case "duplicateId": errorMsg = "이미 사용 중인 아이디입니다."; break;
-            case "duplicateNickname": errorMsg = "이미 사용 중인 닉네임입니다."; break;
-            case "emailNotVerified": errorMsg = "이메일 인증을 완료해주세요."; break;
-            case "session": errorMsg = "세션이 만료되었습니다. 다시 시도해주세요."; break;
-            case "exception": errorMsg = "오류가 발생했습니다. 다시 시도해주세요."; break;
-          }
-          if (!errorMsg.isEmpty()) {
-      %>
+      <c:if test="${not empty errorMsg}">
         <div style="color: red; background-color: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-          <%= errorMsg %>
+          ${errorMsg}
         </div>
-      <% 
-          }
-        } 
-      %>
+      </c:if>
 
-      <form id="signupForm" action="<%=request.getContextPath()%>/user/signupInsertInfo" method="post">
+      <%-- ✅ 소셜 로그인일 때 다른 action URL 사용 --%>
+      <form id="signupForm" 
+            action="<c:choose>
+                      <c:when test='${isSocialLogin}'><%=request.getContextPath()%>/user/updateSocialUserInfo</c:when>
+                      <c:otherwise><%=request.getContextPath()%>/user/signupInsertInfo</c:otherwise>
+                    </c:choose>" 
+            method="post">
 
         <%-- 이름 --%>
         <div class="form-group">
           <label>이름</label>
-          <input type="text" name="name" required>
+          <input type="text" name="name" id="nameInput" value="${socialName}" 
+                 <c:if test="${isSocialLogin}">readonly style="background-color: #f5f5f5;"</c:if> required>
         </div>
 
         <%-- 닉네임 --%>
@@ -82,80 +74,96 @@
           <span id="nicknameMsg" class="validation-msg"></span>
         </div>
 
-        <%-- 아이디 --%>
-        <div class="form-group">
-          <label>아이디</label>
-          <div class="field-inline">
-            <input type="text" name="userid" id="useridInput" required>
-            <button type="button" class="check-btn" onclick="checkUserId()">중복 확인</button>
+        <%-- 아이디 (소셜 로그인 시 숨김) --%>
+        <c:if test="${!isSocialLogin}">
+          <div class="form-group" id="userIdGroup">
+            <label>아이디</label>
+            <div class="field-inline">
+              <input type="text" name="userid" id="useridInput" required>
+              <button type="button" class="check-btn" onclick="checkUserId()">중복 확인</button>
+            </div>
+            <span id="useridMsg" class="validation-msg"></span>
           </div>
-          <span id="useridMsg" class="validation-msg"></span>
-        </div>
+        </c:if>
 
-        <%-- 비밀번호 --%>
-        <div class="form-group">
-          <label>비밀번호</label>
-          <input type="password" name="password" id="passwordInput" required>
-          <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합<br>
-          사용 가능한 특수문자: <strong>@ $ ! % * # ? &</strong></p>
-          <span id="passwordSpecialMsg" class="validation-msg"></span>
-          <div class="password-strength" id="passwordStrength">
-            <div class="strength-label">강도: <span id="strengthText">-</span></div>
-            <div class="strength-bar">
-              <div class="strength-fill" id="strengthFill"></div>
+        <%-- 비밀번호 (소셜 로그인 시 숨김) --%>
+        <c:if test="${!isSocialLogin}">
+          <div class="form-group" id="passwordGroup">
+            <label>비밀번호</label>
+            <input type="password" name="password" id="passwordInput" required>
+            <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합<br>
+            사용 가능한 특수문자: <strong>@ $ ! % * # ? &</strong></p>
+            <span id="passwordSpecialMsg" class="validation-msg"></span>
+            <div class="password-strength" id="passwordStrength">
+              <div class="strength-label">강도: <span id="strengthText">-</span></div>
+              <div class="strength-bar">
+                <div class="strength-fill" id="strengthFill"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label>비밀번호 확인</label>
-          <input type="password" name="password2" id="password2Input" required>
-          <span id="passwordMsg" class="validation-msg"></span>
-        </div>
+          <div class="form-group" id="password2Group">
+            <label>비밀번호 확인</label>
+            <input type="password" name="password2" id="password2Input" required>
+            <span id="passwordMsg" class="validation-msg"></span>
+          </div>
+        </c:if>
 
         <%-- 이메일 --%>
         <div class="form-group">
           <label>이메일</label>
-          <div class="field-inline email-box">
-            <input type="text" name="emailId" id="emailIdInput" placeholder="이메일 아이디" required>
-            <span>@</span>
-            <input type="text" name="emailDomain" id="emailDomainInput" placeholder="직접 입력" required>
+          <c:choose>
+            <c:when test="${isSocialLogin}">
+              <%-- 소셜 로그인: 표시만 (전송 안함) --%>
+              <input type="text" id="emailDisplay" value="${socialEmail}" 
+                     readonly style="background-color: #f5f5f5;">
+            </c:when>
+            <c:otherwise>
+              <%-- 일반 회원가입: 입력 가능 --%>
+              <div class="field-inline email-box">
+                <input type="text" name="emailId" id="emailIdInput" placeholder="이메일 아이디" required>
+                <span>@</span>
+                <input type="text" name="emailDomain" id="emailDomainInput" placeholder="직접 입력" required>
 
-            <select id="emailDomainSelect" class="email-domain-select">
-              <option value="">직접 입력</option>
-              <option value="naver.com">naver.com</option>
-              <option value="gmail.com">gmail.com</option>
-              <option value="daum.net">daum.net</option>
-              <option value="kakao.com">kakao.com</option>
-            </select>
+                <select id="emailDomainSelect" class="email-domain-select">
+                  <option value="">직접 입력</option>
+                  <option value="naver.com">naver.com</option>
+                  <option value="gmail.com">gmail.com</option>
+                  <option value="daum.net">daum.net</option>
+                  <option value="kakao.com">kakao.com</option>
+                </select>
 
-            <button type="button" id="sendEmailBtn" class="check-btn">인증번호 발송</button>
-          </div>
+                <button type="button" id="sendEmailBtn" class="check-btn">인증번호 발송</button>
+              </div>
 
-          <div class="email-verify-area" style="margin-top:8px;">
-            <input type="text" id="emailCodeInput" placeholder="인증번호 입력" style="width:160px;">
-            <button type="button" id="verifyEmailBtn" class="check-btn">인증 확인</button>
-            <span id="emailVerifyMsg" class="validation-msg"></span>
-          </div>
+              <div class="email-verify-area" style="margin-top:8px;">
+                <input type="text" id="emailCodeInput" placeholder="인증번호 입력" style="width:160px;">
+                <button type="button" id="verifyEmailBtn" class="check-btn">인증 확인</button>
+                <span id="emailVerifyMsg" class="validation-msg"></span>
+              </div>
+            </c:otherwise>
+          </c:choose>
         </div>
 
-        <%-- 생년월일 + 성별 --%>
+        <%-- 주민등록번호 --%>
         <div class="form-group">
-          <label>생년월일 및 성별</label>
-          <div class="birth-box">
-            <input type="text" name="birthDate" id="birthDateInput" placeholder="YYMMDD" maxlength="6" required>
-            <span class="dash">-</span>
-            <input type="text" name="genderDigit" id="genderDigitInput" placeholder="" maxlength="1" class="gender-digit" required>
-            <span class="dots">● ● ● ● ● ●</span>
+          <label>주민등록번호</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="text" name="birthDate" id="birthDateInput" placeholder="YYMMDD" maxlength="6" 
+                   style="flex: 0 0 120px;" required>
+            <span style="font-size: 1.2em; font-weight: bold;">-</span>
+            <input type="text" name="genderDigit" id="genderDigitInput" placeholder="1" maxlength="1" 
+                   style="flex: 0 0 50px; text-align: center;" required>
+            <span style="color: #666;">● ● ● ● ● ●</span>
           </div>
-          <p class="hint-text">생년월일 6자리와 주민등록번호 뒷자리 첫 번째 숫자를 입력하세요 (1,2,3,4)</p>
+          <p class="hint-text" style="font-size: 0.85em; color: #666; margin-top: 5px;">
+            뒷자리 첫 번째 숫자만 입력 (1,2: 1900년대생 | 3,4: 2000년대생)
+          </p>
         </div>
 
         <%-- 전화번호 --%>
         <div class="form-group">
           <label>전화번호</label>
-          <div class="field-inline">
-            <input type="text" placeholder="010-1234-5678" name="phone" id="phoneInput" required>
-          </div>
+          <input type="text" name="phone" id="phoneInput" placeholder="010-1234-5678" required>
         </div>
 
         <div class="button-area">
@@ -170,416 +178,279 @@
 
 <script>
 const contextPath = '<%=request.getContextPath()%>';
-
-// 상태 변수들
-let isUserIdChecked = false;
-let isNicknameChecked = false;
-let isUserIdAvailable = false;
-let isNicknameAvailable = false;
-let isEmailVerified = false;        // 이메일 인증 상태 추가
-let verifiedEmail = '';             // 인증된 이메일 주소 저장
-
-function getFullEmail() {
-  const id = document.getElementById('emailIdInput').value.trim();
-  const domain = document.getElementById('emailDomainInput').value.trim();
-  return id && domain ? id + '@' + domain : '';
-}
-
-// 이메일 인증 상태 초기화 함수
-function resetEmailVerification() {
-  isEmailVerified = false;
-  verifiedEmail = '';
-  document.getElementById('emailVerifyMsg').textContent = '';
-  document.getElementById('emailCodeInput').value = '';
-}
-
-// 이메일 아이디 입력 변경 시 인증 상태 초기화
-document.getElementById('emailIdInput').addEventListener('input', function() {
-  resetEmailVerification();
-});
-
-// 이메일 도메인 직접 입력 변경 시 인증 상태 초기화
-document.getElementById('emailDomainInput').addEventListener('input', function() {
-  resetEmailVerification();
-});
-
-// 이메일 도메인 선택
-document.getElementById("emailDomainSelect").addEventListener("change", function() {
-  const domainInput = document.getElementById("emailDomainInput");
-  
-  // 인증 상태 초기화
-  resetEmailVerification();
-  
-  if (this.value === "") {
-    domainInput.value = "";
-    domainInput.readOnly = false;
-  } else {
-    domainInput.value = this.value;
-    domainInput.readOnly = true;
-  }
-});
-
-// 이메일 인증번호 발송
-document.getElementById('sendEmailBtn').addEventListener('click', function() {
-  const email = getFullEmail();
-  const msgSpan = document.getElementById('emailVerifyMsg');
-  msgSpan.textContent = '';
-
-  if (!email) { 
-    alert('이메일을 정확히 입력해주세요.'); 
-    return; 
-  }
-
-  // 이메일 형식 검증
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    alert('올바른 이메일 형식이 아닙니다.');
-    return;
-  }
-
-  // 인증 상태 초기화 (새로 발송하므로)
-  isEmailVerified = false;
-  verifiedEmail = '';
-
-  fetch(contextPath + '/user/sendEmailCode', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'email=' + encodeURIComponent(email)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      alert('인증번호를 발송했습니다. 이메일을 확인해주세요.');
-      msgSpan.textContent = '인증번호가 발송되었습니다. (5분 내 입력)';
-      msgSpan.style.color = '#666';
-    } else {
-      alert(data.message || '인증번호 발송에 실패했습니다.');
-    }
-  })
-  .catch(err => { 
-    console.error(err); 
-    alert('메일 전송 중 오류가 발생했습니다.'); 
-  });
-});
-
-// 이메일 인증번호 확인
-document.getElementById('verifyEmailBtn').addEventListener('click', function() {
-  const email = getFullEmail();
-  const code = document.getElementById('emailCodeInput').value.trim();
-  const msgSpan = document.getElementById('emailVerifyMsg');
-
-  if (!email) { 
-    alert('이메일을 입력해주세요.'); 
-    return; 
-  }
-  if (!code) { 
-    alert('인증번호를 입력해주세요.'); 
-    return; 
-  }
-
-  fetch(contextPath + '/user/verifyEmailCode', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      isEmailVerified = true;
-      verifiedEmail = email;
-      msgSpan.style.color = 'green';
-      msgSpan.textContent = '✓ 이메일 인증이 완료되었습니다.';
-    } else {
-      isEmailVerified = false;
-      verifiedEmail = '';
-      msgSpan.style.color = 'red';
-      msgSpan.textContent = '✗ ' + (data.message || '인증에 실패했습니다.');
-    }
-  })
-  .catch(err => { 
-    console.error(err); 
-    alert('인증 확인 중 오류가 발생했습니다.'); 
-  });
-});
-
-// 비밀번호 특수문자 체크
-document.getElementById('passwordInput').addEventListener('input', function() {
-  const allowedSpecial = /[@$!%*#?&]/;
-  const allSpecial = /[^A-Za-z0-9]/g;
-  const specials = this.value.match(allSpecial);
-  const msgSpan = document.getElementById('passwordSpecialMsg');
-  
-  if (!specials) { 
-    msgSpan.textContent = ''; 
-    return; 
-  }
-  
-  const invalid = specials.filter(ch => !allowedSpecial.test(ch));
-  if (invalid.length > 0) {
-    msgSpan.textContent = '✗ 사용할 수 없는 특수문자가 포함되어 있습니다: ' + invalid.join(' ');
-    msgSpan.style.color = 'red';
-  } else {
-    msgSpan.textContent = '';
-  }
-});
-
-// 비밀번호 확인 실시간 체크
-document.getElementById('password2Input').addEventListener('input', function() {
-  const password = document.getElementById('passwordInput').value;
-  const msgSpan = document.getElementById('passwordMsg');
-  
-  if (this.value === '') { 
-    msgSpan.textContent = ''; 
-    return; 
-  }
-  
-  if (password === this.value) { 
-    msgSpan.textContent = '✓ 비밀번호가 일치합니다.'; 
-    msgSpan.style.color = 'green'; 
-  } else { 
-    msgSpan.textContent = '✗ 비밀번호가 일치하지 않습니다.'; 
-    msgSpan.style.color = 'red'; 
-  }
-});
-
-// 아이디 입력 시 중복확인 상태 초기화
-document.getElementById('useridInput').addEventListener('input', function() {
-  isUserIdChecked = false;
-  isUserIdAvailable = false;
-  document.getElementById('useridMsg').textContent = '';
-});
-
-// 닉네임 입력 시 중복확인 상태 초기화
-document.getElementById('nicknameInput').addEventListener('input', function() {
-  isNicknameChecked = false;
-  isNicknameAvailable = false;
-  document.getElementById('nicknameMsg').textContent = '';
-});
-
-let passwordStrengthLevel = 'none';
-
-function evaluatePasswordStrength(pw) {
-  const strengthBox = document.getElementById('passwordStrength');
-  const strengthText = document.getElementById('strengthText');
-  const strengthFill = document.getElementById('strengthFill');
-  if (!strengthBox || !strengthText || !strengthFill) return;
-
-  if (!pw) {
-    strengthBox.classList.remove('show');
-    passwordStrengthLevel = 'none';
-    return;
-  }
-
-  strengthBox.classList.add('show');
-
-  const hasLetter = /[A-Za-z]/.test(pw);
-  const hasNumber = /\d/.test(pw);
-  const hasSpecial = /[@$!%*#?&]/.test(pw);
-  const lengthOK = pw.length >= 8;
-  const varietyCount = [hasLetter, hasNumber, hasSpecial].filter(Boolean).length;
-
-  let level = 'very-low';
-  if (!lengthOK) {
-    level = 'very-low';
-  } else if (varietyCount === 1) {
-    level = 'low';
-  } else if (varietyCount === 2) {
-    level = 'medium';
-  } else if (varietyCount === 3) {
-    level = 'high';
-  }
-
-  passwordStrengthLevel = level;
-
-  const labels = {
-    'very-low': '매우 낮음',
-    'low': '낮음',
-    'medium': '보통',
-    'high': '높음'
-  };
-  const widths = {
-    'very-low': '25%',
-    'low': '50%',
-    'medium': '75%',
-    'high': '100%'
-  };
-  const colors = {
-    'very-low': '#a10000',
-    'low': '#ff5959',
-    'medium': '#f2b705',
-    'high': '#12d48a'
-  };
-
-  strengthText.textContent = labels[level] || '-';
-  strengthFill.style.width = widths[level] || '0%';
-  strengthFill.style.backgroundColor = colors[level] || '#ddd';
-}
-
-document.getElementById('passwordInput').addEventListener('input', function() {
-  evaluatePasswordStrength(this.value);
-});
-
-// 아이디 중복 확인
-function checkUserId() {
-  const userid = document.getElementById('useridInput').value.trim();
-  const msgSpan = document.getElementById('useridMsg');
-  
-  if (!userid) { 
-    alert('아이디를 입력해주세요.'); 
-    return; 
-  }
-  
-  const idPattern = /^[a-zA-Z0-9]{4,20}$/;
-  if (!idPattern.test(userid)) { 
-    msgSpan.textContent = '✗ 4~20자의 영문, 숫자만 사용 가능합니다.'; 
-    msgSpan.style.color = 'red'; 
-    return; 
-  }
-
-  fetch(contextPath + '/user/checkUserId', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'userid=' + encodeURIComponent(userid)
-  })
-  .then(res => res.json())
-  .then(isDuplicate => {
-    isUserIdChecked = true;
-    if (isDuplicate) { 
-      msgSpan.textContent = '✗ 이미 사용 중인 아이디입니다.'; 
-      msgSpan.style.color = 'red'; 
-      isUserIdAvailable = false; 
-    } else { 
-      msgSpan.textContent = '✓ 사용 가능한 아이디입니다.'; 
-      msgSpan.style.color = 'green'; 
-      isUserIdAvailable = true; 
-    }
-  })
-  .catch(err => {
-    console.error(err); 
-    alert('중복 확인 중 오류가 발생했습니다.'); 
-  });
-}
+const isSocialLogin = ${isSocialLogin != null ? isSocialLogin : false};
 
 // 닉네임 중복 확인
 function checkNickname() {
   const nickname = document.getElementById('nicknameInput').value.trim();
-  const msgSpan = document.getElementById('nicknameMsg');
-  
-  if (!nickname) { 
-    alert('닉네임을 입력해주세요.'); 
-    return; 
+  if (!nickname) {
+    alert('닉네임을 입력해주세요.');
+    return;
   }
   
-  const nicknamePattern = /^[가-힣a-zA-Z0-9]{2,20}$/;
-  if (!nicknamePattern.test(nickname)) { 
-    msgSpan.textContent = '✗ 2~20자의 한글, 영문, 숫자만 사용 가능합니다.'; 
-    msgSpan.style.color = 'red'; 
-    return; 
-  }
+  fetch(contextPath + '/user/checkNickname?nickname=' + encodeURIComponent(nickname))
+    .then(response => response.json())
+    .then(data => {
+      const nicknameMsg = document.getElementById('nicknameMsg');
+      if (data.available) {
+        nicknameMsg.textContent = '✅ ' + data.message;
+        nicknameMsg.style.color = 'green';
+        window.isNicknameChecked = true;
+        window.isNicknameAvailable = true;
+      } else {
+        nicknameMsg.textContent = '❌ ' + data.message;
+        nicknameMsg.style.color = 'red';
+        window.isNicknameChecked = true;
+        window.isNicknameAvailable = false;
+      }
+    })
+    .catch(err => {
+      alert('닉네임 확인 중 오류가 발생했습니다.');
+      console.error(err);
+    });
+}
 
-  fetch(contextPath + '/user/checkNickname', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'nickname=' + encodeURIComponent(nickname)
-  })
-  .then(res => res.json())
-  .then(isDuplicate => {
-    isNicknameChecked = true;
-    if (isDuplicate) { 
-      msgSpan.textContent = '✗ 이미 사용 중인 닉네임입니다.'; 
-      msgSpan.style.color = 'red'; 
-      isNicknameAvailable = false; 
-    } else { 
-      msgSpan.textContent = '✓ 사용 가능한 닉네임입니다.'; 
-      msgSpan.style.color = 'green'; 
-      isNicknameAvailable = true; 
-    }
-  })
-  .catch(err => {
-    console.error(err); 
-    alert('중복 확인 중 오류가 발생했습니다.'); 
-  });
+// 아이디 중복 확인 (일반 회원가입만)
+function checkUserId() {
+  const userid = document.getElementById('useridInput').value.trim();
+  if (!userid) {
+    alert('아이디를 입력해주세요.');
+    return;
+  }
+  
+  fetch(contextPath + '/user/checkUserId?userid=' + encodeURIComponent(userid))
+    .then(response => response.json())
+    .then(data => {
+      const useridMsg = document.getElementById('useridMsg');
+      if (data.available) {
+        useridMsg.textContent = '✅ ' + data.message;
+        useridMsg.style.color = 'green';
+        window.isUserIdChecked = true;
+        window.isUserIdAvailable = true;
+      } else {
+        useridMsg.textContent = '❌ ' + data.message;
+        useridMsg.style.color = 'red';
+        window.isUserIdChecked = true;
+        window.isUserIdAvailable = false;
+      }
+    })
+    .catch(err => {
+      alert('아이디 확인 중 오류가 발생했습니다.');
+      console.error(err);
+    });
 }
 
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
-  if (confirm('회원가입을 취소하시겠습니까?')) {
+  if(confirm('회원가입을 취소하시겠습니까?')) {
     window.location.href = contextPath + '/';
   }
 });
 
 // Form 제출 검증
 document.getElementById('signupForm').addEventListener('submit', function(e) {
-  
-  // 1. 아이디 중복 확인 체크
-  if (!isUserIdChecked || !isUserIdAvailable) { 
-    e.preventDefault(); 
-    alert('아이디 중복 확인을 해주세요.'); 
-    return false; 
-  }
-  
-  // 2. 닉네임 중복 확인 체크
-  if (!isNicknameChecked || !isNicknameAvailable) { 
-    e.preventDefault(); 
-    alert('닉네임 중복 확인을 해주세요.'); 
-    return false; 
-  }
-
-  // 3. 비밀번호 일치 체크
-  const password = document.getElementById('passwordInput').value;
-  const password2 = document.getElementById('password2Input').value;
-  if (password !== password2) { 
-    e.preventDefault(); 
-    alert('비밀번호가 일치하지 않습니다.'); 
-    return false; 
-  }
-
-  // 4. 비밀번호 규칙 체크
-  const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-  if (!passwordPattern.test(password)) { 
-    e.preventDefault(); 
-    alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 모두 포함해야 합니다.'); 
-    return false; 
-  }
-  if (passwordStrengthLevel !== 'high') {
+  // 닉네임 검증
+  const nicknameChecked = window.isNicknameChecked || false;
+  const nicknameAvailable = window.isNicknameAvailable || false;
+  if (!nicknameChecked || !nicknameAvailable) {
     e.preventDefault();
-    alert('비밀번호 강도가 \"높음\"이어야 가입이 가능합니다.');
+    alert('닉네임 중복 확인을 해주세요.');
     return false;
   }
 
-  // 5. 이메일 인증 체크
-  if (!isEmailVerified) { 
-    e.preventDefault(); 
-    alert('이메일 인증을 완료해주세요.'); 
-    return false; 
-  }
-  
-  // 6. 인증된 이메일과 현재 입력된 이메일이 같은지 확인
-  const currentEmail = getFullEmail();
-  if (verifiedEmail !== currentEmail) {
-    e.preventDefault();
-    alert('이메일이 변경되었습니다. 다시 인증해주세요.');
-    return false;
+  if (!isSocialLogin) {
+    // 일반 회원 검증 (아이디/비밀번호)
+    const useridChecked = window.isUserIdChecked || false;
+    const userIdAvailable = window.isUserIdAvailable || false;
+    if (!useridChecked || !userIdAvailable) {
+      e.preventDefault();
+      alert('아이디 중복 확인을 해주세요.');
+      return false;
+    }
+
+    const password = document.getElementById('passwordInput').value;
+    const password2 = document.getElementById('password2Input').value;
+    if (password !== password2) {
+      e.preventDefault();
+      alert('비밀번호가 일치하지 않습니다.');
+      return false;
+    }
+
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      e.preventDefault();
+      alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 모두 포함해야 합니다.');
+      return false;
+    }
+    
+    // ✅ 이메일 인증 확인
+    if (!window.emailVerified) {
+      e.preventDefault();
+      alert('이메일 인증을 완료해주세요.');
+      return false;
+    }
   }
 
-  // 7. 생년월일 체크
+  // 생년월일 검증
   const birthDate = document.getElementById('birthDateInput').value;
-  if (birthDate.length !== 6 || !/^\d{6}$/.test(birthDate)) { 
-    e.preventDefault(); 
-    alert('생년월일 6자리를 정확히 입력해주세요.'); 
-    return false; 
+  if (birthDate.length !== 6 || !/^\d{6}$/.test(birthDate)) {
+    e.preventDefault();
+    alert('생년월일 6자리를 정확히 입력해주세요. (예: 990101)');
+    return false;
   }
 
-  // 8. 성별 숫자 체크
+  // 주민등록번호 뒷자리 첫 번째 숫자 검증
   const genderDigit = document.getElementById('genderDigitInput').value;
-  if (!/^[1-4]$/.test(genderDigit)) { 
-    e.preventDefault(); 
-    alert('주민등록번호 뒷자리 첫 번째 숫자(1~4)를 입력해주세요.'); 
-    return false; 
+  if (!/^[1-4]$/.test(genderDigit)) {
+    e.preventDefault();
+    alert('주민등록번호 뒷자리 첫 번째 숫자를 1~4 중에서 입력해주세요.');
+    return false;
+  }
+
+  // 전화번호 검증
+  const phone = document.getElementById('phoneInput').value.trim();
+  const phonePattern = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
+  if (!phonePattern.test(phone)) {
+    e.preventDefault();
+    alert('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
+    return false;
   }
 
   return true;
 });
+
+// 이메일 도메인 선택 (일반 회원가입만)
+if (!isSocialLogin) {
+  const emailDomainSelect = document.getElementById('emailDomainSelect');
+  const emailDomainInput = document.getElementById('emailDomainInput');
+  
+  if (emailDomainSelect && emailDomainInput) {
+    emailDomainSelect.addEventListener('change', function() {
+      if (this.value) {
+        emailDomainInput.value = this.value;
+        emailDomainInput.readOnly = true;
+      } else {
+        emailDomainInput.value = '';
+        emailDomainInput.readOnly = false;
+      }
+    });
+  }
+  
+  // ✅ 이메일 인증번호 발송
+  const sendEmailBtn = document.getElementById('sendEmailBtn');
+  if (sendEmailBtn) {
+    sendEmailBtn.addEventListener('click', function() {
+      const emailId = document.getElementById('emailIdInput').value.trim();
+      const emailDomain = document.getElementById('emailDomainInput').value.trim();
+      
+      if (!emailId || !emailDomain) {
+        alert('이메일을 입력해주세요.');
+        return;
+      }
+      
+      const email = emailId + '@' + emailDomain;
+      
+      sendEmailBtn.disabled = true;
+      sendEmailBtn.textContent = '발송 중...';
+      
+      fetch(contextPath + '/user/sendEmailCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'email=' + encodeURIComponent(email)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          document.getElementById('emailVerifyMsg').textContent = '✅ 인증번호가 발송되었습니다.';
+          document.getElementById('emailVerifyMsg').style.color = 'green';
+          
+          // 타이머 시작 (5분)
+          let timeLeft = 300;
+          const timer = setInterval(function() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            sendEmailBtn.textContent = `재발송 (${minutes}:${seconds.toString().padStart(2, '0')})`;
+            
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              sendEmailBtn.disabled = false;
+              sendEmailBtn.textContent = '인증번호 재발송';
+            }
+            timeLeft--;
+          }, 1000);
+          
+        } else {
+          alert(data.message || '인증번호 발송에 실패했습니다.');
+          sendEmailBtn.disabled = false;
+          sendEmailBtn.textContent = '인증번호 발송';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('인증번호 발송 중 오류가 발생했습니다.');
+        sendEmailBtn.disabled = false;
+        sendEmailBtn.textContent = '인증번호 발송';
+      });
+    });
+  }
+  
+  // ✅ 이메일 인증번호 확인
+  const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+  if (verifyEmailBtn) {
+    verifyEmailBtn.addEventListener('click', function() {
+      const emailId = document.getElementById('emailIdInput').value.trim();
+      const emailDomain = document.getElementById('emailDomainInput').value.trim();
+      const code = document.getElementById('emailCodeInput').value.trim();
+      
+      if (!emailId || !emailDomain) {
+        alert('이메일을 입력해주세요.');
+        return;
+      }
+      
+      if (!code) {
+        alert('인증번호를 입력해주세요.');
+        return;
+      }
+      
+      const email = emailId + '@' + emailDomain;
+      
+      fetch(contextPath + '/user/verifyEmailCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
+      })
+      .then(response => response.json())
+      .then(data => {
+        const emailVerifyMsg = document.getElementById('emailVerifyMsg');
+        if (data.success) {
+          emailVerifyMsg.textContent = '✅ ' + data.message;
+          emailVerifyMsg.style.color = 'green';
+          window.emailVerified = true;
+          
+          // 인증 완료 후 입력 필드 비활성화
+          document.getElementById('emailIdInput').readOnly = true;
+          document.getElementById('emailDomainInput').readOnly = true;
+          document.getElementById('emailCodeInput').readOnly = true;
+          verifyEmailBtn.disabled = true;
+          document.getElementById('sendEmailBtn').disabled = true;
+        } else {
+          emailVerifyMsg.textContent = '❌ ' + data.message;
+          emailVerifyMsg.style.color = 'red';
+          window.emailVerified = false;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('인증번호 확인 중 오류가 발생했습니다.');
+      });
+    });
+  }
+}
 </script>
 
 <style>
