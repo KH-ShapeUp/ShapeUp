@@ -29,7 +29,7 @@ public class NoticeApiController {
 
     private final NoticeService noticeService;
     private static final DateTimeFormatter ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final Path UPLOAD_DIR = Paths.get(System.getProperty("user.dir"), "uploads", "notice");
+    private static final Path UPLOAD_ROOT = Paths.get(System.getProperty("user.dir"), "uploads", "notice");
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> list(
@@ -126,7 +126,8 @@ public class NoticeApiController {
             return ResponseEntity.badRequest().body("no files");
         }
         try {
-            Files.createDirectories(UPLOAD_DIR);
+            Path noticeDir = UPLOAD_ROOT.resolve(String.valueOf(id));
+            Files.createDirectories(noticeDir);
             int index = 0;
             for (MultipartFile file : files) {
                 if (file.isEmpty()) continue;
@@ -136,14 +137,14 @@ public class NoticeApiController {
                     ext = original.substring(original.lastIndexOf("."));
                 }
                 String rename = UUID.randomUUID() + ext;
-                Path target = UPLOAD_DIR.resolve(rename);
+                Path target = noticeDir.resolve(rename);
                 file.transferTo(target.toFile());
 
                 NoticeImage img = new NoticeImage();
                 img.setNoticeNo(id);
                 img.setImgOriginalName(original);
                 img.setImgRename(rename);
-                img.setImgPath("/uploads/notice/" + rename);
+                img.setImgPath("/uploads/notice/" + id + "/" + rename);
                 img.setImgMainYn(index == 0 ? "Y" : "N");
                 noticeService.insertNoticeImage(img);
                 index++;
