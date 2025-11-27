@@ -37,7 +37,9 @@ const Sidebar = ({
   };
 
   const goHome = () => {
-    const target = homeHref || "/";
+    // Admin과 Stadium 모두 루트(8080)로 이동하도록 고정
+    const target =
+      variant === "admin" || variant === "stadium" ? "/" : homeHref || "/";
     const url = target.startsWith("http")
       ? target
       : `${window.location.protocol}//${window.location.hostname}:8080${target}`;

@@ -37,4 +37,34 @@ public class NoticeServiceImpl implements NoticeService{
 		return result;
 	}
 
+	@Override
+	public int updateNotice(Notice notice) {
+		return noticeMapper.updateNotice(notice);
+	}
+
+	@Override
+	public int insertNoticeImage(com.ShapeUp.boot.domain.notice.model.vo.NoticeImage image) {
+		return noticeMapper.insertNoticeImage(image);
+	}
+
+	@Override
+	public int deleteNoticeImage(int imgNo) {
+		return noticeMapper.deleteNoticeImage(imgNo);
+	}
+
+	@Override
+	public int deleteNotice(int noticeNo) {
+		return noticeMapper.deleteNotice(noticeNo);
+	}
+
+	@Override
+	public java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo) {
+		return noticeMapper.selectImagesByNotice(noticeNo);
+	}
+
+	@Override
+	public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
+		return noticeMapper.selectNoticeTrend();
+	}
+
 }

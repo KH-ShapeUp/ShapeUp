@@ -10,16 +10,46 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        // 어드민 리소스 보호
-        registry.addInterceptor(new AdminAccessInterceptor())
-                .addPathPatterns("/admin/**", "/api/admin/**");
+    private static final String UPLOAD_BASE = System.getProperty("user.dir") + "/uploads/";
 
-        // 시설 관리자 리소스 보호
-        registry.addInterceptor(new StadiumAccessInterceptor())
-                .addPathPatterns("/stadium/**", "/api/stadium/**");
-    }
+@Override
+public void addInterceptors(InterceptorRegistry registry) {
+registry.addInterceptor(new AdminAccessInterceptor())
+    .addPathPatterns("/admin/**", "/api/admin/**")
+    .excludePathPatterns(
+        "/error",
+        // SPA entry & static assets
+        "/admin/index.html",
+        "/admin/assets/**",
+        "/admin/mock/**",
+        "/admin/**/*.js",
+        "/admin/**/*.css",
+        "/admin/**/*.map",
+        "/admin/**/*.png",
+        "/admin/**/*.jpg",
+        "/admin/**/*.ico",
+        "/admin/**/*.svg",
+        // allow notice CRUD while session 세팅 전 개발용
+        "/api/admin/notices/**"
+    );
+
+registry.addInterceptor(new StadiumAccessInterceptor())
+    .addPathPatterns("/stadium/**", "/api/stadium/**")
+    .excludePathPatterns(
+        "/error",
+        "/stadium/index.html",
+        "/stadium/assets/**",
+        "/stadium/mock/**",
+        "/stadium/**/*.js",
+        "/stadium/**/*.css",
+        "/stadium/**/*.map",
+        "/stadium/**/*.png",
+        "/stadium/**/*.jpg",
+        "/stadium/**/*.ico",
+        "/stadium/**/*.svg"
+    );
+
+}
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -28,5 +58,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600);
+    }
+
+    @Override
+    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:" + UPLOAD_BASE);
     }
 }
