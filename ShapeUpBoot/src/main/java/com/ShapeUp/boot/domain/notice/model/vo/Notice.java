@@ -22,6 +22,7 @@ public class Notice {
 	private String noticeContent;
 	private String noticeCategory;
 	private Integer userNo;
+	private String userName;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
 	private String eventStart;
@@ -29,4 +30,3 @@ public class Notice {
 	private Integer viewCount;
 	private List<NoticeImage> images;
 }
-

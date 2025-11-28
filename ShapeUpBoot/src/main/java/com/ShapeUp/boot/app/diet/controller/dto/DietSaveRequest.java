@@ -5,11 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
+
+import com.ShapeUp.boot.app.diet.dto.Item;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Alias("DietSaveRequestController")
 public class DietSaveRequest {
     private String dietDate;      // 식사 날짜 (yyyy-MM-dd)
     private String dietType;      // 식사 유형 (아침, 점심, 저녁, 간식)

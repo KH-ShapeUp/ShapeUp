@@ -12,4 +12,5 @@ public interface ActivityService {
 
 	int insertActivities(ActivityLogVO log);
 
+
 }

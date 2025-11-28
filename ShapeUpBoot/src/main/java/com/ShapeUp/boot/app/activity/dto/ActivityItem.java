@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.ibatis.type.Alias;
 
 @Data
+@Alias("ActivityDomainItem")
 public class ActivityItem {
    private int activityId;
    private int durationMin;
