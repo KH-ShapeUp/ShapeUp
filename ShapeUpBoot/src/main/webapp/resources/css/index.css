@@ -1,949 +1,1037 @@
 @charset "UTF-8";
 /* 광고 */
 .ad-wrapper {
-    width: 100%;
-    height: 400px;
-    background-color: #0a2fff;
-    border-radius: 12px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* 1. Swiper 기본 컨테이너 크기 */
+.swiper {
+  width: 100%;
+  height: 400px; /* 💡 슬라이더의 높이 지정 */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-slide,
+.swiper-slide a {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 2. 슬라이드 내부의 .ad-img 스타일 (색상 배경 + 텍스트 중앙 정렬) */
+.ad-img {
+  width: 100%;
+  height: 100%;
+  /* 텍스트 중앙 정렬 */
+  display: block;
+  object-fit: fill;
+}
+
+/* 2. 🚀 [핵심] img 태그 스타일: DIV 크기에 맞게 조정 */
+.ad-img img {
+  width: 100%;
+  height: 100%;
+  /* 이미지가 찌그러지지 않고 영역을 채우도록 설정 */
+  object-fit: fill;
+  /* 만약 이미지가 잘리는 것을 원치 않고 무조건 전체가 보이게 하려면 object-fit: contain; 으로 변경 */
+}
+
+.swiper-pagination {
+  pointer-events: none;
+  /* 이 속성은 페이지네이션이 배너 위를 덮을 때 링크 클릭을 막는 문제를 해결합니다. */
+}
+
+/* 페이지네이션 점(`.swiper-pagination-bullet`)만 다시 클릭 가능하게 설정합니다. */
+.swiper-pagination-bullet {
+  pointer-events: auto;
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경하여 클릭 가능함을 명시 */
+}
+
+/* 3. [선택적] 이전 문제 해결을 위해 적용했던 a 태그 관련 코드를 확인합니다. */
+/* (a 태그가 배너 전체를 덮는 경우) */
+.swiper-slide a {
+  pointer-events: none; /* 슬라이드 전체 a 태그 비활성화 유지 */
+  display: block;
+}
+
+.swiper-slide a .ad-img {
+  pointer-events: auto; /* 이미지 위에서만 a 태그 활성화 유지 */
+}
+
+/* Swiper 기본 네비게이션 버튼 색상 조정 (선택 사항) */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #fff; /* 버튼 아이콘 색상 */
+  opacity: 0.8;
+}
+
+/* 페이지네이션 (하단 점) 색상 조정 (선택 사항) */
+.swiper-pagination-bullet-active {
+  background: #ff4d4d !important; /* 활성 점 색상 */
+}
+
+.swiper-pagination-bullet {
+  width: 10px; /* 기본값보다 크게 조정 */
+  height: 10px; /* 기본값보다 크게 조정 */
+  margin: 0 6px; /* 점 사이의 간격도 넓혀서 겹치지 않게 합니다. */
+  opacity: 0.7; /* 비활성 점도 잘 보이게 합니다. */
+
+  /* 이전 문제 해결을 위해 추가했던 속성은 유지 */
+  pointer-events: auto;
+  cursor: pointer; /* 🚀 [개선 2] 마우스를 올리면 클릭 가능함을 명확히 표시 */
 }
 
 /* 식단, 환영 문구 */
 /* 식단쪽 아이콘 공통 */
 .diet-wrapper .fa-solid {
-    width: 50px;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
+  width: 50px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 }
 
 .diet-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .diet-content {
-    gap: 20px;
-    display: flex;
-    flex-direction: row;
-    position: relative; /* for overlay */
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  position: relative; /* for overlay */
 }
 
 /* 로그인 상태가 아닐 때 .diet-content 만 블러 처리하고 클릭을 차단합니다 */
 .diet-content.locked .user-diet-record {
-    filter: blur(6px);
-    pointer-events: none;
-    user-select: none;
-    transform: scale(1.0);
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  transform: scale(1);
 }
 
 .diet-lock-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.6);
-    border-radius: 12px;
-    z-index: 40;
-    backdrop-filter: blur(4px);
-    flex-direction: column;
-    gap: 10px;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  z-index: 40;
+  backdrop-filter: blur(4px);
+  flex-direction: column;
+  gap: 10px;
 }
 
 .diet-content.locked .material-symbols-outlined {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 .diet-content.locked p {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .btn-login {
-    background-color: #0A84FF;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.25s ease-in-out;
+  background-color: #0a84ff;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.25s ease-in-out;
 }
 
 .btn-login:hover {
-    background-color: #007bff;
-    transform: scale(1.02);
+  background-color: #007bff;
+  transform: scale(1.02);
 }
 /* 로그인 상태가 아닐 때 .diet-content 만 블러 처리하고 클릭을 차단합니다 */
 
-.diet-wrapper-title span{
-    font-weight: 500;
-    color: #111;
+.diet-wrapper-title span {
+  font-weight: 500;
+  color: #111;
 }
 
 .diet-wrapper .user-diet-record {
-    padding: 20px;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    border-radius: 12px;
-    background-color: #fff;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    transition: box-shadow 0.15s ease;
-    border: 1px solid #ddd;
+  padding: 20px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  transition: box-shadow 0.15s ease;
+  border: 1px solid #ddd;
 }
 
 .user-diet-record a {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
 
 .user-diet-record:hover {
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 54px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 54px;
 }
 
 .user-diet-record .title {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .title .title-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .title-info p {
-    font-weight: 500;
-    font-size: .9rem;
-    color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .info {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
 }
 
 .info .cal {
-    font-weight: 500;
-    font-size: .9rem;
-    color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .progress {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    margin-top: 5px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
 }
 
 .progress-out {
-    width: 100%;
-    height: 10px;
-    border-radius: 999px;
-    overflow: hidden;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .progress-in {
-    height: 100%;
-    width: 0%;
-    border-radius: 999px;
-    transition: width 0.4s ease;
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
 }
 
 .meta {
-    margin-top: 25px;
-    font-weight: 500;
-    font-size: .9rem;
-    color: #666;
+  margin-top: 25px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 /* 목표 초과 시 색상 변경 */
 .progress-in.over {
-    background: #f25c5c;
+  background: #f25c5c;
 }
 
 /* 프로그래스바 각 색상 */
 /* 아침 */
-#progressOut-m {background-color: #FFF6D7;}
-#progressIn-m {background-color: #F2B84B;}
+#progressOut-m {
+  background-color: #fff6d7;
+}
+#progressIn-m {
+  background-color: #f2b84b;
+}
 
 /* 점심 */
-#progressOut-l {background-color: #E8F3FF;}
-#progressIn-l {background-color: #2E8CFF;}
+#progressOut-l {
+  background-color: #e8f3ff;
+}
+#progressIn-l {
+  background-color: #2e8cff;
+}
 
 /* 저녁 */
-#progressOut-d {background-color: #FFE4D9;}
-#progressIn-d {background-color: #F25C5C;}
+#progressOut-d {
+  background-color: #ffe4d9;
+}
+#progressIn-d {
+  background-color: #f25c5c;
+}
 
 /* 기타 */
-#progressOut-o {background-color: #F7EEDF;}
-#progressIn-o {background-color: #C58C5D;}
+#progressOut-o {
+  background-color: #f7eedf;
+}
+#progressIn-o {
+  background-color: #c58c5d;
+}
 
 /* 식단 각각의 디자인 (아이콘, 진행바) */
 /* 아침 */
 .fa-mug-saucer {
-    background-color: #FFF6D7;
-    color: #F2B84B;
+  background-color: #fff6d7;
+  color: #f2b84b;
 }
 /* 점심 */
 .fa-utensils {
-    background-color: #E8F3FF;
-    color: #2E8CFF;
+  background-color: #e8f3ff;
+  color: #2e8cff;
 }
 /* 저녁 */
 .fa-bowl-food {
-    background-color: #FFE4D9;
-    color: #F25C5C;
+  background-color: #ffe4d9;
+  color: #f25c5c;
 }
 /* 기타 */
 .fa-cookie-bite {
-    background-color: #F7EEDF;
-    color: #C58C5D;
+  background-color: #f7eedf;
+  color: #c58c5d;
 }
 
 /* 식단 로그인 안했을 때 */
 
-
 /* 최근 올라온 매칭 */
 .recent-matching-wrapper {
-    width: 100%;
+  width: 100%;
 }
 
 .matching {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
 }
 
-
 .matching span {
-    font-weight: 500;
-    color: #111;
+  font-weight: 500;
+  color: #111;
 }
 
 .all-page-btn {
-    color: #111;
-    text-decoration: none;
-    font-size: .8rem;
-    font-weight: 500;
+  color: #111;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .all-page-btn .fa-solid {
-    margin-left: 3px;
-    font-size: .8rem;
-    color: #111;
+  margin-left: 3px;
+  font-size: 0.8rem;
+  color: #111;
 }
 
 .matching-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* 매칭 카드 */
 .matching-card {
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    border: 1px solid #ddd;
-    gap: 15px;
-    transition: background-color 0.15s ease;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  border: 1px solid #ddd;
+  gap: 15px;
+  transition: background-color 0.15s ease;
 }
 
 .matching-card:hover {
-    background-color: #f2f3f4;
+  background-color: #f2f3f4;
 }
 
 .matching-user {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .user-profile img {
-    object-fit: contain;
-    width: 50px;
-    border-radius: 50%;
+  object-fit: contain;
+  width: 50px;
+  border-radius: 50%;
 }
 
 .user-profile-info {
-    width: 100%;
+  width: 100%;
 }
 
 .user-profile-top {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .user-info {
-    font-size: 1rem;
-    font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .workout-category {
-    padding: 1px 5px;
-    text-align: center;
-    font-size: .8rem;
-    font-weight: 600;
-    color: #666;
-    background-color: #d1d1d1;
-    border-radius: 8px;
+  padding: 1px 5px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  background-color: #d1d1d1;
+  border-radius: 8px;
 }
 
 .matching-title {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .matching-title .card-title {
-    font-size: 1.2rem;
-    font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .matching-title .card-content {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #666;   
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
 }
 
 .matching-info {
-    justify-content: space-between;
-    display: flex;
-    align-items: center;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
 }
 
 .matching-icon {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 20px;
-    gap: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  gap: 20px;
 }
 
 .matching-icon i {
-    margin-right: 5px;
-    font-size: .9rem;
-    color: #666;
+  margin-right: 5px;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .matching-icon span {
-    font-size: .9rem;
-    color: #666;
-    font-weight: 500;    
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
 }
 
 /* 모집중 */
 .user-profile-top .card-state-ing {
-    background-color: #D6EBFF;
-    color: var(--main-color);
-    border-radius: 8px;
-    padding: 5px 8px;
-    font-size: .7rem;
-    font-weight: 600;
+  background-color: #d6ebff;
+  color: var(--main-color);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* 마감임박 */
 .user-profile-top .card-state-imminent {
-    background-color: #FFE4D9;
-    color: #F25C5C;
-    border-radius: 8px;
-    padding: 5px 8px;
-    font-size: .7rem;
-    font-weight: 600;    
+  background-color: #ffe4d9;
+  color: #f25c5c;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* 마감 */
 .user-profile-top .card-state-finish {
-    background-color: #ddd;
-    color: #666;
-    border-radius: 8px;
-    padding: 5px 8px;
-    font-size: .7rem;
-    font-weight: 600;
+  background-color: #ddd;
+  color: #666;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
-
 .matching-btn-wrapper .matching-btn {
-    position: relative; 
-    overflow: hidden;  
-    z-index: 1;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background-color: #0A84FF;
-    cursor: pointer;
-    transition: color 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: #0a84ff;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
 }
 
 .matching-btn-wrapper .matching-btn::before {
-    content: ''; 
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #007bff; 
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
-    z-index: -1;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #007bff;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  z-index: -1;
 }
 
 .matching-btn-wrapper .matching-btn:hover {
-    color: #fff;
+  color: #fff;
 }
 
 .matching-btn:hover::before {
-    transform: scaleX(1); 
-    transform-origin: left;
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* 성공후기 게시판 */
 .goal-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
 }
 
 .goal-left-content {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    flex: 1;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  flex: 1;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  border: 1px solid #ddd;
 }
 
 .goal-top {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 15px;
 }
 
 .goal span {
-    font-weight: 500;
-    color: #111;
+  font-weight: 500;
+  color: #111;
 }
 
 .goal-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .goal-content a {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
 
 .goal-card {
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    border-radius: 12px;
-    overflow: hidden;
-    padding: 1.5rem;
-    border: 1px solid #f2f3f4;
-    gap: 10px;
-    transition: background-color 0.15s ease;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 1.5rem;
+  border: 1px solid #f2f3f4;
+  gap: 10px;
+  transition: background-color 0.15s ease;
 }
 
 .goal-card:hover {
-    background-color: #f2f3f4;
+  background-color: #f2f3f4;
 }
 
 .goal-card-top {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
 .goal-profile-img img {
-    width: 50px;
-    border-radius: 8px;
+  width: 50px;
+  border-radius: 8px;
 }
 
 .goal-profile-info {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .goal-profile-info span:nth-child(1) {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #111;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
 }
 
 .goal-profile-info span:nth-child(2) {
-    font-size: .9rem;
-    font-weight: 600;
-    color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #666;
 }
 
 .goal-main {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .goal-title {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .goal-icon {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
 .goal-icon i {
-    font-size: 0.8rem;
-    color: #666;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .goal-icon span {
-    font-size: .8rem;
-    font-weight: 500;
-    color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
 }
 
 .goal-middle {
-    display: flex;
-    flex-direction: row;
-    margin-top: 15px;
-    gap: 5px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+  gap: 5px;
 }
 
 .goal-middle .goal-content {
-    font-size: .9rem;
-    font-weight: 500;
-    color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
 }
 
 .goal-middle .goal-comment {
-    font-size: .9rem;
-    font-weight: 500;
-    color: #0A84FF;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #0a84ff;
 }
 
 /* 공지사항 */
 .goal-right {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 30px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 30px;
 }
 
 .post-left-notice {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  border: 1px solid #ddd;
 }
 
 .post-left-notice .goal-wrapper-title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
 }
 
-
-
 .goal-wrapper-title {
-    font-size: 1rem;
-    color: #111;
-    font-weight: 600;
+  font-size: 1rem;
+  color: #111;
+  font-weight: 600;
 }
 
 .notice-main a {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
 
 .notice-main a:hover {
-    color: #0A84FF;
+  color: #0a84ff;
 }
 
 .notice-card {
-    background-color: #fff;
-    margin-top: 10px;
-    padding: .8rem;
-    border: 1px solid #f2f3f4;
-    display: flex;
-    border-radius: 12px;
-    flex-direction: column;
-    gap: 14.5px;
-    transition: all 0.15s ease;
+  background-color: #fff;
+  margin-top: 10px;
+  padding: 0.8rem;
+  border: 1px solid #f2f3f4;
+  display: flex;
+  border-radius: 12px;
+  flex-direction: column;
+  gap: 14.5px;
+  transition: all 0.15s ease;
 }
 
 .notice-card:hover {
-    background-color: #f3f4f6;;
+  background-color: #f3f4f6;
 }
 
 .notice-ahref {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
 
 .notice-top {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
 }
 
 /* 공지 사항 카테고리가 nomral 일 때 */
 .notice-top .notice-category-n {
-    background-color: #FF3B30;
-    padding: 4px 10px;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 600;
+  background-color: #ff3b30;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* 공지사항 카테고리가 이벤트일때*/
 .notice-top .notice-category-e {
-    background-color: #E3F2FD;
-    padding: 4px 10px;
-    border-radius: 8px;
-    color: #1E88E5;
-    font-size: 0.7rem;
-    font-weight: 600;
+  background-color: #e3f2fd;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #1e88e5;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* 공지사항 카테고리가 제휴 일때*/
 .notice-top .notice-category-c {
-    background-color: #D0F0C0;
-    padding: 4px 10px;
-    border-radius: 8px;
-    color: #2E7D32;
-    font-size: 0.7rem;
-    font-weight: 600;
+  background-color: #d0f0c0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #2e7d32;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* 공지사항 카테고리가 징계 일때*/
 .notice-top .notice-category-d {
-    background-color: #FFF3CD;
-    padding: 4px 10px;
-    border-radius: 8px;
-    color: #C58B00;
-    font-size: 0.7rem;
-    font-weight: 600;
+  background-color: #fff3cd;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #c58b00;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 .notice-top .notice-writeDate {
-    color: #111;
-    font-size: .8rem;
-    font-weight: 500;
+  color: #111;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .notice-main {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.notice-icon  {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+.notice-icon {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
 .notice-icon .fa-solid {
-    margin-right: 5px;
-    font-size: 0.8rem;
-    color: #666;
+  margin-right: 5px;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .notice-icon span {
-    font-size: .8rem;
-    font-weight: 500;
-    color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
 }
 
-.notice-middle h4{
-    padding-bottom: 5px;
+.notice-middle h4 {
+  padding-bottom: 5px;
 }
 
 .notice-middle .notice-comment {
-    font-size: .8rem;
-    font-weight: 500;
-    color: #0A84FF;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #0a84ff;
 }
 
 .notice-middle span {
-    font-size: .9rem;
-    color: #666;
-    font-weight: 500;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
 }
 
 /* 자유 게시판 */
 .post-right-free {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-    border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  border: 1px solid #ddd;
 }
 
 .post-right-free .post-wrapper-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 15px ;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
 }
 
 .post-wrapper-title {
-    font-size: 1rem;
-    font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .post-content .post-ahref {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
 
 .post-card {
-    background-color: #fff;
-    margin-top: 10px;
-    padding: .8rem;
-    border: 1px solid #f2f3f4;
-    display: flex;
-    border-radius: 12px;
-    flex-direction: column;
-    gap: 14.5px;
-    transition: all 0.15s ease;
+  background-color: #fff;
+  margin-top: 10px;
+  padding: 0.8rem;
+  border: 1px solid #f2f3f4;
+  display: flex;
+  border-radius: 12px;
+  flex-direction: column;
+  gap: 14.5px;
+  transition: all 0.15s ease;
 }
 
 .post-card:hover {
-    background-color: #f2f3f4;
+  background-color: #f2f3f4;
 }
 
 .post-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .post-header-left {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .post-header-left .post-category {
-    background-color: #e2e2e2;
-    padding: 4px 10px;
-    border-radius: 8px;
-    color: #666;
-    font-size: 0.7rem;
-    font-weight: 600;
+  background-color: #e2e2e2;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #666;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 .post-header-left .post-nickName {
-    font-size: .9rem;
-    font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .post-header-left .post-writeDate {
-    font-size: .8rem;
-    font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .post-icon {
-    display: flex;
-    gap: 12px;
-    align-items: center;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .post-icon .fa-solid {
-    margin-right: 5px;
-    font-size: 0.8rem;
-    color: #666;
+  margin-right: 5px;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .post-icon span {
-    font-size: .8rem;
-    font-weight: 500;
-    color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
 }
 
 .post-middle .post-title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #111;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111;
 }
 
 .post-middle .post-comment {
-    font-size: 0.8rem;
-    color: #0A84FF;
-    font-weight: 500;
+  font-size: 0.8rem;
+  color: #0a84ff;
+  font-weight: 500;
 }
 .category-wrapper {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
 .category-wrapper span:nth-child(2) {
-    font-weight: 600;
-    font-size: .8rem;
-    padding: 1px 5px;
-    border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 1px 5px;
+  border-radius: 8px;
 }
 .user-level {
-    color: #1B5E20;
-    background-color: #E8F5E9;
+  color: #1b5e20;
+  background-color: #e8f5e9;
 }
 
 .user-level.middleClass {
-    color: #E65100;
-    background-color: #FFF3E0; 
+  color: #e65100;
+  background-color: #fff3e0;
 }
 
 .user-level.advanced {
-    color: #B71C1C;
-    background-color: #FFEBEE;
+  color: #b71c1c;
+  background-color: #ffebee;
 }
 
-.matching-btn.finish, .matching-btn:disabled {
-    background-color: #ddd;
-    color: #666;
-    cursor: not-allowed;
-    pointer-events: none;
+.matching-btn.finish,
+.matching-btn:disabled {
+  background-color: #ddd;
+  color: #666;
+  cursor: not-allowed;
+  pointer-events: none;
 }
-
 
 @media screen and (max-width: 768px) {
-    .main {
-        width: 100%;
-        display: flex;
-        padding: 5vw;
-        overflow-x: hidden;
-        overflow-y: scroll;
-        scroll-behavior: smooth;
-        flex-direction: column;
-        gap: 2em;
-    }
+  .main {
+    width: 100%;
+    display: flex;
+    padding: 5vw;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    flex-direction: column;
+    gap: 2em;
+  }
 
-    .diet-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
+  .diet-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .diet-lock-box { padding: 14px; }
-    .diet-content {
-        display: grid;
-        grid-template-columns: repeat(2, 2fr); /* 2열, 각 2fr */
-        gap: 20px;
-    }
+  .diet-lock-box {
+    padding: 14px;
+  }
+  .diet-content {
+    display: grid;
+    grid-template-columns: repeat(2, 2fr); /* 2열, 각 2fr */
+    gap: 20px;
+  }
 
-    .user-diet-record {
-        padding: 10px;
-    }
+  .user-diet-record {
+    padding: 10px;
+  }
 
-    .user-diet-record .title-info h3 {
-        font-size: 1.1em;
-    }
+  .user-diet-record .title-info h3 {
+    font-size: 1.1em;
+  }
 
-    .user-diet-record .cal-num {
-        font-size: 1.5em;
-    }
-    .recent-matching-wrapper .matching-content {
-        display: flex;
-        flex-direction: row; 
-        overflow-x: auto;   
-        /* 모바일 스크롤바 숨기기 */
-        -ms-overflow-style: none; 
-        scrollbar-width: none; 
-    }
-    
-    .recent-matching-wrapper .matching-content::-webkit-scrollbar {
-        display: none; 
-    }
+  .user-diet-record .cal-num {
+    font-size: 1.5em;
+  }
+  .recent-matching-wrapper .matching-content {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    /* 모바일 스크롤바 숨기기 */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-    .recent-matching-wrapper .matching-card {
-        flex: 0 0 100%;  
-    }
+  .recent-matching-wrapper .matching-content::-webkit-scrollbar {
+    display: none;
+  }
 
-    .matching-info {
-        display: flex;
-        flex-direction: column;
-    }
+  .recent-matching-wrapper .matching-card {
+    flex: 0 0 100%;
+  }
 
-    
-    .matching-btn-wrapper {
-        width: 100%;
-        margin-top: 20px;
-    }
+  .matching-info {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .matching-btn-wrapper .matching-btn {
-        width: 100%;
-    }
+  .matching-btn-wrapper {
+    width: 100%;
+    margin-top: 20px;
+  }
 
-    .matching-icon {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
+  .matching-btn-wrapper .matching-btn {
+    width: 100%;
+  }
 
-    .goal-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .goal-content {
-        overflow-y: auto;
-        flex-direction: row;
-        -ms-overflow-style: none; 
-        scrollbar-width: none; 
-        gap: 20px;
-    }
-    
-    .goal-content::-webkit-scrollbar {
-        display: none;
-    }
+  .matching-icon {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 
-    .goal-content a {
-        flex: 0 0 100%;  /* 1개씩만 보이도록 */
-        width: 100%;
-    }
+  .goal-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .goal-card {
-        padding: 15px;
-    }
+  .goal-content {
+    overflow-y: auto;
+    flex-direction: row;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    gap: 20px;
+  }
+
+  .goal-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .goal-content a {
+    flex: 0 0 100%; /* 1개씩만 보이도록 */
+    width: 100%;
+  }
+
+  .goal-card {
+    padding: 15px;
+  }
 }
