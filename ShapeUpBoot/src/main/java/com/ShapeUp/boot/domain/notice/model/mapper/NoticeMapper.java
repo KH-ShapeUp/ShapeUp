@@ -29,6 +29,10 @@ public interface NoticeMapper {
 	int increaseViewCount(@Param("noticeNo") int noticeNo);
 
 	Notice selectNoticeDetail(int noticeNo);
+
+	Integer selectPrevNoticeNo(@Param("noticeNo") int noticeNo);
+
+	Integer selectNextNoticeNo(@Param("noticeNo") int noticeNo);
 	
 	int updateNotice(Notice notice);
 

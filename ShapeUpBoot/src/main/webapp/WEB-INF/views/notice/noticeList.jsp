@@ -9,121 +9,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>공지사항</title>
 <link rel="stylesheet" href="/resources/css/notice/noticeList.css" />
-<style>
-/* CSS 파일이 분리되지 않은 경우 여기에 스타일을 포함할 수 있습니다. */
-/* 아래에 제공된 CSS 내용을 여기에 복사하여 붙여넣으셔도 됩니다. */
-</style>
 </head>
 <body>
-	<header class="header-placeholder"></header>
+	<jsp:include page="/WEB-INF/views/include/head.jsp"/>
+	<jsp:include page="/WEB-INF/views/include/header.jsp"/>
 
-	<div class="container">
-		<div class="top-section">
-			<h1 class="page-title">공지사항</h1>
-
-			<div class="logo-area">
-				<img src="" alt="ShapeUp 로고" />
+	<div class="notice-top">
+		<h1>공지사항</h1>
+		<form class="notice-search notice-search--top" method="get" action="/notice/list">
+			<input type="hidden" name="category" value="${param.category}"/>
+			<div class="select-box">
+				<select name="searchType">
+					<option value="T" ${param.searchType eq 'T' ? 'selected' : ''}>제목</option>
+					<option value="C" ${param.searchType eq 'C' ? 'selected' : ''}>내용</option>
+					<option value="TC" ${param.searchType eq 'TC' ? 'selected' : ''}>제목+내용</option>
+				</select>
+				<span class="arrow">&#9662;</span>
 			</div>
-		</div>
-
-		<form class="search-section">
-			<select name="searchType" class="search-select">
-				<option value="T" ${param.searchType eq 'T' ? 'selected' : ''}>제목</option>
-				<option value="C" ${param.searchType eq 'C' ? 'selected' : ''}>내용</option>
-				<option value="TC" ${param.searchType eq 'TC' ? 'selected' : ''}>제목+내용</option>
-			</select> <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요"
-				value="${param.searchKeyword}" />
-
-			<c:if test="${not empty currentCategory}">
-				<input type="hidden" name="category" value="${currentCategory}" />
-			</c:if>
-
-			<button class="search-btn" type="submit">검색</button>
+			<input type="text" name="searchKeyword" placeholder="검색어를 입력하세요" value="${param.searchKeyword}"/>
+			<button type="submit" aria-label="검색" class="icon-search-btn"></button>
 		</form>
+	</div>
 
-		<div class="category-section">
-			<div class="left-content">
-				<span class="total-count">총 ${totalCount}건</span>
-				<c:set var="currentCategory" value="${param.category }" />
-				<div class="category-list">
-					<a href="/notice/list"
-						class="${empty currentCategory ? 'active' : ''}">전체</a> <a
-						href="/notice/list?category=공지"
-						class="${currentCategory eq '공지' ? 'active' : ''}">공지</a> <a
-						href="/notice/list?category=이벤트"
-						class="${currentCategory eq '이벤트' ? 'active' : ''}">이벤트</a> <a
-						href="/notice/list?category=제휴"
-						class="${currentCategory eq '제휴' ? 'active' : ''}">제휴</a> <a
-						href="/notice/list?category=징계"
-						class="${currentCategory eq '징계' ? 'active' : ''}">징계</a>
+	<div class="notice-container">
+		<div class="notice-page">
+			<div class="notice-controls">
+				<div class="notice-bar">
+					<div class="notice-summary">
+						${totalCount}건의 게시물이 있습니다.
+					</div>
+					<div class="notice-categories">
+						<c:set var="currentCategory" value="${param.category}" />
+						<a class="${empty currentCategory ? 'active' : ''}" href="/notice/list">전체</a>
+						<a class="${currentCategory eq '공지사항' || currentCategory eq '공지' ? 'active' : ''}" href="/notice/list?category=공지">공지사항</a>
+						<a class="${currentCategory eq '이벤트' ? 'active' : ''}" href="/notice/list?category=이벤트">이벤트</a>
+						<a class="${currentCategory eq '제휴' || currentCategory eq '파트너' ? 'active' : ''}" href="/notice/list?category=제휴">제휴 / 협찬</a>
+						<a class="${currentCategory eq '징계' ? 'active' : ''}" href="/notice/list?category=징계">징계</a>
+					</div>
 				</div>
 			</div>
 
-			<a href="/notice/insert"><button class="write-btn">글쓰기</button></a>
-		</div>
+			<div class="notice-list">
+				<c:set var="pageStart" value="${totalCount - (currentPage - 1) * 5}" />
+				<c:forEach var="notice" items="${nList}" varStatus="status">
+					<div class="notice-card" onclick="location.href='/notice/detail?noticeNo=${notice.noticeNo}'">
+						<div class="notice-meta">
+							<span class="pill pill-${notice.noticeCategory}">${notice.noticeCategory}</span>
+							<span class="notice-date"><fmt:formatDate value="${notice.createdAt}" pattern="yyyy-MM-dd" /></span>
+							<span class="notice-title">${notice.noticeTitle}</span>
+						</div>
+						<div class="notice-extra">
+							<span class="notice-writer">${notice.userName != null ? notice.userName : '관리자'}</span>
+							<span class="notice-views"><span class="icon-eye"></span> ${notice.viewCount}</span>
+						</div>
+					</div>
+				</c:forEach>
+				<c:if test="${empty nList}">
+					<div class="notice-empty">등록된 공지사항이 없습니다.</div>
+				</c:if>
+			</div>
 
-		<div class="notice-table-wrapper">
-			<table class="notice-table">
-				<thead>
-					<tr>
-						<th>번호</th>
-						<th>분류</th>
-						<th class="title-col">제목</th>
-						<th>날짜</th>
-						<th>작성자</th>
-						<th>조회</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:set var="pageStart"
-						value="${totalCount - (currentPage - 1) * 5}" />
+			<div class="notice-pagination">
+				<c:set var="categoryParam" value="" />
+				<c:if test="${not empty currentCategory}">
+					<c:set var="categoryParam" value="${categoryParam}&category=${currentCategory}" />
+				</c:if>
+				<c:if test="${not empty param.searchKeyword}">
+					<c:set var="categoryParam" value="${categoryParam}&searchType=${param.searchType}&searchKeyword=${param.searchKeyword}" />
+				</c:if>
 
-					<c:forEach var="notice" items="${nList}" varStatus="status">
-						<tr onclick="location.href='/notice/detail?noticeNo=${notice.noticeNo}'">
-							<td>${pageStart - status.index}</td>
-							<td><span class="badge ${notice.noticeCategory }">${notice.noticeCategory }</span></td>
-							<td class="title-col">${notice.noticeTitle }</td>
-							<td><fmt:formatDate value="${notice.createdAt }"
-									pattern="yyyy-MM-dd" /></td>
-							<td>관리자</td>
-							<td>${notice.viewCount }</td>
-						</tr>
-					</c:forEach>
-					<c:if test="${empty nList }">
-						<tr>
-							<td colspan="6">등록된 공지사항이 없습니다</td>
-						</tr>
-					</c:if>
-				</tbody>
-			</table>
-		</div>
-
-		<div class="pagination">
-			<c:set var="categoryParam" value="" />
-			<c:if test="${not empty currentCategory }">
-				<c:set var="categoryParam"
-					value="${categoryParam }&category=${currentCategory }" />
-			</c:if>
-
-			<c:if test="${startNavi > 1 }">
-				<a href="/notice/list?page=${startNavi - 1 }${categoryParam}">&lt;</a>
-			</c:if>
-
-			<c:if test="${not empty param.searchKeyword}">
-				<c:set var="categoryParam"
-					value="${categoryParam}&searchType=${param.searchType}&searchKeyword=${param.searchKeyword}" />
-			</c:if>
-			<c:forEach begin="${startNavi }" end="${endNavi }" var="n">
-				<a href="/notice/list?page=${n }${categoryParam}"
-					class="page-btn <c:if test="${currentPage eq n }">active</c:if>">${n }</a>
-			</c:forEach>
-
-			<c:if test="${endNavi < maxPage }">
-				<a href="/notice/list?page=${endNavi + 1 }${categoryParam }">&gt;</a>
-			</c:if>
+				<c:if test="${startNavi > 1}">
+					<a class="page-btn" href="/notice/list?page=${startNavi - 1}${categoryParam}">이전</a>
+				</c:if>
+				<c:forEach begin="${startNavi}" end="${endNavi}" var="n">
+					<a class="page-btn ${currentPage eq n ? 'active' : ''}" href="/notice/list?page=${n}${categoryParam}">${n}</a>
+				</c:forEach>
+				<c:if test="${endNavi < maxPage}">
+					<a class="page-btn" href="/notice/list?page=${endNavi + 1}${categoryParam}">다음</a>
+				</c:if>
+			</div>
 		</div>
 	</div>
 
-	<footer class="footer-placeholder"></footer>
+	<jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 </body>
 </html>

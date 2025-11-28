@@ -37,7 +37,7 @@ public class NoticeApiController {
             @RequestParam(defaultValue = "10") int size
     ) {
         int total = noticeService.getTotalCount(null, null, null);
-        List<Notice> items = noticeService.selectNoticeList(page, size);
+        List<Notice> items = noticeService.selectNoticeList(page, size, null, null, null);
         Map<String, Object> body = new HashMap<>();
         body.put("total", total);
         body.put("items", items);

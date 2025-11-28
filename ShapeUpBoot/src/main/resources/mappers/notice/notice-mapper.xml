@@ -161,6 +161,18 @@
 		WHERE n.NOTICE_NO = #{noticeNo}
 	</select>
 
+	<select id="selectPrevNoticeNo" parameterType="int" resultType="int">
+		SELECT MAX(NOTICE_NO)
+		FROM NOTICE_TBL
+		WHERE NOTICE_NO <![CDATA[<]]> #{noticeNo}
+	</select>
+
+	<select id="selectNextNoticeNo" parameterType="int" resultType="int">
+		SELECT MIN(NOTICE_NO)
+		FROM NOTICE_TBL
+		WHERE NOTICE_NO <![CDATA[>]]> #{noticeNo}
+	</select>
+
 	<select id="selectImagesByNotice" parameterType="int" resultMap="NoticeImageMap">
 		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN_YN, NOTICE_NO
 		FROM NOTICE_IMG_TBL

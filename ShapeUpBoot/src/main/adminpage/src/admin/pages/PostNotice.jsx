@@ -255,7 +255,7 @@ const PostNotice = () => {
             <label>카테고리</label>
             <CustomSelect
               value={category}
-              options={["공지", "업데이트", "이벤트"].map((c) => ({ label: c, value: c }))}
+              options={["공지", "업데이트", "이벤트", "제휴"].map((c) => ({ label: c, value: c }))}
               onChange={setCategory}
               size="sm"
             />

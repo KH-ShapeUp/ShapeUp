@@ -13,7 +13,8 @@ public interface NoticeService{
 
 	int getTotalCount(String category, String searchType, String searchKeyword);
 	
-	List<Notice> selectNoticeList(int currentPage, int boardCountPerPage);
+	List<Notice> selectNoticeList(int currentPage, int boardCountPerPage,
+								  String category, String searchType, String searchKeyword);
 
 	Notice selectNoticeDetail(int noticeNo);
 	
@@ -30,4 +31,8 @@ public interface NoticeService{
 	java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo);
 
 	java.util.List<java.util.Map<String, Object>> selectNoticeTrend();
+
+	Integer selectPrevNoticeNo(int noticeNo);
+
+	Integer selectNextNoticeNo(int noticeNo);
 }

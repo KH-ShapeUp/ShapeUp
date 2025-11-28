@@ -2,7 +2,6 @@ package com.ShapeUp.boot.domain.notice.model.service.impl;
 
 import java.util.List;
 
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,15 +58,6 @@ public class NoticeServiceImpl implements NoticeService{
 		int totalCount = noticeMapper.getTotalCount(category, searchType, searchKeyword);
 		return totalCount;
 	}
-
-//	@Override
-//	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
-//			String searchKeyword) {
-//		int startRow = (currentPage - 1) * boardCountPerPage + 1;
-//		int endRow = currentPage * boardCountPerPage;
-//		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
-//		return nList;
-//	}
 
 	@Override
 	public Notice selectNoticeDetail(int noticeNo) {
@@ -127,10 +117,21 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
-	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage,
+										String category, String searchType, String searchKeyword) {
 		int startRow = (currentPage - 1) * boardCountPerPage + 1;
 		int endRow = currentPage * boardCountPerPage;
-		return noticeMapper.selectNoticeList(startRow, endRow, null, null, null);
+		return noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
+	}
+
+	@Override
+	public Integer selectPrevNoticeNo(int noticeNo) {
+		return noticeMapper.selectPrevNoticeNo(noticeNo);
+	}
+
+	@Override
+	public Integer selectNextNoticeNo(int noticeNo) {
+		return noticeMapper.selectNextNoticeNo(noticeNo);
 	}
 
 }

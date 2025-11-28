@@ -37,7 +37,7 @@ public class NoticeController {
 			int totalCount = nService.getTotalCount(category, searchType, searchKeyword);
 			int boardCountPerPage = 5;
 			int maxPage = (int) Math.ceil((double) totalCount / boardCountPerPage);
-//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
+			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
 			int naviCountPerPage = 10;
 			int startnavi = ((currentPage - 1) / naviCountPerPage) * naviCountPerPage + 1;
 			int endNavi = (startnavi - 1) + naviCountPerPage;
@@ -51,7 +51,7 @@ public class NoticeController {
 			model.addAttribute("currentPage", currentPage);
 			model.addAttribute("startNavi", startnavi);
 			model.addAttribute("endNavi", endNavi);
-//			model.addAttribute("nList", nList);
+			model.addAttribute("nList", nList);
 			model.addAttribute("category", category);
 			model.addAttribute("searchType", searchType);
 			model.addAttribute("searchKeyword", searchKeyword);
@@ -71,11 +71,10 @@ public class NoticeController {
 			@RequestParam(value = "searchKeyword", required = false) String searchKeyword){
 		try {
 			int boardCountPerPage = 5;
-//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
-			return null;
+			return nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return java.util.Collections.emptyList();
 		}
 	}
 
@@ -84,7 +83,11 @@ public class NoticeController {
 		try {
 			Notice notice = nService.selectNoticeDetail(noticeNo);
 			if(notice != null) {
+				Integer prevNo = nService.selectPrevNoticeNo(noticeNo);
+				Integer nextNo = nService.selectNextNoticeNo(noticeNo);
 				model.addAttribute("notice", notice);
+				model.addAttribute("prevNoticeNo", prevNo);
+				model.addAttribute("nextNoticeNo", nextNo);
 				return "notice/noticeDetail";
 			}
 			else {
