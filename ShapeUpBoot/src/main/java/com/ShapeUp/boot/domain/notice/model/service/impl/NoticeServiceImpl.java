@@ -60,14 +60,14 @@ public class NoticeServiceImpl implements NoticeService{
 		return totalCount;
 	}
 
-	@Override
-	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
-			String searchKeyword) {
-		int startRow = (currentPage - 1) * boardCountPerPage + 1;
-		int endRow = currentPage * boardCountPerPage;
-		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
-		return nList;
-	}
+//	@Override
+//	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
+//			String searchKeyword) {
+//		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+//		int endRow = currentPage * boardCountPerPage;
+//		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
+//		return nList;
+//	}
 
 	@Override
 	public Notice selectNoticeDetail(int noticeNo) {
@@ -77,6 +77,48 @@ public class NoticeServiceImpl implements NoticeService{
 			notice = noticeMapper.selectNoticeDetail(noticeNo);
 		}
 		return notice;
+	}
+
+
+//	public int insertNotice(Notice notice) {
+//		int result = noticeMapper.insertNotice(notice);
+//		return result;
+//	} (승재님코드 NoticeMapper수정해서 메소드 빠진 부분 주석처리 NoticeMapper확인하세요) 
+
+	@Override
+	public int updateNotice(Notice notice) {
+		return noticeMapper.updateNotice(notice);
+	}
+
+	@Override
+	public int insertNoticeImage(com.ShapeUp.boot.domain.notice.model.vo.NoticeImage image) {
+		return noticeMapper.insertNoticeImage(image);
+	}
+
+	@Override
+	public int deleteNoticeImage(int imgNo) {
+		return noticeMapper.deleteNoticeImage(imgNo);
+	}
+
+	@Override
+	public int deleteNotice(int noticeNo) {
+		return noticeMapper.deleteNotice(noticeNo);
+	}
+
+	@Override
+	public java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo) {
+		return noticeMapper.selectImagesByNotice(noticeNo);
+	}
+
+	@Override
+	public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
+		return noticeMapper.selectNoticeTrend();
+	}
+
+	@Override
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

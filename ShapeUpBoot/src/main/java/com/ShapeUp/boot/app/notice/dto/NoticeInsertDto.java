@@ -22,4 +22,5 @@ public class NoticeInsertDto {
 	private String eventStart;
 	private String eventEnd;
 	private MultipartFile uploadFile;
+	private int viewCount;
 }

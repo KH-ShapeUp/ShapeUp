@@ -62,4 +62,9 @@ public class HomeController {
 		mAppDTO.setMatchingAppliNo(loginUserNo);
 		return mService.matchApplication(mAppDTO);
 	}
+	
+	@GetMapping("/map")
+	public String mapPage() {
+		return "map/map";
+	}
 }

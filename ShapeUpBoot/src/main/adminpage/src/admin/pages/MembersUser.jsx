@@ -359,13 +359,18 @@ const MembersUser = () => {
   const computeReleaseDate = () => {
     if (selected?.status !== "정지") return "";
     const days = computeBanDays();
-    const base = new Date();
     if (days) {
+      const base = new Date();
       base.setDate(base.getDate() + days);
       return base.toISOString().slice(0, 10);
     }
     if (selected.updatedAt) {
-      return new Date(selected.updatedAt).toISOString().slice(0, 10);
+      const parsed = new Date(selected.updatedAt);
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed.toISOString().slice(0, 10);
+      }
+      const str = String(selected.updatedAt);
+      return str.slice(0, 10);
     }
     return "";
   };

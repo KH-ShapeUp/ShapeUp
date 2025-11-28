@@ -37,7 +37,7 @@ public class NoticeController {
 			int totalCount = nService.getTotalCount(category, searchType, searchKeyword);
 			int boardCountPerPage = 5;
 			int maxPage = (int) Math.ceil((double) totalCount / boardCountPerPage);
-			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
+//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
 			int naviCountPerPage = 10;
 			int startnavi = ((currentPage - 1) / naviCountPerPage) * naviCountPerPage + 1;
 			int endNavi = (startnavi - 1) + naviCountPerPage;
@@ -51,7 +51,7 @@ public class NoticeController {
 			model.addAttribute("currentPage", currentPage);
 			model.addAttribute("startNavi", startnavi);
 			model.addAttribute("endNavi", endNavi);
-			model.addAttribute("nList", nList);
+//			model.addAttribute("nList", nList);
 			model.addAttribute("category", category);
 			model.addAttribute("searchType", searchType);
 			model.addAttribute("searchKeyword", searchKeyword);
@@ -64,15 +64,15 @@ public class NoticeController {
 	
 	@GetMapping("/ajaxList")
 	@ResponseBody
-	public List<Notice> getNoticeListAjax(
+	public List<Notice> getNoticeListAjax( //return형 바꿔놨어요 확인해주세요
 			@RequestParam(value = "page", defaultValue = "1") int currentPage
 			, @RequestParam(value = "category", required = false) String category,
 			@RequestParam(value = "searchType", required = false) String searchType,
 			@RequestParam(value = "searchKeyword", required = false) String searchKeyword){
 		try {
 			int boardCountPerPage = 5;
-			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
-			return nList;
+//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

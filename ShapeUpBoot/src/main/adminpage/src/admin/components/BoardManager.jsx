@@ -16,6 +16,12 @@ const BoardManager = ({
   chartDatasetLabel = "등록 게시물 수",
   detailMode = "edit",
   storageKey = null,
+  onDeleteImage = null,
+  onUpdatePost = null,
+  onDeletePost = null,
+  onUploadImages = null,
+  columns = null,
+  detailRenderer = null,
 }) => {
   const loadStoredPosts = () => {
     const fallback = Array.isArray(initialPosts) ? initialPosts : [];
@@ -80,6 +86,19 @@ const BoardManager = ({
   const advancedOptions = useMemo(() => ["전체", "날짜", "제목", "작성자"], []);
   const pageSizeOptions = useMemo(() => ["5", "10", "30", "50"], []);
 
+  const defaultColumns = useMemo(
+    () => [
+      { key: "id", label: "번호", sortable: "id" },
+      { key: "date", label: "날짜", sortable: "date" },
+      { key: "author", label: "작성자", sortable: "author" },
+      { key: "category", label: "카테고리", sortable: "category" },
+      { key: "title", label: "제목", sortable: "title" },
+      { key: "actions", label: "삭제" },
+    ],
+    []
+  );
+  const columnsToUse = columns && columns.length ? columns : defaultColumns;
+
   const getDisplayDate = (post) => {
     if (post.category === "이벤트") {
       const start = post.startDate ?? "";
@@ -118,10 +137,16 @@ const BoardManager = ({
   const handleSelectPost = (post) => setSelectedPost(post);
   const handleChange = (e) =>
     setSelectedPost((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const [actionModal, setActionModal] = useState({ open: false, mode: null, status: "confirm" });
+
   const handleUpdate = () => {
     if (!selectedPost) return;
-    setPosts((prev) => prev.map((p) => (p.id === selectedPost.id ? selectedPost : p)));
-    alert("게시물 수정 완료");
+    setActionModal({ open: true, mode: "update", status: "confirm" });
+  };
+
+  const handleDeletePost = () => {
+    if (!selectedPost) return;
+    setActionModal({ open: true, mode: "delete", status: "confirm" });
   };
 
   const toggleSort = (key) => {
@@ -150,6 +175,14 @@ const BoardManager = ({
           return post.category ?? "";
         case "title":
           return post.title ?? "";
+        case "activityName":
+          return post.activityName ?? "";
+        case "location":
+          return post.location ?? "";
+        case "level":
+          return post.level ?? "";
+        case "status":
+          return post.status ?? "";
         default:
           return "";
       }
@@ -279,35 +312,62 @@ const BoardManager = ({
         <table className="posts-table">
           <thead>
             <tr>
-              <th onClick={() => toggleSort("id")} style={{ cursor: "pointer" }}>
-                번호{sortMark("id")}
-              </th>
-              <th onClick={() => toggleSort("date")} style={{ cursor: "pointer" }}>
-                날짜{sortMark("date")}
-              </th>
-              <th onClick={() => toggleSort("author")} style={{ cursor: "pointer" }}>
-                작성자{sortMark("author")}
-              </th>
-              <th onClick={() => toggleSort("category")} style={{ cursor: "pointer" }}>
-                카테고리{sortMark("category")}
-              </th>
-              <th onClick={() => toggleSort("title")} style={{ cursor: "pointer" }}>
-                제목{sortMark("title")}
-              </th>
-              <th>이동</th>
+              {columnsToUse.map((col) => {
+                const style = {
+                  cursor: col.sortable ? "pointer" : "default",
+                  ...(col.width ? { width: col.width } : {}),
+                };
+                return (
+                  <th
+                    key={col.key}
+                    onClick={() => col.sortable && toggleSort(col.sortable)}
+                    style={style}
+                    className={col.sortable ? "sortable-header" : undefined}
+                  >
+                    <span className="header-label">
+                      {col.label}
+                      {col.sortable ? <span className="sort-mark">{sortMark(col.sortable)}</span> : null}
+                    </span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
             {paginatedPosts.map((post, idx) => (
               <tr key={post.id} onClick={() => handleSelectPost(post)}>
-                <td>{pageStart + idx + 1}</td>
-                <td>{getDisplayDate(post)}</td>
-                <td>{post.author}</td>
-                <td>{post.category}</td>
-                <td>{post.title}</td>
-                <td>
-                  <button className="move-btn">보기</button>
-                </td>
+                {columnsToUse.map((col) => {
+                  if (col.key === "actions") {
+                    return (
+                      <td key={`${post.id}-actions`} style={col.width ? { width: col.width } : undefined}>
+                        <button
+                          className="delete-btn small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectPost(post);
+                            setActionModal({ open: true, mode: "delete", status: "confirm" });
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </td>
+                    );
+                  }
+                  const value =
+                    typeof col.render === "function"
+                      ? col.render(post, pageStart + idx + 1)
+                      : col.key === "id"
+                      ? pageStart + idx + 1
+                      : post[col.key] ?? "";
+                  return (
+                    <td
+                      key={`${post.id}-${col.key}`}
+                      style={col.width ? { width: col.width } : undefined}
+                    >
+                      {value}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -357,6 +417,9 @@ const BoardManager = ({
           {boardTitle} {isEditable ? "게시물 상태 수정" : "상세 정보"}
         </div>
         {selectedPost ? (
+          detailRenderer ? (
+            detailRenderer({ post: selectedPost, onDelete: handleDeletePost })
+          ) : (
           <div className="detail-body">
             <label>게시글 번호</label>
             {isEditable ? (
@@ -439,23 +502,97 @@ const BoardManager = ({
                 onChange={handleChange}
               />
             ) : (
-              <div className="detail-content-block">{selectedPost.content || "내용이 없습니다."}</div>
+              <div className="detail-content-block">
+                {selectedPost.content || "내용이 없습니다."}
+                {selectedPost.images && selectedPost.images.length > 0 && (
+                  <div className="image-gallery">
+                    {selectedPost.images.map((img, idx) => {
+                      const src = img.imgPath || img.imgRename || img;
+                      return (
+                        <div key={img.imgRename || idx} className="image-thumb">
+                          <img src={src} alt="첨부" />
+                          {isEditable && onDeleteImage && img.imgNo && (
+                            <button
+                              type="button"
+                              className="delete-img-btn"
+                              onClick={() => {
+                                onDeleteImage(img.imgNo, selectedPost.id);
+                                setSelectedPost((prev) => ({
+                                  ...prev,
+                                  images: (prev.images || []).filter((im) => im.imgNo !== img.imgNo),
+                                }));
+                              }}
+                            >
+                              삭제
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             )}
 
             <label>첨부파일</label>
-            {isEditable ? (
-              <input type="file" />
-            ) : selectedPost.attachments && selectedPost.attachments.length ? (
-              <ul className="attachments-list">
-                {selectedPost.attachments.map((file, idx) => (
-                  <li key={file + idx}>
-                    <span className="attachment-icon">📎</span>
-                    {file}
-                  </li>
-                ))}
-              </ul>
+            {selectedPost.images && selectedPost.images.length > 0 ? (
+              <div className="image-gallery">
+                {selectedPost.images.map((img, idx) => {
+                  const src = img.imgPath || img.imgRename || img;
+                  return (
+                    <div key={img.imgRename || idx} className="image-thumb">
+                      <img src={src} alt="첨부" />
+                      {isEditable && onDeleteImage && img.imgNo && (
+                        <button
+                          type="button"
+                          className="delete-img-btn"
+                          onClick={() => {
+                            onDeleteImage(img.imgNo, selectedPost.id);
+                            setSelectedPost((prev) => ({
+                              ...prev,
+                              images: (prev.images || []).filter((im) => im.imgNo !== img.imgNo),
+                            }));
+                          }}
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
               <p className="detail-text">첨부된 파일이 없습니다.</p>
+            )}
+            {isEditable && onUploadImages && (
+              <div className="row-inputs">
+                <div>
+                  <label>첨부 추가</label>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (!files.length) return;
+                      if (await onUploadImages(files, selectedPost.id)) {
+                        setSelectedPost((prev) => ({
+                          ...prev,
+                          images: [
+                            ...(prev.images || []),
+                            ...files.map((f, idx) => ({
+                              imgNo: undefined,
+                              imgPath: URL.createObjectURL(f),
+                              imgOriginalName: f.name,
+                            })),
+                          ],
+                        }));
+                      }
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              </div>
             )}
 
             {isEditable ? (
@@ -463,11 +600,12 @@ const BoardManager = ({
                 수정
               </button>
             ) : (
-              <button className="delete-btn" onClick={openDeleteModal}>
+              <button className="delete-btn" onClick={handleDeletePost}>
                 삭제
               </button>
             )}
           </div>
+          )
         ) : (
           <p className="empty">게시물을 선택하세요.</p>
         )}
@@ -480,30 +618,53 @@ const BoardManager = ({
         </div>
       </div>
 
-      {deleteModal.open && selectedPost && (
+      {actionModal.open && selectedPost && (
         <div className="modal-overlay">
           <div className="modal delete">
             <div className="modal-header">
-              <h3>게시물 삭제</h3>
-              {deleteModal.status === "confirm" && (
-                <button className="close" onClick={closeDeleteModal}>
-                  ×
-                </button>
-              )}
+              <h3>{actionModal.mode === "update" ? "게시물 수정" : "게시물 삭제"}</h3>
             </div>
             <div className="modal-body">
-              {deleteModal.status === "confirm" ? <p>삭제하시겠습니까?</p> : <p>삭제되었습니다.</p>}
+              {actionModal.status === "confirm"
+                ? actionModal.mode === "update"
+                  ? "수정하시겠습니까?"
+                  : "삭제하시겠습니까?"
+                : actionModal.mode === "update"
+                ? "수정되었습니다."
+                : "삭제되었습니다."}
             </div>
-            {deleteModal.status === "confirm" && (
+            {actionModal.status === "confirm" ? (
               <div className="modal-footer">
-                <button className="confirm-btn" onClick={confirmDelete}>
-                  네
+                <button
+                  className="confirm-btn"
+                  onClick={async () => {
+                    try {
+                      if (actionModal.mode === "update" && onUpdatePost) {
+                        await onUpdatePost(selectedPost);
+                      } else if (actionModal.mode === "delete" && onDeletePost) {
+                        await onDeletePost(selectedPost.id);
+                      }
+                      setActionModal((prev) => ({ ...prev, status: "done" }));
+                      if (actionModal.mode === "delete") {
+                        setPosts((prev) => prev.filter((p) => p.id !== selectedPost.id));
+                        setSelectedPost(null);
+                      }
+                      setTimeout(() => setActionModal({ open: false, mode: null, status: "confirm" }), 1000);
+                    } catch {
+                      setActionModal({ open: false, mode: null, status: "confirm" });
+                    }
+                  }}
+                >
+                  예
                 </button>
-                <button className="cancel-btn" onClick={closeDeleteModal}>
-                  아니요
+                <button
+                  className="cancel-btn"
+                  onClick={() => setActionModal({ open: false, mode: null, status: "confirm" })}
+                >
+                  아니오
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
