@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.ibatis.type.Alias;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Alias("ActivityControllerItem")
 public class ActivityItem {
     private String activityId;
     private Integer durationMin;

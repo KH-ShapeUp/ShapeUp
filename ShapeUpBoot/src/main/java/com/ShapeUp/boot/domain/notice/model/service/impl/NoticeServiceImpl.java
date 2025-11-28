@@ -117,8 +117,9 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
-		// TODO Auto-generated method stub
-		return null;
+		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+		int endRow = currentPage * boardCountPerPage;
+		return noticeMapper.selectNoticeList(startRow, endRow, null, null, null);
 	}
 
 }

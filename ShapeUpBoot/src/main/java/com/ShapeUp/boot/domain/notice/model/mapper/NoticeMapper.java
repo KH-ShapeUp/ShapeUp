@@ -12,13 +12,19 @@ import com.ShapeUp.boot.domain.notice.model.vo.NoticeImage;
 @Mapper
 public interface NoticeMapper {
 
-	int getTotalCount(String category, String searchType, String searchKeyword);
+	int getTotalCount(@Param("category") String category,
+					  @Param("searchType") String searchType,
+					  @Param("searchKeyword") String searchKeyword);
 
 	int insertNotice(NoticeInsertDto noticeInsertDto); //원래코드(태현님 코드)
 	
 //	int insertNotice(Notice notice); // (승재님 코드)
 	
-	List<Notice> selectNoticeList(int startRow, int endRow, String category, String searchType, String searchKeyword);
+	List<Notice> selectNoticeList(@Param("startRow") int startRow,
+								  @Param("endRow") int endRow,
+								  @Param("category") String category,
+								  @Param("searchType") String searchType,
+								  @Param("searchKeyword") String searchKeyword);
 
 	int increaseViewCount(@Param("noticeNo") int noticeNo);
 

@@ -64,12 +64,12 @@ const PostNotice = () => {
       };
       const mapped = items.map((n) => ({
         id: n.noticeNo,
-        date: normalizeDate(n.evStartAt || n.createAt),
+        date: normalizeDate(n.eventStart || n.createdAt),
         author: n.userName || (n.userNo ? `작성자#${n.userNo}` : "관리자"),
-        category: n.category || "공지",
+        category: n.noticeCategory || n.category || "공지",
         title: n.noticeTitle,
-        startDate: n.evStartAt ? normalizeDate(n.evStartAt) : undefined,
-        endDate: n.evEndDate ? normalizeDate(n.evEndDate) : undefined,
+        startDate: n.eventStart ? normalizeDate(n.eventStart) : undefined,
+        endDate: n.eventEnd ? normalizeDate(n.eventEnd) : undefined,
         content: n.noticeContent,
         images: Array.isArray(n.images)
           ? n.images.map((img) => ({ ...img, imgPath: resolveUrl(img.imgPath) }))
