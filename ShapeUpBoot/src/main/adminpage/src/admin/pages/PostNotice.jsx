@@ -119,9 +119,9 @@ const PostNotice = () => {
     const body = {
       noticeTitle: title,
       noticeContent: content,
-      category,
-      evStartAt: eventStart || new Date().toISOString().slice(0, 10),
-      evEndDate: category === "이벤트" ? eventEnd : null,
+      noticeCategory: category,
+      eventStart: category === "이벤트" ? eventStart || new Date().toISOString().slice(0, 10) : null,
+      eventEnd: category === "이벤트" ? eventEnd : null,
       userNo: 1, // TODO: 실제 로그인 세션 사용자 번호로 교체
     };
     try {

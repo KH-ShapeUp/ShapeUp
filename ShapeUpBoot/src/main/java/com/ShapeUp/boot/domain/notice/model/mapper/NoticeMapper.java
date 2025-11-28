@@ -38,6 +38,8 @@ public interface NoticeMapper {
 
 	int deleteNoticeImage(int imgNo);
 
+	int insertNoticeVo(Notice notice);
+
 	int deleteNotice(int noticeNo);
 
 	List<java.util.Map<String, Object>> selectNoticeTrend();

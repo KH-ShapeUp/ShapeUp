@@ -198,4 +198,34 @@
 		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"MM\"-\"IW')
 		ORDER BY LABEL
 	</select>
+
+	<!-- Admin API 전용: VO로 공지 등록 -->
+	<insert id="insertNoticeVo" parameterType="com.ShapeUp.boot.domain.notice.model.vo.Notice">
+		<selectKey keyProperty="noticeNo" resultType="int" order="BEFORE">
+			SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO NOTICE_TBL (
+			NOTICE_NO,
+			NOTICE_TITLE,
+			NOTICE_CONTENT,
+			NOTICE_CATEGORY,
+			USER_NO,
+			CREATED_AT,
+			UPDATED_AT,
+			EVENT_START,
+			EVENT_END,
+			VIEW_COUNT
+		) VALUES (
+			#{noticeNo},
+			#{noticeTitle},
+			#{noticeContent},
+			NVL(#{noticeCategory}, '공지'),
+			#{userNo},
+			COALESCE(#{createdAt, jdbcType=TIMESTAMP}, SYSTIMESTAMP),
+			NULL,
+			#{eventStart, jdbcType=VARCHAR},
+			#{eventEnd, jdbcType=VARCHAR},
+			NVL(#{viewCount, jdbcType=INTEGER}, 0)
+		)
+	</insert>
 </mapper>
