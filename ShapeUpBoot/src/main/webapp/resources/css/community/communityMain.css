@@ -1,1 +1,527 @@
 @charset "UTF-8";
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.board-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 3em;
+}
+
+.board-wrapper-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 10px;
+}
+
+.main-board-top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-board-middle {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.main-board-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 20px 0px;
+}
+
+/* 전체 검색창 래퍼 */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+/* 필터 버튼 */
+.filter-btn-wrapper {
+    background: #fff;
+    padding: 9px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.25s ease;
+}
+ 
+.filter-btn-wrapper .material-symbols-outlined {
+    font-size: 1rem;
+    margin-top: 3px;
+    color: #111;
+}
+
+.filter-btn-wrapper:hover {
+    background: #e7e7e7;
+}
+
+/* 필터 아이콘 회전 효과 */
+.filter-btn-wrapper.active .material-symbols-outlined {
+    transform: rotate(180deg);
+    transition: 0.25s ease;
+}
+
+/* 필터 리스트 */
+.filter-btn-list {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    width: 120px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    animation: fadeDown 0.25s ease;
+    z-index: 20;
+}
+
+.filter-btn-list.active {
+    display: flex;
+}
+
+/* 필터 리스트 안 버튼 */
+.filter-btn {
+    padding: 8px 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s ease;
+    text-align: left;
+}
+
+.filter-btn:hover {
+    background: #ececec;
+}
+
+/* 드롭다운 애니메이션 */
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 검색 영역 */
+.search {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.search #keyword {
+    border: none;
+    background-color: #fff;
+    flex: 1;
+    font-size: 1rem;
+    outline: none;
+    border: 1px solid #ddd;
+    height: 40px;
+    border-radius: 8px;
+    outline: none;
+    padding-left: 36px;
+}
+
+.search #keyword::placeholder {
+    font-size: .8rem;
+}
+
+/* 검색 아이콘 */
+.search .material-symbols-outlined {
+    position: absolute;
+    font-size: 1.2rem;
+    color: #999;
+    left: 12px;
+    top: 53%;
+    transform: translateY(-50%);
+}
+
+
+.main-board-top a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 15px;
+    height: 40px;
+    background-color: var(--main-color);
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+.main-board-top i {
+    margin-right: 10px;
+    margin-top: 3px;
+}
+
+.notice-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.notice-card {
+    display: flex;
+    flex-direction: row;
+    gap: 13px;
+    align-items: center;
+    border-radius: 10px;
+    padding: 12px .8rem;
+    background-color: #f2f9ff;
+}
+
+.notice-category {
+    padding: 4px 10px;
+    background-color: #ff3b00;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 500;
+    border-radius: 8px;
+}
+
+.notice-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.notice-title:hover {
+    color: var(--main-color);
+}
+
+/*********************/
+/*  게시물 카드 시작 */
+/*********************/
+.main-board-middle a {
+    color: #111;
+    text-decoration: none;
+}
+
+.post-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;;
+}
+
+.post-card {
+    background-color: #fff;
+    padding: .8rem;
+    border: 1px solid #f2f3f4;
+    display: flex;
+    border-radius: 12px;
+    flex-direction: column;;
+    border: 1px solid #f2f3f4;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.post-card:hover {
+    background-color: #f2f3f4;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-header-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.post-header-left .post-category {
+    background-color: #e2e2e2;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 운동 질문 카테고리 */
+.post-category-question {
+    background-color: #D9F0FF;
+    color: #034A7F;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 운동 꿀팁 */
+.post-category-tip {
+    background-color: #E6F9EA;
+    color: #1D5C3A;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 식단 / 영양 */
+.post-category-food {
+    background-color: #FFF2E5;
+    color: #80461B;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 오운완 */
+.post-category-certification {
+    background-color: #F0E6FF;
+    color: #4B2C91;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;    
+}
+
+.post-header-left .post-nickName {
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.post-header-left .post-writeDate {
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.post-icon {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.post-icon .fa-solid {
+    margin-right: 5px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.post-icon span {
+    font-size: .8rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.post-middle {
+    padding: 0px 5px;
+}
+
+.post-middle .post-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111;
+}
+
+.post-middle .post-comment {
+    font-size: 0.8rem;
+    color: var(--main-color);
+    font-weight: 500;
+}
+/*******************/
+/*  게시물 카드 끝 */
+/*******************/
+
+/**********************/
+/*  댓글, 조회수 영역 */
+/**********************/
+.board-wrapper-right {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 330px;
+    gap: 3em;    
+}
+
+.post-icon div {
+    display: flex;
+    align-items: center;
+}
+
+.board-wrapper-left .post-icon div span {
+    margin-bottom: 4px;
+}
+
+.board-wrapper-right .post-icon div span {
+    margin-bottom: 3px;
+}
+
+.board-wrapper-comment, 
+.board-wrapper-view {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    border-radius: 12px;
+}
+
+.board-comment-title, 
+.board-view-title {
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.board-comment-card, 
+.board-view-card {
+    background-color: #fff;
+    margin-top: 10px;
+    padding: .8rem;
+    border: 1px solid #f2f3f4;
+    display: flex;
+    border-radius: 12px;
+    flex-direction: column;;
+    border: 1px solid #f2f3f4;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.board-comment-card:hover,
+.board-view-card:hover {
+    background: #f2f3f4;
+}
+
+.board-comment-card .post-title,
+.board-view-card .post-title {
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+
+.board-comment-card .post-category,
+.board-view-card .post-category {
+    font-size: .6rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #666;
+    font-size: 0.55rem;
+    font-weight: 600;
+}
+
+.board-comment-card .post-nickName,
+.board-view-card .post-nickName {
+    font-size: 0.8rem;
+}
+
+.board-comment-card .post-writeDate,
+.board-view-card .post-writeDate {
+    font-weight: 500;
+    font-size: .7rem;
+}
+
+.board-comment-card .fa-eye,
+.board-view-card .fa-eye,
+.post-icon .post-view,
+.post-middle .post-comment {
+    font-size: .6rem;
+}
+
+/***************/
+/*    페이징   */
+/***************/
+.pagination-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-num {
+    padding: 8px 14px;
+    cursor: pointer;
+    border: none;
+    color: #111;
+    background-color: #fff;
+    font-size: 0.9rem;
+}
+
+.page-num.active {
+    color: var(--main-color);
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.pagination .back {
+    position: absolute;
+    left: 0px; 
+}
+
+.pagination .next {
+    position: absolute;
+    right: 0px; 
+}
+
+.pagination .back,
+.pagination .next {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    transition: .25s;
+    color: #111;
+    font-weight: 550;
+    font-size: .9rem;
+}
+
+.back i, .next i {
+    margin-top: 3px;
+}
+
+.page-num:hover {
+    color: var(--main-color);
+}
+
+.pagination .back:hover,
+.pagination .next:hover {
+    color: var(--main-color);
+}

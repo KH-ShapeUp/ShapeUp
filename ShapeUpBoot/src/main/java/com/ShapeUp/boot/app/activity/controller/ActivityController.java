@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ShapeUp.boot.app.activity.controller.dto.ActivityItem;
-import com.ShapeUp.boot.app.activity.controller.dto.ActivityinsertDto;
+import com.ShapeUp.boot.app.activity.dto.ActivityItem;
+import com.ShapeUp.boot.app.activity.dto.ActivtiyInsertDto;
 import com.ShapeUp.boot.domain.activity.model.service.ActivityService;
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityLogVO;
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
@@ -52,13 +52,13 @@ public class ActivityController {
 
     @PostMapping("/insert")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> insertActivities(@RequestBody ActivityinsertDto items, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> insertActivities(@RequestBody ActivtiyInsertDto items, HttpSession session) {
     	int userNo = (int) session.getAttribute("userNo");
         log.info("Received activity insert payload: {}", items);
         if (items == null || items.getItems() == null || items.getItems().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "NO_ITEMS"));
         }
-    	String actionAt = sanitizeDate(items.getActionAt());
+    	//String actionAt = sanitizeDate(items.getActionAt());
 //    	Timestamp actionAtTs = convertToTimestamp(actionAt);
     	
     	

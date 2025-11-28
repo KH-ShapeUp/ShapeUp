@@ -147,14 +147,4 @@ public class matchingController {
 		mAppDTO.setMatchingAppliNo(loginUserNo);
 		return mService.matchApplication(mAppDTO);
 	}
-	
-	@GetMapping("/mypage")
-	public String mypage() {
-		return "user/real-estate-mypage";
-	}
-	
-	@GetMapping("/community")
-	public String freeBoard() {
-		return "community/communityMain";
-	}
 }

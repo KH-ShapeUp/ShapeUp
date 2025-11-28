@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ShapeUp.boot.app.diet.controller.dto.DietSaveRequest;
-import com.ShapeUp.boot.app.diet.controller.dto.Item;
+import com.ShapeUp.boot.app.diet.dto.DietSaveRequest;
+import com.ShapeUp.boot.app.diet.dto.Item;
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;

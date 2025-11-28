@@ -74,6 +74,7 @@
 
 /* 난이도 선택 */
 .level-wrapper {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -82,6 +83,7 @@
     padding: 5px;
     height: 50px;
     gap: 10px;
+    z-index: 0;
 }
 
 .level-wrapper input {
@@ -95,6 +97,8 @@
     border-radius: 8px;
     align-items: center;
     cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1;
 }
 
 .level-wrapper label span {
@@ -103,10 +107,37 @@
 }
 
 .level-wrapper label:has(input:checked) {
-    background: #fff;
     color: var(--txt-color);
-    box-shadow: var(--box-shadow);
 }
+
+/* :has()를 이용한 위치 이동 (아이템이 3개라고 가정) */
+/* 첫 번째 라벨 선택 시: 제자리 */
+.level-wrapper:has(label:nth-of-type(1) input:checked) .selection-bg {
+    transform: translateX(0);
+}
+/* 두 번째 라벨 선택 시: 1칸 이동 (100% + gap 10px) */
+.level-wrapper:has(label:nth-of-type(2) input:checked) .selection-bg {
+    transform: translateX(calc(100% + 10px));
+}
+/* 세 번째 라벨 선택 시: 2칸 이동 (200% + gap 20px) */
+.level-wrapper:has(label:nth-of-type(3) input:checked) .selection-bg {
+    transform: translateX(calc(200% + 20px));
+}
+
+/* 움직이는 배경 박스 스타일 */
+.selection-bg {
+    position: absolute;
+    top: 5px; /* wrapper padding 만큼 띄움 */
+    left: 5px; 
+    height: calc(100% - 10px); /* 위아래 padding 뺌 */
+    width: calc((100% - 20px) / 3); /* (전체 - padding - gap*2) / 개수 */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow); /* 기존 그림자 효과 이동 */
+    z-index: -1; /* 글자 뒤로 보내기 */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 이동 */
+}
+
 
 /* 매칭 오른쪽 부분 */
 .matching-wrapper-right {
@@ -243,8 +274,22 @@
     max-height: 300px;
     overflow-y: auto;
     scroll-behavior: smooth;
+    animation: fadeDown 0.25s ease;
 }
 
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.filter-btn-wrapper {
+    animation: fadeDown 0.25s ease;
+}
 /* 필터 종류 사라지는 클래스 */
 .filter-btn-wrapper.hidden,
 .matching-btn-wrapper.hidden {
