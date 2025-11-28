@@ -106,6 +106,17 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
+	public int insertNotice(Notice notice) {
+		if (notice.getNoticeCategory() == null) {
+			notice.setNoticeCategory("공지");
+		}
+		if (notice.getViewCount() == null) {
+			notice.setViewCount(0);
+		}
+		return noticeMapper.insertNoticeVo(notice);
+	}
+
+	@Override
 	public java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo) {
 		return noticeMapper.selectImagesByNotice(noticeNo);
 	}
@@ -113,6 +124,13 @@ public class NoticeServiceImpl implements NoticeService{
 	@Override
 	public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
 		return noticeMapper.selectNoticeTrend();
+	}
+
+	@Override
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
+		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+		int endRow = currentPage * boardCountPerPage;
+		return noticeMapper.selectNoticeList(startRow, endRow, null, null, null);
 	}
 
 }

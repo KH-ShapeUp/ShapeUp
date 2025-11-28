@@ -48,14 +48,25 @@ const formatPhone = (phone) => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
 };
 
+const formatDate10 = (value) => {
+  if (!value) return "";
+  // Accepts string/number/Date and returns YYYY-MM-DD when possible
+  const tryDate = new Date(value);
+  if (!Number.isNaN(tryDate.getTime())) {
+    return tryDate.toISOString().slice(0, 10);
+  }
+  const asString = String(value);
+  return asString.length >= 10 ? asString.slice(0, 10) : asString;
+};
+
 const mapUserToMember = (user) => ({
   id: user.userNo,
   name: user.userName ?? "",
   age: user.userAge ?? deriveAgeFromRrn(user.userSerialNo) ?? 0,
   nickname: user.userNickname ?? "",
-  joinedAt: user.createdAt?.slice(0, 10) ?? "",
-  updatedAt: user.updatedAt ?? "",
-  createdAt: user.createdAt ?? "",
+  joinedAt: formatDate10(user.createdAt),
+  updatedAt: formatDate10(user.updatedAt),
+  createdAt: formatDate10(user.createdAt),
   userType: user.userType ?? "USER",
   status: user.status ?? "정상",
   gender: deriveGenderFromRrn(user.userSerialNo),

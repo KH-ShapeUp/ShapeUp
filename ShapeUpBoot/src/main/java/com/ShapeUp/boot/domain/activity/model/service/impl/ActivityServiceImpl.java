@@ -26,5 +26,4 @@ public class ActivityServiceImpl implements ActivityService {
 		return aMapper.insertActivityVO(log);
 	}
 
-
 }

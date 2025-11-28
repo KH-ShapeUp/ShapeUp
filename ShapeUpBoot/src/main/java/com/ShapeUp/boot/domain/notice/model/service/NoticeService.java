@@ -25,8 +25,9 @@ public interface NoticeService{
 
 	int deleteNotice(int noticeNo);
 
+	int insertNotice(Notice notice);
+
 	java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo);
 
 	java.util.List<java.util.Map<String, Object>> selectNoticeTrend();
-
 }

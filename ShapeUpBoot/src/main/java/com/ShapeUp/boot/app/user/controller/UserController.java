@@ -530,9 +530,9 @@ public class UserController {
 
             // 사용자 타입에 따른 리다이렉트
             if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://localhost:5173/admin";
+                return "redirect:http://localhost:8080/admin";
             } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://localhost:5173/stadium";
+                return "redirect:http://localhost:8080/stadium";
             } else {
                 return "redirect:/";
             }

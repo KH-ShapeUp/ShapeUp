@@ -4,178 +4,228 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ShapeUp.boot.domain.notice.model.mapper.NoticeMapper">
 
-    <resultMap id="NoticeMap" type="com.ShapeUp.boot.domain.notice.model.vo.Notice">
-        <id property="noticeNo" column="NOTICE_NO"/>
-        <result property="noticeTitle" column="NOTICE_TITLE"/>
-        <result property="noticeContent" column="NOTICE_CONTENT"/>
-        <result property="category" column="NOTICE_CATEGORY"/>
-        <result property="userNo" column="USER_NO"/>
-        <result property="userName" column="USER_NAME"/>
-        <result property="createAt" column="CREATED_AT"/>
-        <result property="updateAt" column="UPDATED_AT"/>
-        <result property="evStartAt" column="EVENT_START"/>
-        <result property="evEndDate" column="EVENT_END"/>
-        <result property="viewCount" column="VIEW_COUNT"/>
-        <collection property="images" column="NOTICE_NO" select="selectImagesByNotice"/>
-    </resultMap>
+	<resultMap id="NoticeMap" type="com.ShapeUp.boot.domain.notice.model.vo.Notice">
+		<id property="noticeNo" column="NOTICE_NO"/>
+		<result property="noticeTitle" column="NOTICE_TITLE"/>
+		<result property="noticeContent" column="NOTICE_CONTENT"/>
+		<result property="noticeCategory" column="NOTICE_CATEGORY"/>
+		<result property="userNo" column="USER_NO"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="createdAt" column="CREATED_AT"/>
+		<result property="updatedAt" column="UPDATED_AT"/>
+		<result property="eventStart" column="EVENT_START"/>
+		<result property="eventEnd" column="EVENT_END"/>
+		<result property="viewCount" column="VIEW_COUNT"/>
+		<collection property="images" column="NOTICE_NO" select="selectImagesByNotice"/>
+	</resultMap>
 
-    <resultMap id="NoticeImageMap" type="com.ShapeUp.boot.domain.notice.model.vo.NoticeImage">
-        <id property="imgNo" column="IMG_NO"/>
-        <result property="imgPath" column="IMG_PATH"/>
-        <result property="imgRename" column="IMG_RENAME"/>
-        <result property="imgOriginalName" column="IMG_ORIGINAL_NAME"/>
-        <result property="imgMainYn" column="IMG_MAIN_YN"/>
-        <result property="noticeNo" column="NOTICE_NO"/>
-    </resultMap>
+	<resultMap id="NoticeImageMap" type="com.ShapeUp.boot.domain.notice.model.vo.NoticeImage">
+		<id property="imgNo" column="IMG_NO"/>
+		<result property="imgPath" column="IMG_PATH"/>
+		<result property="imgRename" column="IMG_RENAME"/>
+		<result property="imgOriginalName" column="IMG_ORIGINAL_NAME"/>
+		<result property="imgMainYn" column="IMG_MAIN_YN"/>
+		<result property="noticeNo" column="NOTICE_NO"/>
+	</resultMap>
 
-    <select id="getTotalCount" resultType="_int">
-        SELECT COUNT(*)
-        FROM NOTICE_TBL
-        <where>
-            <if test="category != null and category != ''">
-                NOTICE_CATEGORY = #{category}
-            </if>
+	<select id="getTotalCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM NOTICE_TBL
+		<where>
+			<if test="category != null and category != ''">
+				NOTICE_CATEGORY = #{category}
+			</if>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				AND
+				<choose>
+					<when test="searchType == 'T'.toString()">
+						NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchType == 'C'.toString()">
+						NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchType == 'TC'.toString()">
+						(NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' OR
+						NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%')
+					</when>
+				</choose>
+			</if>
+		</where>
+	</select>
 
-            <if test="searchKeyword != null and searchKeyword != ''">
-                AND
-                <choose>
-                    <when test="searchType == 'T'.toString()">
-                        NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
-                    </when>
-                    <when test="searchType == 'C'.toString()">
-                        NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%'
-                    </when>
-                    <when test="searchType == 'TC'.toString()">
-                        (NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' OR
-                        NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%')
-                    </when>
-                </choose>
-            </if>
-        </where>
-    </select>
+	<select id="selectNoticeList" resultMap="NoticeMap">
+		SELECT NOTICE_NO,
+		       NOTICE_TITLE,
+		       NOTICE_CONTENT,
+		       NOTICE_CATEGORY,
+		       USER_NO,
+		       USER_NAME,
+		       CREATED_AT,
+		       UPDATED_AT,
+		       EVENT_START,
+		       EVENT_END,
+		       VIEW_COUNT
+		FROM (
+			SELECT ROWNUM RNUM, A.*
+			FROM (
+				SELECT n.NOTICE_NO,
+				       n.NOTICE_TITLE,
+				       n.NOTICE_CONTENT,
+				       n.NOTICE_CATEGORY,
+				       n.USER_NO,
+				       u.USER_NAME,
+				       n.CREATED_AT,
+				       n.UPDATED_AT,
+				       n.EVENT_START,
+				       n.EVENT_END,
+				       n.VIEW_COUNT
+				FROM NOTICE_TBL n
+				LEFT JOIN USER_TBL u ON n.USER_NO = u.USER_NO
+				<where>
+					<if test="category != null and category != ''">
+						n.NOTICE_CATEGORY = #{category}
+					</if>
+					<if test="searchKeyword != null and searchKeyword != ''">
+						AND
+						<choose>
+							<when test='searchType != null and searchType.equals("T")'>
+								n.NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
+							</when>
+							<when test='searchType != null and searchType.equals("C")'>
+								n.NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%'
+							</when>
+							<when test='searchType != null and searchType.equals("TC")'>
+								(n.NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' OR n.NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%')
+							</when>
+						</choose>
+					</if>
+				</where>
+				ORDER BY n.CREATED_AT DESC
+			) A
+		)
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
 
-    <select id="selectNoticeList" resultMap="NoticeMap">
-        SELECT NOTICE_NO, 
-            NOTICE_TITLE, 
-            NOTICE_CONTENT, 
-            NOTICE_CATEGORY, 
-            USER_NO, 
-            CREATED_AT, 
-            UPDATED_AT, 
-            EVENT_START, 
-            EVENT_END, 
-            VIEW_COUNT
-        FROM (
-            SELECT ROWNUM RNUM, A.*
-            FROM (
-                SELECT NOTICE_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CATEGORY, 
-                USER_NO, CREATED_AT, UPDATED_AT, EVENT_START, EVENT_END, VIEW_COUNT
-                FROM NOTICE_TBL
-                <where>
-                    <if test="category != null and category != ''">
-                        NOTICE_CATEGORY = #{category}
-                    </if>
-                    
-                    <if test="searchKeyword != null and searchKeyword != ''">
-                        AND
-                        <choose>
-                            <when test='searchType != null and searchType.equals("T")'>
-                                NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
-                            </when>
-                            <when test='searchType != null and searchType.equals("C")'>
-                                NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%'
-                            </when>
-                            <when test='searchType != null and searchType.equals("TC")'>
-                                (NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' OR NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%')
-                            </when>
-                        </choose>
-                    </if>
-                </where>
-                ORDER BY CREATED_AT DESC
-            ) A
-        )
-        WHERE RNUM BETWEEN #{startRow} AND #{endRow} 
-    </select>
+	<insert id="insertNotice"
+		parameterType="com.ShapeUp.boot.app.notice.dto.NoticeInsertDto">
+		<selectKey keyProperty="noticeNo" resultType="_int"
+			order="BEFORE">
+			SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
+		</selectKey>
 
-    <insert id="insertNotice" parameterType="com.ShapeUp.boot.app.notice.dto.NoticeInsertDto">
-        <selectKey keyProperty="noticeNo" resultType="_int" order="BEFORE">
-            SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
-        </selectKey>
+		INSERT INTO NOTICE_TBL (
+		NOTICE_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CATEGORY,
+		USER_NO, CREATED_AT, UPDATED_AT, EVENT_START, EVENT_END, VIEW_COUNT
+		)
+		VALUES(
+		#{noticeNo}, #{noticeTitle}, #{noticeContent}, #{noticeCategory}
+		, #{userNo}, SYSDATE, NULL, #{eventStart}, #{eventEnd}, 0
+		)
+	</insert>
 
-        INSERT INTO NOTICE_TBL (
-            NOTICE_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CATEGORY,
-            USER_NO, CREATED_AT, UPDATED_AT, EVENT_START, EVENT_END, VIEW_COUNT
-        )
-        VALUES(
-            #{noticeNo}, #{noticeTitle}, #{noticeContent}, #{noticeCategory}
-            , #{userNo}, SYSDATE, NULL, #{eventStart}, #{eventEnd}, 0
-        )
-    </insert>
+	<update id="updateNotice" parameterType="com.ShapeUp.boot.domain.notice.model.vo.Notice">
+		UPDATE NOTICE_TBL
+		SET
+			NOTICE_TITLE    = #{noticeTitle},
+			NOTICE_CONTENT  = #{noticeContent},
+			NOTICE_CATEGORY = NVL(#{noticeCategory}, '공지'),
+			EVENT_START     = #{eventStart, jdbcType=VARCHAR},
+			EVENT_END       = #{eventEnd, jdbcType=VARCHAR},
+			UPDATED_AT      = SYSTIMESTAMP
+		WHERE NOTICE_NO = #{noticeNo}
+	</update>
 
-    <update id="increaseViewCount">
-        UPDATE NOTICE_TBL SET VIEW_COUNT = VIEW_COUNT + 1
-        WHERE NOTICE_NO = #{noticeNo}
-    </update>
+	<delete id="deleteNotice" parameterType="int">
+		DELETE FROM NOTICE_TBL WHERE NOTICE_NO = #{noticeNo}
+	</delete>
 
-    <select id="selectNoticeDetail" resultMap="NoticeMap">
-        SELECT NOTICE_NO, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_CATEGORY, USER_NO,
-        CREATED_AT, UPDATED_AT, EVENT_START, EVENT_END, VIEW_COUNT
-        FROM NOTICE_TBL
-        WHERE NOTICE_NO = #{noticeNo}
-    </select>
+	<update id="increaseViewCount">
+		UPDATE NOTICE_TBL SET VIEW_COUNT = VIEW_COUNT + 1
+		WHERE NOTICE_NO = #{noticeNo}
+	</update>
 
-    <update id="updateNotice" parameterType="com.ShapeUp.boot.domain.notice.model.vo.Notice">
-        UPDATE NOTICE_TBL
-        SET
-            NOTICE_TITLE    = #{noticeTitle},
-            NOTICE_CONTENT  = #{noticeContent},
-            NOTICE_CATEGORY = NVL(#{category}, '공지'),
-            EVENT_START     = #{evStartAt, jdbcType=VARCHAR},
-            EVENT_END       = #{evEndDate, jdbcType=VARCHAR},
-            UPDATED_AT      = SYSTIMESTAMP
-        WHERE NOTICE_NO = #{noticeNo}
-    </update>
+	<select id="selectNoticeDetail" resultMap="NoticeMap">
+		SELECT n.NOTICE_NO,
+		       n.NOTICE_TITLE,
+		       n.NOTICE_CONTENT,
+		       n.NOTICE_CATEGORY,
+		       n.USER_NO,
+		       u.USER_NAME,
+		       n.CREATED_AT,
+		       n.UPDATED_AT,
+		       n.EVENT_START,
+		       n.EVENT_END,
+		       n.VIEW_COUNT
+		FROM NOTICE_TBL n
+		LEFT JOIN USER_TBL u ON n.USER_NO = u.USER_NO
+		WHERE n.NOTICE_NO = #{noticeNo}
+	</select>
 
-    <delete id="deleteNotice" parameterType="int">
-        DELETE FROM NOTICE_TBL WHERE NOTICE_NO = #{noticeNo}
-    </delete>
+	<select id="selectImagesByNotice" parameterType="int" resultMap="NoticeImageMap">
+		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN_YN, NOTICE_NO
+		FROM NOTICE_IMG_TBL
+		WHERE NOTICE_NO = #{noticeNo}
+		ORDER BY IMG_NO ASC
+	</select>
 
-    <select id="selectNoticeTrend" resultType="map">
-        SELECT
-            TO_CHAR(CREATED_AT, 'YYYY\"-\"MM\"-\"IW') AS LABEL,
-            COUNT(*) AS CNT
-        FROM NOTICE_TBL
-        GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"MM\"-\"IW')
-        ORDER BY LABEL
-    </select>
+	<insert id="insertNoticeImage" parameterType="com.ShapeUp.boot.domain.notice.model.vo.NoticeImage">
+		INSERT INTO NOTICE_IMG_TBL (
+		IMG_NO,
+		IMG_PATH,
+		IMG_RENAME,
+		IMG_ORIGINAL_NAME,
+		IMG_MAIN_YN,
+		NOTICE_NO
+		) VALUES (
+		SEQ_NOTICE_IMG_NO.NEXTVAL,
+		#{imgPath},
+		#{imgRename},
+		#{imgOriginalName},
+		NVL(#{imgMainYn}, 'N'),
+		#{noticeNo}
+		)
+	</insert>
 
-    <select id="selectImagesByNotice" parameterType="int" resultMap="NoticeImageMap">
-        SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN_YN, NOTICE_NO
-        FROM NOTICE_IMG_TBL
-        WHERE NOTICE_NO = #{noticeNo}
-        ORDER BY IMG_NO ASC
-    </select>
+	<delete id="deleteNoticeImage" parameterType="int">
+		DELETE FROM NOTICE_IMG_TBL WHERE IMG_NO = #{imgNo}
+	</delete>
 
-    <insert id="insertNoticeImage" parameterType="com.ShapeUp.boot.domain.notice.model.vo.NoticeImage">
-        INSERT INTO NOTICE_IMG_TBL (
-            IMG_NO,
-            IMG_PATH,
-            IMG_RENAME,
-            IMG_ORIGINAL_NAME,
-            IMG_MAIN_YN,
-            NOTICE_NO
-        ) VALUES (
-            SEQ_NOTICE_IMG_NO.NEXTVAL,
-            #{imgPath},
-            #{imgRename},
-            #{imgOriginalName},
-            NVL(#{imgMainYn}, 'N'),
-            #{noticeNo}
-        )
-    </insert>
+	<select id="selectNoticeTrend" resultType="map">
+		SELECT
+		TO_CHAR(CREATED_AT, 'YYYY\"-\"MM\"-\"IW') AS LABEL,
+		COUNT(*) AS CNT
+		FROM NOTICE_TBL
+		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"MM\"-\"IW')
+		ORDER BY LABEL
+	</select>
 
-    <delete id="deleteNoticeImage" parameterType="int">
-        DELETE FROM NOTICE_IMG_TBL WHERE IMG_NO = #{imgNo}
-    </delete>
-
+	<!-- Admin API 전용: VO로 공지 등록 -->
+	<insert id="insertNoticeVo" parameterType="com.ShapeUp.boot.domain.notice.model.vo.Notice">
+		<selectKey keyProperty="noticeNo" resultType="int" order="BEFORE">
+			SELECT SEQ_NOTICE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO NOTICE_TBL (
+			NOTICE_NO,
+			NOTICE_TITLE,
+			NOTICE_CONTENT,
+			NOTICE_CATEGORY,
+			USER_NO,
+			CREATED_AT,
+			UPDATED_AT,
+			EVENT_START,
+			EVENT_END,
+			VIEW_COUNT
+		) VALUES (
+			#{noticeNo},
+			#{noticeTitle},
+			#{noticeContent},
+			NVL(#{noticeCategory}, '공지'),
+			#{userNo},
+			COALESCE(#{createdAt, jdbcType=TIMESTAMP}, SYSTIMESTAMP),
+			NULL,
+			#{eventStart, jdbcType=VARCHAR},
+			#{eventEnd, jdbcType=VARCHAR},
+			NVL(#{viewCount, jdbcType=INTEGER}, 0)
+		)
+	</insert>
 </mapper>

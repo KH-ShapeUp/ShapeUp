@@ -7,8 +7,8 @@ import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
 
 public interface ActivityService {
 
-   List<ActivityVO> getActivityListByKeyword(String keyword);
+	List<ActivityVO> getActivityListByKeyword(String keyword);
 
-   int insertActivities(ActivityLogVO log);
+	int insertActivities(ActivityLogVO log);
 
 }

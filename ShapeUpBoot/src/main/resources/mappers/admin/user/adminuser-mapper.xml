@@ -51,15 +51,13 @@
 
   <update id="updateUserPassword">
     UPDATE USER_TBL
-    SET USER_PW = #{userPw},
-        UPDATED_AT = SYSTIMESTAMP
+    SET USER_PW = #{userPw}
     WHERE USER_NO = #{userNo}
   </update>
 
   <update id="updateUserType">
     UPDATE USER_TBL
-    SET USER_TYPE = #{userType},
-        UPDATED_AT = SYSTIMESTAMP
+    SET USER_TYPE = #{userType}
     WHERE USER_NO = #{userNo}
   </update>
 
@@ -71,8 +69,7 @@
         USER_EMAIL = #{userEmail},
         USER_PHONE = #{userPhone},
         USER_SERIAL_NO = #{userSerialNo},
-        USER_AGE = #{userAge},
-        UPDATED_AT = SYSTIMESTAMP
+        USER_AGE = #{userAge}
     WHERE USER_NO = #{userNo}
   </update>
 
