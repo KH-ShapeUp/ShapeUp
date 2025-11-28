@@ -60,14 +60,14 @@ public class NoticeServiceImpl implements NoticeService{
 		return totalCount;
 	}
 
-//	@Override
-//	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
-//			String searchKeyword) {
-//		int startRow = (currentPage - 1) * boardCountPerPage + 1;
-//		int endRow = currentPage * boardCountPerPage;
-//		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
-//		return nList;
-//	}
+	@Override
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage, String category, String searchType,
+			String searchKeyword) {
+		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+		int endRow = currentPage * boardCountPerPage;
+		List<Notice> nList = noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
+		return nList;
+	}
 
 	@Override
 	public Notice selectNoticeDetail(int noticeNo) {
@@ -113,12 +113,6 @@ public class NoticeServiceImpl implements NoticeService{
 	@Override
 	public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
 		return noticeMapper.selectNoticeTrend();
-	}
-
-	@Override
-	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

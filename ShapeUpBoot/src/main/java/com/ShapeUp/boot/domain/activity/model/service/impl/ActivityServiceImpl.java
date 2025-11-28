@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-
-import com.ShapeUp.boot.app.activity.controller.dto.ActivityInsertDto;
 import com.ShapeUp.boot.domain.activity.model.mapper.ActivityMapper;
 import com.ShapeUp.boot.domain.activity.model.service.ActivityService;
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityLogVO;

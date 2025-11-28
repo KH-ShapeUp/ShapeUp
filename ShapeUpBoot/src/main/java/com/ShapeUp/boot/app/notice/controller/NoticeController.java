@@ -37,7 +37,7 @@ public class NoticeController {
 			int totalCount = nService.getTotalCount(category, searchType, searchKeyword);
 			int boardCountPerPage = 5;
 			int maxPage = (int) Math.ceil((double) totalCount / boardCountPerPage);
-//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
+			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
 			int naviCountPerPage = 10;
 			int startnavi = ((currentPage - 1) / naviCountPerPage) * naviCountPerPage + 1;
 			int endNavi = (startnavi - 1) + naviCountPerPage;
