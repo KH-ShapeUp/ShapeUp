@@ -2,6 +2,7 @@ package com.ShapeUp.boot.domain.notice.model.service.impl;
 
 import java.util.List;
 
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,69 +60,83 @@ public class NoticeServiceImpl implements NoticeService{
       return totalCount;
    }
 
-   @Override
-   public Notice selectNoticeDetail(int noticeNo) {
-      int result = noticeMapper.increaseViewCount(noticeNo);
-      Notice notice = null;
-      if(result > 0) {
-         notice = noticeMapper.selectNoticeDetail(noticeNo);
-      }
-      return notice;
-   }
 
 
-//   public int insertNotice(Notice notice) {
-//      int result = noticeMapper.insertNotice(notice);
-//      return result;
-//   } (승재님코드 NoticeMapper수정해서 메소드 빠진 부분 주석처리 NoticeMapper확인하세요) 
+	@Override
+	public Notice selectNoticeDetail(int noticeNo) {
+		int result = noticeMapper.increaseViewCount(noticeNo);
+		Notice notice = null;
+		if(result > 0) {
+			notice = noticeMapper.selectNoticeDetail(noticeNo);
+		}
+		return notice;
+	}
 
-   @Override
-   public int updateNotice(Notice notice) {
-      return noticeMapper.updateNotice(notice);
-   }
 
-   @Override
-   public int insertNoticeImage(com.ShapeUp.boot.domain.notice.model.vo.NoticeImage image) {
-      return noticeMapper.insertNoticeImage(image);
-   }
 
-   @Override
-   public int deleteNoticeImage(int imgNo) {
-      return noticeMapper.deleteNoticeImage(imgNo);
-   }
+//	public int insertNotice(Notice notice) {
+//		int result = noticeMapper.insertNotice(notice);
+//		return result;
+//	} (승재님코드 NoticeMapper수정해서 메소드 빠진 부분 주석처리 NoticeMapper확인하세요) 
 
-   @Override
-   public int deleteNotice(int noticeNo) {
-      return noticeMapper.deleteNotice(noticeNo);
-   }
+	@Override
+	public int updateNotice(Notice notice) {
+		return noticeMapper.updateNotice(notice);
+	}
 
-   @Override
-   public int insertNotice(Notice notice) {
-      if (notice.getNoticeCategory() == null) {
-         notice.setNoticeCategory("공지");
-      }
-      if (notice.getViewCount() == null) {
-         notice.setViewCount(0);
-      }
-      return noticeMapper.insertNoticeVo(notice);
-   }
+	@Override
+	public int insertNoticeImage(com.ShapeUp.boot.domain.notice.model.vo.NoticeImage image) {
+		return noticeMapper.insertNoticeImage(image);
+	}
 
-   @Override
-   public java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo) {
-      return noticeMapper.selectImagesByNotice(noticeNo);
-   }
+	@Override
+	public int deleteNoticeImage(int imgNo) {
+		return noticeMapper.deleteNoticeImage(imgNo);
+	}
 
-   @Override
-   public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
-      return noticeMapper.selectNoticeTrend();
-   }
+	@Override
+	public int deleteNotice(int noticeNo) {
+		return noticeMapper.deleteNotice(noticeNo);
+	}
 
-   @Override
-   public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage,
-                              String category, String searchType, String searchKeyword) {
-      int startRow = (currentPage - 1) * boardCountPerPage + 1;
-      int endRow = currentPage * boardCountPerPage;
-      return noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
-   }
+	@Override
+	public int insertNotice(Notice notice) {
+		if (notice.getNoticeCategory() == null) {
+			notice.setNoticeCategory("공지");
+		}
+		if (notice.getViewCount() == null) {
+			notice.setViewCount(0);
+		}
+		return noticeMapper.insertNoticeVo(notice);
+	}
+
+	@Override
+	public java.util.List<com.ShapeUp.boot.domain.notice.model.vo.NoticeImage> selectImagesByNotice(int noticeNo) {
+		return noticeMapper.selectImagesByNotice(noticeNo);
+	}
+
+	@Override
+	public java.util.List<java.util.Map<String, Object>> selectNoticeTrend() {
+		return noticeMapper.selectNoticeTrend();
+	}
+
+	@Override
+	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage,
+										String category, String searchType, String searchKeyword) {
+		int startRow = (currentPage - 1) * boardCountPerPage + 1;
+		int endRow = currentPage * boardCountPerPage;
+		return noticeMapper.selectNoticeList(startRow, endRow, category, searchType, searchKeyword);
+	}
+
+	@Override
+	public Integer selectPrevNoticeNo(int noticeNo) {
+		return noticeMapper.selectPrevNoticeNo(noticeNo);
+	}
+
+	@Override
+	public Integer selectNextNoticeNo(int noticeNo) {
+		return noticeMapper.selectNextNoticeNo(noticeNo);
+	}
 
 }
+

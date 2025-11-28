@@ -29,6 +29,7 @@ public class NoticeController {
 
 	@GetMapping("/list")
 	public String showNoticeList(@RequestParam(value = "page", defaultValue = "1") int currentPage, 
+
 			@RequestParam(value = "category", required = false) String category,
 			@RequestParam(value = "searchType", required = false) String searchType,
 			@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
@@ -47,6 +48,8 @@ public class NoticeController {
 			System.out.println("Search Type: " + searchType);
 			System.out.println("Search Keyword: " + searchKeyword);
 			model.addAttribute("totalCount", totalCount);
+
+
 			model.addAttribute("maxPage", maxPage);
 			model.addAttribute("currentPage", currentPage);
 			model.addAttribute("startNavi", startnavi);
@@ -57,6 +60,7 @@ public class NoticeController {
 			model.addAttribute("searchKeyword", searchKeyword);
 			return "notice/noticeList";
 		} catch (Exception e) {
+
 			model.addAttribute("errorMsg", e.getMessage());
 			return "common/error";
 		}
@@ -71,11 +75,10 @@ public class NoticeController {
 			@RequestParam(value = "searchKeyword", required = false) String searchKeyword){
 		try {
 			int boardCountPerPage = 5;
-//			List<Notice> nList = nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
-			return null;
+			return nService.selectNoticeList(currentPage, boardCountPerPage, category, searchType, searchKeyword);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return java.util.Collections.emptyList();
 		}
 	}
 
@@ -84,7 +87,11 @@ public class NoticeController {
 		try {
 			Notice notice = nService.selectNoticeDetail(noticeNo);
 			if(notice != null) {
+				Integer prevNo = nService.selectPrevNoticeNo(noticeNo);
+				Integer nextNo = nService.selectNextNoticeNo(noticeNo);
 				model.addAttribute("notice", notice);
+				model.addAttribute("prevNoticeNo", prevNo);
+				model.addAttribute("nextNoticeNo", nextNo);
 				return "notice/noticeDetail";
 			}
 			else {

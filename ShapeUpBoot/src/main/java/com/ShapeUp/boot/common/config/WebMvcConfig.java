@@ -80,5 +80,8 @@ registry.addInterceptor(new StadiumAccessInterceptor())
         // Serve built stadium SPA static files (if present)
         registry.addResourceHandler("/stadium/**")
                 .addResourceLocations("classpath:/static/stadium/");
+        // Serve JSP resources (css/js/img) under webapp/resources
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/");
     }
 }

@@ -1,435 +1,396 @@
-/* ========================================================= */
-/* 1. 기본 설정 + Sticky Footer */
-/* ========================================================= */
+/* Reset & base */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
-  line-height: 1.5;
   margin: 0;
   padding: 0;
-  background-color: white;
-
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  background: #f0f2f5;
+  color: #222;
 }
 
-.container {
-  width: 900px;
+.notice-container {
+  background: #f0f2f5;
+  padding: 0 0 90px;
+}
+
+.notice-page {
+  max-width: 1180px;
   margin: 0 auto;
-  flex-grow: 1;
-}
-
-.header-placeholder,
-.footer-placeholder {
-  width: 100%;
-  height: 60px;
-  background-color: #f7f7f7;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-.header-placeholder {
-  border-bottom: 1px solid #ddd;
-}
-.footer-placeholder {
-  border-top: 1px solid #ddd;
-}
-
-/* ========================================================= */
-/* 2. 상단 섹션 (공지 + 로고) */
-/* ========================================================= */
-.top-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #ccc;
+  padding: 28px 28px 48px;
+  background: #fff;
   border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  background: #f0f0f0;
-  height: 100px;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.page-title {
-  font-size: 40px;
-  color: #333;
-  font-weight: bold;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 60px;
-  transform: translateY(-50%);
-}
-
-.logo-area {
-  width: 250px;
-  height: 40px;
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.logo-area img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-/* ========================================================= */
-/* 3. 검색 섹션 */
-/* ========================================================= */
-.search-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.search-section .search-select {
-  height: 40px;
-  padding: 0 10px;
-  margin-right: -1px; /* 검색 입력창과 겹치게 하여 연결된 느낌을 줌 */
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-  border-radius: 0; /* 통일성 유지 */
-  font-size: 14px;
-}
-
-.search-section input[type="text"] {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  width: 450px;
-  margin-right: 5px;
-  height: 40px;
-  box-sizing: border-box;
-}
-
-.search-btn {
-  height: 40px;
-  padding: 5px 20px;
-  background-color: #e57373;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-/* ========================================================= */
-/* 4. 카테고리 + 총 건수 + 글쓰기 */
-/* ========================================================= */
-.category-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.left-content {
-  display: flex;
-  align-items: flex-end;
-  padding-left: 20px;
-}
-
-.total-count {
-  font-size: 14px;
-  color: #666;
-  margin-right: 20px;
-}
-
-.category-list a {
-  text-decoration: none;
-  color: #333;
-  margin-left: 10px;
-  padding: 5px 10px;
-  font-size: 16px;
-}
-
-.category-list a:hover {
-  /* 마우스 오버 시 스타일 */
-  background-color: #f0f0f0;
-}
-
-.category-list a.active {
-  /* 강조 스타일 */
-  background-color: #007bff; /* 메인 색상 (파란색 계열) */
-  color: white; /* 글자색을 흰색으로 변경 */
-  border-color: #007bff; /* 테두리 색상도 변경 */
-  font-weight: bold;
-}
-
-.write-btn {
-  padding: 8px 15px;
-  background-color: #e57373;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* ========================================================= */
-/* 5. 공지 리스트 테이블 */
-/* ========================================================= */
-.notice-table {
-  width: 100%;
-  border-collapse: collapse;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
   margin-top: 10px;
 }
 
-.notice-table th,
-.notice-table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
+.notice-hero {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 0 10px;
+}
+
+.notice-hero h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.notice-top {
+  max-width: 1180px;
+  margin: 28px auto 0;
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-top: 60px;
+  
+}
+
+.notice-top h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  margin-bottom: 40px;
+}
+
+.notice-search--top {
+  max-width: 680px;
+  flex: 1 1 auto;
+}
+
+.notice-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+.notice-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e7e7e7;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* 상단 검색바는 배경/테두리/그림자 제거 */
+.notice-search.notice-search--top {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.notice-search .select-box {
+  position: relative;
+  min-width: 120px;
+}
+
+.notice-search select {
+  width: 100%;
+  padding: 10px 34px 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  font-size: 14px;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.notice-search .arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+}
+
+.notice-search input[type="text"] {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: #fafafa;
   font-size: 14px;
 }
 
-.notice-table th {
-  background-color: #f9f9f9;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+.notice-search input[type="text"]:focus,
+.notice-search select:focus {
+  outline: none;
+  border-color: #2b6de2;
+  background: #fff;
 }
 
-.notice-table td.title-col {
-  text-align: left;
-  padding-left: 20px;
-}
-
-.notice-table tbody tr:hover {
-  background-color: #fafafa;
+.icon-search-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  background: #2b6de2;
   cursor: pointer;
+  position: relative;
 }
 
-/* 뱃지 */
-.badge {
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 12px;
-  border-radius: 3px;
-  color: rgb(255, 255, 255);
-}
-.badge.공지 {
-  background-color: #ff7300;
-}
-.badge.이벤트 {
-  background-color: #003cff;
-}
-.badge.제휴 {
-  background-color: #65cc65;
-}
-.badge.징계 {
-  background-color: #dc3545;
+.icon-search-btn::before {
+  content: "🔍";
+  font-size: 16px;
+  color: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* ========================================================= */
-/* 6. 페이지네이션 */
-/* ========================================================= */
-.pagination {
-  text-align: center;
-  padding: 20px 0;
+.notice-categories {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 
-.pagination a {
-  padding: 5px 10px;
-  margin: 0 2px;
-  border: 1px solid #ccc;
+.notice-categories a {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid #dcdcdc;
+  background: #fafafa;
+  color: #333;
   text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 120px;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.notice-categories a:hover {
+  background: #eef2ff;
+  border-color: #cdd9ff;
+}
+
+.notice-categories a.active {
+  background: #2b6de2;
+  border-color: #2b6de2;
+  color: #fff;
+}
+
+.notice-summary {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+.notice-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.notice-bar .notice-summary {
+  flex: 0 0 auto;
+  text-align: left;
+}
+
+.notice-bar .notice-categories {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notice-card {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.notice-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.notice-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.notice-title {
+  font-weight: 700;
+  color: #222;
+  font-size: 16px;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 200px;
+}
+
+.notice-date {
+  font-size: 13px;
+  color: #444;
+  font-weight: 600;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  min-width: 78px;
+}
+
+.pill-공지,
+.pill-공지사항 {
+  background: linear-gradient(90deg, #ff8b5f, #ff6262);
+}
+.pill-이벤트 {
+  background: linear-gradient(90deg, #46c2ff, #2b6de2);
+}
+.pill-제휴,
+.pill-파트너 {
+  background: linear-gradient(90deg, #7ce79b, #1fad6b);
+}
+.pill-징계 {
+  background: linear-gradient(90deg, #6a6f7d, #414654);
+}
+.pill-default {
+  background: #888;
+}
+
+.notice-extra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
   color: #666;
 }
 
-.pagination a.current {
-  background-color: #f0f0f0;
-  color: #e57373;
-  border-color: #ccc;
-  font-weight: bold;
+.notice-writer {
+  font-weight: 600;
 }
 
-/* ========================================================= */
-/* 모바일 반응형 스타일 (max-width: 900px) 📢 최종 정렬 및 인풋 길이 수정 */
-/* ========================================================= */
+.notice-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-eye::before {
+  content: "👁";
+  font-size: 14px;
+}
+
+.notice-empty {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 14px;
+}
+
+.notice-pagination {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.notice-pagination .page-btn {
+  min-width: 52px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid #dcdcdc;
+  background: #f7f7f7;
+  text-align: center;
+  text-decoration: none;
+  color: #444;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.notice-pagination .page-btn:hover {
+  border-color: #2b6de2;
+  color: #2b6de2;
+  background: #eef2ff;
+}
+
+.notice-pagination .page-btn.active {
+  background: #2b6de2;
+  color: #fff;
+  border-color: #2b6de2;
+  box-shadow: 0 6px 16px rgba(43, 109, 226, 0.2);
+}
+
 @media (max-width: 900px) {
-  /* 1. 기본 설정: 컨테이너에서 패딩 제거 */
-  .container {
-    width: 100%;
-    padding: 0; /* ⬅️ 컨테이너의 좌우 패딩 제거 */
-    box-sizing: border-box;
+  .notice-page {
+    padding: 24px 16px 60px;
   }
-
-  /* 상단 섹션 조정: 좌우 정렬을 위해 padding 추가 */
-  .top-section {
-    height: 70px;
-    padding: 15px 10px; /* ⬅️ 좌우 10px 패딩 추가 */
-    margin-top: 10px;
-    border-radius: 10px; /* 둥근 모서리 유지 */
-  }
-  .page-title {
+  .notice-hero h1 {
     font-size: 28px;
-    left: 20px;
-    transform: translateY(-50%);
   }
-  .logo-area {
-    width: 150px;
-    right: 15px;
+  .notice-search {
+    flex-wrap: wrap;
   }
-
-  /* 2. 검색 섹션: 검색창 길게, 버튼 정렬 */
-  .search-section {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 10px;
-    border-top: none;
-    border-bottom: none;
-    padding: 10px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
+  .notice-search .select-box {
+    width: 45%;
+    min-width: 160px;
   }
-
-  .search-section .search-select {
-    height: 40px;
-    flex-shrink: 0; /* 너비가 내용에 맞춰 유지되도록 설정 */
-    font-size: 12px;
-    padding: 0 5px;
-    margin-right: -1px;
+  .notice-search input[type="text"] {
+    width: 100%;
   }
-
-  .search-section input[type="text"] {
-    flex-grow: 1; /* ⬅️ 최대한 길게 늘어남 */
-    height: 40px;
-    font-size: 14px;
-    margin-right: 5px;
-    width: auto;
-    border-radius: 0;
-    padding: 0 10px;
+  .notice-search .icon-search-btn {
+    width: 100%;
   }
-
-  .search-btn {
-    height: 40px;
-    width: 70px;
-    padding: 0;
-    font-size: 14px;
-    flex-shrink: 0;
-    border-radius: 0;
+  .notice-categories {
+    gap: 8px;
   }
-
-  /* 3. 카테고리 섹션: 글쓰기 버튼 정렬 및 스크롤 개선 */
-  .category-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: none;
-    padding-bottom: 0;
-    margin-bottom: 10px;
-    padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
+  .notice-card {
+    padding: 12px 14px;
   }
-
-  .left-content {
-    display: flex;
-    align-items: center;
-    padding-left: 0;
-    gap: 10px;
-
-    overflow-x: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    max-width: calc(100% - 100px);
-    white-space: nowrap;
-    padding-bottom: 0;
+  .notice-title {
+    font-size: 15px;
   }
-
-  .left-content::-webkit-scrollbar {
-    display: none;
-  }
-
-  .total-count {
-    font-size: 14px;
-    color: #666;
-    margin-right: 0;
-    flex-shrink: 0;
-  }
-
-  .category-list a {
-    flex-shrink: 0;
-    margin: 0;
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-
-  .write-btn {
-    width: 80px;
-    height: 40px;
-    flex-shrink: 0;
-    margin-bottom: 0;
-  }
-
-  /* 4. 공지 리스트 테이블 조정: 좌우 10px 패딩 적용 */
-  .notice-table-wrapper {
-    padding: 0 10px; /* ⬅️ 좌우 10px 패딩 적용 */
-  }
-  .notice-table {
-    font-size: 12px;
-    margin-top: 0;
-  }
-
-  .notice-table th,
-  .notice-table td {
-    padding: 8px 3px;
-  }
-
-  /* 테이블 열 표시/숨김 설정 (유지) */
-  .notice-table th:nth-child(1),
-  .notice-table td:nth-child(1) {
-    display: table-cell;
-    width: 30px;
-    min-width: 30px;
-  }
-  .notice-table th:nth-child(2),
-  .notice-table td:nth-child(2) {
-    display: table-cell;
-    width: 70px;
-    min-width: 70px;
-  }
-  .notice-table th:nth-child(4),
-  .notice-table td:nth-child(4) {
-    display: none;
-  }
-  .notice-table th:nth-child(5),
-  .notice-table td:nth-child(5) {
-    display: table-cell;
-    width: 50px;
-    min-width: 50px;
-  }
-  .notice-table th:nth-child(6),
-  .notice-table td:nth-child(6) {
-    display: table-cell;
-    width: 40px;
-    min-width: 40px;
-  }
-
-  /* 제목 줄바꿈 방지 (유지) */
-  .notice-table td.title-col {
-    max-width: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
-    padding-left: 10px;
-  }
-
-  /* 5. 페이지네이션: 좌우 10px 패딩 적용 */
-  .pagination {
-    padding-top: 15px;
-    padding: 15px 10px 20px 10px; /* ⬅️ 좌우 10px 패딩 적용 */
-  }
-  .pagination a {
-    padding: 3px 8px;
-    font-size: 12px;
-  }
-}
-
-/* 추가 스타일 (미디어 쿼리 밖) */
-.notice-table-wrapper {
-  overflow-x: auto;
-}
-.search-section input[type="text"],
-.search-btn {
-  border-radius: 0;
 }

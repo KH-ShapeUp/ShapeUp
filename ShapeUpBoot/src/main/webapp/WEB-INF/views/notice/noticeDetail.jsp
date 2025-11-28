@@ -8,48 +8,76 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>공지사항 상세</title>
-<link rel="stylesheet" href="/resources/css/notice/noticeDetail.css" />
+<link rel="stylesheet" href="<c:url value='/resources/css/notice/noticeDetail.css'/>" />
 </head>
 <body>
-	<header class="header-placeholder"></header>
+	<jsp:include page="/WEB-INF/views/include/head.jsp"/>
+	<jsp:include page="/WEB-INF/views/include/header.jsp"/>
 
-	<div class="container">
-		<div class="top-section">
-			<h1 class="page-title">공지사항</h1>
-			<div class="logo-area">
-				<img src="" alt="ShapeUp 로고" />
-			</div>
-		</div>
-
-		<div class="detail-section">
-			<div class="detail-header">
-				<div class="detail-meta">
-					<span class="badge ${notice.noticeCategory}">${notice.noticeCategory }</span> <span
-						class="detail-title">${notice.noticeTitle }</span>
+	<main class="notice-main">
+		<div class="notice-wrapper">
+			<div class="notice-top-view">
+				<div class="notice-top-row">
+					<div class="notice-pill ${notice.noticeCategory}">${notice.noticeCategory}</div>
+					<div class="notice-meta">
+						<span class="meta-date"><fmt:formatDate value="${notice.createdAt}" pattern="yyyy-MM-dd"/></span>
+						<span class="meta-view">조회 ${notice.viewCount}</span>
+					</div>
 				</div>
-				<div class="detail-info-right"> 
-                    <span class="detail-view-count">조회수: ${notice.viewCount}</span>
-                    <span class="detail-date">
-                        <fmt:formatDate value="${notice.createdAt }" pattern="yyyy-MM-dd"/>
-                    </span>
-                </div>
+				<h1 class="notice-title">${notice.noticeTitle}</h1>
 			</div>
 
-			<div class="detail-content">
-				<div class="detail-image-placeholder"></div>
-				<p>${notice.noticeContent }</p>
+			<div class="notice-banner notice-banner-${notice.noticeCategory}">
+				<div class="banner-label">${notice.noticeCategory}</div>
+				<div class="banner-icon">
+					<c:choose>
+						<c:when test="${notice.noticeCategory eq '이벤트'}">🎉</c:when>
+						<c:when test="${notice.noticeCategory eq '공지' || notice.noticeCategory eq '공지사항'}">📢</c:when>
+						<c:when test="${notice.noticeCategory eq '제휴' || notice.noticeCategory eq '파트너'}">🤝</c:when>
+						<c:when test="${notice.noticeCategory eq '징계'}">⚠️</c:when>
+						<c:otherwise>ℹ️</c:otherwise>
+					</c:choose>
+				</div>
 			</div>
 
-			<div class="detail-buttons">
+			<c:if test="${not empty notice.images}">
+				<div class="notice-hero-list">
+					<c:forEach var="image" items="${notice.images}">
+						<div class="notice-hero-image">
+							<img src="${image.imgPath}" alt="공지 이미지" />
+						</div>
+					</c:forEach>
+				</div>
+			</c:if>
+
+			<div class="notice-content">
+				${notice.noticeContent}
+			</div>
+
+			<div class="notice-actions">
+				<c:set var="prevNo" value="${empty prevNoticeNo ? param.prevNo : prevNoticeNo}" />
+				<c:set var="nextNo" value="${empty nextNoticeNo ? param.nextNo : nextNoticeNo}" />
 				<button class="btn-primary" onclick="location.href='/notice/list'">목록</button>
-				<div class="right-buttons">
-					<button class="btn-secondary" onclick="location.href='/notice/update?noticeNo=${noticeNo}'">수정</button>
-					<button class="btn-secondary" onclick="if(confirm('정말 삭제하시겠습니까?')) {location.href='notice/delete?noticeNo=${notice.noticeNo}'}">삭제</button>
-				</div>
+				<c:choose>
+					<c:when test="${not empty prevNo}">
+						<button class="btn-secondary" onclick="location.href='/notice/detail?noticeNo=${prevNo}'">이전</button>
+					</c:when>
+					<c:otherwise>
+						<button class="btn-secondary disabled" disabled>이전</button>
+					</c:otherwise>
+				</c:choose>
+				<c:choose>
+					<c:when test="${not empty nextNo}">
+						<button class="btn-secondary" onclick="location.href='/notice/detail?noticeNo=${nextNo}'">다음</button>
+					</c:when>
+					<c:otherwise>
+						<button class="btn-secondary disabled" disabled>다음</button>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
-	</div>
+	</main>
 
-	<footer class="footer-placeholder"></footer>
+	<jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 </body>
 </html>
