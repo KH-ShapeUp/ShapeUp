@@ -31,18 +31,18 @@ public class NoticeApiController {
     private static final DateTimeFormatter ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Path UPLOAD_ROOT = Paths.get(System.getProperty("user.dir"), "uploads", "notice");
 
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> list(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//        int total = noticeService.getTotalCount(null, null, null);
-//        List<Notice> items = noticeService.selectNoticeList(page, size);
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("total", total);
-//        body.put("items", items);
-//        return ResponseEntity.ok(body);
-//    }
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> list(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        int total = noticeService.getTotalCount(null, null, null);
+        List<Notice> items = noticeService.selectNoticeList(page, size, null, null, null);
+        Map<String, Object> body = new HashMap<>();
+        body.put("total", total);
+        body.put("items", items);
+        return ResponseEntity.ok(body);
+    }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Notice notice) {

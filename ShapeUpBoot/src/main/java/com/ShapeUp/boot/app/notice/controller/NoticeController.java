@@ -51,7 +51,7 @@ public class NoticeController {
 			model.addAttribute("currentPage", currentPage);
 			model.addAttribute("startNavi", startnavi);
 			model.addAttribute("endNavi", endNavi);
-//			model.addAttribute("nList", nList);
+			model.addAttribute("nList", nList);
 			model.addAttribute("category", category);
 			model.addAttribute("searchType", searchType);
 			model.addAttribute("searchKeyword", searchKeyword);
