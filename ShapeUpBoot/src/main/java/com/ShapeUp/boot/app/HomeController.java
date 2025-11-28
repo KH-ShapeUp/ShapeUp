@@ -64,11 +64,7 @@ public class HomeController {
 	}
 	
 	@GetMapping("/map")
-<<<<<<< HEAD
 	public String mapPage() {
-=======
-	public String mapPaeg() {
->>>>>>> refs/remotes/origin/taehyeok
 		return "map/map";
 	}
 }
