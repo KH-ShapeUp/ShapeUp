@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ShapeUp.boot.app.diet.dto.DietSaveRequest;
-import com.ShapeUp.boot.app.diet.dto.Item;
+import com.ShapeUp.boot.app.diet.dto.DietItem;
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
@@ -63,7 +63,7 @@ public class DietController {
 		
 		int userNo = 2; // TODO: 로그인 사용자 정보 연동
 		int inserted = 0;
-		for(Item item : request.getItems()) {
+		for(DietItem item : request.getItems()) {
 			DietVo diet = new DietVo();
 			diet.setUserNo(userNo);
 			diet.setDietDate(dietDate);

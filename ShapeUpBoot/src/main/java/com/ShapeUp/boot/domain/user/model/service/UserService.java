@@ -1,5 +1,6 @@
 package com.ShapeUp.boot.domain.user.model.service;
 
+import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
 public interface UserService {
@@ -54,4 +55,8 @@ public interface UserService {
     int updateNickname(int userNo, String nickname);
     
     public int updateSocialUserInfo(UserVO user);
+    
+    UserInterestVO selectUserInterest(int userNo);
+    
+    int updateUserInterest(int userNo, String interests, String times);
 }

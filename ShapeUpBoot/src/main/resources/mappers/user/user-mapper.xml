@@ -120,7 +120,26 @@
         AND USER_NAME = #{name}
         AND USER_EMAIL = #{email}
     </select>
-
+	
+	<select id="selectUserInterest" parameterType="int" resultType="UserInterestVO">
+	    SELECT 
+	        USER_INTEREST_NO AS interestNo,
+	        USER_NO AS userNo,
+	        INTEREST_ACTIVITY AS interestActivity,
+	        ACTIVE_TIME AS activityTime,
+	        ACTIVE_LOCATION AS activityLocation
+	    FROM USER_INTEREST
+	    WHERE USER_NO = #{userNo}
+	</select>
+	
+	<!-- 사용자 관심사 수정 -->
+	<update id="updateUserInterest">
+	    UPDATE USER_INTEREST
+	    SET INTEREST_ACTIVITY = #{interests},
+	        ACTIVE_TIME = #{times}
+	    WHERE USER_NO = #{userNo}
+	</update>
+	
     <!-- 비밀번호 변경 -->
     <update id="updatePassword">
         UPDATE USER_TBL
@@ -205,23 +224,23 @@
     
     <!-- 사용자 관심사 추가 -->
     <insert id="insertUserInterest">
-        INSERT INTO USER_INTEREST
-        (
-            USER_INTEREST_NO,
-            USER_NO,
-            INTEREST_ACTIVITY,
-            ACTIVE_TIME,
-            ACTIVE_LOCATION
-        )
-        VALUES
-        (
-            SEQ_USER_INTEREST.NEXTVAL,
-            #{userNo},
-            #{interests},
-            #{times},
-            #{addresses}
-        )
-    </insert>
+	    INSERT INTO USER_INTEREST
+	    (
+	        USER_INTEREST_NO,
+	        USER_NO,
+	        INTEREST_ACTIVITY,
+	        ACTIVE_TIME,
+	        ACTIVE_LOCATION
+	    )
+	    VALUES
+	    (
+	        SEQ_USER_INTEREST.NEXTVAL,
+	        #{userNo},
+	        #{interests},
+	        #{times},
+	        #{addresses}
+	    )
+	</insert>
 
     <!-- USER_NO로 회원 조회 -->
     <select id="selectUserByUserNo" resultMap="userResultMap">

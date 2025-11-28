@@ -7,6 +7,6 @@ import lombok.Data;
 public class DietSaveRequest {
    private String dietType;
    private String dietDate;
-   private List<Item> items;
+   private List<DietItem> items;
 }
 

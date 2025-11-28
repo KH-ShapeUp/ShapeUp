@@ -3,7 +3,7 @@ package com.ShapeUp.boot.app.diet.dto;
 import lombok.Data;
 
 @Data
-public class Item {
+public class DietItem {
    private String name;
    private String foodNames;
    private String foodCd;
