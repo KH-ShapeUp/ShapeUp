@@ -52,4 +52,6 @@ public interface UserService {
     int deleteUser(int userNo);
     
     int updateNickname(int userNo, String nickname);
+    
+    public int updateSocialUserInfo(UserVO user);
 }

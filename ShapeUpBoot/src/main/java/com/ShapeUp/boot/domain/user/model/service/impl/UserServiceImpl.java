@@ -162,4 +162,16 @@ public class UserServiceImpl implements UserService {
         log.info("🔄 Service - 닉네임 업데이트 - userNo: {}, nickname: {}", userNo, nickname);
         return userMapper.updateNickname(userNo, nickname);
     }
+    
+    @Override
+    public int updateSocialUserInfo(UserVO user) {
+        try {
+            userMapper.updateSocialUserInfo(user);
+            log.info("✅ UserService - 소셜 사용자 정보 업데이트 완료");
+            return 1;
+        } catch (Exception e) {
+            log.error("❌ UserService - 소셜 사용자 정보 업데이트 실패", e);
+            return 0;
+        }
+    }
 }

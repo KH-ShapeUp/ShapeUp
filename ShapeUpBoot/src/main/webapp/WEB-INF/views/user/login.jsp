@@ -87,9 +87,14 @@
                     </div>
 
                     <div class="social-login">
-                        <img src="../../resources/img/naver.png" class="naver">
-                        <img src="../../resources/img/kakao.png" class="kakao">
-                    </div>
+					    <a href="/oauth/kakao/login">
+					        <img src="../../resources/img/kakao.png" class="kakao">
+					    </a>
+					
+					    <a href="/oauth/naver/login">
+					        <img src="../../resources/img/naver.png" class="naver">
+					    </a>
+					</div>
                 </div>
             </div>
         </div>
