@@ -8,5 +8,6 @@
 </head>
 <body>
 	<h1>에러</h1>
+	${ errorMsg }
 </body>
 </html>
