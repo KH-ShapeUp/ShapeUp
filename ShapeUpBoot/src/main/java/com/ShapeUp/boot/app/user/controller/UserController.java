@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ShapeUp.boot.app.user.mail.MailService;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
+import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -709,14 +710,9 @@ public class UserController {
         return visible + "***@" + domain;
     }
     
- // UserController.java에 추가할 메서드들
-
     /* ================================
         마이페이지
     ================================ */
-    
-    
-    
     
     /**
      * 회원정보 수정 페이지
@@ -739,6 +735,49 @@ public class UserController {
         
         model.addAttribute("user", user);
         return "user/updateUserInfo";
+    }
+
+    /**
+     * 계정 관리 페이지 (회원 탈퇴)
+     */
+    @GetMapping("/user/accountManage")
+    public String accountManage(HttpSession session, Model model) {
+        Integer userNo = (Integer) session.getAttribute("userNo");
+        
+        if (userNo == null) {
+            return "redirect:/user/login";
+        }
+        
+        // 사용자 정보 조회
+        UserVO user = userService.selectUserByUserNo(userNo);
+        
+        if (user == null) {
+            session.invalidate();
+            return "redirect:/user/login";
+        }
+        
+        model.addAttribute("user", user);
+        return "user/accountManage";
+    }
+
+    /**
+     * 닉네임 변경
+     */
+    @PostMapping("/user/updateNickname")
+    @ResponseBody
+    public Map<String, Object> updateNickname(
+            @RequestParam("userNo") int userNo,
+            @RequestParam("nickname") String nickname) {
+
+        log.info("닉네임 수정 요청: userNo={}, nickname={}", userNo, nickname);
+
+        int result = userService.updateNickname(userNo, nickname);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", result > 0);
+        response.put("message", result > 0 ? "닉네임 변경 성공" : "닉네임 변경 실패");
+
+        return response;
     }
 
     /**
@@ -944,20 +983,79 @@ public class UserController {
         return response;
     }
     
-    @PostMapping("/user/updateNickname")
+    @GetMapping("/user/userInterest")
+    public String userInterest(HttpSession session, Model model) {
+        Integer userNo = (Integer) session.getAttribute("userNo");
+        
+        if (userNo == null) {
+            return "redirect:/user/login";
+        }
+        
+        // 사용자 정보 조회
+        UserVO user = userService.selectUserByUserNo(userNo);
+        
+        if (user == null) {
+            session.invalidate();
+            return "redirect:/user/login";
+        }
+        
+        // 기존 관심사 조회
+        UserInterestVO userInterest = userService.selectUserInterest(userNo);
+        
+        model.addAttribute("user", user);
+        model.addAttribute("userInterest", userInterest != null ? userInterest : new UserInterestVO());
+        
+        return "user/updateInterest";  // ⭐ 여기 수정!
+    }
+
+    /**
+     * 관심사 업데이트
+     */
+    @PostMapping("/user/updateInterest")
     @ResponseBody
-    public Map<String, Object> updateNickname(
-            @RequestParam("userNo") int userNo,
-            @RequestParam("nickname") String nickname) {
-
-        log.info("닉네임 수정 요청: userNo={}, nickname={}", userNo, nickname);
-
-        int result = userService.updateNickname(userNo, nickname);
-
+    public Map<String, Object> updateInterest(
+            @RequestParam String interests,
+            @RequestParam String times,
+            HttpSession session) {
+        
         Map<String, Object> response = new HashMap<>();
-        response.put("success", result > 0);
-        response.put("message", result > 0 ? "닉네임 변경 성공" : "닉네임 변경 실패");
-
+        
+        try {
+            Integer userNo = (Integer) session.getAttribute("userNo");
+            
+            if (userNo == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return response;
+            }
+            
+            // 기존 관심사 확인
+            UserInterestVO existingInterest = userService.selectUserInterest(userNo);
+            
+            int result;
+            if (existingInterest != null) {
+                // 업데이트
+                result = userService.updateUserInterest(userNo, interests, times);
+            } else {
+                // 새로 등록
+                result = userService.insertUserInterest(userNo, interests, times, "");
+            }
+            
+            if (result > 0) {
+                log.info("✅ 관심사 저장 성공 - userNo: {}", userNo);
+                response.put("success", true);
+                response.put("message", "관심사가 저장되었습니다.");
+            } else {
+                response.put("success", false);
+                response.put("message", "관심사 저장에 실패했습니다.");
+            }
+            
+        } catch (Exception e) {
+            log.error("❌ 관심사 저장 오류", e);
+            response.put("success", false);
+            response.put("message", "오류가 발생했습니다.");
+        }
+        
         return response;
     }
 }

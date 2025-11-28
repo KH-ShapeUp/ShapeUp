@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.ShapeUp.boot.domain.user.model.mapper.UserMapper;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
+import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -157,6 +158,7 @@ public class UserServiceImpl implements UserService {
         log.info("🗑️ Service - 회원 탈퇴 - userNo: {}", userNo);
         return userMapper.deleteUser(userNo);
     }
+    
     @Override
     public int updateNickname(int userNo, String nickname) {
         log.info("🔄 Service - 닉네임 업데이트 - userNo: {}, nickname: {}", userNo, nickname);
@@ -173,5 +175,22 @@ public class UserServiceImpl implements UserService {
             log.error("❌ UserService - 소셜 사용자 정보 업데이트 실패", e);
             return 0;
         }
+    }
+
+    // ================================
+    // ⭐ 관심사 관련 메서드 추가
+    // ================================
+    
+    @Override
+    public UserInterestVO selectUserInterest(int userNo) {
+        log.info("🔍 Service - 사용자 관심사 조회 - userNo: {}", userNo);
+        return userMapper.selectUserInterest(userNo);
+    }
+
+    @Override
+    public int updateUserInterest(int userNo, String interests, String times) {
+        log.info("✏️ Service - 사용자 관심사 수정 - userNo: {}, interests: {}, times: {}", 
+                 userNo, interests, times);
+        return userMapper.updateUserInterest(userNo, interests, times);
     }
 }

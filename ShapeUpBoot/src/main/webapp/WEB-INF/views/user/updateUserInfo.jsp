@@ -9,13 +9,14 @@
   <title>회원정보 수정 | ShapeUp</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/updateUserInfo.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/mypage.css">
 </head>
 <body>
 
   <div class="mypage-container">
     <!-- 헤더 -->
     <div class="page-header">
-      <h1>회원정보 수정</h1>
+      <h1>사용자 정보</h1>
       <p>회원님의 정보를 확인하고 수정할 수 있습니다</p>
     </div>
 
@@ -23,7 +24,22 @@
     <div class="content-area">
       <div id="messageBox" class="message"></div>
 
-      <!-- 기본 정보 (읽기 전용) -->
+      <!-- 탭 메뉴 -->
+      <div class="tab-menu">
+        <a href="${pageContext.request.contextPath}/user/updateUserInfo" class="tab-button active">
+          <span class="tab-icon">👤</span>사용자 정보
+        </a>
+        <a href="${pageContext.request.contextPath}/user/accountManage" class="tab-button">
+          <span class="tab-icon">⚙️</span>계정 관리
+        </a>
+        <a href="${pageContext.request.contextPath}/user/userInterest" class="tab-button">
+          <span class="tab-icon">⭐</span>관심사 설정
+        </a>
+      </div>
+
+      <!-- 사용자 정보 콘텐츠 -->
+      
+      <!-- 기본 정보 섹션 -->
       <div class="info-section">
         <h2 class="section-title">기본 정보</h2>
 
@@ -36,30 +52,28 @@
           <div class="info-label">이름</div>
           <div class="info-value readonly">${user.userName}</div>
         </div>
-		
-		<!-- 닉네임 (편집 가능) -->
-		<!-- 닉네임 -->
-		<div class="info-group">
-		  <div class="info-label">닉네임</div>
-		
-		  <!-- 현재 표시되는 닉네임 -->
-		  <div class="info-value" id="nicknameDisplay">${user.userNickname}</div>
-		
-		  <!-- 수정 폼 -->
-		  <div class="edit-form" id="nicknameEditForm">
-		    <input type="text" id="nicknameInput" value="${user.userNickname}" placeholder="닉네임을 입력하세요">
-		    <input type="hidden" id="userNo" value="${user.userNo}">
-		    <button class="btn btn-save" onclick="saveNickname()">저장</button>
-		    <button class="btn btn-cancel" onclick="cancelEdit('nickname')">취소</button>
-		  </div>
-		
-		  <!-- 수정 버튼 영역 -->
-		  <div class="info-actions" id="nicknameActions">
-		    <button class="btn btn-edit" onclick="editField('nickname')">수정</button>
-		  </div>
-		</div>
+        
+        <!-- 닉네임 (편집 가능) -->
+        <div class="info-group">
+          <div class="info-label">닉네임</div>
+        
+          <!-- 현재 표시되는 닉네임 -->
+          <div class="info-value" id="nicknameDisplay">${user.userNickname}</div>
+        
+          <!-- 수정 폼 -->
+          <div class="edit-form" id="nicknameEditForm">
+            <input type="text" id="nicknameInput" value="${user.userNickname}" placeholder="닉네임을 입력하세요">
+            <input type="hidden" id="userNo" value="${user.userNo}">
+            <button class="btn btn-save" onclick="saveNickname()">저장</button>
+            <button class="btn btn-cancel" onclick="cancelEdit('nickname')">취소</button>
+          </div>
+        
+          <!-- 수정 버튼 영역 -->
+          <div class="info-actions" id="nicknameActions">
+            <button class="btn btn-edit" onclick="editField('nickname')">수정</button>
+          </div>
+        </div>
 
-		
         <div class="info-group">
           <div class="info-label">생년월일</div>
           <div class="info-value readonly" id="birthDateDisplay"></div>
@@ -78,7 +92,9 @@
         </div>
       </div>
 
-      <!-- 수정 가능한 정보 -->
+      <hr class="section-divider">
+
+      <!-- 연락처 정보 섹션 -->
       <div class="info-section">
         <h2 class="section-title">연락처 정보</h2>
 
@@ -111,9 +127,11 @@
         </div>
       </div>
 
-      <!-- 비밀번호 변경 -->
+      <hr class="section-divider">
+
+      <!-- 보안 설정 섹션 -->
       <div class="info-section">
-        <h2 class="section-title">보안</h2>
+        <h2 class="section-title">보안 설정</h2>
         
         <div class="password-section">
           <div class="info-group" style="border-bottom: none;">
@@ -134,12 +152,14 @@
               <div class="form-group">
                 <label>새 비밀번호</label>
                 <input type="password" id="newPassword" placeholder="새 비밀번호를 입력하세요" required>
-                <small style="color: #666; font-size: 0.85rem;">8~20자, 영문+숫자+특수문자 조합</small>
+                <small style="color: #666; font-size: 0.85rem;">8~20자, 영문+숫자+특수문자(@$!%*#?&) 조합</small>
+                <span id="newPasswordValidMsg" class="validation-msg"></span>
               </div>
 
               <div class="form-group">
                 <label>새 비밀번호 확인</label>
                 <input type="password" id="confirmPassword" placeholder="새 비밀번호를 다시 입력하세요" required>
+                <span id="confirmPasswordMsg" class="validation-msg"></span>
               </div>
 
               <div class="password-buttons">
@@ -151,69 +171,154 @@
         </div>
       </div>
 
-      <!-- 회원탈퇴 -->
-      <div class="danger-zone">
-        <h3>⚠️ 회원 탈퇴</h3>
-        <p>회원 탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.</p>
-        <button class="btn btn-delete" onclick="deleteAccount()">회원 탈퇴</button>
-      </div>
     </div>
   </div>
+
+  <!-- 모달 -->
   <div id="customModal" class="modal-overlay" style="display:none;">
-  <div class="modal-box">
-    <p id="modalMessage">메시지 내용</p>
-    <button class="modal-btn" onclick="closeModal()">확인</button>
+    <div class="modal-box">
+      <p id="modalMessage">메시지 내용</p>
+      <button class="modal-btn" onclick="closeModal()">확인</button>
+    </div>
   </div>
-</div>
+
 </body>
+
 <script>
 const contextPath = '${pageContext.request.contextPath}';
 
-// 페이지 로드 시 생년월일 포맷팅
+// 페이지 로드 시 생년월일 포맷팅 및 비밀번호 검증 리스너 추가
 document.addEventListener('DOMContentLoaded', function() {
   formatBirthDate();
+  
+  // 새 비밀번호 입력 시 실시간 검증
+  const newPasswordInput = document.getElementById('newPassword');
+  const confirmPasswordInput = document.getElementById('confirmPassword');
+  
+  if (newPasswordInput) {
+    newPasswordInput.addEventListener('input', function() {
+      validateNewPassword();
+      // 비밀번호 확인란에 값이 있으면 일치 여부도 체크
+      if (confirmPasswordInput.value.length > 0) {
+        checkPasswordMatch();
+      }
+    });
+  }
+  
+  if (confirmPasswordInput) {
+    confirmPasswordInput.addEventListener('input', function() {
+      checkPasswordMatch();
+    });
+  }
 });
 
+// 새 비밀번호 유효성 검사
+function validateNewPassword() {
+  const newPassword = document.getElementById('newPassword').value;
+  const newPasswordValidMsg = document.getElementById('newPasswordValidMsg');
+  const currentPassword = document.getElementById('currentPassword').value;
+  
+  if (newPassword.length === 0) {
+    newPasswordValidMsg.textContent = '';
+    window.isNewPasswordValid = false;
+    return;
+  }
+  
+  const pwPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
+  
+  if (!pwPattern.test(newPassword)) {
+    let errorMsg = '❌ ';
+    
+    if (newPassword.length < 8) {
+      errorMsg += '8자 이상 입력해주세요. ';
+    } else if (newPassword.length > 20) {
+      errorMsg += '20자 이하로 입력해주세요. ';
+    }
+    if (!/[A-Za-z]/.test(newPassword)) {
+      errorMsg += '영문 포함 필수. ';
+    }
+    if (!/\d/.test(newPassword)) {
+      errorMsg += '숫자 포함 필수. ';
+    }
+    if (!/[@$!%*#?&]/.test(newPassword)) {
+      errorMsg += '특수문자(@$!%*#?&) 포함 필수. ';
+    }
+    
+    newPasswordValidMsg.textContent = errorMsg;
+    newPasswordValidMsg.style.color = 'red';
+    window.isNewPasswordValid = false;
+  } else if (currentPassword && newPassword === currentPassword) {
+    newPasswordValidMsg.textContent = '❌ 현재 비밀번호와 동일합니다.';
+    newPasswordValidMsg.style.color = 'red';
+    window.isNewPasswordValid = false;
+  } else {
+    newPasswordValidMsg.textContent = '✅ 사용 가능한 비밀번호입니다.';
+    newPasswordValidMsg.style.color = 'green';
+    window.isNewPasswordValid = true;
+  }
+}
+
+// 비밀번호 확인 일치 여부 검사
+function checkPasswordMatch() {
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  const confirmPasswordMsg = document.getElementById('confirmPasswordMsg');
+  
+  if (confirmPassword.length === 0) {
+    confirmPasswordMsg.textContent = '';
+    window.isPasswordMatched = false;
+    return;
+  }
+  
+  if (newPassword === confirmPassword) {
+    confirmPasswordMsg.textContent = '✅ 비밀번호가 일치합니다.';
+    confirmPasswordMsg.style.color = 'green';
+    window.isPasswordMatched = true;
+  } else {
+    confirmPasswordMsg.textContent = '❌ 비밀번호가 일치하지 않습니다.';
+    confirmPasswordMsg.style.color = 'red';
+    window.isPasswordMatched = false;
+  }
+}
 
 function saveNickname() {
-	  const nickname = document.getElementById('nicknameInput').value.trim();
-	  const userNo = document.getElementById('userNo').value;
+  const nickname = document.getElementById('nicknameInput').value.trim();
+  const userNo = document.getElementById('userNo').value;
 
-	  if (!nickname) {
-	    showModal('닉네임을 입력해주세요.');
-	    return;
-	  }
+  if (!nickname) {
+    showModal('닉네임을 입력해주세요.');
+    return;
+  }
 
-	  if (nickname.length < 2 || nickname.length > 12) {
-	    showModal('닉네임은 2~12자만 가능합니다.');
-	    return;
-	  }
+  if (nickname.length < 2 || nickname.length > 12) {
+    showModal('닉네임은 2~12자만 가능합니다.');
+    return;
+  }
 
-	  fetch(contextPath + '/user/updateNickname', {
-	    method: 'POST',
-	    headers: {
-	      'Content-Type': 'application/x-www-form-urlencoded'
-	    },
-	    body:
-	      'userNo=' + encodeURIComponent(userNo) +
-	      '&nickname=' + encodeURIComponent(nickname)
-	  })
-	    .then(res => res.json())
-	    .then(data => {
-	      if (data.success) {
-	        document.getElementById('nicknameDisplay').textContent = nickname;
-	        cancelEdit('nickname');
-	        showModal('닉네임이 변경되었습니다.', 'success');
-	      } else {
-	        showModal(data.message || '닉네임 변경에 실패했습니다.');
-	      }
-	    })
-	    .catch(err => {
-	      console.error('닉네임 변경 오류:', err);
-	      showModal('오류가 발생했습니다. 다시 시도해주세요.');
-	    });
-	}
-
+  fetch(contextPath + '/user/updateNickname', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body:
+      'userNo=' + encodeURIComponent(userNo) +
+      '&nickname=' + encodeURIComponent(nickname)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('nicknameDisplay').textContent = nickname;
+        cancelEdit('nickname');
+        showModal('닉네임이 변경되었습니다.', 'success');
+      } else {
+        showModal(data.message || '닉네임 변경에 실패했습니다.');
+      }
+    })
+    .catch(err => {
+      console.error('닉네임 변경 오류:', err);
+      showModal('오류가 발생했습니다. 다시 시도해주세요.');
+    });
+}
 
 // 생년월일 포맷팅 함수
 function formatBirthDate() {
@@ -352,8 +457,12 @@ function togglePasswordForm() {
   if (form.classList.contains('active')) {
     form.classList.remove('active');
     btn.textContent = '변경';
-    // 입력 필드 초기화
+    // 입력 필드 및 검증 메시지 초기화
     document.getElementById('changePasswordForm').reset();
+    document.getElementById('newPasswordValidMsg').textContent = '';
+    document.getElementById('confirmPasswordMsg').textContent = '';
+    window.isNewPasswordValid = false;
+    window.isPasswordMatched = false;
   } else {
     form.classList.add('active');
     btn.textContent = '취소';
@@ -367,18 +476,18 @@ function changePassword() {
   const confirmPw = document.getElementById('confirmPassword').value;
   
   if (!currentPw || !newPw || !confirmPw) {
-    alert('모든 필드를 입력해주세요.');
+    showModal('모든 필드를 입력해주세요.');
     return;
   }
   
   const pwPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
   if (!pwPattern.test(newPw)) {
-    alert('비밀번호는 8~20자, 영문+숫자+특수문자 조합이어야 합니다.');
+    showModal('비밀번호는 8~20자, 영문+숫자+특수문자 조합이어야 합니다.');
     return;
   }
   
   if (newPw !== confirmPw) {
-    alert('새 비밀번호가 일치하지 않습니다.');
+    showModal('새 비밀번호가 일치하지 않습니다.');
     return;
   }
 
@@ -398,65 +507,26 @@ function changePassword() {
   .then(res => res.json())
   .then(data => {
     if (data.success) {
-
       showModal('비밀번호가 성공적으로 변경되었습니다.');
-
       togglePasswordForm();
       showMessage('비밀번호가 변경되었습니다.', 'success');
-      
     } else {
-      alert(data.message || '비밀번호 변경에 실패했습니다.');
+      showModal(data.message || '비밀번호 변경에 실패했습니다.');
     }
   })
   .catch(err => {
     console.error('비밀번호 변경 오류:', err);
-    alert('오류가 발생했습니다. 다시 시도해주세요.');
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
   });
 }
 
 function showModal(message) {
-	  document.getElementById('modalMessage').textContent = message;
-	  document.getElementById('customModal').style.display = 'flex';
-	}
+  document.getElementById('modalMessage').textContent = message;
+  document.getElementById('customModal').style.display = 'flex';
+}
 
-	// 🔥 모달 닫기
-	function closeModal() {
-	  document.getElementById('customModal').style.display = 'none';
-	}
-
-// 회원 탈퇴
-function deleteAccount() {
-  if (!confirm('정말로 회원 탈퇴를 하시겠습니까?\n탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.')) {
-    return;
-  }
-  
-  const password = prompt('비밀번호를 입력하여 본인 확인을 해주세요:');
-  
-  if (!password) {
-    return;
-  }
-  
-  // 서버에 회원 탈퇴 요청
-  fetch(contextPath + '/user/deleteAccount', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: 'password=' + encodeURIComponent(password)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      alert('회원 탈퇴가 완료되었습니다.');
-      window.location.href = contextPath + '/';
-    } else {
-      alert(data.message || '회원 탈퇴에 실패했습니다.');
-    }
-  })
-  .catch(err => {
-    console.error('회원 탈퇴 오류:', err);
-    alert('오류가 발생했습니다. 다시 시도해주세요.');
-  });
+function closeModal() {
+  document.getElementById('customModal').style.display = 'none';
 }
 </script>
 

@@ -11,7 +11,6 @@
 </head>
 <body>
 <main class="signup-container">
-
   <section class="right-panel">
     <a href ="/">
       <img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="Logo" width="180px">
@@ -93,7 +92,7 @@
             <input type="password" name="password" id="passwordInput" required>
             <p class="hint-text">8자 이상, 영문/숫자/특수문자 조합<br>
             사용 가능한 특수문자: <strong>@ $ ! % * # ? &</strong></p>
-            <span id="passwordSpecialMsg" class="validation-msg"></span>
+            <span id="passwordValidMsg" class="validation-msg"></span>
             <div class="password-strength" id="passwordStrength">
               <div class="strength-label">강도: <span id="strengthText">-</span></div>
               <div class="strength-bar">
@@ -104,7 +103,7 @@
           <div class="form-group" id="password2Group">
             <label>비밀번호 확인</label>
             <input type="password" name="password2" id="password2Input" required>
-            <span id="passwordMsg" class="validation-msg"></span>
+            <span id="passwordMatchMsg" class="validation-msg"></span>
           </div>
         </c:if>
 
@@ -180,6 +179,13 @@
 const contextPath = '<%=request.getContextPath()%>';
 const isSocialLogin = ${isSocialLogin != null ? isSocialLogin : false};
 
+// ✅ 닉네임 입력값 변경 시 중복확인 초기화
+document.getElementById('nicknameInput').addEventListener('input', function() {
+  window.isNicknameChecked = false;
+  window.isNicknameAvailable = false;
+  document.getElementById('nicknameMsg').textContent = '';
+});
+
 // 닉네임 중복 확인
 function checkNickname() {
   const nickname = document.getElementById('nicknameInput').value.trim();
@@ -208,6 +214,18 @@ function checkNickname() {
       alert('닉네임 확인 중 오류가 발생했습니다.');
       console.error(err);
     });
+}
+
+// ✅ 아이디 입력값 변경 시 중복확인 초기화 (일반 회원가입만)
+if (!isSocialLogin) {
+  const useridInput = document.getElementById('useridInput');
+  if (useridInput) {
+    useridInput.addEventListener('input', function() {
+      window.isUserIdChecked = false;
+      window.isUserIdAvailable = false;
+      document.getElementById('useridMsg').textContent = '';
+    });
+  }
 }
 
 // 아이디 중복 확인 (일반 회원가입만)
@@ -240,6 +258,82 @@ function checkUserId() {
     });
 }
 
+// ✅ 비밀번호 유효성 검사 (일반 회원가입만)
+if (!isSocialLogin) {
+  const passwordInput = document.getElementById('passwordInput');
+  const password2Input = document.getElementById('password2Input');
+  const passwordValidMsg = document.getElementById('passwordValidMsg');
+  const passwordMatchMsg = document.getElementById('passwordMatchMsg');
+  
+  if (passwordInput) {
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+      
+      if (password.length === 0) {
+        passwordValidMsg.textContent = '';
+        return;
+      }
+      
+      if (!passwordPattern.test(password)) {
+        let errorMsg = '❌ ';
+        
+        if (password.length < 8) {
+          errorMsg += '8자 이상 입력해주세요. ';
+        }
+        if (!/[A-Za-z]/.test(password)) {
+          errorMsg += '영문 포함 필수. ';
+        }
+        if (!/\d/.test(password)) {
+          errorMsg += '숫자 포함 필수. ';
+        }
+        if (!/[@$!%*#?&]/.test(password)) {
+          errorMsg += '특수문자(@$!%*#?&) 포함 필수. ';
+        }
+        
+        passwordValidMsg.textContent = errorMsg;
+        passwordValidMsg.style.color = 'red';
+        window.isPasswordValid = false;
+      } else {
+        passwordValidMsg.textContent = '✅ 사용 가능한 비밀번호입니다.';
+        passwordValidMsg.style.color = 'green';
+        window.isPasswordValid = true;
+      }
+      
+      // 비밀번호 확인란이 입력되어 있으면 일치 여부도 체크
+      if (password2Input.value.length > 0) {
+        checkPasswordMatch();
+      }
+    });
+  }
+  
+  if (password2Input) {
+    password2Input.addEventListener('input', function() {
+      checkPasswordMatch();
+    });
+  }
+  
+  function checkPasswordMatch() {
+    const password = passwordInput.value;
+    const password2 = password2Input.value;
+    
+    if (password2.length === 0) {
+      passwordMatchMsg.textContent = '';
+      return;
+    }
+    
+    if (password === password2) {
+      passwordMatchMsg.textContent = '✅ 비밀번호가 일치합니다.';
+      passwordMatchMsg.style.color = 'green';
+      window.isPasswordMatched = true;
+    } else {
+      passwordMatchMsg.textContent = '❌ 비밀번호가 일치하지 않습니다.';
+      passwordMatchMsg.style.color = 'red';
+      window.isPasswordMatched = false;
+    }
+  }
+}
+
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
   if(confirm('회원가입을 취소하시겠습니까?')) {
@@ -270,16 +364,17 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
 
     const password = document.getElementById('passwordInput').value;
     const password2 = document.getElementById('password2Input').value;
-    if (password !== password2) {
-      e.preventDefault();
-      alert('비밀번호가 일치하지 않습니다.');
-      return false;
-    }
-
+    
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     if (!passwordPattern.test(password)) {
       e.preventDefault();
       alert('비밀번호는 8자 이상, 영문/숫자/특수문자를 모두 포함해야 합니다.');
+      return false;
+    }
+    
+    if (password !== password2) {
+      e.preventDefault();
+      alert('비밀번호가 일치하지 않습니다.');
       return false;
     }
     
