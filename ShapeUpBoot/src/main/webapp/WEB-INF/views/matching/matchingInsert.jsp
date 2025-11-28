@@ -39,8 +39,8 @@
                             </div>
                             <div class="matching-category-list">
                             <c:forEach var="aList" items="${aList}">
-                            	<input type="hidden" name="activityId" id="activityId" value="${aList.activityId }">
-                                <button class="filter-btn" value="${aList.activityName}">${aList.activityName}</button>                      
+                                <!--<input type="hidden" class="activity-id" value="${aList.activityId}">-->
+                                <button class="filter-btn" value="${aList.activityName}" data-id="${aList.activityId}">${aList.activityName}</button>                      
                             </c:forEach>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                     <div class="matching-level-wrapper">
                         <p class="form-title">매칭 난이도</p>
                         <div class="level-wrapper">
-
+                            <div class="selection-bg"></div>
                             <label for="matchingLevel_1">
                                 <span>초급</span>
                                 <input type="radio" name="matchingLevel" id="matchingLevel_1" value="1" checked>
@@ -176,7 +176,7 @@
             });
         });
 
-         /* 매칭 지역 리스트 버튼 클릭시 드롭다운 닫기 */
+        /* 매칭 지역 리스트 버튼 클릭시 드롭다운 닫기 */
         document.querySelectorAll(".location-filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 locationFilterBox.classList.add("hidden");
@@ -190,7 +190,7 @@
         const categoryHeader = document.querySelector("#CategoryHeader");
         const categorySpan = document.querySelector("#CategoryHeader span");
         const categoryFilterBox = categoryHeader.nextElementSibling;
- 
+
         categoryHeader.addEventListener("click", () => {
             categoryFilterBox.classList.toggle("hidden");
             categoryHeader.classList.toggle("active");
@@ -198,14 +198,17 @@
 
         let categoryBtn = ""; // 카테고리 저장 변수
 
-        document.querySelectorAll("#matching-btn-wrapper").forEach(btn => {
-            btn.addEventListener("click", () => {
-                categoryBtn = btn.value;
+        document.addEventListener("click", (e) => {
+            const btn = e.target.closest(".filter-btn");
+
+            if(btn) {
+                categoryBtn = btn.dataset.id;
                 categorySpan.innerText = btn.innerText;
                 categoryFilterBox.classList.add("hidden");
                 categoryHeader.classList.remove("active");
-            });
+            }
         });
+
         /* 매칭 카테고리 리스트 버튼 클릭시 드롭다운 닫기 */
         document.querySelectorAll(".matching-category-list .filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -260,7 +263,7 @@
                     categoryList.innerHTML = "<p style='text-align : center; padding:20px; font-size:.9rem; font-weight:500; color:#666;'>해당 검색 결과가 없습니다.</p>";
                     return;
                 }
-       
+    
                 result.forEach(aList => {
                     categoryList.innerHTML += `
                         <button type="button" 
@@ -281,13 +284,13 @@
         let categorySelect = " ";
         document.querySelectorAll(".filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
-               categorySelect = btn.value;
-               const searchInput = document.querySelector("#CategoryHeader span");
+            categorySelect = btn.value;
+            const searchInput = document.querySelector("#CategoryHeader span");
                 searchInput.innerText = categorySelect;
             })
         })
 
-        
+            
         /* ============================== */
         /*         매칭 게시글 삽입       */
         /* ============================== */
@@ -341,7 +344,7 @@
                 matchingDate : document.querySelector("#matchingDay").value,
                 matchingTime : document.querySelector("#matchingTime").value,
                 matchingLocation : locationBtn,
-                activityId : document.querySelector("#activityId").value,
+                activityId : categoryBtn,
                 partnerType : document.querySelector("#partnerType").value,
                 matchingUserCount : document.querySelector("#userCount").value,
             }
@@ -417,6 +420,7 @@
                 });
             });
         };
+        
     </script>
 </body>
 </html>

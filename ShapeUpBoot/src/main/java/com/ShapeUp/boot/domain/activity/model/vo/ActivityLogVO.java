@@ -1,25 +1,21 @@
 package com.ShapeUp.boot.domain.activity.model.vo;
 
-import java.sql.Timestamp;
+import jakarta.annotation.security.DenyAll;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivityLogVO {
-    private Long logId;
-    private Integer userNo;
-    private String activityId;
-    private Integer durationMin;
-    private Integer calories;
-    private String weightLevel;
-    private String intensityLevel;
-    private String sourceType;
-    private Timestamp actionAt;
-    private Timestamp createdAt;
+   private int logNo;
+   private int userNo;
+   private int activityId;
+   private int durationMin;
+   private double calories;
+   private int actionAt;
+   private String sourceType;
+   private int weightLevel;
+   private int intensityLevel;
 }

@@ -94,6 +94,7 @@
     margin-top: 10px;
     z-index: 9999;
     overflow-y: auto;
+    animation: fadeDown 0.25s ease;
 }
 
 /* 필터 종류 사라지는 클래스 */
@@ -133,6 +134,17 @@
     font-weight: 600;
 }
 
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* 매칭 게시판 */
 .matching-wrapper {
     display: flex;
@@ -169,7 +181,7 @@
 
 /* 매칭 게시판 "매칭게시판" 커스텀 */
 .matching-top-left p {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 600;
 }
 

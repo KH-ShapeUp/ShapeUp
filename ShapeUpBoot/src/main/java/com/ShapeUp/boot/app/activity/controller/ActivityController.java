@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ShapeUp.boot.app.activity.controller.dto.ActivityItem;
-import com.ShapeUp.boot.app.activity.controller.dto.ActivityInsertDto;
+
+import com.ShapeUp.boot.app.activity.dto.ActivityItem;
+import com.ShapeUp.boot.app.activity.dto.ActivtiyInsertDto;
 import com.ShapeUp.boot.domain.activity.model.service.ActivityService;
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityLogVO;
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
@@ -54,45 +55,64 @@ public class ActivityController {
     
     @PostMapping("/insert")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> insertActivities(
-            @RequestBody ActivityInsertDto items, 
-            HttpSession session) {
-        
-        int userNo = (int) session.getAttribute("userNo");
+
+    public ResponseEntity<Map<String, Object>> insertActivities(@RequestBody ActivtiyInsertDto items, HttpSession session) {
+    	int userNo = (int) session.getAttribute("userNo");
         log.info("Received activity insert payload: {}", items);
         
         if (items == null || items.getItems() == null || items.getItems().isEmpty()) {
             return ResponseEntity.badRequest()
                 .body(Map.of("success", false, "message", "NO_ITEMS"));
         }
-        
-        String actionAt = sanitizeDate(items.getActionAt());
-        Timestamp actionAtTs = convertToTimestamp(actionAt);
 
-        int inserted = 0;
+    	//String actionAt = sanitizeDate(items.getActionAt());
+//    	Timestamp actionAtTs = convertToTimestamp(actionAt);
+    	
+    	int inserted = 0;
         for(ActivityItem aItem : items.getItems()) {
-            ActivityLogVO activityLog = new ActivityLogVO();
-            activityLog.setUserNo(userNo);
-            activityLog.setActivityId(aItem.getActivityId());
-            activityLog.setDurationMin(aItem.getDurationMin());
-            activityLog.setCalories(aItem.getCalories());
-            activityLog.setWeightLevel(aItem.getWeightLevel());
-            activityLog.setIntensityLevel(aItem.getIntensityFactor());
-            activityLog.setSourceType("MANUAL");
-            activityLog.setActionAt(actionAtTs);
-
-            int result = aService.insertActivities(activityLog);
-            inserted += result;
-            log.info("Inserted activity log: {}", activityLog);
+        	ActivityLogVO log = new ActivityLogVO();
+            log.setUserNo(userNo);
+            log.setActivityId(aItem.getActivityId());
+            log.setDurationMin(aItem.getDurationMin());
+            log.setCalories(aItem.getCalories());
+            log.setWeightLevel(aItem.getWeightLevel());
+            log.setIntensityLevel(aItem.getIntensityFactor());
+            log.setSourceType("MANUAL");
+            
+            inserted += aService.insertActivities(log);
+            
+            System.out.println(log);
         }
-        
-        log.info("Total {} activities inserted", inserted);
-        return ResponseEntity.ok(Map.of(
-            "success", true, 
-            "inserted", inserted
-        ));
+        System.out.println(inserted);
+        return ResponseEntity.ok(Map.of("success", true));
     }
     
+
+
+        //int inserted = 0;
+//        for(ActivityItem aItem : items.getItems()) {
+//            ActivityLogVO activityLog = new ActivityLogVO();
+//            activityLog.setUserNo(userNo);
+//            activityLog.setActivityId(aItem.getActivityId());
+//            activityLog.setDurationMin(aItem.getDurationMin());
+//            activityLog.setCalories(aItem.getCalories());
+//            activityLog.setWeightLevel(aItem.getWeightLevel());
+//            activityLog.setIntensityLevel(aItem.getIntensityFactor());
+//            activityLog.setSourceType("MANUAL");
+//            activityLog.setActionAt(actionAtTs);
+//
+//            int result = aService.insertActivities(activityLog);
+//            inserted += result;
+//            log.info("Inserted activity log: {}", activityLog);
+//        }
+        
+//        log.info("Total {} activities inserted", inserted);
+//        return ResponseEntity.ok(Map.of(
+//            "success", true, 
+//            "inserted", inserted
+//        ));
+//    }
+//    
     private Timestamp convertToTimestamp(String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
@@ -122,5 +142,4 @@ public class ActivityController {
             return LocalDate.now().toString();
         }
     }
-
 }

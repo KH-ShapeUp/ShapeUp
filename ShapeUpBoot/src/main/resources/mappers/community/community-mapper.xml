@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.communityMapper">
+	<!-- 커뮤니티 게시글 삽입 -->
+	<insert id="communityInsert">
+	    <selectKey keyProperty="communityNo" resultType="int" order="BEFORE">
+	        SELECT SEQ_COMMUNITY_NO.NEXTVAL FROM DUAL
+	    </selectKey>
+	
+	    INSERT INTO COMMUNITY_TBL (
+	        COMMUNITY_NO, 
+	        COMMUNITY_TITLE, 
+	        COMMUNITY_CONTENT, 
+	        USER_NO,
+	        CREATED_AT,
+	        UPDATED_AT,
+	        VIEW_COUNT,
+	        COMMUNITY_TYPE,
+	        COMMUNITY_STATUS
+	    ) VALUES (
+	        #{communityNo},
+	        #{communityTitle}, 
+	        #{communityContent}, 
+	        #{userNo},
+	        DEFAULT,
+	        NULL,
+	        0,
+	        #{communityType},
+	        DEFAULT,
+	    )
+	</insert>
+	<!-- 커뮤니티 이미지 삽입 -->
+	<insert id="insertCommunityImages" parameterType="java.util.List">
+        INSERT INTO COMMUNITY_IMG_TBL (
+            IMG_NO,
+            IMG_PATH,
+            IMG_RENAME,
+            IMG_ORIGINAL_NAME,
+            IMG_MAIN,
+            COMMUNITY_NO
+        )
+        SELECT SEQ_IMG_NO.NEXTVAL, A.* FROM (
+            <foreach collection="list" item="img" separator="UNION ALL">
+                SELECT 
+                    #{img.imgPath} as IMG_PATH,
+                    #{img.imgRename} as IMG_RENAME,
+                    #{img.imgOriginalName} as IMG_ORIGINAL_NAME,
+                    'N' as IMG_MAIN ,
+                    #{img.communityNo} as COMMUNITY_NO
+                FROM DUAL
+            </foreach>
+        ) A
+    </insert>
+    <!-- 커뮤니티 공지 사항 -->
+    <select id="getNoticeList">
+    	SELECT * FROM (
+    		SELECT * FROM NOTICE_TBL WHERE NOTICE_CATEGORY = '공지' ORDER BY CREATED_AT DESC
+    	) WHERE ROWNUM <![CDATA[ <= ]]> 2
+    </select>
+    
+    <select id="getCommunityList">
+    	SELECT 
+		    C.COMMUNITY_NO,
+		    C.COMMUNITY_TITLE,
+		    C.COMMUNITY_TYPE,
+		    C.CREATED_AT,
+		    C.COMMUNITY_STATUS,
+		    C.VIEW_COUNT,
+		    C.UPDATED_AT,
+		    U.USER_NICKNAME AS userNickName,
+		    COUNT(B.LIKE_NO) AS LIKE_COUNT
+		FROM COMMUNITY_TBL C
+		LEFT JOIN USER_TBL U 
+		    ON C.USER_NO = U.USER_NO
+		LEFT JOIN COMMUNITY_BOARD_LIKE B 
+		    ON C.COMMUNITY_NO = B.COMMUNITY_NO
+		WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		GROUP BY 
+		    C.COMMUNITY_NO,
+		    C.COMMUNITY_TITLE,
+		    C.COMMUNITY_TYPE,
+		    C.CREATED_AT,
+		    C.COMMUNITY_STATUS,
+		    C.VIEW_COUNT,
+		    C.UPDATED_AT,
+		    U.USER_NICKNAME
+    </select>
+    <select id="getTotalCount">
+    	SELECT COUNT(*) FROM COMMUNITY_TBL WHERE COMMUNITY_STATUS = 'ACTIVE'
+    </select>
+    
+    <update id="viewCount">
+    	UPDATE COMMUNITY_TBL SET VIEW_COUNT = VIEW_COUNT + 1 WHERE COMMUNITY_NO = #{boardNo}
+    </update>
+    
+    <select id="getCommunityDetail">
+    	SELECT 
+		    C.COMMUNITY_NO,
+		    C.COMMUNITY_TITLE,
+		    C.COMMUNITY_TYPE,
+		    C.COMMUNITY_CONTENT,
+		    C.CREATED_AT,
+		    C.COMMUNITY_STATUS,
+		    C.VIEW_COUNT,
+		    C.UPDATED_AT,
+		    C.USER_NO,
+		    U.USER_NICKNAME AS userNickName,
+		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE WHERE COMMUNITY_NO = #{boardNo}) AS LIKE_COUNT
+		FROM COMMUNITY_TBL C
+		JOIN USER_TBL U 
+		    ON C.USER_NO = U.USER_NO
+	    WHERE C.COMMUNITY_NO = #{boardNo} AND 
+		C.COMMUNITY_STATUS = 'ACTIVE'
+    </select>
+   <!-- 좋아요 체크 -->
+	<select id="checkLike">
+    SELECT COUNT(*) 
+      FROM COMMUNITY_BOARD_LIKE
+     WHERE COMMUNITY_NO = #{communityNo}
+       AND USER_NO = #{userNo}
+	</select>
+	<!-- 좋아요 삽입 -->
+	<insert id="insertLike">
+	    INSERT INTO COMMUNITY_BOARD_LIKE (
+	        LIKE_NO,
+	        COMMUNITY_NO,
+	        USER_NO,
+	        LIKE_AT
+	    ) VALUES (
+	        SEQ_LIKE_NO.NEXTVAL, #{communityNo},
+	        #{userNo},
+	        DEFAULT
+	    )
+	</insert>
+	<!-- 좋아요 삭제 -->
+	<delete id="deleteLike">
+	    DELETE FROM COMMUNITY_BOARD_LIKE
+	     WHERE COMMUNITY_NO = #{communityNo}
+	       AND USER_NO = #{userNo}
+	</delete>
+	<!-- 좋아요 카운트 -->
+	<select id="countLike">
+	    SELECT COUNT(*) 
+	      FROM COMMUNITY_BOARD_LIKE
+	     WHERE COMMUNITY_NO = #{communityNo}
+	</select>
+	
+	<!-- 커뮤니티 삭제 -->
+	<update id="communityDelete">
+		UPDATE COMMUNITY_TBL SET COMMUNITY_STATUS = 'DELETE' WHERE COMMUNITY_NO = #{communityNo}
+	</update>
+	
+	<!-- 커뮤니티 수정 -->
+	<select id="communityModify">
+		SELECT 
+		    C.COMMUNITY_NO,
+		    C.COMMUNITY_TITLE,
+		    C.COMMUNITY_TYPE,
+		    C.COMMUNITY_CONTENT,
+		    C.CREATED_AT,
+		    C.COMMUNITY_STATUS,
+		    C.VIEW_COUNT,
+		    C.UPDATED_AT,
+		    C.USER_NO,
+		    U.USER_NICKNAME AS userNickName
+		FROM COMMUNITY_TBL C
+		JOIN USER_TBL U 
+		    ON C.USER_NO = U.USER_NO
+	    WHERE C.COMMUNITY_NO = #{communityNo} AND 
+		C.COMMUNITY_STATUS = 'ACTIVE'
+	</select>
+ </mapper>
