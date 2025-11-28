@@ -42,6 +42,7 @@
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>3.0.1</version>
         </dependency>
+
 		
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
@@ -55,6 +56,7 @@
 		    <version>20231013</version>
 		</dependency>
 		
+
 
         <!-- Spring Web (JSP 포함) -->
         <dependency>
