@@ -28,7 +28,7 @@
 	        NULL,
 	        0,
 	        #{communityType},
-	        DEFAULT,
+	        DEFAULT
 	    )
 	</insert>
 	<!-- 커뮤니티 이미지 삽입 -->
@@ -60,6 +60,7 @@
     	) WHERE ROWNUM <![CDATA[ <= ]]> 2
     </select>
     
+    <!-- 커뮤니티 리스트 -->
     <select id="getCommunityList">
     	SELECT 
 		    C.COMMUNITY_NO,
@@ -86,15 +87,21 @@
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    U.USER_NICKNAME
+		    
+		ORDER BY C.CREATED_AT DESC
     </select>
+    
+    <!-- 커뮤니티 총 페이지 갯수 -->
     <select id="getTotalCount">
     	SELECT COUNT(*) FROM COMMUNITY_TBL WHERE COMMUNITY_STATUS = 'ACTIVE'
     </select>
     
+    <!-- 조회수 -->
     <update id="viewCount">
     	UPDATE COMMUNITY_TBL SET VIEW_COUNT = VIEW_COUNT + 1 WHERE COMMUNITY_NO = #{boardNo}
     </update>
     
+    <!-- 커뮤니티 디테일  -->
     <select id="getCommunityDetail">
     	SELECT 
 		    C.COMMUNITY_NO,
@@ -170,5 +177,24 @@
 		    ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMUNITY_NO = #{communityNo} AND 
 		C.COMMUNITY_STATUS = 'ACTIVE'
+	</select>
+	
+	<!-- 커뮤니티 조회수 리스트 -->
+	<select id="getSortViewList">
+		SELECT *
+		FROM (
+		    SELECT 
+		        C.COMMUNITY_NO,
+		        C.COMMUNITY_TITLE,
+		    	C.COMMUNITY_TYPE,
+   			    C.COMMUNITY_STATUS,
+		        C.CREATED_AT,
+		        C.VIEW_COUNT,
+		        U.USER_NICKNAME
+		    FROM COMMUNITY_TBL C
+		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
+		    ORDER BY C.VIEW_COUNT DESC
+		)
+		WHERE COMMUNITY_STATUS = 'ACTIVE' AND ROWNUM <![CDATA[ <= ]]> 3 
 	</select>
  </mapper>

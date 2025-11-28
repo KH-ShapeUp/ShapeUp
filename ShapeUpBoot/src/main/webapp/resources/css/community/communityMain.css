@@ -19,6 +19,11 @@
     gap: 10px;
 }
 
+.board-view-content a {
+	color:#111;
+	text-decoration: none;
+}
+
 .main-board-top {
     width: 100%;
     display: flex;
@@ -314,6 +319,53 @@
     font-weight: 600;    
 }
 
+/* 댓글순, 조회수 카테고리 디자인 */
+.board-wrapper-view .post-category {
+	font-size: .6rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #666;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-wrapper-view .post-category-question {
+	background-color: #D9F0FF;
+    color: #034A7F;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-wrapper-view .post-category-tip {
+	background-color: #E6F9EA;
+    color: #1D5C3A;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-wrapper-view .post-category-food {
+	background-color: #FFF2E5;
+    color: #80461B;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-wrapper-view .post-category-certification {
+	background-color: #F0E6FF;
+    color: #4B2C91;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+/********************/
+
 .post-header-left .post-nickName {
     font-size: .9rem;
     font-weight: 600;
@@ -425,7 +477,6 @@
     font-weight: 500;
 }
 
-
 .board-comment-card .post-category,
 .board-view-card .post-category {
     font-size: .6rem;
@@ -524,4 +575,9 @@
 .pagination .back:hover,
 .pagination .next:hover {
     color: var(--main-color);
+}
+
+
+.comment-delete:hover {
+    text-decoration: underline;
 }

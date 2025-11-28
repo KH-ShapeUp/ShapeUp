@@ -187,54 +187,42 @@
                         <div class="board-view-top">
                             <span class="board-view-title">조회순</span>
                             <div class="board-view-content">
-                                <div class="board-view-card">
-                                    <div class="post-header">
-                                        <div class="post-header-left">
-                                            <span class="post-category">자유 게시판</span>
-                                            <span class="post-nickName">윤태혁</span>
-                                            <span class="post-writeDate">2025.01.25</span>
-                                        </div>
-                                        <div class="post-icon">
-											<div><i class="fa-solid fa-eye"></i><span class="post-view">1,203</span></div>
-										</div>
-                                    </div>
-                                    <div class="post-middle">
-                                        <span class="post-title">등운동시 광배에 자극이 없어요..</span>
-                                        <span class="post-comment">(10)</span>
-                                    </div>
-                                </div>
-                                <div class="board-view-card">
-                                    <div class="post-header">
-                                        <div class="post-header-left">
-                                            <span class="post-category">자유 게시판</span>
-                                            <span class="post-nickName">윤태혁</span>
-                                            <span class="post-writeDate">2025.01.25</span>
-                                        </div>
-                                        <div class="post-icon">
-											<div><i class="fa-solid fa-eye"></i><span class="post-view">1,203</span></div>
-										</div>
-                                    </div>
-                                    <div class="post-middle">
-                                        <span class="post-title">등운동시 광배에 자극이 없어요..</span>
-                                        <span class="post-comment">(10)</span>
-                                    </div>
-                                </div>
-                                <div class="board-view-card">
-                                    <div class="post-header">
-                                        <div class="post-header-left">
-                                            <span class="post-category">자유 게시판</span>
-                                            <span class="post-nickName">윤태혁</span>
-                                            <span class="post-writeDate">2025.01.25</span>
-                                        </div>
-                                        <div class="post-icon">
-											<div><i class="fa-solid fa-eye"></i><span class="post-view">1,203</span></div>
-										</div>
-                                    </div>
-                                    <div class="post-middle">
-                                        <span class="post-title">등운동시 광배에 자극이 없어요..</span>
-                                        <span class="post-comment">(10)</span>
-                                    </div>
-                                </div>
+	                            <c:forEach var="vList" items="${vList }">
+		                            <a href="/community/detail?boardNo=${vList.communityNo }">
+		                                <div class="board-view-card">
+		                                    <div class="post-header">
+		                                        <div class="post-header-left">
+			                                        <c:choose>
+		                                        		<c:when test="${vList.communityType eq '운동질문' }">
+		                                        			<span class="post-category-question">${vList.communityType }</span>
+		                                        		</c:when>
+		                                        		<c:when test="${vList.communityType eq '운동꿀팁' }">
+		                                        			<span class="post-category-tip">${vList.communityType }</span>
+		                                        		</c:when>
+		                                        		<c:when test="${vList.communityType eq '식단/영양' }">
+		                                        			<span class="post-category-food">${vList.communityType }</span>
+		                                        		</c:when>
+		                                        		<c:when test="${vList.communityType eq '운동인증' }">
+		                                        			<span class="post-category-certification">${vList.communityType }</span>
+		                                        		</c:when>
+		                                        		<c:when test="${vList.communityType eq '일상/소통' }">
+		                                        			<span class="post-category">${vList.communityType }</span>
+		                                        		</c:when>
+		                                        	</c:choose>
+		                                            <span class="post-nickName">${vList.userNickName }</span>
+		                                            <span class="post-writeDate">${vList.timeAgo }</span>
+		                                        </div>
+		                                        <div class="post-icon">
+													<div><i class="fa-solid fa-eye"></i><span class="post-view">${vList.viewCount }</span></div>
+												</div>
+		                                    </div>
+		                                    <div class="post-middle">
+		                                        <span class="post-title">${vList.communityTitle }</span>
+		                                        <span class="post-comment">(10)</span>
+		                                    </div>
+		                                </div>
+		                            </a>
+	                            </c:forEach>                             
                             </div>
                         </div>
                     </div>

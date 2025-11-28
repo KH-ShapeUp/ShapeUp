@@ -63,15 +63,16 @@ public class communityController {
 		model.addAttribute("nList", nList);
 		/* 커뮤니티 리스트 가져오기 끝 */	
 		
-//		/* 커뮤니티 최신 댓글 순 */
+		/* 커뮤니티 최신 댓글 순 */
 //		List<communityListDTO> commentList = cService.getSortCommentList();
 //		model.addAttribute("commnetList", commentList);
-//		/* 커뮤니티 최신 댓글 순 끝 */
-//		
-//		/* 커뮤니티 최신 조회수 순 */
-//		List<communityListDTO> viewList = cService.getSortViewList();
-//		model.addAttribute("viewList", viewList);
-//		/* 커뮤니티 최신 조회수 순 끝 */
+		/* 커뮤니티 최신 댓글 순 끝 */
+		
+		/* 커뮤니티 최신 조회수 순 */
+		List<communityListDTO> viewList = cService.getSortViewList();
+		System.out.println(viewList);
+		model.addAttribute("vList", viewList);
+		/* 커뮤니티 최신 조회수 순 끝 */
 		
 		model.addAttribute("userNo", userNo);
 		return "community/communityMain";
