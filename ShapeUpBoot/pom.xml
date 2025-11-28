@@ -55,6 +55,7 @@
 		    <version>20231013</version>
 		</dependency>
 		
+
         <!-- Spring Web (JSP 포함) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -99,6 +100,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
 		
 		<dependency>
 	          <groupId>org.jsoup</groupId>
@@ -106,6 +108,7 @@
 	          <version>1.15.3</version>
       	</dependency>
 		
+
         <!-- DevTools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
