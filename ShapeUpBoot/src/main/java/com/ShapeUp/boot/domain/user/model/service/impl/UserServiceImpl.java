@@ -193,4 +193,9 @@ public class UserServiceImpl implements UserService {
                  userNo, interests, times);
         return userMapper.updateUserInterest(userNo, interests, times);
     }
+    
+    @Override
+    public int updateUserType(int userNo, String userType) {
+        return userMapper.updateUserType(userNo, userType);
+    }
 }

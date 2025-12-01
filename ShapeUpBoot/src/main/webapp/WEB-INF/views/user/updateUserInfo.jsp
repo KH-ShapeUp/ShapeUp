@@ -10,8 +10,34 @@
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/updateUserInfo.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/mypage.css">
+  
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/include/header.jsp"/>
+  <!-- ========== 쪽지함 알림 시스템 ========== -->
+  <div class="notification-container">
+    <button class="notification-icon-btn" id="notificationIconBtn">
+      📬
+      <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+    </button>
+    
+    <div class="notification-dropdown" id="notificationDropdown">
+      <div class="notification-header">
+        <div class="notification-title">
+          <span>📬</span>
+          <span>권한 신청 알림</span>
+        </div>
+        <button class="notification-close-btn" id="notificationCloseBtn">✕</button>
+      </div>
+      
+      <div class="notification-list" id="notificationList">
+        <div class="notification-empty">
+          <div class="notification-empty-icon">📭</div>
+          <div>알림이 없습니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="mypage-container">
     <!-- 헤더 -->
@@ -51,6 +77,32 @@
         <div class="info-group">
           <div class="info-label">이름</div>
           <div class="info-value readonly">${user.userName}</div>
+        </div>
+
+        <!-- 유저 구분 (권한 추가 및 포기 버튼 포함) -->
+        <div class="info-group">
+          <div class="info-label">유저 구분</div>
+          <div class="user-type-wrapper">
+            <div class="info-value readonly" id="userTypeDisplay"></div>
+            <div class="permission-buttons" id="permissionButtonsContainer">
+              <!-- 대기 중인 신청이 없을 때 -->
+              <div id="normalButtons">
+                <button class="btn btn-request-permission" onclick="openPermissionSelect()">권한 신청</button>
+                <c:if test="${user.userType != 'USER'}">
+                  <button class="btn btn-revoke-permission" onclick="openRevokePermissionModal()">권한 포기</button>
+                </c:if>
+              </div>
+              
+              <!-- 대기 중인 신청이 있을 때 -->
+              <div id="pendingButtons" style="display: none;">
+                <div class="pending-status">
+                  <span class="pending-badge">⏳ 승인 대기중</span>
+                  <span class="pending-type" id="pendingRequestType"></span>
+                </div>
+                <button class="btn btn-cancel-request" onclick="cancelPendingRequest()">신청 취소</button>
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- 닉네임 (편집 가능) -->
@@ -174,7 +226,7 @@
     </div>
   </div>
 
-  <!-- 모달 -->
+  <!-- 기본 모달 -->
   <div id="customModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
       <p id="modalMessage">메시지 내용</p>
@@ -182,23 +234,311 @@
     </div>
   </div>
 
+  <!-- 권한 선택 모달 -->
+  <div id="permissionSelectModal" class="permission-select-modal">
+    <div class="permission-select-box">
+      <h3 class="permission-select-title">추가로 신청할 권한을 선택하세요</h3>
+      <div class="permission-options">
+        <div class="permission-option" onclick="openRequestForm('STADIUM_MANAGER')">
+          <div class="permission-option-title">🏟️ 시설 관리자</div>
+          <div class="permission-option-desc">체육시설을 관리하고 운영합니다</div>
+        </div>
+        <div class="permission-option" onclick="openRequestForm('TRAINER')">
+          <div class="permission-option-title">💪 트레이너</div>
+          <div class="permission-option-desc">회원들에게 운동 지도를 제공합니다</div>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <button class="btn-close" onclick="closePermissionSelect()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 권한 포기 모달 -->
+  <div id="revokePermissionModal" class="permission-select-modal">
+    <div class="permission-select-box">
+      <h3 class="permission-select-title">⚠️ 권한 포기</h3>
+      <p style="text-align: center; color: #666; margin-bottom: 20px;">
+        포기할 권한을 선택하세요.<br>
+        <strong>권한을 포기하면 일반 사용자로 전환됩니다.</strong>
+      </p>
+      <div class="permission-options">
+        <c:if test="${user.userType == 'STADIUM_MANAGER' || user.userType == 'TRAINER'}">
+          <div class="permission-option revoke-option" onclick="revokePermission()">
+            <div class="permission-option-title" id="currentPermissionTitle"></div>
+            <div class="permission-option-desc">현재 권한을 포기하고 일반 사용자로 전환</div>
+          </div>
+        </c:if>
+      </div>
+      <div style="text-align: center;">
+        <button class="btn-close" onclick="closeRevokePermissionModal()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 시설 관리자 신청 폼 모달 -->
+  <div id="stadiumManagerFormModal" class="request-form-modal">
+    <div class="request-form-box">
+      <h3 class="request-form-title">🏟️ 시설 관리자 권한 신청</h3>
+      <form id="stadiumManagerForm" enctype="multipart/form-data">
+        <input type="hidden" name="requestType" value="STADIUM_MANAGER">
+        
+        <div class="form-field">
+          <label>시설명<span class="required">*</span></label>
+          <input type="text" name="businessName" required placeholder="운영하시는 시설명을 입력하세요">
+        </div>
+        
+        <div class="form-field">
+          <label>사업자등록번호<span class="required">*</span></label>
+          <input type="text" name="businessNumber" required placeholder="000-00-00000" maxlength="12">
+          <div class="hint">하이픈(-)을 포함하여 입력하세요</div>
+        </div>
+        
+        <div class="form-field">
+          <label>신청 사유</label>
+          <textarea name="requestReason" required placeholder="신청 사유를 작성해주세요"></textarea>
+        </div>
+        
+        <div class="form-field">
+          <label>증빙 서류<span class="required">*</span></label>
+          <input type="file" name="attachmentFile" id="stadiumFile" required accept="image/*,.pdf" onchange="previewFile('stadium')">
+          <div class="hint">사업자등록증 또는 시설 운영 증명 서류 (이미지 또는 PDF, 최대 10MB)</div>
+          <div id="stadiumFilePreview" class="file-preview"></div>
+        </div>
+        
+        <div class="form-buttons">
+          <button type="button" class="btn-submit" onclick="submitRequest('stadium')">신청하기</button>
+          <button type="button" class="btn-close" onclick="closeRequestForm('stadium')">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 트레이너 신청 폼 모달 -->
+  <div id="trainerFormModal" class="request-form-modal">
+    <div class="request-form-box">
+      <h3 class="request-form-title">💪 트레이너 권한 신청</h3>
+      <form id="trainerForm" enctype="multipart/form-data">
+        <input type="hidden" name="requestType" value="TRAINER">
+        
+        <div class="form-field">
+          <label>자격증 종류<span class="required">*</span></label>
+          <input type="text" name="certificateType" required placeholder="예: 생활체육지도사 2급, 건강운동관리사">
+        </div>
+        
+        <div class="form-field">
+          <label>자격증 번호<span class="required">*</span></label>
+          <input type="text" name="certificateNumber" required placeholder="자격증에 기재된 번호를 입력하세요">
+        </div>
+        
+        <div class="form-field">
+          <label>신청 사유</label>
+          <textarea name="requestReason" placeholder="신청 사유를 작성해주세요"></textarea>
+        </div>
+        
+        <div class="form-field">
+          <label>증빙 서류<span class="required">*</span></label>
+          <input type="file" name="attachmentFile" id="trainerFile" required accept="image/*,.pdf" onchange="previewFile('trainer')">
+          <div class="hint">자격증 사본 (이미지 또는 PDF, 최대 10MB)</div>
+          <div id="trainerFilePreview" class="file-preview"></div>
+        </div>
+        
+        <div class="form-buttons">
+          <button type="button" class="btn-submit" onclick="submitRequest('trainer')">신청하기</button>
+          <button type="button" class="btn-close" onclick="closeRequestForm('trainer')">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+<jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 </body>
 
 <script>
 const contextPath = '${pageContext.request.contextPath}';
+let pendingRequest = null;
 
-// 페이지 로드 시 생년월일 포맷팅 및 비밀번호 검증 리스너 추가
+// ========== 쪽지함 알림 시스템 ==========
+(function() {
+  // 알림 목록 로드
+  window.loadNotifications = function() {
+    fetch(contextPath + '/user/checkRecentRequest', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.hasRecent) {
+        updateNotificationBadge(1);
+        renderNotificationList([data.request]);
+      } else {
+        updateNotificationBadge(0);
+      }
+    })
+    .catch(err => {
+      console.error('알림 로드 오류:', err);
+    });
+  };
+
+  function updateNotificationBadge(count) {
+    const badge = document.getElementById('notificationBadge');
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function renderNotificationList(notifications) {
+    const listContainer = document.getElementById('notificationList');
+    
+    if (!notifications || notifications.length === 0) {
+      listContainer.innerHTML = `
+        <div class="notification-empty">
+          <div class="notification-empty-icon">📭</div>
+          <div>알림이 없습니다</div>
+        </div>
+      `;
+      return;
+    }
+    
+    listContainer.innerHTML = '';
+    
+    notifications.forEach(notification => {
+      const item = createNotificationItem(notification);
+      listContainer.appendChild(item);
+    });
+  }
+
+  function createNotificationItem(notification) {
+    const item = document.createElement('div');
+    item.className = 'notification-item unread';
+    item.onclick = () => markAsRead(notification.requestNo);
+    
+    const requestTypeText = notification.requestType === 'STADIUM_MANAGER' ? '시설 관리자' : '트레이너';
+    const isApproved = notification.requestStatus === '승인';
+    
+    let statusHTML = '';
+    let messageHTML = '';
+    
+    if (isApproved) {
+      statusHTML = '<div class="notification-status approved">✅ 승인됨</div>';
+      messageHTML = '<div class="notification-message">' + requestTypeText + ' 권한 신청이 승인되었습니다.</div>';
+    } else {
+      statusHTML = '<div class="notification-status rejected">❌ 반려됨</div>';
+      messageHTML = '<div class="notification-message">' + requestTypeText + ' 권한 신청이 반려되었습니다.';
+      if (notification.rejectReason) {
+        messageHTML += '<br><strong>반려 사유:</strong> ' + notification.rejectReason;
+      }
+      messageHTML += '</div>';
+    }
+    
+    let timeHTML = '';
+    if (notification.processedAt) {
+      const date = new Date(notification.processedAt);
+      timeHTML = '<div class="notification-time">' + formatNotificationDate(date) + '</div>';
+    }
+    
+    item.innerHTML = statusHTML + messageHTML + timeHTML;
+    return item;
+  }
+
+  function formatNotificationDate(date) {
+    const now = new Date();
+    const diff = now - date;
+    
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return '방금 전';
+    if (minutes < 60) return minutes + '분 전';
+    if (hours < 24) return hours + '시간 전';
+    if (days < 7) return days + '일 전';
+    
+    return date.toLocaleDateString('ko-KR');
+  }
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById('notificationDropdown');
+    const isOpening = !dropdown.classList.contains('show');
+    
+    dropdown.classList.toggle('show');
+    
+    if (isOpening) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+          badge.classList.add('hidden');
+        }
+      }
+  }
+
+  function markAsRead(requestNo) {
+    fetch(contextPath + '/user/markNotificationRead', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ requestNo: requestNo })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        updateNotificationBadge(0);
+        toggleDropdown();
+        loadNotifications();
+      }
+    })
+    .catch(err => {
+      console.error('알림 확인 오류:', err);
+    });
+  }
+
+  // DOM 로드 완료 후
+  document.addEventListener('DOMContentLoaded', function() {
+    // 이벤트 리스너 등록
+    const iconBtn = document.getElementById('notificationIconBtn');
+    if (iconBtn) {
+      iconBtn.addEventListener('click', toggleDropdown);
+    }
+    
+    const closeBtn = document.getElementById('notificationCloseBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', toggleDropdown);
+    }
+    
+    // 외부 클릭 시 닫기
+    document.addEventListener('click', function(event) {
+      const container = document.querySelector('.notification-container');
+      const dropdown = document.getElementById('notificationDropdown');
+      
+      if (!container.contains(event.target) && dropdown && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    // 알림 로드
+    loadNotifications();
+  });
+})();
+
+// ========== 기존 기능들 ==========
+
+// 페이지 로드 시
 document.addEventListener('DOMContentLoaded', function() {
   formatBirthDate();
+  displayUserType();
+  checkPendingRequest();
   
-  // 새 비밀번호 입력 시 실시간 검증
+  // 비밀번호 검증 리스너
   const newPasswordInput = document.getElementById('newPassword');
   const confirmPasswordInput = document.getElementById('confirmPassword');
   
   if (newPasswordInput) {
     newPasswordInput.addEventListener('input', function() {
       validateNewPassword();
-      // 비밀번호 확인란에 값이 있으면 일치 여부도 체크
       if (confirmPasswordInput.value.length > 0) {
         checkPasswordMatch();
       }
@@ -212,7 +552,239 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// 새 비밀번호 유효성 검사
+// 대기 중인 신청 확인
+function checkPendingRequest() {
+  fetch(contextPath + '/user/checkPendingRequest', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.hasPending) {
+      pendingRequest = data.request;
+      showPendingStatus(data.request);
+    } else {
+      showNormalButtons();
+    }
+  })
+  .catch(err => {
+    console.error('대기 중인 신청 확인 오류:', err);
+    showNormalButtons();
+  });
+}
+
+function showPendingStatus(request) {
+  document.getElementById('normalButtons').style.display = 'none';
+  document.getElementById('pendingButtons').style.display = 'flex';
+  
+  const typeText = request.requestType === 'STADIUM_MANAGER' ? '시설 관리자' : '트레이너';
+  document.getElementById('pendingRequestType').textContent = typeText + ' 신청';
+}
+
+function showNormalButtons() {
+  document.getElementById('normalButtons').style.display = 'flex';
+  document.getElementById('pendingButtons').style.display = 'none';
+}
+
+function cancelPendingRequest() {
+  if (!pendingRequest) {
+    showModal('취소할 신청이 없습니다.');
+    return;
+  }
+  
+  if (!confirm('정말로 신청을 취소하시겠습니까?')) {
+    return;
+  }
+  
+  fetch(contextPath + '/user/cancelRequest', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'requestNo=' + encodeURIComponent(pendingRequest.requestNo)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('신청이 취소되었습니다.');
+      pendingRequest = null;
+      showNormalButtons();
+    } else {
+      showModal(data.message || '신청 취소에 실패했습니다.');
+    }
+  })
+  .catch(err => {
+    console.error('신청 취소 오류:', err);
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
+  });
+}
+
+function displayUserType() {
+  const userType = '${user.userType}';
+  const userTypeDisplay = document.getElementById('userTypeDisplay');
+  const currentPermissionTitle = document.getElementById('currentPermissionTitle');
+  
+  let displayText = '';
+  let permissionTitle = '';
+  
+  switch(userType) {
+    case 'USER':
+      displayText = '일반 사용자';
+      break;
+    case 'STADIUM_MANAGER':
+      displayText = '시설 관리자';
+      permissionTitle = '🏟️ 시설 관리자 권한';
+      break;
+    case 'TRAINER':
+      displayText = '트레이너';
+      permissionTitle = '💪 트레이너 권한';
+      break;
+    default:
+      displayText = userType;
+  }
+  
+  userTypeDisplay.textContent = displayText;
+  if (currentPermissionTitle) {
+    currentPermissionTitle.textContent = permissionTitle;
+  }
+}
+
+function openPermissionSelect() {
+  document.getElementById('permissionSelectModal').style.display = 'flex';
+}
+
+function closePermissionSelect() {
+  document.getElementById('permissionSelectModal').style.display = 'none';
+}
+
+function openRevokePermissionModal() {
+  document.getElementById('revokePermissionModal').style.display = 'flex';
+}
+
+function closeRevokePermissionModal() {
+  document.getElementById('revokePermissionModal').style.display = 'none';
+}
+
+function revokePermission() {
+  if (!confirm('정말로 권한을 포기하시겠습니까?\n권한 포기 시 일반 사용자로 전환되며, 재신청이 필요합니다.')) {
+    return;
+  }
+  
+  fetch(contextPath + '/user/revokePermission', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('권한이 포기되었습니다.\n일반 사용자로 전환되었습니다.');
+      closeRevokePermissionModal();
+      setTimeout(() => {
+        location.reload();
+      }, 1500);
+    } else {
+      showModal(data.message || '권한 포기에 실패했습니다.');
+    }
+  })
+  .catch(err => {
+    console.error('권한 포기 오류:', err);
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
+  });
+}
+
+function openRequestForm(type) {
+  closePermissionSelect();
+  
+  if (type === 'STADIUM_MANAGER') {
+    document.getElementById('stadiumManagerFormModal').style.display = 'flex';
+  } else if (type === 'TRAINER') {
+    document.getElementById('trainerFormModal').style.display = 'flex';
+  }
+}
+
+function closeRequestForm(type) {
+  if (type === 'stadium') {
+    document.getElementById('stadiumManagerFormModal').style.display = 'none';
+    document.getElementById('stadiumManagerForm').reset();
+    document.getElementById('stadiumFilePreview').style.display = 'none';
+  } else if (type === 'trainer') {
+    document.getElementById('trainerFormModal').style.display = 'none';
+    document.getElementById('trainerForm').reset();
+    document.getElementById('trainerFilePreview').style.display = 'none';
+  }
+}
+
+function previewFile(type) {
+  const fileInput = document.getElementById(type + 'File');
+  const preview = document.getElementById(type + 'FilePreview');
+  
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+    
+    if (fileSize > 10) {
+      showModal('파일 크기는 10MB를 초과할 수 없습니다.');
+      fileInput.value = '';
+      preview.style.display = 'none';
+      return;
+    }
+    
+    preview.innerHTML = '📎 ' + file.name + ' (' + fileSize + 'MB)';
+    preview.style.display = 'block';
+  }
+}
+
+function submitRequest(type) {
+  const formId = type === 'stadium' ? 'stadiumManagerForm' : 'trainerForm';
+  const form = document.getElementById(formId);
+  const formData = new FormData(form);
+  
+  if (type === 'stadium') {
+    const businessNumber = formData.get('businessNumber');
+    const businessNumberPattern = /^\d{3}-\d{2}-\d{5}$/;
+    
+    if (!businessNumberPattern.test(businessNumber)) {
+      showModal('사업자등록번호 형식이 올바르지 않습니다. (예: 000-00-00000)');
+      return;
+    }
+  }
+  
+  const fileInput = document.getElementById(type + 'File');
+  if (!fileInput.files || !fileInput.files[0]) {
+    showModal('증빙 서류를 첨부해주세요.');
+    return;
+  }
+  
+  if (!confirm('권한 신청을 제출하시겠습니까?\n관리자 승인 후 권한이 부여됩니다.')) {
+    return;
+  }
+  
+  fetch(contextPath + '/user/requestPermission', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('권한 신청이 완료되었습니다.\n관리자 승인 후 권한이 부여됩니다.');
+      closeRequestForm(type);
+      setTimeout(() => {
+        checkPendingRequest();
+      }, 500);
+    } else {
+      showModal(data.message || '권한 신청에 실패했습니다.');
+    }
+  })
+  .catch(err => {
+    console.error('권한 신청 오류:', err);
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
+  });
+}
+
 function validateNewPassword() {
   const newPassword = document.getElementById('newPassword').value;
   const newPasswordValidMsg = document.getElementById('newPasswordValidMsg');
@@ -258,7 +830,6 @@ function validateNewPassword() {
   }
 }
 
-// 비밀번호 확인 일치 여부 검사
 function checkPasswordMatch() {
   const newPassword = document.getElementById('newPassword').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
@@ -320,19 +891,17 @@ function saveNickname() {
     });
 }
 
-// 생년월일 포맷팅 함수
 function formatBirthDate() {
-  const serialNo = '${user.userSerialNo}'; // 예: 990101-1
+  const serialNo = '${user.userSerialNo}';
   
   if (serialNo && serialNo.length >= 7) {
-    const birthPart = serialNo.substring(0, 6); // 990101
-    const genderDigit = serialNo.charAt(7); // 1 또는 2
+    const birthPart = serialNo.substring(0, 6);
+    const genderDigit = serialNo.charAt(7);
     
     let year = parseInt(birthPart.substring(0, 2));
     const month = birthPart.substring(2, 4);
     const day = birthPart.substring(4, 6);
     
-    // 성별 구분자로 연도 판단 (1,2: 1900년대 / 3,4: 2000년대)
     if (genderDigit === '1' || genderDigit === '2') {
       year += 1900;
     } else if (genderDigit === '3' || genderDigit === '4') {
@@ -344,7 +913,6 @@ function formatBirthDate() {
   }
 }
 
-// 메시지 표시 함수
 function showMessage(message, type) {
   const messageBox = document.getElementById('messageBox');
   messageBox.textContent = message;
@@ -355,21 +923,18 @@ function showMessage(message, type) {
   }, 3000);
 }
 
-// 필드 수정 모드 전환
 function editField(field) {
   document.getElementById(field + 'Display').style.display = 'none';
   document.getElementById(field + 'Actions').style.display = 'none';
   document.getElementById(field + 'EditForm').classList.add('active');
 }
 
-// 수정 취소
 function cancelEdit(field) {
   document.getElementById(field + 'Display').style.display = 'block';
   document.getElementById(field + 'Actions').style.display = 'flex';
   document.getElementById(field + 'EditForm').classList.remove('active');
 }
 
-// 이메일 저장
 function saveEmail() {
   const email = document.getElementById('emailInput').value.trim();
   
@@ -378,14 +943,12 @@ function saveEmail() {
     return;
   }
   
-  // 이메일 형식 검증
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(email)) {
     alert('올바른 이메일 형식이 아닙니다.');
     return;
   }
   
-  // 서버에 이메일 업데이트 요청
   fetch(contextPath + '/user/updateEmail', {
     method: 'POST',
     headers: {
@@ -409,7 +972,6 @@ function saveEmail() {
   });
 }
 
-// 전화번호 저장
 function savePhone() {
   const phone = document.getElementById('phoneInput').value.trim();
   
@@ -418,14 +980,12 @@ function savePhone() {
     return;
   }
   
-  // 전화번호 형식 검증
   const phonePattern = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
   if (!phonePattern.test(phone)) {
     alert('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
     return;
   }
   
-  // 서버에 전화번호 업데이트 요청
   fetch(contextPath + '/user/updatePhone', {
     method: 'POST',
     headers: {
@@ -449,7 +1009,6 @@ function savePhone() {
   });
 }
 
-// 비밀번호 변경 폼 토글
 function togglePasswordForm() {
   const form = document.getElementById('passwordForm');
   const btn = document.getElementById('showPasswordFormBtn');
@@ -457,7 +1016,6 @@ function togglePasswordForm() {
   if (form.classList.contains('active')) {
     form.classList.remove('active');
     btn.textContent = '변경';
-    // 입력 필드 및 검증 메시지 초기화
     document.getElementById('changePasswordForm').reset();
     document.getElementById('newPasswordValidMsg').textContent = '';
     document.getElementById('confirmPasswordMsg').textContent = '';
@@ -469,7 +1027,6 @@ function togglePasswordForm() {
   }
 }
 
-// 비밀번호 변경
 function changePassword() {
   const currentPw = document.getElementById('currentPassword').value;
   const newPw = document.getElementById('newPassword').value;

@@ -59,4 +59,6 @@ public interface UserService {
     UserInterestVO selectUserInterest(int userNo);
     
     int updateUserInterest(int userNo, String interests, String times);
+    
+    int updateUserType(int userNo, String userType);
 }

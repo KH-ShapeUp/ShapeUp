@@ -13,7 +13,7 @@
   
 </head>
 <body>
-
+	<jsp:include page="/WEB-INF/views/include/header.jsp"/>
   <div class="mypage-container">
     <!-- 헤더 -->
     <div class="page-header">
@@ -106,7 +106,7 @@
       <button class="modal-btn" onclick="closeModal()">확인</button>
     </div>
   </div>
-
+<jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 </body>
 
 <script>
