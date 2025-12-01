@@ -231,176 +231,292 @@
 	</div>
 
 	<script>
-document.addEventListener("DOMContentLoaded", function () {
-  // ----- DOM 요소 정의 -----
-  const addButton = document.querySelector(".btn-add");
-  const modal = document.getElementById("routineModal");
-  const closeButton = document.querySelector(".close-modal-btn");
+      document.addEventListener("DOMContentLoaded", function () {
+        const addButton = document.querySelector(".btn-add");
+        const modal = document.getElementById("routineModal");
+        const closeButton = document.querySelector(".close-modal-btn");
 
-  const routineForm = document.getElementById("routineForm");
-  const routineNameInput = document.getElementById("routineNameInput");
-  const activityTypeSelect = document.querySelector(".activity-type-select");
-  const strengthSelect = document.querySelector(".strength-select");
-  const startTimeInput = document.getElementById("startTimeInput");
-  const activityNameSelect = document.getElementById("activityNameSelect");
-  const durationMinSelect = document.getElementById("durationMinSelect");
-  const dayButtons = document.querySelectorAll(".day-btn");
+        // 💡 [DOM 요소 정의]
+        const routineForm = document.getElementById("routineForm");
+        const routineNameInput = document.getElementById("routineNameInput");
+        const activityTypeSelect = document.querySelector(".activity-type-select");
+        const strengthSelect = document.querySelector(".strength-select");
+        const startTimeInput = document.getElementById("startTimeInput");
+        const activityNameSelect = document.getElementById("activityNameSelect");
+        const durationMinSelect = document.getElementById("durationMinSelect");
+        const dayButtons = document.querySelectorAll(".day-btn");
+        const routineSummaryWrapper = document.querySelector(".routine-summary");
+        const summaryDayCount = routineSummaryWrapper.querySelector(".summary-day");
+        const summaryDuration = routineSummaryWrapper.querySelector(".summary-time");
+        const summaryKcal = routineSummaryWrapper.querySelector(".summary-kcal");
+        
+        // 🚨 새로 추가된 필터링 관련 DOM 요소
+        const routineListContainer = document.querySelector(".routine-list");
+        const routineCards = document.querySelectorAll(".routine-card");
+        const routineSearchForm = document.getElementById("routineSearchForm");
+        const searchInput = document.getElementById("searchInput");
+        const categoryTabs = document.querySelectorAll(".category-tabs .tab-button");
 
-  const routineSummaryWrapper = document.querySelector(".routine-summary");
-  const summaryDayCount = routineSummaryWrapper.querySelector(".summary-day");
-  const summaryDuration = routineSummaryWrapper.querySelector(".summary-time");
-  const summaryKcal = routineSummaryWrapper.querySelector(".summary-kcal");
 
-  const routineListContainer = document.querySelector(".routine-list");
-  const searchInput = document.getElementById("searchInput");
-  const categoryTabs = document.querySelectorAll(".category-tabs .tab-button");
+        let currentCaloriePerMin = 0.0;
 
-  let currentCaloriePerMin = 0;
+        // --------------------------------------------------------
+        // [모달/저장/요약 로직] (기존 로직 유지)
+        // --------------------------------------------------------
 
-  // ----- 모달 열기/닫기 -----
-  if (addButton && modal) {
-    addButton.addEventListener("click", function () {
-      modal.style.display = "flex";
-      updateSummary();
-    });
-  }
+        if (addButton && modal) {
+          addButton.addEventListener("click", function () {
+            modal.style.display = "flex";
+            updateSummary();
+          });
+        }
 
-  if (closeButton && modal) {
-    closeButton.addEventListener("click", function () {
-      modal.style.display = "none";
-    });
-  }
+        if (closeButton && modal) {
+          closeButton.addEventListener("click", function () {
+            modal.style.display = "none";
+          });
+        }
 
-  modal?.addEventListener("click", function (e) {
-    if (e.target === modal) modal.style.display = "none";
-  });
+        if (modal) {
+          modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
 
-  // ----- 요일 버튼 토글 -----
-  dayButtons.forEach(btn => {
-    btn.setAttribute("type", "button"); // 안전
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      this.classList.toggle("active");
-      updateSummary();
-    });
-  });
+        if (routineForm) {
+          routineForm.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-  // ----- 칼로리 fetch 및 요약 업데이트 -----
-  activityNameSelect?.addEventListener("change", function () {
-    const selectedActivityName = this.value;
-    if (!selectedActivityName) {
-      currentCaloriePerMin = 0;
-      updateSummary();
-      return;
-    }
+            const selectedDays = Array.from(dayButtons)
+              .filter((btn) => btn.classList.contains("active"))
+              .map((btn) => btn.getAttribute("data-day"));
 
-    fetch("/routine/getCalorie?activityName=" + encodeURIComponent(selectedActivityName))
-      .then(res => res.ok ? res.json() : Promise.reject("Network error"))
-      .then(data => {
-        currentCaloriePerMin = data || 0;
+            if (selectedDays.length === 0) {
+              alert("반복 요일을 1개 이상 선택해 주세요.");
+              return;
+            }
+            if (!activityNameSelect.value || !durationMinSelect.value) {
+              alert("활동 종목과 시간을 모두 선택해 주세요.");
+              return;
+            }
+
+            const formData = {
+              routineName: routineNameInput.value.trim(),
+              userNo: 1, 
+              activityName: activityNameSelect.value,
+              activityType: activityTypeSelect.value,
+              strength: strengthSelect.value,
+              durationMin: parseInt(durationMinSelect.value),
+              startTime: startTimeInput.value,
+              days: selectedDays,
+            };
+
+            console.log("전송할 데이터:", formData);
+            saveRoutine(formData);
+          });
+        }
+
+        function saveRoutine(data) {
+          fetch("/routine/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((error) => {
+                  throw new Error(error.message || "루틴 저장 실패");
+                });
+              }
+              return response.json();
+            })
+            .then((result) => {
+              alert("루틴이 성공적으로 저장되었습니다.");
+              modal.style.display = "none";
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.error("루틴 저장 중 오류 발생:", error);
+              alert("루틴 저장에 실패했습니다: " + error.message);
+            });
+        }
+
+        // --------------------------------------------------------
+        // [이벤트 핸들러: 동적 요약 정보] (기존 로직 유지)
+        // --------------------------------------------------------
+
+        dayButtons.forEach((button) => {
+          button.addEventListener("click", function (e) {
+            e.preventDefault();
+            this.classList.toggle("active");
+            updateSummary();
+          });
+        });
+
+        activityNameSelect.addEventListener("change", function () {
+          const selectedActivityName = this.value;
+
+          if (selectedActivityName) {
+            fetchCalorieAndUpdatedSummary(selectedActivityName);
+          } else {
+            currentCaloriePerMin = 0.0;
+            updateSummary();
+          }
+        });
+
+        durationMinSelect.addEventListener("change", function () {
+          updateSummary();
+        });
+
+        function fetchCalorieAndUpdatedSummary(activityName) {
+          fetch(
+            "/routine/getCalorie?activityName=" +
+              encodeURIComponent(activityName)
+          )
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              currentCaloriePerMin = data || 0.0;
+              updateSummary();
+            })
+            .catch((error) => {
+              console.error("칼로리 값 조회 오류:", error);
+              currentCaloriePerMin = 0.0;
+              updateSummary();
+            });
+        }
+
+        function updateSummary() {
+          const activeDays = document.querySelectorAll(".day-btn.active").length;
+          summaryDayCount.textContent = `반복 요일 : ${activeDays}일 / 주`;
+          const durationMin = parseInt(durationMinSelect.value) || 0;
+          summaryDuration.textContent = `시간 : ${durationMin}분`;
+          const estimatedKcal = Math.round(currentCaloriePerMin * durationMin);
+          summaryKcal.textContent = `예상 소모 kcal / 회 : ${estimatedKcal} kcal`;
+        }
+        
+        // --------------------------------------------------------
+        // [검색 및 카테고리 필터링 로직] 👈 새로 추가 및 통합
+        // --------------------------------------------------------
+        
+        /**
+         * 루틴 목록을 현재 선택된 카테고리 탭과 검색어에 따라 필터링하는 함수
+         */
+        function filterRoutinesBy(selectedCategory) {
+            if (!routineCards || routineCards.length === 0) {
+                return;
+            }
+
+            // 검색어는 필터링 시 항상 고려합니다.
+            const searchTerm = searchInput.value.trim().toLowerCase(); 
+
+            routineCards.forEach(card => {
+                const titleElement = card.querySelector(".routine-title");
+                const routineName = titleElement ? titleElement.textContent.trim().toLowerCase() : "";
+                const tagElement = card.querySelector(".tag");
+                const routineCategory = tagElement ? tagElement.textContent.trim() : ""; // 카테고리 텍스트
+
+                // 1. 카테고리 일치 확인 (selectedCategory가 '전체'이거나 카테고리가 일치하는 경우)
+                const categoryMatch = selectedCategory === '전체' || routineCategory === selectedCategory;
+                
+                // 2. 검색어 포함 확인
+                const searchMatch = routineName.includes(searchTerm) || routineCategory.toLowerCase().includes(searchTerm);
+                
+                // 두 조건이 모두 참일 때만 표시
+                if (categoryMatch && searchMatch) {
+                    card.style.display = "grid"; // CSS에 맞게 'grid'로 표시
+                } else {
+                    card.style.display = "none";  // 숨김
+                }
+            });
+        }
+        
+        // --- 탭 클릭 이벤트 핸들러 ---
+        categoryTabs.forEach(button => {
+            button.addEventListener("click", function() {
+                categoryTabs.forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+                const category = this.textContent.trim();
+                filterRoutinesBy(category);
+            });
+        });
+
+        // --- 검색 이벤트 핸들러 ---
+        if (routineSearchForm) {
+            routineSearchForm.addEventListener("submit", function(e) {
+                e.preventDefault(); // 폼 제출 방지
+            });
+        }
+        
+        if (searchInput) {
+            searchInput.addEventListener("input", function() {
+                // 현재 활성화된 탭을 찾아서 필터링 기준 카테고리를 가져옵니다.
+                const activeTab = document.querySelector(".tab-button.active");
+                const currentCategory = activeTab ? activeTab.textContent.trim() : '전체';
+                
+                // 검색어와 현재 카테고리를 기준으로 필터링 함수 호출
+                filterRoutinesBy(currentCategory);
+            });
+        }
+
+        // --------------------------------------------------------
+        // [루틴 삭제 로직] (최신 수정된 오류 방지 로직 유지)
+        // --------------------------------------------------------
+        
+        if (routineListContainer) {
+            routineListContainer.addEventListener("click", function (e) {
+                if (e.target.classList.contains("delete-routine-btn")) {
+                    const routineCard = e.target.closest(".routine-card");
+                    const routineId = routineCard ? routineCard.getAttribute("data-routine-id") : null;
+
+                    if (routineId && confirm("정말로 이 루틴을 삭제하시겠습니까?")) {
+                        deleteRoutine(routineId);
+                    }
+                }
+            });
+        }
+
+        function deleteRoutine(routineId) {
+            fetch("/routine/delete/" + routineId, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("서버 오류가 발생했거나 루틴 삭제에 실패했습니다. (HTTP Error)");
+                }
+                
+                const contentType = response.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json();
+                } else {
+                    return null; 
+                }
+            })
+            .then((result) => {
+                alert("루틴이 성공적으로 삭제되었습니다.");
+                window.location.reload();
+            })
+            .catch((error) => {
+                console.error("루틴 삭제 중 오류 발생:", error);
+                alert("루틴 삭제에 실패했습니다: " + error.message);
+            });
+        }
+
+        // 페이지 로드 시 초기 요약 정보를 한 번 업데이트
         updateSummary();
-      })
-      .catch(err => {
-        console.error("칼로리 조회 실패:", err);
-        currentCaloriePerMin = 0;
-        updateSummary();
+        
+        // 페이지 로드 시 '전체' 탭이 활성화되어 있으므로 초기 필터링을 한 번 실행합니다.
+        // 이는 추후 CSS가 load되기 전 모든 카드가 보이지 않는 문제를 방지합니다.
+        filterRoutinesBy('전체');
       });
-  });
-
-  durationMinSelect?.addEventListener("change", updateSummary);
-
-  function updateSummary() {
-    const activeDays = document.querySelectorAll(".day-btn.active").length;
-    summaryDayCount.textContent = `반복 요일 : ${activeDays}일 / 주`;
-    const durationMin = parseInt(durationMinSelect?.value || 0);
-    summaryDuration.textContent = `시간 : ${durationMin}분`;
-    const estimatedKcal = Math.round(currentCaloriePerMin * durationMin);
-    summaryKcal.textContent = `예상 소모 kcal / 회 : ${estimatedKcal} kcal`;
-  }
-
-  // ----- 루틴 저장 -----
-  routineForm?.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const selectedDays = Array.from(dayButtons)
-      .filter(btn => btn.classList.contains("active"))
-      .map(btn => btn.getAttribute("data-day"));
-
-    if (selectedDays.length === 0) return alert("요일을 1개 이상 선택하세요.");
-    if (!activityNameSelect.value || !durationMinSelect.value) return alert("종목과 시간을 선택하세요.");
-
-    const payload = {
-      routineName: routineNameInput.value.trim(),
-      userNo: 1,
-      activityName: activityNameSelect.value,
-      activityType: activityTypeSelect.value,
-      strength: strengthSelect.value,
-      durationMin: parseInt(durationMinSelect.value),
-      startTime: startTimeInput.value,
-      days: selectedDays
-    };
-
-    fetch("/routine/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.ok ? res.json() : Promise.reject("저장 실패"))
-      .then(() => {
-        alert("루틴이 저장되었습니다.");
-        modal.style.display = "none";
-        window.location.reload();
-      })
-      .catch(err => alert(err));
-  });
-
-  // ----- 루틴 삭제 -----
-  routineListContainer?.addEventListener("click", function (e) {
-    if (!e.target.classList.contains("delete-routine-btn")) return;
-    const routineCard = e.target.closest(".routine-card");
-    const routineId = routineCard?.dataset.routineId;
-    if (!routineId) return;
-
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-
-    fetch("/routine/delete/" + routineId, { method: "POST", headers: { "Content-Type": "application/json" } })
-      .then(res => res.ok ? res.json() : Promise.reject("삭제 실패"))
-      .then(() => window.location.reload())
-      .catch(err => alert(err));
-  });
-
-  // ----- 검색 & 카테고리 필터링 -----
-  function filterRoutinesBy(category) {
-    const routineCards = document.querySelectorAll(".routine-card");
-    const searchTerm = searchInput?.value.trim().toLowerCase() || "";
-
-    routineCards.forEach(card => {
-      const title = card.querySelector(".routine-title")?.textContent.trim().toLowerCase() || "";
-      const tag = card.querySelector(".tag")?.textContent.trim() || "";
-      const categoryMatch = category === "전체" || tag === category;
-      const searchMatch = title.includes(searchTerm) || tag.toLowerCase().includes(searchTerm);
-      card.style.display = categoryMatch && searchMatch ? "grid" : "none";
-    });
-  }
-
-  categoryTabs.forEach(tab => {
-    tab.addEventListener("click", function () {
-      categoryTabs.forEach(btn => btn.classList.remove("active"));
-      this.classList.add("active");
-      filterRoutinesBy(this.textContent.trim());
-    });
-  });
-
-  searchInput?.addEventListener("input", function () {
-    const activeTab = document.querySelector(".tab-button.active");
-    const currentCategory = activeTab?.textContent.trim() || "전체";
-    filterRoutinesBy(currentCategory);
-  });
-
-  // ----- 초기 실행 -----
-  updateSummary();
-  filterRoutinesBy("전체");
-});
-</script>
-
+    </script>
 </body>
 </html>
