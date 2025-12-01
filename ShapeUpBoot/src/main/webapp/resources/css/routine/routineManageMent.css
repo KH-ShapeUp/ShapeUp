@@ -7,7 +7,12 @@
   --border-color: #e5e5e5;
   --text-dark: #333;
   --text-light: #666;
-  --tag-cardio: #ffc107; /* 유산소 노란색 */
+
+  /* 통일된 카테고리 색상 변수 정의 */
+  --color-sport: #dc3545; /* 스포츠: 강한 빨강 */
+  --color-cardio: #ffc107; /* 유산소: 노랑 */
+  --color-weight: #28a745; /* 근력: 녹색 */
+  --color-stretch: #007bff; /* 스트레칭: 파랑 */
 }
 
 /* 기본 설정 */
@@ -24,7 +29,7 @@ body {
 }
 
 /* ---------------------------------------------------- */
-/* 헤더 Placeholder 스타일 */
+/* 헤더 Placeholder 스타일 (유지) */
 /* ---------------------------------------------------- */
 .main-header-placeholder {
   width: 100%;
@@ -101,7 +106,7 @@ body {
 }
 /* ---------------------------------------------------- */
 
-/* 페이지 레이아웃 */
+/* 페이지 레이아웃 (유지) */
 .page-container {
   max-width: 1200px;
   margin: 20px auto;
@@ -114,14 +119,14 @@ body {
   margin-bottom: 20px;
 }
 
-/* 메인 컨텐츠 그리드 (3열 레이아웃) */
+/* 메인 컨텐츠 그리드 (3열 레이아웃) (유지) */
 .main-content-grid {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr; /* 1:2:1 비율 */
   gap: 20px;
 }
 
-/* 공통 패널 스타일 */
+/* 공통 패널 스타일 (유지) */
 .panel {
   background-color: var(--panel-background);
   border-radius: 10px;
@@ -143,14 +148,8 @@ body {
   margin: 0;
 }
 
-.panel-header .material-symbols-outlined {
-  font-size: 1.2rem;
-  color: var(--text-light);
-  margin-right: 8px;
-}
-
 /* ---------------------------------------------------- */
-/* 1. 활동 요약 (왼쪽) */
+/* 1. 활동 요약 (왼쪽) (유지) */
 /* ---------------------------------------------------- */
 .summary-panel .panel-header {
   border: none;
@@ -192,24 +191,24 @@ body {
 }
 
 .activity-item:nth-child(1) {
-  border-left-color: #dc3545;
-} /* 스포츠 */
+  border-left-color: var(--color-sport); /* 스포츠 (빨강) */
+}
 .activity-item:nth-child(2) {
-  border-left-color: #ffc107;
-} /* 유산소 */
+  border-left-color: var(--color-cardio); /* 유산소 (노랑) */
+}
 .activity-item:nth-child(3) {
-  border-left-color: #28a745;
-} /* 근력 */
+  border-left-color: var(--color-weight); /* 근력 (녹색) */
+}
 .activity-item:nth-child(4) {
-  border-left-color: #007bff;
-} /* 스트레칭 */
+  border-left-color: var(--color-stretch); /* 스트레칭 (파랑) */
+}
 
 .activity-percent {
   font-weight: 600;
 }
 
 /* ---------------------------------------------------- */
-/* 2. 루틴 관리 메인 (중앙) */
+/* 2. 루틴 관리 메인 (중앙) (유지) */
 /* ---------------------------------------------------- */
 .center-content {
   display: flex;
@@ -217,7 +216,7 @@ body {
   gap: 15px;
 }
 
-/* 탭 메뉴 */
+/* 탭 메뉴 (유지) */
 .category-tabs {
   display: flex;
   gap: 8px;
@@ -240,7 +239,7 @@ body {
   border-color: var(--primary-color);
 }
 
-/* 검색 및 추가 버튼 */
+/* 검색 및 추가 버튼 (유지) */
 .actions-row {
   display: flex;
   justify-content: space-between;
@@ -286,7 +285,9 @@ body {
   font-size: 0.8rem;
 }
 
-/* 루틴 카드 */
+/* ---------------------------------------------------- */
+/* 루틴 카드 (유지) */
+/* ---------------------------------------------------- */
 .routine-list {
   display: flex;
   flex-direction: column;
@@ -294,31 +295,111 @@ body {
 }
 
 .routine-card {
+  /* 데스크톱 그리드: 제목/요일(auto) | 메타(1fr) | 액션(auto) */
   display: grid;
-  grid-template-columns: auto 1fr auto; /* 제목/요일, 메타, 태그 순 */
+  grid-template-columns: auto 1fr auto; 
+  grid-template-rows: auto auto; 
   align-items: center;
   background-color: var(--panel-background);
   border-radius: 8px;
   padding: 15px 20px;
   border: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  position: relative;
+  position: relative; 
+  gap: 5px 15px; 
 }
 
+/* 유산소 태그 위치 조정 (액션 버튼 공간 확보) (유지) */
+.routine-card .card-header-right {
+  position: absolute; 
+  top: 15px; 
+  right: 50px; 
+  z-index: 10;
+}
+
+/* 기본 태그 스타일 (유지) */
+.routine-card .tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white; 
+}
+
+/* 카테고리별 색상 정의 (유지) */
+.routine-card .tag-유산소 {
+  background-color: var(--color-cardio);
+  color: var(--text-dark); 
+}
+
+.routine-card .tag-근력 {
+  background-color: var(--color-weight);
+}
+
+.routine-card .tag-스포츠 {
+  background-color: var(--color-sport);
+}
+
+.routine-card .tag-스트레칭 {
+  background-color: var(--color-stretch);
+}
+
+/* 액션 버튼 영역 스타일 (유지) */
+.routine-actions {
+  grid-column: 3 / 4; /* 3열에 위치 */
+  grid-row: 1 / 3; /* 1행과 2행 모두 차지하여 세로 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 1.2rem; /* 아이콘 크기 통일 */
+}
+
+/* 루틴 삭제 버튼 스타일 (유지) */
+/* 이 스타일은 JSP 인라인 스타일로 대체되어 사용됨: .delete-btn-invisible */
+.delete-routine-btn { 
+  color: var(--secondary-color);
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px; /* 클릭 영역 확보 */
+}
+
+.delete-routine-btn:hover {
+  color: var(--color-sport); /* 호버 시 빨간색으로 변경 */
+}
+
+
+/* 모달 닫기 버튼 (유지) */
+.close-modal-btn {
+    font-size: 1.5rem; /* 모달 닫기 버튼 크기 조정 */
+    color: var(--text-light); 
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: var(--text-dark); 
+}
+
+/* 루틴 제목 (유지) */
 .routine-title {
   font-size: 1.1rem;
   font-weight: 600;
-  grid-column: 1 / 2;
-  margin-right: 15px;
+  grid-column: 1 / 2; /* 1열, 1행 */
+  grid-row: 1 / 2; 
+  margin-right: 0; 
 }
 
+/* 루틴 요일 (유지) */
 .routine-days {
   display: flex;
   gap: 5px;
-  grid-column: 1 / 2;
-  margin-top: 5px;
+  grid-column: 1 / 2; /* 1열, 2행 */
+  grid-row: 2 / 3; 
+  margin-top: 0;
 }
 
+/* 요일 점 스타일 (유지) */
 .day-dot {
   width: 20px;
   height: 20px;
@@ -337,27 +418,25 @@ body {
   color: white;
 }
 
+/* 주당 칼로리 소모 (데스크톱) (유지) */
 .routine-meta {
   font-size: 0.9rem;
   color: var(--text-light);
-  grid-column: 2 / 3;
+  grid-column: 2 / 3; /* 2열 */
+  grid-row: 2 / 3; /* 2행 */
   text-align: right;
+  align-self: flex-end; 
 }
 
+/* 태그 스타일 (유지) */
 .tag {
   padding: 3px 8px;
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 600;
-  grid-column: 3 / 4;
 }
 
-.tag-cardio {
-  background-color: var(--tag-cardio);
-  color: var(--text-dark);
-}
-
-/* 확장 푸터 */
+/* 확장 푸터 (유지) */
 .routine-footer {
   text-align: center;
   margin-top: 5px;
@@ -366,7 +445,7 @@ body {
 }
 
 /* ---------------------------------------------------- */
-/* 3. 목표 및 예상 칼로리 (오른쪽) */
+/* 3. 목표 및 예상 칼로리 (오른쪽) (유지) */
 /* ---------------------------------------------------- */
 .goals-panel {
   padding: 20px;
@@ -468,25 +547,25 @@ body {
 
 /* 모달 오버레이 */
 .modal-overlay {
-  position: fixed;
+  position: fixed; /* 🚨 **수정됨:** 'none' 대신 'fixed'를 사용하여 화면을 덮습니다. */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-  display: none; /* JS로 'flex'로 변경되어 표시됨 */
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: none; 
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* 모달 컨텐츠 카드 */
+/* 모달 컨텐츠 카드 (유지) */
 .modal-content-card {
   background-color: white;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  width: 450px; /* 고정 너비 */
+  width: 450px; 
   max-width: 90%;
 }
 
@@ -508,7 +587,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* 드롭다운 영역 */
+/* 드롭다운 영역 (유지) */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -517,7 +596,7 @@ body {
 }
 
 .time-section {
-  grid-template-columns: 1fr 2fr; /* 시간(분)은 좁게, 시작 시각은 넓게 */
+  grid-template-columns: 1fr 2fr; 
   margin-bottom: 30px;
 }
 
@@ -553,7 +632,7 @@ body {
   width: 80px;
 }
 
-/* 시작 시각 입력 필드 */
+/* 시작 시각 입력 필드 (유지) */
 .time-input-container {
   position: relative;
   display: flex;
@@ -579,7 +658,7 @@ body {
   pointer-events: none;
 }
 
-/* 요일 선택 및 정보 */
+/* 요일 선택 및 정보 (유지) */
 .day-info-wrapper {
   display: flex;
   justify-content: space-between;
@@ -616,8 +695,9 @@ body {
 }
 
 .day-btn.active {
-  background-color: var(--text-dark);
-  color: white;
+    background-color: #4e73df;
+    color: white;
+    border-color: #4e73df;
 }
 
 .routine-summary {
@@ -628,9 +708,11 @@ body {
 
 .routine-summary p {
   color: var(--text-dark);
+  font-weight: 500; 
+  transition: color 0.2s; 
 }
 
-/* 저장 버튼 */
+/* 저장 버튼 (유지) */
 .btn-save {
   width: 100%;
   padding: 12px;
@@ -644,7 +726,9 @@ body {
   transition: background-color 0.2s;
 }
 
-/* 반응형 디자인 */
+/* ---------------------------------------------------- */
+/* 반응형 디자인 (Media Queries) (유지) */
+/* ---------------------------------------------------- */
 @media (max-width: 992px) {
   .main-content-grid {
     grid-template-columns: 1fr;
@@ -658,25 +742,52 @@ body {
   }
 
   .routine-card {
+    /* 모바일 그리드: 카테고리/제목 등 (1fr) | 액션(auto) */
     grid-template-columns: 1fr auto;
-    gap: 10px;
+    /* 행 구조: 1(카테고리/액션), 2(제목), 3(메타), 4(요일) */
+    grid-template-rows: auto auto auto auto; 
+    gap: 8px 10px; 
   }
 
-  .routine-title {
-    grid-column: 1 / 2;
-  }
-
+  /* 1. 카테고리 태그 */
   .card-header-right {
-    grid-column: 2 / 3;
-  }
-
-  .routine-days,
-  .routine-meta {
-    grid-column: 1 / 3;
-  }
-
-  .routine-meta {
+    position: static; 
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
     text-align: left;
+    order: 1; 
+  }
+  
+  /* 2. 삭제 버튼 영역 */
+  .routine-actions {
+    grid-column: 2 / 3; 
+    grid-row: 1 / 2;
+    align-self: flex-start;
+    justify-content: flex-end;
+    order: 2;
+  }
+
+  /* 3. 루틴 제목 */
+  .routine-title {
+    grid-column: 1 / 3; /* 2열 모두 차지 */
+    grid-row: 2 / 3; 
+    order: 3;
+  }
+
+  /* 4. 주당 칼로리 소모 (모바일) */
+  .routine-meta {
+    grid-column: 1 / 3; 
+    grid-row: 3 / 4; 
+    text-align: left;
+    align-self: flex-start;
+    order: 4;
+  }
+
+  /* 5. 루틴 요일 (모바일) */
+  .routine-days {
+    grid-column: 1 / 3; 
+    grid-row: 4 / 5; 
+    order: 5;
   }
 
   .modal-content-card {
@@ -694,7 +805,7 @@ body {
   }
 
   .form-grid {
-    grid-template-columns: 1fr; /* 모바일에서 드롭다운 세로 정렬 */
+    grid-template-columns: 1fr; 
   }
 
   .time-section {

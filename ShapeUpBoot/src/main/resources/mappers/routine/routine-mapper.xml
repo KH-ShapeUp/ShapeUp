@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.ShapeUp.boot.domain.routine.mapper.RoutineMapper">
+
+	<resultMap type="com.ShapeUp.boot.domain.routine.vo.Routine"
+		id="routineResultMap">
+		<id property="routineId" column="ROUTINE_ID" />
+		<result property="userNo" column="USER_NO" />
+		<result property="routineName" column="ROUTINE_NAME" />
+		<result property="routineExplain" column="ROUTINE_EXPLAIN" />
+		<result property="routineStart" column="ROUTINE_START" />
+		<result property="routineEnd" column="ROUTINE_END" />
+		<result property="createdAt" column="CREATED_AT" />
+		<result property="updatedAt" column="UPDATED_AT" />
+		<result property="routineCategorySummary"
+			column="CATEGORY_SUMMARY" />
+		<result property="routineDaysSummary" column="DAYS_SUMMARY" />
+		<result property="totalKcal" column="TOTAL_KCAL" />
+	</resultMap>
+
+
+	<select id="selectRoutineListByUserNo"
+		resultMap="routineResultMap">
+<![CDATA[
+    SELECT 
+        R.ROUTINE_ID, R.USER_NO, R.ROUTINE_NAME, R.ROUTINE_EXPLAIN, R.ROUTINE_START, R.ROUTINE_END, R.CREATED_AT, R.UPDATED_AT,
+		(
+        SELECT 
+            DECODE(A.ACTIVITY_TYPE,
+                'CARDIO', '유산소',
+                'WEIGHT', '근력',
+                'SPORTS', '스포츠',
+                'STRETCH', '스트레칭',
+                A.ACTIVITY_TYPE -- 일치하는 값이 없으면 원래 값 반환
+            ) 
+        FROM ROUTINE_ITEM_TBL RI 
+        JOIN ACTIVITY_TBL A ON RI.ACTIVITY_ID = A.ACTIVITY_ID
+        WHERE RI.ROUTINE_ID = R.ROUTINE_ID 
+          AND ROWNUM = 1 
+    ) AS CATEGORY_SUMMARY,
+        (
+            SELECT LISTAGG(
+                DECODE(RD.DAY_OF_WEEK, 
+                    1, '월', 2, '화', 3, '수', 4, '목', 5, '금', 6, '토', 7, '일', 
+                    RD.DAY_OF_WEEK -- 일치하지 않으면 원래 숫자 반환 (디버깅용)
+                )
+                , ',') WITHIN GROUP (
+                ORDER BY RD.DAY_OF_WEEK -- 숫자 코드를 기준으로 정렬 (1=월, 2=화...)
+            )
+            FROM ROUTINE_ITEM_TBL RI
+            JOIN ROUTINE_ITEM_DAY_TBL RD ON RI.ROUTINE_ITEM_ID = RD.ROUTINE_ITEM_ID
+            WHERE RI.ROUTINE_ID = R.ROUTINE_ID
+        ) AS DAYS_SUMMARY,
+		(
+		    SELECT SUM(A.CAL_PER_MIN * RI.DURATION_MIN) 
+		    FROM ROUTINE_ITEM_TBL RI
+		    JOIN ACTIVITY_TBL A ON RI.ACTIVITY_ID = A.ACTIVITY_ID
+		    WHERE RI.ROUTINE_ID = R.ROUTINE_ID
+		) AS TOTAL_KCAl
+    FROM ROUTINE_TBL R
+    WHERE R.USER_NO = #{userNo}
+    ]]>
+	</select>
+
+	<!-- 활동명 가져오기 -->
+	<select id="selectActivityNames" resultType="string">
+	    <![CDATA[
+	    SELECT ACTIVITY_NAME
+	    FROM ACTIVITY_TBL
+	    WHERE USE_YN = 'Y'
+	    ORDER BY ACTIVITY_NAME
+	    ]]>
+	</select>
+
+	<select id="selectCaloriePerMinByName" parameterType="string"
+		resultType="double">
+		<![CDATA[
+			SELECT CAL_PER_MIN FROM ACTIVITY_TBL
+			WHERE ACTIVITY_NAME = #{activityName}		
+		]]>
+	</select>
+
+	<select id="selectActivityIdByName" parameterType="string"
+		resultType="int">
+		SELECT ACTIVITY_ID FROM ACTIVITY_TBL
+		WHERE ACTIVITY_NAME =
+		#{activityName}
+	</select>
+
+	<!-- 루틴 작성 -->
+	<insert id="insertRoutine"
+		parameterType="com.ShapeUp.boot.domain.routine.vo.Routine">
+		<selectKey keyProperty="routineId" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_ROUTINE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO ROUTINE_TBL(
+		ROUTINE_ID,
+		USER_NO,
+		ROUTINE_NAME,
+		ROUTINE_EXPLAIN,
+		ROUTINE_START,
+		ROUTINE_END,
+		CREATED_AT,
+		UPDATED_AT
+		)
+		VALUES(
+		#{routineId},
+		#{userNo},
+		#{routineName},
+		#{routineExplain,
+		jdbcType=VARCHAR},
+		#{routineStart, jdbcType=DATE},
+		#{routineEnd,
+		jdbcType=DATE},
+		SYSDATE,
+		SYSDATE
+		)
+	</insert>
+
+	<insert id="insertRoutineItem" parameterType="map">
+		<selectKey keyProperty="routineItemId" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_ROUTINE_ITEM_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO ROUTINE_ITEM_TBL(
+		ROUTINE_ITEM_ID,
+		ROUTINE_ID,
+		ACTIVITY_ID,
+		TARGET_SET,
+		TARGET_REPS,
+		DURATION_MIN,
+		START_TIME
+		) VALUES(
+		#{routineItemId},
+		#{routineId},
+		#{activityId},
+		#{targetSet,
+		jdbcType=NUMERIC},
+		#{targetReps, jdbcType=NUMERIC},
+		#{durationMin,
+		jdbcType=NUMERIC},
+		TO_DATE(#{startTime}, 'HH24:MI')
+		)
+	</insert>
+
+	<insert id="insertRoutineItemDay" parameterType="map">
+		INSERT INTO
+		ROUTINE_ITEM_DAY_TBL(
+		ROUTINE_ITEM_ID,
+		DAY_OF_WEEK
+		) VALUES(
+		#{routineItemId, jdbcType=NUMERIC},
+		#{dayOfWeek, jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<delete id="deleteRoutine" parameterType="int">
+		DELETE FROM ROUTINE_TBL
+		WHERE ROUTINE_ID = #{routineId}
+	</delete>
+
+</mapper>
