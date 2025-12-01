@@ -97,13 +97,13 @@
                   <p class="meal-name">아침</p>
                   <p class="meal-time">07:30</p>
                 </div>
-                <button class="fasting-button" type="button">단식</button>
               </div>
               <div class="meal-card-bottom">
                 <div class="kcal-label">섭취 칼로리</div>
                 <div class="kcal-value" id="kcal-breakfast">0 Kcal</div>
                 <div class="progress-track"><span class="progress-fill"></span></div>
               </div>
+              <div class="fasting-overlay" style="display:none;">단식 상태입니다.</div>
             </div>
             <div class="meal-card noon" data-diet-type="점심">
               <div class="meal-card-top">
@@ -114,13 +114,13 @@
                   <p class="meal-name">점심</p>
                   <p class="meal-time">12:30</p>
                 </div>
-                <button class="fasting-button" type="button">단식</button>
               </div>
               <div class="meal-card-bottom">
                 <div class="kcal-label">섭취 칼로리</div>
                 <div class="kcal-value" id="kcal-lunch">0 Kcal</div>
                 <div class="progress-track"><span class="progress-fill"></span></div>
               </div>
+              <div class="fasting-overlay" style="display:none;">단식 상태입니다.</div>
             </div>
             <div class="meal-card evening" data-diet-type="저녁">
               <div class="meal-card-top">
@@ -131,13 +131,13 @@
                   <p class="meal-name">저녁</p>
                   <p class="meal-time">18:30</p>
                 </div>
-                <button class="fasting-button" type="button">단식</button>
               </div>
               <div class="meal-card-bottom">
                 <div class="kcal-label">섭취 칼로리</div>
                 <div class="kcal-value" id="kcal-dinner">0 Kcal</div>
                 <div class="progress-track"><span class="progress-fill"></span></div>
               </div>
+              <div class="fasting-overlay" style="display:none;">단식 상태입니다.</div>
             </div>
             <div class="meal-card night" data-diet-type="기타">
               <div class="meal-card-top">
@@ -148,13 +148,13 @@
                   <p class="meal-name">기타</p>
                   <p class="meal-time">22:00</p>
                 </div>
-                <button class="fasting-button" type="button">단식</button>
               </div>
               <div class="meal-card-bottom">
                 <div class="kcal-label">섭취 칼로리</div>
                 <div class="kcal-value" id="kcal-etc">0 Kcal</div>
                 <div class="progress-track"><span class="progress-fill"></span></div>
               </div>
+              <div class="fasting-overlay" style="display:none;">단식 상태입니다.</div>
             </div>
           </div>
         </div>
@@ -167,16 +167,10 @@
   </body>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-<<<<<<< HEAD
   let macroChart = null;
   let currentDietDate = null;
-  const SAMPLE_DIET = {
-    meals: { '아침': 320, '점심': 540, '저녁': 480, '기타': 150 },
-    totals: { kcal: 1490, carb: 180, protein: 75, fat: 55 }
-  };
-=======
-  let currentDietDate = null;
->>>>>>> refs/remotes/origin/Donghyok2
+  let currentTotalKcal = 0;
+  const MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
@@ -279,15 +273,35 @@
     const applyDietState = (mealValues = {}, totals = {}) => {
       const totalFromMeals = Object.values(mealValues || {}).reduce((acc, cur) => acc + (Number(cur) || 0), 0);
       const totalKcalValue = Number(totals.kcal || totals.totalKcal || totalFromMeals) || 0;
+      currentTotalKcal = totalKcalValue;
       const totalEl = document.getElementById('total-kcal');
       if (totalEl) totalEl.textContent = totalKcalValue + ' Kcal';
 
       Object.entries(targets).forEach(([key, el]) => {
         const val = Number(mealValues[key]) || 0;
-        if (el) el.textContent = val + ' Kcal';
+        const kcalText = val + ' Kcal';
+        if (el) {
+          el.textContent = kcalText;
+          el.dataset.prevKcal = kcalText;
+        }
         const progressEl = progressBars[key];
+        const card = progressEl ? progressEl.closest('.meal-card') : null;
+        if (card) {
+          card.dataset.fasting = 'false';
+          card.classList.remove('fasting-active');
+          const overlay = card.querySelector('.fasting-overlay');
+          if (overlay) overlay.style.display = 'none';
+        }
         if (progressEl) {
-          const pct = totalKcalValue > 0 ? Math.min(100, Math.round((val / totalKcalValue) * 100)) : (val > 0 ? 100 : 0);
+          const goal = MEAL_GOALS[key];
+          let pct = 0;
+          if (goal && goal > 0) {
+            pct = Math.min(100, Math.round((val / goal) * 100));
+          } else if (totalKcalValue > 0) {
+            pct = Math.min(100, Math.round((val / totalKcalValue) * 100));
+          } else if (val > 0) {
+            pct = 100;
+          }
           progressEl.style.width = pct + '%';
         }
       });
@@ -306,11 +320,13 @@
     };
 
     const safeDate = sanitizeDateInput(dateStr) || getTodayIso();
-    const isToday = safeDate === getTodayIso();
     applyDietState({}, { kcal: 0, carb: 0, protein: 0, fat: 0 });
 
     try {
       const res = await fetch('/diet/summary?date=' + encodeURIComponent(safeDate));
+      if (res.status === 401) {
+        throw new Error('unauthorized');
+      }
       if (!res.ok) throw new Error('summary failed');
       const json = await res.json();
       const data = json.data || {};
@@ -326,21 +342,51 @@
       const hasMeals = Object.keys(mealValues).length > 0;
       const hasTotals = !!(totals && (totals.kcal || totals.totalKcal || totals.carb || totals.totalCarb || totals.protein || totals.totalProtein || totals.fat || totals.totalFat));
 
-      if (!hasMeals && !hasTotals && isToday) {
-        applyDietState(SAMPLE_DIET.meals, SAMPLE_DIET.totals);
-        return;
-      }
-
       applyDietState(mealValues, totals);
     } catch (err) {
       console.error('failed to load diet summary', err);
-      if (isToday) {
-        applyDietState(SAMPLE_DIET.meals, SAMPLE_DIET.totals);
-      } else {
-        applyDietState({}, { kcal: 0, carb: 0, protein: 0, fat: 0 });
+      applyDietState({}, { kcal: 0, carb: 0, protein: 0, fat: 0 });
+    }
+  }
+
+  function findCardByType(type) {
+    const key = type || window.lastSelectedDietType || '기타';
+    return document.querySelector(`.meal-card[data-diet-type="${key}"]`);
+  }
+
+  function toggleFasting(card, desiredState) {
+    if (!card) return;
+    const kcalEl = card.querySelector('.kcal-value');
+    const progressEl = card.querySelector('.progress-fill');
+    if (!kcalEl) return;
+
+    const isFasting = card.dataset.fasting === 'true';
+    const nextState = typeof desiredState === 'boolean' ? desiredState : !isFasting;
+    if (nextState === isFasting) return;
+
+    if (nextState) {
+      kcalEl.dataset.prevKcal = kcalEl.textContent;
+      kcalEl.textContent = '단식';
+      card.dataset.fasting = 'true';
+      card.classList.add('fasting-active');
+      if (progressEl) progressEl.style.width = '0%';
+    } else {
+      const restoreText = kcalEl.dataset.prevKcal || '0 Kcal';
+      kcalEl.textContent = restoreText;
+      card.dataset.fasting = 'false';
+      card.classList.remove('fasting-active');
+      if (progressEl) {
+        const valNum = parseFloat(restoreText) || 0;
+        const pct = currentTotalKcal > 0 ? Math.min(100, Math.round((valNum / currentTotalKcal) * 100)) : (valNum > 0 ? 100 : 0);
+        progressEl.style.width = pct + '%';
       }
     }
   }
+
+  window.toggleFastingByType = (type) => {
+    const card = findCardByType(type);
+    toggleFasting(card);
+  };
 
   document.addEventListener('DOMContentLoaded', () => {
     ['diet-list-backdrop','modal-backdrop','custom-backdrop'].forEach(id => {
@@ -363,6 +409,14 @@
         card.classList.remove('active-hover');
       });
       card.addEventListener('click', () => {
+        window.lastSelectedDietType = type;
+        if (card.dataset.fasting === 'true') {
+          const confirmOff = window.confirm('단식을 취소하겠습니까?');
+          if (confirmOff) {
+            toggleFasting(card, false);
+          }
+          return;
+        }
         if (typeof setDietType === 'function') setDietType(type);
         if (typeof openDietListModal === 'function') openDietListModal();
       });

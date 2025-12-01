@@ -12,5 +12,12 @@ public interface ActivityService {
 
 	int insertActivities(ActivityLogVO log);
 
+	List<java.util.Map<String, Object>> selectLogsByDate(int userNo, String actionDate);
+
+	java.util.Map<String, Object> sumLogsByDate(int userNo, String actionDate);
+
+	List<java.util.Map<String, Object>> sumKcalByType(int userNo, String actionDate);
+
+	int deleteLogs(int userNo, List<Integer> logIds);
 
 }

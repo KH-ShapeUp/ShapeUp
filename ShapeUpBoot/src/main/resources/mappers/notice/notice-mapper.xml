@@ -18,6 +18,9 @@
 		<result property="eventStart" column="EVENT_START"/>
 		<result property="eventEnd" column="EVENT_END"/>
 		<result property="viewCount" column="VIEW_COUNT"/>
+		<result property="bannerYn" column="BANNER_YN"/>
+		<result property="bannerTitle" column="BANNER_TITLE"/>
+		<result property="bannerImgPath" column="BANNER_IMG_PATH"/>
 		<collection property="images" column="NOTICE_NO" select="selectImagesByNotice"/>
 	</resultMap>
 
@@ -66,7 +69,10 @@
 		       UPDATED_AT,
 		       EVENT_START,
 		       EVENT_END,
-		       VIEW_COUNT
+		       VIEW_COUNT,
+		       BANNER_YN,
+		       BANNER_TITLE,
+		       BANNER_IMG_PATH
 		FROM (
 			SELECT ROWNUM RNUM, A.*
 			FROM (
@@ -80,9 +86,13 @@
 				       n.UPDATED_AT,
 				       n.EVENT_START,
 				       n.EVENT_END,
-				       n.VIEW_COUNT
+				       n.VIEW_COUNT,
+				       b.BANNER_YN       AS BANNER_YN,
+				       b.BANNER_TITLE    AS BANNER_TITLE,
+				       b.IMG_PATH        AS BANNER_IMG_PATH
 				FROM NOTICE_TBL n
 				LEFT JOIN USER_TBL u ON n.USER_NO = u.USER_NO
+				LEFT JOIN BANNER_TBL b ON n.NOTICE_NO = b.NOTICE_NO
 				<where>
 					<if test="category != null and category != ''">
 						n.NOTICE_CATEGORY = #{category}
@@ -157,9 +167,13 @@
 		       n.UPDATED_AT,
 		       n.EVENT_START,
 		       n.EVENT_END,
-		       n.VIEW_COUNT
+		       n.VIEW_COUNT,
+		       b.BANNER_YN       AS BANNER_YN,
+		       b.BANNER_TITLE    AS BANNER_TITLE,
+		       b.IMG_PATH        AS BANNER_IMG_PATH
 		FROM NOTICE_TBL n
 		LEFT JOIN USER_TBL u ON n.USER_NO = u.USER_NO
+		LEFT JOIN BANNER_TBL b ON n.NOTICE_NO = b.NOTICE_NO
 		WHERE n.NOTICE_NO = #{noticeNo}
 	</select>
 
@@ -213,6 +227,28 @@
 		ORDER BY LABEL
 	</select>
 
+	<select id="selectLatestNotices" resultMap="NoticeMap">
+		SELECT *
+		FROM (
+			SELECT
+				n.NOTICE_NO,
+				n.NOTICE_TITLE,
+				n.NOTICE_CONTENT,
+				n.NOTICE_CATEGORY,
+				n.USER_NO,
+				u.USER_NAME,
+				n.CREATED_AT,
+				n.UPDATED_AT,
+				n.EVENT_START,
+				n.EVENT_END,
+				n.VIEW_COUNT
+			FROM NOTICE_TBL n
+			LEFT JOIN USER_TBL u ON n.USER_NO = u.USER_NO
+			ORDER BY n.CREATED_AT DESC
+		)
+		WHERE ROWNUM &lt;= #{limit}
+	</select>
+
 	<!-- Admin API 전용: VO로 공지 등록 -->
 	<insert id="insertNoticeVo" parameterType="com.ShapeUp.boot.domain.notice.model.vo.Notice">
 		<selectKey keyProperty="noticeNo" resultType="int" order="BEFORE">
@@ -244,4 +280,3 @@
 	</insert>
 
 </mapper>
-

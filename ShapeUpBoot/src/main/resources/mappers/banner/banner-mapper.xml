@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.banner.model.mapper.BannerMapper">
+
+    <resultMap id="bannerMap" type="com.ShapeUp.boot.domain.banner.model.vo.Banner">
+        <id property="bannerNo" column="bannerNo"/>
+        <result property="noticeNo" column="noticeNo"/>
+        <result property="bannerTitle" column="bannerTitle"/>
+        <result property="imgPath" column="imgPath"/>
+        <result property="bannerYn" column="bannerYn"/>
+    </resultMap>
+
+    <insert id="insertBanner" parameterType="com.ShapeUp.boot.domain.banner.model.vo.Banner">
+        INSERT INTO BANNER_TBL (
+            BANNER_NO,
+            NOTICE_NO,
+            BANNER_TITLE,
+            IMG_PATH,
+            BANNER_YN
+        ) VALUES (
+            SEQ_BANNER_NO.NEXTVAL,
+            #{noticeNo},
+            #{bannerTitle},
+            #{imgPath},
+            COALESCE(#{bannerYn}, 'Y')
+        )
+    </insert>
+
+    <delete id="deleteByNotice">
+        DELETE FROM BANNER_TBL WHERE NOTICE_NO = #{noticeNo}
+    </delete>
+
+    <select id="selectActiveBanners" resultMap="bannerMap">
+        SELECT
+            BANNER_NO AS bannerNo,
+            NOTICE_NO AS noticeNo,
+            BANNER_TITLE AS bannerTitle,
+            IMG_PATH AS imgPath,
+            BANNER_YN AS bannerYn
+        FROM BANNER_TBL
+        WHERE BANNER_YN = 'Y'
+        ORDER BY BANNER_NO DESC
+    </select>
+
+    <select id="selectByNoticeNo" resultMap="bannerMap">
+        SELECT
+            BANNER_NO AS bannerNo,
+            NOTICE_NO AS noticeNo,
+            BANNER_TITLE AS bannerTitle,
+            IMG_PATH AS imgPath,
+            BANNER_YN AS bannerYn
+        FROM BANNER_TBL
+        WHERE NOTICE_NO = #{noticeNo}
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+ </mapper>

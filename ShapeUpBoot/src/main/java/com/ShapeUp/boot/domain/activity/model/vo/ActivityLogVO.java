@@ -14,7 +14,7 @@ public class ActivityLogVO {
    private int activityId;
    private int durationMin;
    private double calories;
-   private int actionAt;
+   private java.sql.Timestamp actionAt;
    private String sourceType;
    private int weightLevel;
    private int intensityLevel;

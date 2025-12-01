@@ -50,4 +50,6 @@ public interface NoticeService{
 	Integer selectPrevNoticeNo(int noticeNo);
 
 	Integer selectNextNoticeNo(int noticeNo);
+
+	java.util.List<Notice> selectLatestNotices(int limit);
 }

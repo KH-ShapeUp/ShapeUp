@@ -20,6 +20,7 @@ const BoardManager = ({
   onUpdatePost = null,
   onDeletePost = null,
   onUploadImages = null,
+  onUploadBanner = null,
   columns = null,
   detailRenderer = null,
 }) => {
@@ -57,6 +58,10 @@ const BoardManager = ({
   const [pageInput, setPageInput] = useState("");
   const chartRef = useRef(null);
   const [deleteModal, setDeleteModal] = useState({ open: false, status: "confirm" });
+  const [bannerToggle, setBannerToggle] = useState(false);
+  const [bannerTitle, setBannerTitle] = useState("");
+  const [bannerFile, setBannerFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState("");
 
   useEffect(() => {
     if (storageKey) return;
@@ -134,7 +139,13 @@ const BoardManager = ({
     return () => chartInstance.destroy();
   }, [chartLabels, chartDatasetLabel, chartData]);
 
-  const handleSelectPost = (post) => setSelectedPost(post);
+  const handleSelectPost = (post) => {
+    setSelectedPost(post);
+    setBannerToggle(post?.bannerYn === "Y");
+    setBannerTitle(post?.bannerTitle || "");
+    setBannerFile(null);
+    setBannerPreview(post?.bannerImgPath || "");
+  };
   const handleChange = (e) =>
     setSelectedPost((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   const [actionModal, setActionModal] = useState({ open: false, mode: null, status: "confirm" });
@@ -595,6 +606,46 @@ const BoardManager = ({
               </div>
             )}
 
+            {isEditable && (
+              <div className="banner-section">
+                <div className="banner-header">
+                  <label>배너 노출</label>
+                  <div
+                    className={`toggle ${bannerToggle ? "on" : "off"}`}
+                    onClick={() => setBannerToggle((v) => !v)}
+                  >
+                    <span className="knob" />
+                  </div>
+                </div>
+              <div className="banner-fields">
+                <div className="compose-field">
+                  <label>배너 제목</label>
+                  <input
+                    type="text"
+                    value={bannerTitle}
+                    onChange={(e) => setBannerTitle(e.target.value)}
+                    placeholder="배너에 표시할 제목"
+                  />
+                </div>
+                <div className="compose-field">
+                  <label>배너 이미지</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setBannerFile(e.target.files?.[0] || null)}
+                  />
+                  {bannerFile && <p className="banner-file-name">{bannerFile.name}</p>}
+                  {!bannerFile && bannerPreview && (
+                    <div className="image-thumb" style={{ marginTop: "6px" }}>
+                      <img src={bannerPreview} alt="배너" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <p className="muted small">배너 업로드 경로: uploads/notice/{"{userid}"}/banner/</p>
+            </div>
+            )}
+
             {isEditable ? (
               <button className="update-btn" onClick={handleUpdate}>
                 수정
@@ -641,6 +692,11 @@ const BoardManager = ({
                     try {
                       if (actionModal.mode === "update" && onUpdatePost) {
                         await onUpdatePost(selectedPost);
+                        if (onUploadBanner && bannerToggle) {
+                          if (bannerFile) {
+                            await onUploadBanner(selectedPost.id, bannerFile, bannerTitle, true);
+                          }
+                        }
                       } else if (actionModal.mode === "delete" && onDeletePost) {
                         await onDeletePost(selectedPost.id);
                       }
@@ -650,8 +706,10 @@ const BoardManager = ({
                         setSelectedPost(null);
                       }
                       setTimeout(() => setActionModal({ open: false, mode: null, status: "confirm" }), 1000);
-                    } catch {
+                    } catch (err) {
+                      console.error(err);
                       setActionModal({ open: false, mode: null, status: "confirm" });
+                      alert("처리에 실패했습니다. 다시 시도해주세요.");
                     }
                   }}
                 >

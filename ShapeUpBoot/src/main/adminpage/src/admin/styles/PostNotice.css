@@ -222,6 +222,42 @@
   border: 1px solid #d3d9e5;
 }
 
+.banner-section {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+.banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.toggle {
+  width: 50px;
+  height: 28px;
+  background: #d1d5db;
+  border-radius: 999px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+.toggle.on { background: #22c55e; }
+.toggle .knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+.toggle.on .knob { transform: translateX(22px); }
+.banner-fields .compose-field { margin-bottom: 10px; }
+.banner-file-name { margin-top: 6px; color: #374151; font-weight: 700; }
+
 .posts-header {
   display: flex;
   justify-content: space-between;

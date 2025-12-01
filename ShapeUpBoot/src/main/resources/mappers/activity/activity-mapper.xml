@@ -3,9 +3,9 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.ShapeUp.boot.domain.activity.model.mapper.ActivityMapper">
- 	<select id="getActivityListByKeyword" resultType="com.ShapeUp.boot.domain.activity.model.vo.ActivityVO">
- 		SELECT 
- 			ACTIVITY_ID   AS activityId,
+	<select id="getActivityListByKeyword" resultType="com.ShapeUp.boot.domain.activity.model.vo.ActivityVO">
+		SELECT 
+			ACTIVITY_ID   AS activityId,
 			ACTIVITY_NAME AS activityName,
 			ACTIVITY_TYPE AS activityType,
 			CAL_PER_MIN   AS calPerMin,
@@ -39,4 +39,53 @@
             #{intensityLevel}
         )
     </insert>
+
+    <select id="selectLogsByDate" resultType="map">
+        SELECT 
+            l.LOG_ID AS "logId",
+            l.USER_NO AS "userNo",
+            l.ACTIVITY_ID AS "activityId",
+            a.ACTIVITY_NAME AS "activityName",
+            a.ACTIVITY_TYPE AS "activityType",
+            NVL(l.DURATION_MIN,0) AS "durationMin",
+            NVL(l.CALORIES,0) AS "calories",
+            NVL(l.WEIGHT_LEVEL,0) AS "weightLevel",
+            NVL(l.INTENSITY_FACTOR,0) AS "intensityFactor",
+            l.ACTION_AT AS "actionAt"
+        FROM ACTIVITY_LOG_TBL l
+        JOIN ACTIVITY_TBL a ON l.ACTIVITY_ID = a.ACTIVITY_ID
+        WHERE l.USER_NO = #{userNo}
+          AND TRUNC(l.ACTION_AT) = TO_DATE(#{actionDate}, 'YYYY-MM-DD')
+        ORDER BY l.ACTION_AT DESC, l.LOG_ID DESC
+    </select>
+
+    <select id="sumLogsByDate" resultType="map">
+        SELECT
+            NVL(SUM(l.DURATION_MIN),0) AS "totalMinutes",
+            NVL(SUM(l.CALORIES),0) AS "totalKcal",
+            COUNT(*) AS "count"
+        FROM ACTIVITY_LOG_TBL l
+        WHERE l.USER_NO = #{userNo}
+          AND TRUNC(l.ACTION_AT) = TO_DATE(#{actionDate}, 'YYYY-MM-DD')
+    </select>
+
+    <select id="sumKcalByType" resultType="map">
+        SELECT
+            a.ACTIVITY_TYPE AS "activityType",
+            NVL(SUM(l.CALORIES),0) AS "kcal"
+        FROM ACTIVITY_LOG_TBL l
+        JOIN ACTIVITY_TBL a ON l.ACTIVITY_ID = a.ACTIVITY_ID
+        WHERE l.USER_NO = #{userNo}
+          AND TRUNC(l.ACTION_AT) = TO_DATE(#{actionDate}, 'YYYY-MM-DD')
+        GROUP BY a.ACTIVITY_TYPE
+    </select>
+
+    <delete id="deleteLogs">
+        DELETE FROM ACTIVITY_LOG_TBL
+        WHERE USER_NO = #{userNo}
+          AND LOG_ID IN
+          <foreach item="id" collection="logIds" open="(" separator="," close=")">
+            #{id}
+          </foreach>
+    </delete>
  </mapper>

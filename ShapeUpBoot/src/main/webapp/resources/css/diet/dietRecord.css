@@ -155,6 +155,8 @@ body {
   box-shadow: var(--shadow-soft);
   border: 1px solid rgba(226, 232, 240, 0.8);
   backdrop-filter: blur(6px);
+  position: relative;
+  overflow: visible;
 }
 
 .summary-header {
@@ -190,6 +192,7 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 1.2rem;
   align-items: center;
+  position: relative;
 }
 
 .donut-card {
@@ -205,6 +208,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 5;
+  overflow: visible;
 }
 
 #macro-chart {
@@ -266,6 +271,8 @@ body {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 0.8rem;
+  position: relative;
+  z-index: 0;
 }
 
 .macro-card {
@@ -352,6 +359,7 @@ body {
   inset: 0;
   border-radius: inherit;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
   opacity: 0;
   transition: opacity 0.18s ease;
 }
@@ -380,8 +388,8 @@ body {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #f4f6fb;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.04), 0 6px 16px rgba(15, 23, 42, 0.08);
 }
 
 .meal-icon { width: 28px; height: 28px; }
@@ -401,6 +409,8 @@ body {
   border: 1px solid #e5e7eb;
   padding: 0.45rem 0.85rem;
   border-radius: 12px;
+  position: relative;
+  z-index: 2;
   background: #fff;
   color: #1e293b;
   font-weight: 700;
@@ -424,6 +434,31 @@ body {
   font-weight: 800;
   font-size: 1.05rem;
   margin-top: 0.25rem;
+}
+
+.fasting-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(3px);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  z-index: 2;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.meal-card.fasting-active .meal-card-bottom {
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.meal-card.fasting-active .fasting-overlay {
+  display: flex !important;
 }
 
 .progress-track {
