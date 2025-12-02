@@ -1,0 +1,338 @@
+@charset "UTF-8";
+
+/* ===== 목표 설정 페이지 전용 스타일 ===== */
+
+.goal-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 현재 목표 카드 */
+.current-goals-card {
+  background: linear-gradient(135deg, #e7f5ff 0%, #d0ebff 100%);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease;
+}
+
+.current-goals-card .card-header {
+  margin-bottom: 20px;
+}
+
+.current-goals-card h3 {
+  color: #1971c2;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.current-goals-card .icon {
+  font-size: 22px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.goal-item {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.goal-item:hover {
+  transform: translateY(-2px);
+}
+
+.goal-label {
+  color: #495057;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.goal-value {
+  color: #1971c2;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* 정보 박스 */
+.info-box {
+  background: #fff9db;
+  border-left: 4px solid #ffd43b;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.info-box strong {
+  color: #e67700;
+}
+
+.info-box div {
+  color: #495057;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 목표 설정 폼 */
+.goal-form {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.goal-form .form-group {
+  margin-bottom: 24px;
+}
+
+.goal-form .form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.goal-form label {
+  display: flex;
+  align-items: center;
+  color: #212529;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.label-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.goal-form input[type="number"] {
+  width: 100%;
+  padding: 14px 50px 14px 14px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.goal-form input[type="number"]:focus {
+  outline: none;
+  border-color: #4263eb;
+  box-shadow: 0 0 0 3px rgba(66, 99, 235, 0.1);
+}
+
+.goal-form input[type="number"]::placeholder {
+  color: #adb5bd;
+}
+
+.unit {
+  position: absolute;
+  right: 14px;
+  color: #868e96;
+  font-weight: 600;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4263eb 0%, #3b5bdb 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3b5bdb 0%, #364fc7 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 99, 235, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #f1f3f5;
+  color: #495057;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+}
+
+/* 메시지 박스 스타일 개선 */
+.message {
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+.message.show {
+  display: flex;
+}
+
+.message.success {
+  background: #d3f9d8;
+  color: #2b8a3e;
+  border-left: 4px solid #2b8a3e;
+}
+
+.message.error {
+  background: #ffe3e3;
+  color: #c92a2a;
+  border-left: 4px solid #c92a2a;
+}
+
+.message.info {
+  background: #d0ebff;
+  color: #1864ab;
+  border-left: 4px solid #1864ab;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .goal-content {
+    padding: 0 10px;
+  }
+
+  .current-goals-card {
+    padding: 20px;
+  }
+
+  .goals-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .goal-form {
+    padding: 20px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .current-goals-card h3 {
+    font-size: 16px;
+  }
+
+  .goal-value {
+    font-size: 20px;
+  }
+
+  .goal-form input[type="number"] {
+    font-size: 14px;
+  }
+}
+
+/* 로딩 스피너 */
+.loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 버튼 로딩 상태 */
+.btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}

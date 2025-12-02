@@ -61,6 +61,9 @@
         <a href="${pageContext.request.contextPath}/user/userInterest" class="tab-button">
           <span class="tab-icon">⭐</span>관심사 설정
         </a>
+        <a href="${pageContext.request.contextPath}/user/settingGoal" class="tab-button">
+          <span class="tab-icon">🎯</span>목표 설정
+        </a>
       </div>
 
       <!-- 사용자 정보 콘텐츠 -->
@@ -153,15 +156,7 @@
         <!-- 이메일 -->
         <div class="info-group">
           <div class="info-label">이메일</div>
-          <div class="info-value" id="emailDisplay">${user.userEmail}</div>
-          <div class="edit-form" id="emailEditForm">
-            <input type="email" id="emailInput" value="${user.userEmail}" placeholder="이메일을 입력하세요">
-            <button class="btn btn-save" onclick="saveEmail()">저장</button>
-            <button class="btn btn-cancel" onclick="cancelEdit('email')">취소</button>
-          </div>
-          <div class="info-actions" id="emailActions">
-            <button class="btn btn-edit" onclick="editField('email')">수정</button>
-          </div>
+          <div class="info-value readonly" id="emailDisplay">${user.userEmail}</div>
         </div>
 
         <!-- 전화번호 -->

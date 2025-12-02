@@ -36,6 +36,9 @@
         <a href="${pageContext.request.contextPath}/user/userInterest" class="tab-button">
           <span class="tab-icon">⭐</span>관심사 설정
         </a>
+        <a href="${pageContext.request.contextPath}/user/settingGoal" class="tab-button">
+          <span class="tab-icon">🎯</span>목표 설정
+        </a>
       </div>
 
       <!-- 계정 관리 콘텐츠 -->

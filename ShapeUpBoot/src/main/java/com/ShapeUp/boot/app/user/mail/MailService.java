@@ -19,18 +19,18 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final Random random = new Random();
 
-    // 인증코드 생성 (6자리 숫자)
+    // 인증코드 생성
     public String generateCode() {
         int code = 100000 + random.nextInt(900000);
         return String.valueOf(code);
     }
 
-    // 이메일 전송 (Simple text)
+    // 이메일 전송
     public boolean sendVerificationCode(String toEmail, String code) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setFrom("no-reply@shapeup.example"); // 보낸사람 표시 (실제 발송은 spring.mail.username)
+            message.setFrom("no-reply@shapeup.example"); // 보낸사람 표시
             message.setSubject("[ShapeUp] 이메일 인증번호 안내");
             message.setText("안녕하세요, ShapeUp입니다.\n\n인증번호: " + code + "\n\n해당 코드는 5분 동안만 유효합니다.");
             mailSender.send(message);

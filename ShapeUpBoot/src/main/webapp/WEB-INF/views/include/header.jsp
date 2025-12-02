@@ -51,7 +51,7 @@
     <div class="sideBtn">
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
-            <a href="/user/updateUserInfo" id="userMyPage"><span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span></a>
+            <span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span>
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
             <a href="/user/updateUserInfo">마이페이지</a>
         <% } else { %>
@@ -124,9 +124,9 @@
                 </a>
             </div>
             <div class="list-item">
-<<<<<<< HEAD
+
                 <a href="/success">
-=======
+
                 <a href="/notice/list">
                     <span class="material-symbols-outlined">campaign</span>
                     <span>공지사항</span>
@@ -134,7 +134,7 @@
             </div>
             <div class="list-item">
                 <a href="#">
->>>>>>> refs/remotes/origin/Kimjaeseung
+
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
                 </a>
