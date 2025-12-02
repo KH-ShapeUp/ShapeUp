@@ -30,6 +30,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 10px;
 }
 
 .main-board-middle {
@@ -52,6 +53,23 @@
     align-items: center;
     gap: 12px;
     position: relative;
+}
+/* 리셋 버튼 */
+.resetBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+}   
+
+.resetBtn .material-symbols-outlined {
+    font-size: 1rem;
+    color: #999;
 }
 
 /* 필터 버튼 */
@@ -141,6 +159,7 @@
     flex: 1;
     display: flex;
     align-items: center;
+    flex-direction: row;
     gap: 6px;
     position: relative;
 }
@@ -319,52 +338,6 @@
     font-weight: 600;    
 }
 
-/* 댓글순, 조회수 카테고리 디자인 */
-.board-wrapper-view .post-category {
-	font-size: .6rem;
-    padding: 3px 8px;
-    border-radius: 6px;
-    color: #666;
-    font-size: 0.6rem;
-    font-weight: 600;
-}
-
-.board-wrapper-view .post-category-question {
-	background-color: #D9F0FF;
-    color: #034A7F;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.6rem;
-    font-weight: 600;
-}
-
-.board-wrapper-view .post-category-tip {
-	background-color: #E6F9EA;
-    color: #1D5C3A;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.6rem;
-    font-weight: 600;
-}
-
-.board-wrapper-view .post-category-food {
-	background-color: #FFF2E5;
-    color: #80461B;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.6rem;
-    font-weight: 600;
-}
-
-.board-wrapper-view .post-category-certification {
-	background-color: #F0E6FF;
-    color: #4B2C91;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 0.6rem;
-    font-weight: 600;
-}
-/********************/
 
 .post-header-left .post-nickName {
     font-size: .9rem;
@@ -423,6 +396,12 @@
     gap: 3em;    
 }
 
+
+.board-wrapper-right .board-comment-content a {
+	color:#111;
+	text-decoration: none;
+}
+
 .post-icon div {
     display: flex;
     align-items: center;
@@ -447,7 +426,7 @@
 
 .board-comment-title, 
 .board-view-title {
-    font-size: .8rem;
+    font-size: 1rem;
     font-weight: 600;
 }
 
@@ -477,16 +456,6 @@
     font-weight: 500;
 }
 
-.board-comment-card .post-category,
-.board-view-card .post-category {
-    font-size: .6rem;
-    padding: 3px 8px;
-    border-radius: 6px;
-    color: #666;
-    font-size: 0.55rem;
-    font-weight: 600;
-}
-
 .board-comment-card .post-nickName,
 .board-view-card .post-nickName {
     font-size: 0.8rem;
@@ -500,10 +469,69 @@
 
 .board-comment-card .fa-eye,
 .board-view-card .fa-eye,
-.post-icon .post-view,
-.post-middle .post-comment {
+.post-icon .post-view {
     font-size: .6rem;
+    font-weight: 500;
 }
+
+.board-view-content .post-comment,
+.board-comment-content .post-comment {
+	font-size: 0.7rem;
+	font-weight: 500;
+}
+
+.board-comment-card .post-category,
+.board-view-card .post-category {
+    background-color: #e2e2e2;
+    font-size: .6rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #666;
+    font-size: 0.55rem;
+    font-weight: 600;
+}
+
+.board-comment-card .post-category-certification,
+.board-view-card .post-category-certification {
+    background-color: #F0E6FF;
+    color: #4B2C91;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-comment-card .post-category-question,
+.board-view-card .post-category-question {
+    background-color: #D9F0FF;
+    color: #034A7F;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-comment-card .post-category-tip,
+.board-view-card .post-category-tip {
+    background-color: #E6F9EA;
+    color: #1D5C3A;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.board-comment-card .post-category-food
+.board-view-card .post-category-food {
+    background-color: #FFF2E5;
+    color: #80461B;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+
 
 /***************/
 /*    페이징   */

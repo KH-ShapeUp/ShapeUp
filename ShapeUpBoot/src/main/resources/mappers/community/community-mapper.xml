@@ -4,7 +4,7 @@
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.communityMapper">
 	<!-- 커뮤니티 게시글 삽입 -->
-	<insert id="communityInsert">
+	<insert id="successInsert">
 	    <selectKey keyProperty="communityNo" resultType="int" order="BEFORE">
 	        SELECT SEQ_COMMUNITY_NO.NEXTVAL FROM DUAL
 	    </selectKey>
@@ -18,7 +18,9 @@
 	        UPDATED_AT,
 	        VIEW_COUNT,
 	        COMMUNITY_TYPE,
-	        COMMUNITY_STATUS
+	        COMMUNITY_STATUS,
+	        SUCCESS_TYPE,
+	        GOAL_DATE
 	    ) VALUES (
 	        #{communityNo},
 	        #{communityTitle}, 
@@ -28,7 +30,9 @@
 	        NULL,
 	        0,
 	        #{communityType},
-	        DEFAULT
+	        DEFAULT,
+	        null,
+	        null
 	    )
 	</insert>
 	<!-- 커뮤니티 이미지 삽입 -->
@@ -71,13 +75,24 @@
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    U.USER_NICKNAME AS userNickName,
-		    COUNT(B.LIKE_NO) AS LIKE_COUNT
+		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
+		    (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT
 		FROM COMMUNITY_TBL C
 		LEFT JOIN USER_TBL U 
 		    ON C.USER_NO = U.USER_NO
 		LEFT JOIN COMMUNITY_BOARD_LIKE B 
 		    ON C.COMMUNITY_NO = B.COMMUNITY_NO
-		WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+	    <where>
+	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	C.COMMUNITY_TYPE != 'success'	   
+	    	<if test="category != null and category != ''">
+    			AND COMMUNITY_TYPE = #{category}
+    		</if>
+    		<if test="keyword != null and keyword != ''">
+    			AND COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+    		</if>
+	    </where>
+
 		GROUP BY 
 		    C.COMMUNITY_NO,
 		    C.COMMUNITY_TITLE,
@@ -93,7 +108,17 @@
     
     <!-- 커뮤니티 총 페이지 갯수 -->
     <select id="getTotalCount">
-    	SELECT COUNT(*) FROM COMMUNITY_TBL WHERE COMMUNITY_STATUS = 'ACTIVE'
+    	SELECT COUNT(*) FROM COMMUNITY_TBL 
+    	<where>
+    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		COMMUNITY_TYPE != 'success'
+    		<if test="category != null and category != ''">
+    			AND COMMUNITY_TYPE = #{category}
+    		</if>
+    		<if test="keyword != null and keyword != ''">
+    			AND COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+    		</if>
+    	</where>
     </select>
     
     <!-- 조회수 -->
@@ -190,11 +215,34 @@
    			    C.COMMUNITY_STATUS,
 		        C.CREATED_AT,
 		        C.VIEW_COUNT,
-		        U.USER_NICKNAME
+		        U.USER_NICKNAME,
+		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS commentCount
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
+		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
 		    ORDER BY C.VIEW_COUNT DESC
 		)
-		WHERE COMMUNITY_STATUS = 'ACTIVE' AND ROWNUM <![CDATA[ <= ]]> 3 
+		WHERE ROWNUM <![CDATA[ <= ]]> 3
+	</select>
+	
+	<!-- 커뮤니티 댓글 순 리스트 -->
+	<select id="getSortCommentList">
+		SELECT * 
+		FROM (
+			 SELECT 
+		        C.COMMUNITY_NO,
+		        C.COMMUNITY_TITLE,
+		    	C.COMMUNITY_TYPE,
+   			    C.COMMUNITY_STATUS,
+		        C.CREATED_AT,
+		        C.VIEW_COUNT,
+		        U.USER_NICKNAME,
+		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENTCOUNT
+		    FROM COMMUNITY_TBL C
+		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
+		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		    ORDER BY COMMENTCOUNT DESC
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]> 3 
 	</select>
  </mapper>

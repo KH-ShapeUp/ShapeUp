@@ -24,6 +24,7 @@ public class commentVO {
 	private String deleteYn;		// 삭제 여부
 	
 	private String userNickName;
+	private String userType;
 	
 	private String timeAgo;      // 상대 시간 문자열
 	

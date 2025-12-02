@@ -1,4 +1,4 @@
-package com.ShapeUp.boot.app.community.dto;
+package com.ShapeUp.boot.app.success.dto;
 
 import java.sql.Timestamp;
 
@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-public class communityListDTO {
+public class successListDTO {
 	private int communityNo; 			// 커뮤니티 구분 번호
 	private String communityTitle; 		// 커뮤니티 제목
 	private String communityContent; 	// 커뮤니티 내용
@@ -17,12 +17,16 @@ public class communityListDTO {
 	private int viewCount; 				// 조회수
 	private String communityType; 		// 커뮤니티 카테고리
 	private String communityStatus;		// 커뮤니티 게시판 상태
-	private String userNickName;
+	private String successType;
+	private String goalDate;
+	
+	private String userNickName;	
 	private int likeCount;
-	private String timeAgo;      // 상대 시간 문자열
+	private String timeAgo;      		// 상대 시간 문자열
 	private int commentCount;
 	
-	 
+	private String thumbnail; 			// 썸네일
+	private int  popularBoard;   		// 조회수/댓글수 중 큰 값
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }

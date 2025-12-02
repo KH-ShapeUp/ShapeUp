@@ -35,7 +35,10 @@ public class communityController {
 	private final communityService cService;
 	
 	@GetMapping("/community")
-	public String communityPage(HttpSession session, Model model, @RequestParam(value="page", defaultValue = "1") int currentPage) {
+	public String communityPage(HttpSession session, Model model, 
+			@RequestParam(value="boardNo", defaultValue = "1") int currentPage,
+			@RequestParam(value="category", required = false) String category,
+			@RequestParam(value="keyword", required = false) String keyword) {
 		Integer userNo = (Integer)session.getAttribute("userNo");
 		/* 공지사항 리스트 가져오기 */
 		List<Notice> nList = cService.getNoticeList();
@@ -45,16 +48,17 @@ public class communityController {
 		int boardLimit = 10;
 		int naviLimit = 5;
 		
-		int TotalCount = cService.getTotalCount();
+		int TotalCount = cService.getTotalCount(category, keyword);
 		
 		int maxPage = (int)Math.ceil((double)TotalCount / boardLimit);
 		int startNavi = ((currentPage - 1)/ naviLimit) * naviLimit + 1;
 		int endNavi = (startNavi - 1) + naviLimit;
 		if(endNavi > maxPage) {endNavi = maxPage;}
 		
-		List<communityListDTO> cList = cService.getCommunityList(currentPage, boardLimit);
+		List<communityListDTO> cList = cService.getCommunityList(currentPage, boardLimit, category, keyword);
 		System.out.println(cList);
-		
+		model.addAttribute("category", category);
+	    model.addAttribute("keyword", keyword);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("endNavi", endNavi);
 		model.addAttribute("maxPage", maxPage);
@@ -64,8 +68,8 @@ public class communityController {
 		/* 커뮤니티 리스트 가져오기 끝 */	
 		
 		/* 커뮤니티 최신 댓글 순 */
-//		List<communityListDTO> commentList = cService.getSortCommentList();
-//		model.addAttribute("commnetList", commentList);
+		List<communityListDTO> commentList = cService.getSortCommentList();
+		model.addAttribute("ctList", commentList);
 		/* 커뮤니티 최신 댓글 순 끝 */
 		
 		/* 커뮤니티 최신 조회수 순 */

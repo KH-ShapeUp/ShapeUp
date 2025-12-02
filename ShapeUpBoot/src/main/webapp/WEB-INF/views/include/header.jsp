@@ -28,7 +28,7 @@
                 <a>커뮤니티</a>
                 <ul class="sub-menu">
                     <li><a href="/community">자유게시판</a></li>
-                    <li><a href="#">성공 인증 게시판</a></li>
+                    <li><a href="/success">성공 인증 게시판</a></li>
                 </ul>
             </li>
         </ul>
@@ -42,7 +42,7 @@
     <div class="sideBtn">
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
-            <span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span>
+            <a href="/user/updateUserInfo" id="userMyPage"><span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span></a>
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
@@ -114,7 +114,7 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="#">
+                <a href="/success">
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
                 </a>

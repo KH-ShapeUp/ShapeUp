@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.reportMapper">
+	<insert id="reportInsert">
+		INSERT INTO REPORT_TBL (
+			REPORT_NO,
+			REPORT_TYPE,
+			COMMUNITY_NO,
+			COMMENT_NO,
+			REPORTER_NO,
+			REPORT_REASON,
+			CREATED_AT,
+			REPORT_STATUS 
+		) VALUES (
+			SEQ_REPORT_NO.NEXTVAL, 
+			#{reportType}, 
+			<choose>
+	            <when test="communityNo != null and communityNo != 0">#{communityNo}</when>
+	            <otherwise>null</otherwise>
+	        </choose>,
+	        <choose>
+	            <when test="commentNo != null and commentNo != 0">#{commentNo}</when>
+	            <otherwise>null</otherwise>
+	        </choose>,
+			#{reporterNo}, 
+			#{reportReason}, 
+			DEFAULT, 
+			DEFAULT
+		)
+	</insert>
+ </mapper>

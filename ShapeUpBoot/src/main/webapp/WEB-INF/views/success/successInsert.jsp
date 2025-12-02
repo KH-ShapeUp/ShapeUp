@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>ShapeUp - 게시글 수정</title>
-<link rel="stylesheet" href="../../../resources/css/community/communityInsert.css">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../../../resources/css/success/successInsert.css">
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </head>
@@ -15,52 +14,49 @@
         <jsp:include page="/WEB-INF/views/include/header.jsp"/>
         <div class="main">
             <div class="community-wrapper">
-                <p class="title">게시글 수정</p>
+                <p class="title">성공후기 글 작성</p>
                 <div class="community">
-                    <input type="hidden" id="communityNo" value="${cList.communityNo}">                   
                     <div class="form-row">
                         <div class="form-group">
                             <label for="communityTitle">제목</label>
-                            <input type="text" name="communityTitle" id="communityTitle" value="${cList.communityTitle }">
+                            <input type="text" name="communityTitle" id="communityTitle" placeholder="작성할 게시글의 제목을 작성해주세요.">
                         </div>
                         <div class="form-group" id="form-category">
                             <div class="community-category">
                                 <span class="label">카테고리</span>
                                 <button class="dropdown-header">
-                                    <span id="selectedCategory" data-value="${cList.communityType}">${cList.communityType}</span>
+                                    <span id="selectedCategory">카테고리</span>
                                     <span class="material-symbols-outlined">keyboard_arrow_down</span>
                                 </button>
                                 <div class="community-category-list hidden">
-                                    <button class="category-btn" type="button" data-value="일상/소통">일상 / 소통</button>
-                                    <button class="category-btn" type="button" data-value="운동질문">운동 질문</button>
-                                    <button class="category-btn" type="button" data-value="운동꿀팁">운동 꿀팁</button>
-                                    <button class="category-btn" type="button" data-value="식단/영양">식단 / 영양</button>
-                                    <button class="category-btn" type="button" data-value="운동인증">운동 인증</button>
+                                    <button class="category-btn" type="button" data-value="다이어트">다이어트</button>
+                                    <button class="category-btn" type="button" data-value="체중감량">체중감량</button>
+                                    <button class="category-btn" type="button" data-value="체지방감량">체지방감량</button>
+                                    <button class="category-btn" type="button" data-value="골격근증가">골격근증가</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <span class="label">내용</span>
-                        <div id="hidden-content" style="display:none;"><c:out value="${cList.communityContent}" escapeXml="false" /></div>
-                        
-                        <div id="editor"></div>
+                        <span class="label">소요기간</span>
+                        <input type="text" name="goalDate" id="goalData" placeholder="소요시간을 입력해주세요.">
                     </div>
-                    
+                    <div class="form-group">
+                        <span class="label">내용</span>
+                        <div class="content"></div>
+                    </div>												
                     <div class="btn-row">
-                        <button class="save-btn">수정 완료</button>
-                        <button class="cancel-btn" onclick="history.back()">취소</button>
+                        <button class="save-btn">저장</button>
+                        <button class="cancel-btn">취소</button>
                     </div>
                 </div>
             </div>
         </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
-    
     <script>
         /*********************/
         /* 카테고리 드롭다운 */
@@ -90,19 +86,16 @@
         });
 
         /*********************/
-        /* Toast UI Editor  */
+        /*  Toast UI script  */
         /*********************/
         const Editor = toastui.Editor;
-        
-        // 숨겨진 HTML 내용 가져오기
-        const content = document.querySelector('#hidden-content').innerHTML;
 
         const editor = new Editor({
-            el: document.querySelector('#editor'),
+            el: document.querySelector('.content'),
             height: '500px',
             initialEditType: 'wysiwyg', 
             previewStyle: 'vertical',   
-            placeholder: '내용을 입력해주세요.',
+            placeholder: '내용을 입력해주세요. (건전한 커뮤니티 문화를 만들어가요!)',
             language: 'ko-KR',
             hideModeSwitch: true,        
             toolbarItems: [
@@ -113,10 +106,12 @@
             ],
             hooks : {
                 addImageBlobHook: (blob, callback) => {
+                    // 데이터 저장할 폼 데이터 생성 (이미지 파일 담기)
                     const formData = new FormData();
                     formData.append('image', blob);
 
-                    fetch("/community/image-upload", {
+                    // 서버 전송
+                    fetch("/success/image-upload", {
                         method: 'post',
                         body: formData
                     })
@@ -129,70 +124,59 @@
             }
         });
 
-        /* 이걸로 불러온 데이터를 보여줌 */
-        editor.setHTML(content);
-
-
-        /*********************/
-        /* 수정(Update)    */
-        /*********************/
         document.querySelector(".save-btn").addEventListener("click", () => {
-            const communityNo = document.querySelector("#communityNo").value; 
             const title = document.querySelector("#communityTitle").value;
-            const categoryCode = document.querySelector("#selectedCategory").dataset.value; 
-            const contentHTML = editor.getHTML(); // 수정된 내용 가져오기
-
-            // 2. 유효성 검사
-            if(!title) { alert("제목을 입력해주세요."); return; }
-            if(!categoryCode) { alert("카테고리를 선택해주세요."); return; }
+            const goalDate = document.querySelector("#goalData").value;
+            const categoryCode = document.querySelector("#selectedCategory").dataset.value; // data-value 값
+            const contentHTML = editor.getHTML(); // 에디터의 내용을 HTML로 가져옴
+            // const contentMarkdown = editor.getMarkdown(); // 마크다운으로 필요할 경우
 
             const data = {
-                communityNo: communityNo,      
                 communityTitle: title,
-                communityType: categoryCode,   
+                successType : categoryCode,
+                goalDate : goalDate,
                 communityContent: contentHTML
             }
-            
-            console.log("수정할 데이터:", data);
+            console.log("전송할 데이터:", data);
 
-            fetch("/community/modify", { 
-                method: 'put', 
-                headers: {"Content-Type":"application/json"},
+            fetch("/success/insert", {
+                method:'post',
+                headers:{"Content-Type":"application/json"},
                 body: JSON.stringify(data)
             })
-            .then(res => res.json()) 
+            .then(res => res.json())
             .then(result => {
-                if (result > 0 || result === "success") {
+                if (result > 0) {
                     Swal.fire({
-                        icon: 'success',
-                        title: '수정 완료!',
+                        icon:'success',
+                        title: '게시글 작성완료!',
+                        text: '',
                         confirmButtonText: '확인',
                         customClass: {
                             popup: 'success-popup',
                             title: 'success-title',
                             text: 'success-text',
                             confirmButton: 'success-button'
+                        },
+                        didClose: () => {
+                            location.href="/community"
                         }
-                    }).then(() => {
-                        location.href = "/community/detail?boardNo=" + communityNo;
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: '수정 실패',
-                        text: '다시 시도해주세요.',
-                        customClass: {
-                            popup: 'error-popup',
-                            title: 'error-title',
-                            text: 'error-text',
-                            confirmButton: 'error-button'
-                        }, 
-                    });
+                    })
                 }
             })
             .catch(err => {
-                console.error(err);
-                Swal.fire({ icon:'error', title: '에러 발생', text: err });
+                Swal.fire({
+                    icon:'error',
+                    title: '매칭 등록 실패..ㅠ',
+                    text: err,
+                    confirmButtonText: '확인',
+                    customClass: {
+                        popup: 'error-popup',
+                        title: 'error-title',
+                        text: 'error-text',
+                        confirmButton: 'error-button'
+                    }
+                });
             })
         });
     </script>

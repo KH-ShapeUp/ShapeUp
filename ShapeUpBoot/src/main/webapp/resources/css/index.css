@@ -914,26 +914,26 @@
   border-radius: 8px;
 }
 .user-level {
-  color: #1b5e20;
-  background-color: #e8f5e9;
+    color: #1b5e20;
+    background-color: #e8f5e9;
 }
 
 .user-level.middleClass {
-  color: #e65100;
-  background-color: #fff3e0;
+    color: #e65100;
+    background-color: #fff3e0;
 }
 
 .user-level.advanced {
-  color: #b71c1c;
-  background-color: #ffebee;
+    color: #b71c1c;
+    background-color: #ffebee;
 }
 
 .matching-btn.finish,
 .matching-btn:disabled {
-  background-color: #ddd;
-  color: #666;
-  cursor: not-allowed;
-  pointer-events: none;
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 @media screen and (max-width: 768px) {
