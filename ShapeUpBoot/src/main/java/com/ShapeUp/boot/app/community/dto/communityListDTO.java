@@ -16,11 +16,13 @@ public class communityListDTO {
 	private Timestamp updatedAt; 		// 수정일
 	private int viewCount; 				// 조회수
 	private String communityType; 		// 커뮤니티 카테고리
-	private String communityStatus;		// 커뮤니티 게시판 상태
+	private String deleteYn;		// 커뮤니티 게시판 상태
 	private String userNickName;
 	private int likeCount;
 	private String timeAgo;      // 상대 시간 문자열
 	private int commentCount;
+	private String successType;
+	private String goalDate;
 	
 	 
 

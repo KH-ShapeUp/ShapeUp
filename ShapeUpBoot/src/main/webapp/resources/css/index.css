@@ -4,6 +4,44 @@
   width: 100%;
   margin-bottom: 20px;
 }
+.post-category-question {
+    background-color: #D9F0FF;
+    color: #034A7F;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 운동 꿀팁 */
+.post-category-tip {
+    background-color: #E6F9EA;
+    color: #1D5C3A;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 식단 / 영양 */
+.post-category-food {
+    background-color: #FFF2E5;
+    color: #80461B;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* 오운완 */
+.post-category-certification {
+    background-color: #F0E6FF;
+    color: #4B2C91;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;    
+}
 
 /* 1. Swiper 기본 컨테이너 크기 */
 .swiper {
@@ -404,14 +442,14 @@
 }
 
 .matching-title .card-title {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .matching-title .card-content {
-  font-size: 1rem;
+  font-size: .9rem;
   font-weight: 500;
-  color: #666;
+  color: #444;
 }
 
 .matching-info {
@@ -435,7 +473,7 @@
 }
 
 .matching-icon span {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
   font-weight: 500;
 }
@@ -474,11 +512,11 @@
   position: relative;
   overflow: hidden;
   z-index: 1;
-  padding: 8px 15px;
+  padding: 6px 13px;
   border: none;
   border-radius: 8px;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   background-color: #0a84ff;
   cursor: pointer;
@@ -541,7 +579,7 @@
 .goal-content {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .goal-content a {
@@ -589,8 +627,8 @@
 }
 
 .goal-profile-info span:nth-child(2) {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: #666;
 }
 
@@ -612,7 +650,7 @@
 }
 
 .goal-icon i {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #666;
 }
 
@@ -627,18 +665,18 @@
   flex-direction: row;
   margin-top: 15px;
   gap: 5px;
+  overflow: hidden;
 }
 
 .goal-middle .goal-content {
   font-size: 0.9rem;
   font-weight: 500;
   color: #666;
-}
-
-.goal-middle .goal-comment {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #0a84ff;
+  --flex: 1;                 /* 남은 공간을 모두 차지 */
+  min-width: 0;            /* flex item이 컨텐츠 크기보다 작아질 수 있게 함 */
+  --white-space: nowrap;     /* 텍스트를 한 줄로 강제 */
+  overflow: hidden;        /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis; /* 말줄임표(...) 표시 */
 }
 
 /* 공지사항 */
@@ -690,7 +728,7 @@
   display: flex;
   border-radius: 12px;
   flex-direction: column;
-  gap: 14.5px;
+  gap: 10px;
   transition: all 0.15s ease;
   font-weight: normal;
 }
@@ -713,44 +751,38 @@
   padding-left: 0;
 }
 
+.notice-top .pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 28px;
+  padding: 0px 8px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+  color: #fff;
+  --min-width: 78px;
+}
+
 /* 공지 사항 카테고리가 nomral 일 때 */
 .notice-top .notice-category-n {
-  background-color: #ff3b30;
-  padding: 4px 10px;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: linear-gradient(90deg, #ff8b5f, #ff6262);
 }
 
 /* 공지사항 카테고리가 이벤트일때*/
 .notice-top .notice-category-e {
-  background-color: #e3f2fd;
-  padding: 4px 10px;
-  border-radius: 8px;
-  color: #1e88e5;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: linear-gradient(90deg, #46c2ff, #2b6de2);
 }
 
 /* 공지사항 카테고리가 제휴 일때*/
 .notice-top .notice-category-c {
-  background-color: #d0f0c0;
-  padding: 4px 10px;
-  border-radius: 8px;
-  color: #2e7d32;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: linear-gradient(90deg, #7ce79b, #1fad6b);
 }
 
 /* 공지사항 카테고리가 징계 일때*/
 .notice-top .notice-category-d {
-  background-color: #fff3cd;
-  padding: 4px 10px;
-  border-radius: 8px;
-  color: #c58b00;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: linear-gradient(90deg, #6a6f7d, #414654);
 }
 
 .notice-top .notice-writeDate {
@@ -772,7 +804,7 @@
   gap: 15px;
 }
 
-.notice-icon .fa-solid {
+.notice-icon .fa-regular {
   margin-right: 5px;
   font-size: 0.8rem;
   color: #666;
@@ -786,7 +818,8 @@
 
 .notice-middle h4 {
   padding-bottom: 5px;
-  font-weight: 300;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .notice-middle .notice-comment {
@@ -837,7 +870,7 @@
   display: flex;
   border-radius: 12px;
   flex-direction: column;
-  gap: 14.5px;
+  gap: 10px;
   transition: all 0.15s ease;
 }
 
@@ -882,7 +915,7 @@
   align-items: center;
 }
 
-.post-icon .fa-solid {
+.post-icon .fa-regular {
   margin-right: 5px;
   font-size: 0.8rem;
   color: #666;

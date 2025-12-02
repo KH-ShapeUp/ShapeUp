@@ -40,6 +40,8 @@ public class communityController {
 			@RequestParam(value="category", required = false) String category,
 			@RequestParam(value="keyword", required = false) String keyword) {
 		Integer userNo = (Integer)session.getAttribute("userNo");
+		String userType = (String)session.getAttribute("userType");
+		
 		/* 공지사항 리스트 가져오기 */
 		List<Notice> nList = cService.getNoticeList();
 		System.out.println(nList);
@@ -57,6 +59,7 @@ public class communityController {
 		
 		List<communityListDTO> cList = cService.getCommunityList(currentPage, boardLimit, category, keyword);
 		System.out.println(cList);
+		model.addAttribute("TotalCount", TotalCount);
 		model.addAttribute("category", category);
 	    model.addAttribute("keyword", keyword);
 		model.addAttribute("currentPage", currentPage);
@@ -78,6 +81,7 @@ public class communityController {
 		model.addAttribute("vList", viewList);
 		/* 커뮤니티 최신 조회수 순 끝 */
 		
+		model.addAttribute("userType", userType);
 		model.addAttribute("userNo", userNo);
 		return "community/communityMain";
 	}

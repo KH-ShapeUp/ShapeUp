@@ -12,5 +12,5 @@ public class communityModifyDTO {
 	private int userNo;
 	private Timestamp updatedAt;
 	private String communityType;
-	private String communityStatus;
+	private String deleteYn;
 }

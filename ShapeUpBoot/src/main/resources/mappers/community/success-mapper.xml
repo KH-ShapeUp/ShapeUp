@@ -17,9 +17,9 @@
 	        UPDATED_AT,
 	        VIEW_COUNT,
 	        COMMUNITY_TYPE,
-	        COMMUNITY_STATUS,
 	        SUCCESS_TYPE,
-	        GOAL_DATE
+	        GOAL_DATE,
+	        DELETE_YN
 	    ) VALUES (
 	        #{communityNo},
 	        #{communityTitle}, 
@@ -29,9 +29,9 @@
 	        NULL,
 	        0,
 	        #{communityType},
-	        DEFAULT,
 	       	#{successType},
-	        #{goalDate}
+	        #{goalDate},
+	        DEFAULT
 	    )
 	</insert>
 	
@@ -67,6 +67,7 @@
     		C.CREATED_AT,
     		C.GOAL_DATE,
     		C.SUCCESS_TYPE,
+    		C.DELETE_YN,
     		U.USER_NICKNAME AS USER_NICKNAME,
     		DBMS_LOB.SUBSTR(
     			REGEXP_REPLACE(
@@ -80,7 +81,7 @@
    		FROM COMMUNITY_TBL C
    		JOIN USER_TBL U ON C.USER_NO = U.USER_NO
    		<where>
-	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	C.DELETE_YN = 'N' AND
 	    	C.COMMUNITY_TYPE = 'success'	   
 	    	<if test="category != null and category != ''">
     			AND C.SUCCESS_TYPE = #{category}
@@ -95,7 +96,7 @@
     <select id="getTotalCount">
     	SELECT COUNT(*) FROM COMMUNITY_TBL
     	<where>
-    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		DELETE_YN = 'N' AND
     		COMMUNITY_TYPE = 'success'
     		<if test="category != null and category != ''">
     			AND SUCCESS_TYPE = #{category}
@@ -117,6 +118,7 @@
 	    		C.SUCCESS_TYPE,
 	    		C.VIEW_COUNT,
 	    		C.CREATED_AT,
+	    		C.DELETE_YN,
 	    		U.USER_NICKNAME,
 	    		GREATEST(C.VIEW_COUNT, NVL(CT.CNT, 0)) AS POPULAR_BOARD,
 	    		(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
@@ -129,7 +131,7 @@
 		       GROUP BY COMMUNITY_NO
 		   ) CT ON CT.COMMUNITY_NO = C.COMMUNITY_NO
 		   WHERE C.COMMUNITY_TYPE = 'success' AND
-		   C.COMMUNITY_STATUS = 'ACTIVE'
+		   C.DELETE_YN = 'N'
 		   ORDER BY POPULAR_BOARD DESC	
     	)
 	    WHERE ROWNUM <![CDATA[ <= ]]> 3

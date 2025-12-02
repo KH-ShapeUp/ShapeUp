@@ -37,7 +37,7 @@ public class successController {
 		Integer userNo = (Integer)session.getAttribute("userNo");
 		model.addAttribute("userNo", userNo);
 		
-		int boardLimit = 10;
+		int boardLimit = 6;
 		int naviLimit = 5;
 		
 		int TotalCount = sService.getTotalCount(category, keyword);
@@ -48,6 +48,7 @@ public class successController {
 		if(endNavi > maxPage) {endNavi = maxPage;}
 		
 		List<successListDTO> sList = sService.successList(currentPage, boardLimit, category, keyword);
+		model.addAttribute("TotalCount", TotalCount);
 		model.addAttribute("category", category);
 	    model.addAttribute("keyword", keyword);
 		model.addAttribute("currentPage", currentPage);

@@ -20,7 +20,7 @@ public class communityVO {
 	private Timestamp updatedAt; 		// 수정일
 	private int viewCount; 				// 조회수
 	private String communityType; 		// 커뮤니티 카테고리
-	private String communityStatus;		// 커뮤니티 게시판 상태
+	private String deleteYn;	// 커뮤니티 게시판 상태
 	
 	
 	private String successType;			// 성공 후기에서 사용할 카테고리

@@ -4,7 +4,7 @@
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.communityMapper">
 	<!-- 커뮤니티 게시글 삽입 -->
-	<insert id="successInsert">
+	<insert id="communityInsert">
 	    <selectKey keyProperty="communityNo" resultType="int" order="BEFORE">
 	        SELECT SEQ_COMMUNITY_NO.NEXTVAL FROM DUAL
 	    </selectKey>
@@ -18,9 +18,9 @@
 	        UPDATED_AT,
 	        VIEW_COUNT,
 	        COMMUNITY_TYPE,
-	        COMMUNITY_STATUS,
 	        SUCCESS_TYPE,
-	        GOAL_DATE
+	        GOAL_DATE,
+	        DELETE_YN
 	    ) VALUES (
 	        #{communityNo},
 	        #{communityTitle}, 
@@ -30,9 +30,9 @@
 	        NULL,
 	        0,
 	        #{communityType},
-	        DEFAULT,
 	        null,
-	        null
+	        null,
+	        DEFAULT
 	    )
 	</insert>
 	<!-- 커뮤니티 이미지 삽입 -->
@@ -71,9 +71,9 @@
 		    C.COMMUNITY_TITLE,
 		    C.COMMUNITY_TYPE,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
+		    C.DELETE_YN,
 		    U.USER_NICKNAME AS userNickName,
 		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
 		    (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT
@@ -83,7 +83,7 @@
 		LEFT JOIN COMMUNITY_BOARD_LIKE B 
 		    ON C.COMMUNITY_NO = B.COMMUNITY_NO
 	    <where>
-	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	C.DELETE_YN = 'N' AND
 	    	C.COMMUNITY_TYPE != 'success'	   
 	    	<if test="category != null and category != ''">
     			AND COMMUNITY_TYPE = #{category}
@@ -98,7 +98,7 @@
 		    C.COMMUNITY_TITLE,
 		    C.COMMUNITY_TYPE,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
+		    C.DELETE_YN,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    U.USER_NICKNAME
@@ -110,7 +110,7 @@
     <select id="getTotalCount">
     	SELECT COUNT(*) FROM COMMUNITY_TBL 
     	<where>
-    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		DELETE_YN = 'N' AND
     		COMMUNITY_TYPE != 'success'
     		<if test="category != null and category != ''">
     			AND COMMUNITY_TYPE = #{category}
@@ -134,17 +134,19 @@
 		    C.COMMUNITY_TYPE,
 		    C.COMMUNITY_CONTENT,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
+		    C.DELETE_YN,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    C.USER_NO,
+		    C.SUCCESS_TYPE,
+		    C.GOAL_DATE,
 		    U.USER_NICKNAME AS userNickName,
 		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE WHERE COMMUNITY_NO = #{boardNo}) AS LIKE_COUNT
 		FROM COMMUNITY_TBL C
 		JOIN USER_TBL U 
 		    ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMUNITY_NO = #{boardNo} AND 
-		C.COMMUNITY_STATUS = 'ACTIVE'
+		C.DELETE_YN = 'N'
     </select>
    <!-- 좋아요 체크 -->
 	<select id="checkLike">
@@ -181,7 +183,7 @@
 	
 	<!-- 커뮤니티 삭제 -->
 	<update id="communityDelete">
-		UPDATE COMMUNITY_TBL SET COMMUNITY_STATUS = 'DELETE' WHERE COMMUNITY_NO = #{communityNo}
+		UPDATE COMMUNITY_TBL SET DELETE_YN = 'Y' WHERE COMMUNITY_NO = #{communityNo}
 	</update>
 	
 	<!-- 커뮤니티 수정 -->
@@ -192,7 +194,7 @@
 		    C.COMMUNITY_TYPE,
 		    C.COMMUNITY_CONTENT,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
+		    C.DELETE_YN,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    C.USER_NO,
@@ -201,7 +203,7 @@
 		JOIN USER_TBL U 
 		    ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMUNITY_NO = #{communityNo} AND 
-		C.COMMUNITY_STATUS = 'ACTIVE'
+		C.DELETE_YN = 'N'
 	</select>
 	
 	<!-- 커뮤니티 조회수 리스트 -->
@@ -212,14 +214,14 @@
 		        C.COMMUNITY_NO,
 		        C.COMMUNITY_TITLE,
 		    	C.COMMUNITY_TYPE,
-   			    C.COMMUNITY_STATUS,
+   			    C.DELETE_YN,
 		        C.CREATED_AT,
 		        C.VIEW_COUNT,
 		        U.USER_NICKNAME,
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS commentCount
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		    WHERE C.DELETE_YN = 'N'
 		    ORDER BY C.VIEW_COUNT DESC
 		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 3
@@ -233,14 +235,14 @@
 		        C.COMMUNITY_NO,
 		        C.COMMUNITY_TITLE,
 		    	C.COMMUNITY_TYPE,
-   			    C.COMMUNITY_STATUS,
+   			    C.DELETE_YN,
 		        C.CREATED_AT,
 		        C.VIEW_COUNT,
 		        U.USER_NICKNAME,
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENTCOUNT
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		    WHERE C.DELETE_YN = 'N'
 		    ORDER BY COMMENTCOUNT DESC
 		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 3 
