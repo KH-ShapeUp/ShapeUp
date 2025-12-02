@@ -33,7 +33,6 @@ public class ActivityController {
 
     private final ActivityService aService;
 
-
     @GetMapping
     public String activityPage() {
         return "activity/activityRecord";
@@ -51,8 +50,7 @@ public class ActivityController {
         return activitys;
     }
     
-    
-    
+       
     @PostMapping("/insert")
     @ResponseBody
 

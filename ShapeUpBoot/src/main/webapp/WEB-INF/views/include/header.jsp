@@ -44,6 +44,7 @@
             <!-- 로그인 상태 -->
             <a href="/user/updateUserInfo" id="userMyPage"><span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span></a>
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
+            <a href="/user/updateUserInfo">마이페이지</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
             <a href="/user/login" id="loginBtn" class="btn login-btn">로그인</a>

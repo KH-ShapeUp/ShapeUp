@@ -284,18 +284,519 @@ body {
 /* 버튼 */
 .modal-btn {
   padding: 8px 20px;
-  background: #4a67ff;
+  background: #667eea;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 .modal-btn:hover {
-  background: #3d55d9;
+  background: #5568d3;
+}
+
+/* ----------------------- */
+/* 권한 신청 */
+/* ----------------------- */
+/* 유저 타입 래퍼 */
+.user-type-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+/* 권한 신청 버튼 */
+.btn-request-permission {
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-request-permission:hover {
+  background: #5568d3;
+}
+
+/* 권한 선택 모달 */
+.permission-select-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.permission-select-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.permission-select-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.permission-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.permission-option {
+  padding: 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.permission-option:hover {
+  border-color: #667eea;
+  background-color: #f9fafb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.permission-option-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.permission-option-desc {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 신청 폼 모달 */
+.request-form-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.request-form-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.request-form-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-field label .required {
+  color: #ef4444;
+  margin-left: 3px;
+}
+
+.form-field input[type="text"],
+.form-field textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.form-field input[type="text"]:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.form-field input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.form-field .hint {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-submit:hover {
+  background: #5568d3;
+}
+
+.btn-close {
+  padding: 10px 20px;
+  background: #f3f4f6;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-close:hover {
+  background: #e5e7eb;
+}
+
+.file-preview {
+  margin-top: 10px;
+  padding: 12px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #333;
+  display: none;
+}
+
+.user-type-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: 1;
+}
+
+.permission-buttons {
+  display: flex;
+  gap: 0.5rem;
 }
 
 
+.btn-revoke-permission {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.btn-revoke-permission:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* ========== 권한 포기 모달 스타일 ========== */
+
+.revoke-option {
+  border: 2px solid #ef4444;
+  background: #fef2f2;
+}
+
+.revoke-option:hover {
+  background: #fee2e2;
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+#normalButtons,
+#pendingButtons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pending-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+}
+
+.pending-badge {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.pending-type {
+  font-size: 0.85rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.btn-cancel-request {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+  white-space: nowrap;
+}
+
+.btn-cancel-request:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  #normalButtons,
+  #pendingButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .pending-status {
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .btn-cancel-request {
+    width: 100%;
+  }
+}
+
+/* ========== 모바일 반응형 ========== */
+
+@media (max-width: 768px) {
+  .permission-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-request-permission,
+  .btn-revoke-permission {
+    width: 100%;
+  }
+  
+  .user-type-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ========== 권한 신청 알림 박스 스타일 ========== */
+
+.notification-box {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e3e8ef;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  animation: slideDown 0.4s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-title {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notification-icon {
+  font-size: 1.3rem;
+}
+
+.notification-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.notification-content {
+  padding: 1.5rem;
+}
+
+.notification-status {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.status-approved {
+  color: #10b981;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-rejected {
+  color: #ef4444;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notification-message {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  white-space: pre-line;
+}
+
+.notification-date {
+  color: #6b7280;
+  font-size: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ========== 반응형 ========== */
+
+@media (max-width: 768px) {
+  .notification-box {
+    margin: 0 -1rem 1.5rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .notification-header {
+    padding: 1rem;
+  }
+  
+  .notification-title {
+    font-size: 1rem;
+  }
+  
+  .notification-content {
+    padding: 1rem;
+  }
+  
+  .notification-message {
+    font-size: 0.95rem;
+  }
+}
 
 /* ----------------------- */
 /* 반응형 */
@@ -329,5 +830,259 @@ body {
 
   .btn {
     width: 100%;
+  }
+  
+  /* 권한 신청 반응형 */
+  .user-type-wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-request-permission {
+    width: 100%;
+  }
+  
+  .permission-select-box {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .request-form-box {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .form-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-submit,
+  .btn-close {
+    width: 100%;
+  }
+  
+  
+}
+
+/* ========== 쪽지함 알림 스타일 (우하단 고정) ========== */
+
+.notification-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.notification-icon-btn {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.notification-icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.notification-icon-btn:active {
+  transform: translateY(0);
+}
+
+/* 빨간 배지 (안 읽은 알림 개수) */
+.notification-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #ef4444;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+/* 배지 숨김 상태 */
+.notification-badge.hidden {
+  display: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 쪽지함 드롭다운 - 아이콘 위로 펼쳐지도록 수정 */
+.notification-dropdown {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 380px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: none;
+  animation: slideUp 0.3s ease-out;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.notification-dropdown.show {
+  display: block;
+}
+
+/* 아래에서 위로 올라오는 애니메이션 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.notification-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.notification-item:hover {
+  background: #f9fafb;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background: #f0f4ff;
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: #667eea;
+  border-radius: 0 4px 4px 0;
+}
+
+.notification-status.approved {
+  color: #10b981;
+}
+
+.notification-status.rejected {
+  color: #ef4444;
+}
+
+.notification-time {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.notification-empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.notification-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* 스크롤바 스타일 */
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.notification-badge.hidden {
+  display: none;
+}
+
+/* 모바일 반응형 - 쪽지함 */
+@media (max-width: 768px) {
+  .notification-container {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .notification-icon-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+  
+  .notification-dropdown {
+    width: calc(100vw - 40px);
+    right: -10px;
+    max-height: 60vh;
   }
 }

@@ -266,6 +266,207 @@
         WHERE USER_NO = #{userNo}
     </update>
     
+    <!-- ========================================
+     권한 신청 관련 SQL
+========================================= -->
+
+	<!-- 권한 신청 등록 -->
+	<insert id="insertRequestPermission" parameterType="RequestPermissionVO">
+	    INSERT INTO REQUEST_PERMISSION (
+	        REQUEST_NO,
+	        USER_NO,
+	        REQUEST_TYPE,
+	        REQUEST_STATUS,
+	        REQUEST_REASON,
+	        BUSINESS_NAME,
+	        BUSINESS_NUMBER,
+	        CERTIFICATE_TYPE,
+	        CERTIFICATE_NUMBER,
+	        ATTACHMENT_PATH,
+	        ATTACHMENT_ORIGIN,
+	        ATTACHMENT_RENAME,
+	        CREATED_AT
+	    ) VALUES (
+	        SEQ_REQUEST_NO.NEXTVAL,
+	        #{userNo},
+	        #{requestType},
+	        DEFAULT,
+	        #{requestReason},
+	        #{businessName,jdbcType=VARCHAR},
+			#{businessNumber,jdbcType=VARCHAR},
+			#{certificateType,jdbcType=VARCHAR},
+			#{certificateNumber,jdbcType=VARCHAR},
+	        #{attachmentPath},
+	        #{attachmentOrigin},
+	        #{attachmentRename},
+	        SYSTIMESTAMP
+	    )
+	</insert>
+	
+	<!-- 사용자의 대기 중인 신청 조회 -->
+	<select id="selectPendingRequestByUserNo" resultType="RequestPermissionVO">
+	    SELECT 
+	        REQUEST_NO,
+	        USER_NO,
+	        REQUEST_TYPE,
+	        REQUEST_STATUS,
+	        REQUEST_REASON,
+	        BUSINESS_NAME,
+	        BUSINESS_NUMBER,
+	        CERTIFICATE_TYPE,
+	        CERTIFICATE_NUMBER,
+	        ATTACHMENT_PATH,
+	        ATTACHMENT_ORIGIN,
+	        ATTACHMENT_RENAME,
+	        CREATED_AT,
+	        UPDATED_AT,
+	        PROCESSED_AT,
+	        REJECT_REASON
+	    FROM REQUEST_PERMISSION
+	    WHERE USER_NO = #{userNo}
+	      AND REQUEST_STATUS = '대기'
+	    ORDER BY CREATED_AT DESC
+	    FETCH FIRST 1 ROW ONLY
+	</select>
+	
+	<!-- 특정 사용자의 모든 신청 내역 조회 -->
+	<select id="selectRequestsByUserNo" resultType="RequestPermissionVO">
+	    SELECT 
+	        REQUEST_NO,
+	        USER_NO,
+	        REQUEST_TYPE,
+	        REQUEST_STATUS,
+	        REQUEST_REASON,
+	        BUSINESS_NAME,
+	        BUSINESS_NUMBER,
+	        CERTIFICATE_TYPE,
+	        CERTIFICATE_NUMBER,
+	        ATTACHMENT_PATH,
+	        ATTACHMENT_ORIGIN,
+	        ATTACHMENT_RENAME,
+	        CREATED_AT,
+	        UPDATED_AT,
+	        PROCESSED_AT,
+	        REJECT_REASON
+	    FROM REQUEST_PERMISSION
+	    WHERE USER_NO = #{userNo}
+	    ORDER BY CREATED_AT DESC
+	</select>
+	
+	<!-- 신청 번호로 조회 -->
+	<select id="selectRequestByNo" resultType="RequestPermissionVO">
+	    SELECT 
+	        r.REQUEST_NO,
+	        r.USER_NO,
+	        r.REQUEST_TYPE,
+	        r.REQUEST_STATUS,
+	        r.REQUEST_REASON,
+	        r.BUSINESS_NAME,
+	        r.BUSINESS_NUMBER,
+	        r.CERTIFICATE_TYPE,
+	        r.CERTIFICATE_NUMBER,
+	        r.ATTACHMENT_PATH,
+	        r.ATTACHMENT_ORIGIN,
+	        r.ATTACHMENT_RENAME,
+	        r.CREATED_AT,
+	        r.UPDATED_AT,
+	        r.PROCESSED_AT,
+	        r.REJECT_REASON,
+	        u.USER_ID,
+	        u.USER_NAME,
+	        u.USER_NICKNAME
+	    FROM REQUEST_PERMISSION r
+	    JOIN USER_TBL u ON r.USER_NO = u.USER_NO
+	    WHERE r.REQUEST_NO = #{requestNo}
+	</select>
+	
+	<!-- 모든 대기 중인 신청 조회 (관리자용) -->
+	<select id="selectAllPendingRequests" resultType="RequestPermissionVO">
+	    SELECT 
+	        r.REQUEST_NO,
+	        r.USER_NO,
+	        r.REQUEST_TYPE,
+	        r.REQUEST_STATUS,
+	        r.REQUEST_REASON,
+	        r.BUSINESS_NAME,
+	        r.BUSINESS_NUMBER,
+	        r.CERTIFICATE_TYPE,
+	        r.CERTIFICATE_NUMBER,
+	        r.ATTACHMENT_PATH,
+	        r.ATTACHMENT_ORIGIN,
+	        r.ATTACHMENT_RENAME,
+	        r.CREATED_AT,
+	        r.UPDATED_AT,
+	        r.PROCESSED_AT,
+	        r.REJECT_REASON,
+	        u.USER_ID,
+	        u.USER_NAME,
+	        u.USER_NICKNAME
+	    FROM REQUEST_PERMISSION r
+	    JOIN USER_TBL u ON r.USER_NO = u.USER_NO
+	    WHERE r.REQUEST_STATUS = '대기'
+	    ORDER BY r.CREATED_AT DESC
+	</select>
+	
+	<!-- 모든 신청 조회 (관리자용) -->
+	<select id="selectAllRequests" resultType="RequestPermissionVO">
+	    SELECT 
+	        r.REQUEST_NO,
+	        r.USER_NO,
+	        r.REQUEST_TYPE,
+	        r.REQUEST_STATUS,
+	        r.REQUEST_REASON,
+	        r.BUSINESS_NAME,
+	        r.BUSINESS_NUMBER,
+	        r.CERTIFICATE_TYPE,
+	        r.CERTIFICATE_NUMBER,
+	        r.ATTACHMENT_PATH,
+	        r.ATTACHMENT_ORIGIN,
+	        r.ATTACHMENT_RENAME,
+	        r.CREATED_AT,
+	        r.UPDATED_AT,
+	        r.PROCESSED_AT,
+	        r.REJECT_REASON,
+	        u.USER_ID,
+	        u.USER_NAME,
+	        u.USER_NICKNAME
+	    FROM REQUEST_PERMISSION r
+	    JOIN USER_TBL u ON r.USER_NO = u.USER_NO
+	    ORDER BY r.CREATED_AT DESC
+	</select>
+	
+	<!-- 신청 상태 업데이트 (승인/반려) -->
+	<update id="updateRequestStatus">
+	    UPDATE REQUEST_PERMISSION
+	    SET REQUEST_STATUS = #{status},
+	        PROCESSED_AT = SYSTIMESTAMP,
+	        UPDATED_AT = SYSTIMESTAMP,
+	        REJECT_REASON = #{rejectReason}
+	    WHERE REQUEST_NO = #{requestNo}
+	</update>
+	
+	<!-- 신청 삭제 -->
+	<delete id="deleteRequest">
+	    DELETE FROM REQUEST_PERMISSION
+	    WHERE REQUEST_NO = #{requestNo}
+	</delete>
+	
+	<!-- 신청 취소 (사용자가 직접) -->
+	<update id="cancelRequest">
+	    UPDATE REQUEST_PERMISSION
+	    SET REQUEST_STATUS = '취소',
+	        UPDATED_AT = SYSTIMESTAMP
+	    WHERE REQUEST_NO = #{requestNo}
+	      AND REQUEST_STATUS = '대기'
+	</update>
+    
+    <update id="updateUserType">
+	    UPDATE USER_TBL
+	    SET USER_TYPE = #{userType},
+	        UPDATED_AT = SYSTIMESTAMP
+	    WHERE USER_NO = #{userNo}
+	</update>
+    
     <!-- 비밀번호 업데이트 (USER_NO로) -->
     <update id="updateUserPasswordByUserNo">
         UPDATE USER_TBL
@@ -281,5 +482,5 @@
             UPDATED_AT = SYSTIMESTAMP
         WHERE USER_NO = #{userNo}
     </update>
-
+	
 </mapper>

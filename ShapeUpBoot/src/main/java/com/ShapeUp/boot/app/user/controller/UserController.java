@@ -1,6 +1,7 @@
 package com.ShapeUp.boot.app.user.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,6 +30,15 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.multipart.MultipartFile;
+import com.ShapeUp.boot.domain.user.model.service.RequestPermissionService;
+import com.ShapeUp.boot.domain.user.model.vo.RequestPermissionVO;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -36,6 +46,7 @@ public class UserController {
     private final MailService mailService;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RequestPermissionService requestPermissionService;
 
     /* ================================
         이메일 인증
@@ -1058,4 +1069,391 @@ public class UserController {
         
         return response;
     }
+    
+	 // ===== 1. 필드 추가 =====
+	 // @RequiredArgsConstructor 사용 시 아래 필드를 추가
+	 
+	
+	 // ===== 2. 권한 신청 관련 메서드 추가 =====
+	
+	 /**
+	  * 권한 신청 처리
+	  */
+	 @PostMapping("/user/requestPermission")
+	 @ResponseBody
+	 public Map<String, Object> requestPermission(
+	         @RequestParam("requestType") String requestType,
+	         @RequestParam("requestReason") String requestReason,
+	         @RequestParam(value = "businessName", required = false) String businessName,
+	         @RequestParam(value = "businessNumber", required = false) String businessNumber,
+	         @RequestParam(value = "certificateType", required = false) String certificateType,
+	         @RequestParam(value = "certificateNumber", required = false) String certificateNumber,
+	         @RequestParam("attachmentFile") MultipartFile attachmentFile,
+	         HttpSession session) {
+	     
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer userNo = (Integer) session.getAttribute("userNo");
+	         
+	         if (userNo == null) {
+	             response.put("success", false);
+	             response.put("message", "로그인이 필요합니다.");
+	             return response;
+	         }
+	         
+	         // 이미 대기 중인 신청이 있는지 확인
+	         RequestPermissionVO pendingRequest = requestPermissionService.getPendingRequestByUserNo(userNo);
+	         if (pendingRequest != null) {
+	             response.put("success", false);
+	             response.put("message", "이미 처리 대기 중인 신청이 있습니다.");
+	             return response;
+	         }
+	         
+	         // 파일 업로드 처리
+	         String uploadPath = saveFile(attachmentFile);
+	         
+	         if (uploadPath == null) {
+	             response.put("success", false);
+	             response.put("message", "파일 업로드에 실패했습니다.");
+	             return response;
+	         }
+	         
+	         // RequestPermissionVO 생성
+	         RequestPermissionVO request = new RequestPermissionVO();
+	         request.setUserNo(userNo);
+	         request.setRequestType(requestType);
+	         request.setRequestReason(requestReason);
+	         request.setBusinessName(businessName);
+	         request.setBusinessNumber(businessNumber);
+	         request.setCertificateType(certificateType);
+	         request.setCertificateNumber(certificateNumber);
+	         request.setAttachmentPath(uploadPath);
+	         request.setAttachmentOrigin(attachmentFile.getOriginalFilename());
+	         request.setAttachmentRename(new File(uploadPath).getName());
+	         
+	         // DB 저장
+	         int result = requestPermissionService.insertRequestPermission(request);
+	         
+	         if (result > 0) {
+	             log.info("✅ 권한 신청 완료 - userNo: {}, type: {}", userNo, requestType);
+	             response.put("success", true);
+	             response.put("message", "권한 신청이 완료되었습니다.");
+	         } else {
+	             response.put("success", false);
+	             response.put("message", "권한 신청에 실패했습니다.");
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 권한 신청 오류", e);
+	         response.put("success", false);
+	         response.put("message", "오류가 발생했습니다.");
+	     }
+	     
+	     return response;
+	 }
+	
+	 /**
+	  * 파일 저장 메서드
+	  */
+	 private String saveFile(MultipartFile file) throws IOException {
+	     if (file == null || file.isEmpty()) {
+	         return null;
+	     }
+	     
+	     // 업로드 경로 설정 (실제 환경에 맞게 수정 필요)
+	     String uploadDir = "C:/ShapeUp/uploads/permissions/";
+	     
+	     // 디렉토리 생성
+	     File dir = new File(uploadDir);
+	     if (!dir.exists()) {
+	         dir.mkdirs();
+	     }
+	     
+	     // 파일명 생성 (중복 방지)
+	     String originalFilename = file.getOriginalFilename();
+	     String extension = "";
+	     if (originalFilename != null && originalFilename.contains(".")) {
+	         extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+	     }
+	     
+	     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+	     String timestamp = sdf.format(new Date());
+	     String savedFilename = timestamp + extension;
+	     
+	     // 파일 저장
+	     File destFile = new File(uploadDir + savedFilename);
+	     file.transferTo(destFile);
+	     
+	     log.info("✅ 파일 저장 완료 - {}", destFile.getAbsolutePath());
+	     
+	     return destFile.getAbsolutePath();
+	 }
+	
+	 /**
+	  * 내 권한 신청 내역 조회
+	  */
+	 @GetMapping("/user/myRequests")
+	 public String myRequests(HttpSession session, Model model) {
+	     Integer userNo = (Integer) session.getAttribute("userNo");
+	     
+	     if (userNo == null) {
+	         return "redirect:/user/login";
+	     }
+	     
+	     List<RequestPermissionVO> requests = requestPermissionService.getRequestsByUserNo(userNo);
+	     model.addAttribute("requests", requests);
+	     
+	     return "user/myRequests";
+	 }
+	
+	 /**
+	  * 권한 신청 취소
+	  */
+	 @PostMapping("/user/cancelRequest")
+	 @ResponseBody
+	 public Map<String, Object> cancelRequest(@RequestParam int requestNo, HttpSession session) {
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer userNo = (Integer) session.getAttribute("userNo");
+	         
+	         if (userNo == null) {
+	             response.put("success", false);
+	             response.put("message", "로그인이 필요합니다.");
+	             return response;
+	         }
+	         
+	         // 신청 정보 조회 (본인 확인)
+	         RequestPermissionVO request = requestPermissionService.getRequestByNo(requestNo);
+	         
+	         if (request == null || request.getUserNo() != userNo) {
+	             response.put("success", false);
+	             response.put("message", "권한이 없습니다.");
+	             return response;
+	         }
+	         
+	         if (!"대기".equals(request.getRequestStatus())) {
+	             response.put("success", false);
+	             response.put("message", "대기 중인 신청만 취소할 수 있습니다.");
+	             return response;
+	         }
+	         
+	         int result = requestPermissionService.cancelRequest(requestNo);
+	         
+	         if (result > 0) {
+	             log.info("✅ 권한 신청 취소 - requestNo: {}", requestNo);
+	             response.put("success", true);
+	             response.put("message", "신청이 취소되었습니다.");
+	         } else {
+	             response.put("success", false);
+	             response.put("message", "취소에 실패했습니다.");
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 신청 취소 오류", e);
+	         response.put("success", false);
+	         response.put("message", "오류가 발생했습니다.");
+	     }
+	     
+	     return response;
+	 }
+	 
+	 @PostMapping("/user/revokePermission")
+	 @ResponseBody
+	 public Map<String, Object> revokePermission(HttpSession session) {
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer userNo = (Integer) session.getAttribute("userNo");
+	         
+	         if (userNo == null) {
+	             response.put("success", false);
+	             response.put("message", "로그인이 필요합니다.");
+	             return response;
+	         }
+	         
+	         // 현재 사용자 정보 조회
+	         UserVO user = userService.selectUserByUserNo(userNo);
+	         
+	         if (user == null) {
+	             response.put("success", false);
+	             response.put("message", "사용자 정보를 찾을 수 없습니다.");
+	             return response;
+	         }
+	         
+	         // 이미 일반 사용자인 경우
+	         if ("USER".equals(user.getUserType())) {
+	             response.put("success", false);
+	             response.put("message", "이미 일반 사용자입니다.");
+	             return response;
+	         }
+	         
+	         // USER_TYPE을 USER로 변경
+	         int result = userService.updateUserType(userNo, "USER");
+	         
+	         if (result > 0) {
+	             log.info("✅ 권한 포기 완료 - userNo: {}, 기존 권한: {}", userNo, user.getUserType());
+	             
+	             // 세션의 userType 업데이트
+	             session.setAttribute("userType", "USER");
+	             
+	             // loginUser도 업데이트
+	             user.setUserType("USER");
+	             session.setAttribute("loginUser", user);
+	             
+	             response.put("success", true);
+	             response.put("message", "권한이 포기되었습니다. 일반 사용자로 전환되었습니다.");
+	         } else {
+	             response.put("success", false);
+	             response.put("message", "권한 포기에 실패했습니다.");
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 권한 포기 오류", e);
+	         response.put("success", false);
+	         response.put("message", "오류가 발생했습니다.");
+	     }
+	     
+	     return response;
+	 }
+	 
+	 @GetMapping("/user/checkPendingRequest")
+	 @ResponseBody
+	 public Map<String, Object> checkPendingRequest(HttpSession session) {
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer userNo = (Integer) session.getAttribute("userNo");
+	         
+	         if (userNo == null) {
+	             response.put("hasPending", false);
+	             return response;
+	         }
+	         
+	         // 대기 중인 신청 조회
+	         RequestPermissionVO pendingRequest = requestPermissionService.selectPendingRequestByUserNo(userNo);
+	         
+	         if (pendingRequest != null) {
+	             response.put("hasPending", true);
+	             
+	             // 신청 정보를 간단한 맵으로 변환
+	             Map<String, Object> requestInfo = new HashMap<>();
+	             requestInfo.put("requestNo", pendingRequest.getRequestNo());
+	             requestInfo.put("requestType", pendingRequest.getRequestType());
+	             requestInfo.put("requestStatus", pendingRequest.getRequestStatus());
+	             requestInfo.put("createdAt", pendingRequest.getCreatedAt());
+	             
+	             response.put("request", requestInfo);
+	             log.info("✅ 대기 중인 신청 확인 - userNo: {}, requestType: {}", 
+	                     userNo, pendingRequest.getRequestType());
+	         } else {
+	             response.put("hasPending", false);
+	             log.info("ℹ️ 대기 중인 신청 없음 - userNo: {}", userNo);
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 대기 중인 신청 확인 오류", e);
+	         response.put("hasPending", false);
+	     }
+	     
+	     return response;
+	 }
+	 
+	 /**
+	  * UserController.java에 추가할 메서드
+	  */
+
+	 /**
+	  * 최근 처리된 신청 확인 (승인/반려 알림용)
+	  */
+	 @GetMapping("/user/checkRecentRequest")
+	 @ResponseBody
+	 public Map<String, Object> checkRecentRequest(HttpSession session) {
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer userNo = (Integer) session.getAttribute("userNo");
+	         
+	         if (userNo == null) {
+	             response.put("hasRecent", false);
+	             return response;
+	         }
+	         
+	         // 사용자의 최근 신청 내역 조회
+	         List<RequestPermissionVO> requests = requestPermissionService.selectRequestsByUserNo(userNo);
+	         
+	         // 승인 또는 반려 상태이면서 아직 확인하지 않은 신청 찾기
+	         RequestPermissionVO recentRequest = null;
+	         for (RequestPermissionVO request : requests) {
+	             String status = request.getRequestStatus();
+	             if ("승인".equals(status) || "반려".equals(status)) {
+	                 // 세션에 이미 확인한 신청인지 체크
+	                 String checkedKey = "checked_request_" + request.getRequestNo();
+	                 Boolean isChecked = (Boolean) session.getAttribute(checkedKey);
+	                 
+	                 if (isChecked == null || !isChecked) {
+	                     recentRequest = request;
+	                     break;
+	                 }
+	             }
+	         }
+	         
+	         if (recentRequest != null) {
+	             response.put("hasRecent", true);
+	             
+	             Map<String, Object> requestInfo = new HashMap<>();
+	             requestInfo.put("requestNo", recentRequest.getRequestNo());
+	             requestInfo.put("requestType", recentRequest.getRequestType());
+	             requestInfo.put("requestStatus", recentRequest.getRequestStatus());
+	             requestInfo.put("processedAt", recentRequest.getProcessedAt());
+	             requestInfo.put("rejectReason", recentRequest.getRejectReason());
+	             
+	             response.put("request", requestInfo);
+	             
+	             log.info("✅ 최근 처리된 신청 있음 - requestNo: {}, status: {}", 
+	                     recentRequest.getRequestNo(), recentRequest.getRequestStatus());
+	         } else {
+	             response.put("hasRecent", false);
+	             log.info("ℹ️ 최근 처리된 신청 없음 - userNo: {}", userNo);
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 최근 신청 확인 오류", e);
+	         response.put("hasRecent", false);
+	     }
+	     
+	     return response;
+	 }
+
+	 /**
+	  * 알림 확인 처리 (세션에 확인 표시)
+	  */
+	 @PostMapping("/user/markNotificationRead")
+	 @ResponseBody
+	 public Map<String, Object> markNotificationRead(@RequestBody Map<String, Integer> payload, 
+	                                                  HttpSession session) {
+	     Map<String, Object> response = new HashMap<>();
+	     
+	     try {
+	         Integer requestNo = payload.get("requestNo");
+	         
+	         if (requestNo != null) {
+	             // 세션에 확인 표시
+	             String checkedKey = "checked_request_" + requestNo;
+	             session.setAttribute(checkedKey, true);
+	             
+	             log.info("✅ 알림 확인 처리 - requestNo: {}", requestNo);
+	             response.put("success", true);
+	         } else {
+	             response.put("success", false);
+	         }
+	         
+	     } catch (Exception e) {
+	         log.error("❌ 알림 확인 처리 오류", e);
+	         response.put("success", false);
+	     }
+	     
+	     return response;
+	 }
 }
