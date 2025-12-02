@@ -197,12 +197,23 @@
     overflow: hidden;
 }
 
+#noImg {
+    width: 100%;
+    height: 100%;
+    padding: 3em;
+    object-fit: contain;
+}
+
 .left-card-top img {
     width: 100%;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     object-fit: cover;
     object-position: center;
+}
+
+.left-card-top #noImg {
+    width: 100%;
 }
 
 .left-card-top .goal-category {

@@ -15,7 +15,10 @@
         <div class="main">
             <div class="board-wrapper">
                 <div class="board-wrapper-left">
-                    <p class="main-board-title">커뮤니티 게시판</p>
+                	<div class="board-title">
+	                    <p class="main-board-title">커뮤니티 게시판 </p>
+	                    <span style="font-size:.8rem; color:#222;">총 게시물 : ${TotalCount}</span>
+                	</div>
                     <div class="main-board-top">
                         <input type="hidden" id="currentCategory" value="${param.category}">
                         <div class="search-wrapper">
@@ -37,9 +40,6 @@
                                 <input type="text" name="keyword" id="keyword" value="${param.keyword}" placeholder="내용, 제목으로 검색해주세요..">  
                                 <span class="errMsg" style="display: none; position: absolute; top: 40px; left: 5px; font-size: .8rem; color:#ff3B00; font-weight: 500;">검색어를 입력해주세요.</span>                     
                             </div>
-                            <button class="resetBtn" onclick="location.href='/community'">
-                                <span class="material-symbols-outlined" title="검색 초기화">replay</span>
-                            </button>
                         </div>
                         <div class="board-add-wrapper">
                             <a href="javascript:void(0)" id="communityHref" onclick="communityAddBtn();">
@@ -52,7 +52,7 @@
                     <div class="main-board-middle">
                         <div class="notice-wrapper">
 	                        <c:forEach var="nList" items="${nList }">
-	                            <a href="/notice/detail?noticeNo = ${nList.noticeNo }">
+	                            <a href="/notice/detail?noticeNo=${nList.noticeNo }">
 	                                <div class="notice-card">
 	                                    <div class="notice-category-wrapper">
 	                                        <span class="notice-category">공지사항</span>
@@ -67,10 +67,22 @@
                         <div class="post-content">
                         <c:choose>
                         	<c:when test="${empty cList }">
-                                <div style="width:100%; height: 40vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
-                                    <span class="material-symbols-outlined" style="font-size:60px; color:#aaa;">error</span>
-                                    <p style="margin-top:10px; font-size:16px; font-weight: 500; color:#aaa;">검색 결과가 없습니다.</p>    
-                                </div>
+                                <script>
+                                    Swal.fire({
+                                        icon:'warning',
+                                        title: '검색결과가 없습니다.',
+                                        confirmButtonText: '확인',
+                                        customClass: {
+                                            popup: 'error-popup',
+                                            title: 'error-title',
+                                            text: 'error-text',
+                                            confirmButton: 'error-button'
+                                        },
+                                        didClose: () => {
+                                            location.href="/community";
+                                        }
+                                    });
+                                </script>
                         	</c:when>
                         	<c:otherwise>
 		                        <c:forEach var="cList" items="${cList }">
@@ -78,7 +90,7 @@
                                         <div class="post-card">
                                             <div class="post-header">
                                                 <div class="post-header-left">
-                                                    <c:choose>
+                                                   <c:choose>
                                                         <c:when test="${cList.communityType eq '운동질문' }">
                                                             <span class="post-category-question">${cList.communityType }</span>
                                                         </c:when>
@@ -234,7 +246,6 @@
         </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         const filterBtn = document.querySelector(".filter-btn-wrapper");
         const filterList = document.querySelector(".filter-btn-list");
@@ -294,42 +305,43 @@
 
         function movePage(boardNo, category) {
             if (!boardNo || boardNo === 'undefined') boardNo = 1;
-            // 1. 검색어 가져오기
-            const keyword = document.querySelector("#keyword").value;
-            const errMsg = document.querySelector(".errMsg");
-            const search = document.querySelector(".main-board-top");
-            const searchErr = document.querySelector(".search input[type='text']");
 
-            if(!keyword) {
-                errMsg.style.display = 'flex';
-                search.style.marginBottom = 5 + "px";
-                errMsg.innerText = '검색어를 입력해주세요';
-                searchErr.style.border = '1.5px solid #ff3b00';
-                keyword.focus();
-                return;
+            // input 엘리먼트를 가져와야 함(value X)
+            const keywordInput = document.querySelector("#keyword");
+
+            // 검색어 가져오기
+            let keyword = "";
+            if (keywordInput && keywordInput.value != null) {
+                keyword = keywordInput.value;
             }
-            
-            // 2. 카테고리(필터) 가져오기
-            // 인자로 category가 넘어오면 그걸 쓰고, 아니면 기존에 저장된 값(hidden)을 씀
-            const currentCategory = document.getElementById("currentCategory").value;
-            if (category !== undefined && category !== null) {
+
+            // "전체" 클릭한 경우 keyword 초기화
+            if (category === "") {
+                keyword = "";
+                if (keywordInput) keywordInput.value = "";
+            }
+
+            // 카테고리 읽기
+            let currentCategory = document.getElementById("currentCategory").value;
+
+            // category 인자가 있을 때만 카테고리 변경
+            if (category !== undefined) {
                 currentCategory = category;
             }
 
-            // 3. URL 조립 (GET 방식 쿼리 스트링)
-            // Controller에서 받는 파라미터 이름(cPage, keyword, category 등)에 맞춰주세요.
-            const url = "/community";
-            url += "?boardNo=" + boardNo; // 보통 페이지 번호는 cPage, page 등을 쓰지만 작성자님 코드에 맞춰 boardNo 사용
-            
+            // URL 구성
+            let url = "/community";
+            url += "?boardNo=" + boardNo;
+
             if (keyword !== "") {
                 url += "&keyword=" + encodeURIComponent(keyword);
             }
-            
+
             if (currentCategory !== "") {
                 url += "&category=" + encodeURIComponent(currentCategory);
             }
 
-            // 4. 페이지 이동
+            // 이동
             location.href = url;
         }
     </script>

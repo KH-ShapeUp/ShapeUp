@@ -20,7 +20,7 @@
                 <a>매칭 찾기</a>
                 <ul class="sub-menu">
                     <li><a href="/matching/board">일반 매칭</a></li>
-                    <li><a href="#">트레이너 매칭</a></li>
+                    <li><a href="/trainer/matching/board">트레이너 매칭</a></li>
                 </ul>
             </li>
             <li><a href="/map">시설 지도</a></li>
@@ -37,7 +37,7 @@
                 <ul class="sub-menu">
                     <li><a href="/diet">칼로리</a></li>
                     <li><a href="/activity">활동</a></li>
-                    <li><a href="/routine">루틴</a></li>
+                    <li><a href="/routine/list">루틴</a></li>
                 </ul>
             </li>
         </ul>
@@ -51,9 +51,9 @@
     <div class="sideBtn">
         <% if(isLogin) { %>
             <!-- 로그인 상태 -->
-            <a href="/user/updateUserInfo" id="userMyPage"><span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span></a>
+            <span class="user-nickname"><%= loginUserNickname %><span class="welcome_txt">&nbsp;님 환영합니다.</span></span>
             <a href="/logout" id="singnBtn" class="btn logout-btn">로그아웃</a>
-            <a href="/user/updateUserInfo">마이페이지</a>
+            <a href="/user/updateUserInfo" id="myPage">마이페이지</a>
         <% } else { %>
             <!-- 비로그인 상태 -->
             <a href="/user/login" id="loginBtn" class="btn login-btn">로그인</a>
@@ -106,13 +106,13 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="/matching"> 
+                <a href="/matching/board"> 
                     <span class="material-symbols-outlined">group_search</span>
                     <span>일반 매칭</span>
                 </a>
             </div>
             <div class="list-item">
-                <a href="#">
+                <a href="/trainer/matching/board">
                     <span class="material-symbols-outlined">person_search</span>
                     <span>트레이너 매칭</span>
                 </a>
@@ -133,7 +133,7 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="#">
+                <a href="/success">
 >>>>>>> refs/remotes/origin/Kimjaeseung
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
@@ -164,7 +164,7 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="#">
+                <a href="/user/myPage">
                     <span class="material-symbols-outlined">settings_account_box</span>
                     <span>설정</span>
                 </a>

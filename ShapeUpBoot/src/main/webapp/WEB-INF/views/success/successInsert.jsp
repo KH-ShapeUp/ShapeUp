@@ -159,7 +159,7 @@
                             confirmButton: 'success-button'
                         },
                         didClose: () => {
-                            location.href="/community"
+                            location.href="/success"
                         }
                     })
                 }

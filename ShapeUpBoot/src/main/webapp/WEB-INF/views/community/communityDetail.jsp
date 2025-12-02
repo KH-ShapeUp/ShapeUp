@@ -42,6 +42,26 @@
 								<span>${cList.communityType }</span>
 							</div>
 						</c:when>
+						<c:when test="${cList.successType eq '다이어트' }">
+							<div class="community-category">
+								<span>${cList.successType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.successType eq '체중감량' }">
+							<div class="community-category">
+								<span>${cList.successType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.successType eq '체지방감량' }">
+							<div class="community-category">
+								<span>${cList.successType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.successType eq '골격근증가' }">
+							<div class="community-category">
+								<span>${cList.successType }</span>
+							</div>
+						</c:when>					
 					</c:choose>
 					<div class="report" data-type="board">
 						<span class="material-symbols-outlined more_vert">more_vert</span>
@@ -64,19 +84,23 @@
 					</div>
 				</div>
 				<div class="community-title">
-					<span>${cList.communityTitle }</span>
+					<span>${cList.communityTitle }</span>					
 				</div>
 				<div class="community-writer">
 					<div class="writer-left">
 						<img src="../../../resources/img/person.png" width="50">
-						<span class="nick-name">${cList.userNickName }</span>
+						<span class="nick-name">${cList.userNickName }</span>						
 					</div>
 					<div class="writer-right">
 						<span class="writer-date">${cList.timeAgo }<span class="community-view">조회수 ${cList.viewCount }</span></span>
 					</div>
 				</div>
-				
-				<div class="community-content">
+				<c:if test="${cList.goalDate != null }">
+					<div class="goaldate-wrapper">
+						<i class="fa-regular fa-clock"></i><span class="goalDate">소요기간: ${cList.goalDate }</span>
+					</div>
+				</c:if>
+				<div class="community-content">					
 					<!-- 엔터로 줄바꿈으로 하면 코드블럭으로 인식-->
 				    <div id="hidden-content" style="display:none;"><c:out value="${cList.communityContent}" escapeXml="false" /></div>
 				    <div id="viewer"></div>
@@ -91,11 +115,20 @@
 						<span class="material-symbols-outlined" onclick="clip(); return false;">share</span>
 					</button>
 				</div>
+				<c:choose>
+					<c:when test="${userNo == cList.userNo}">
+						<div class="community-setting">
+							<a href="/community/modify?boardNo=${cList.communityNo}" class="community-modify">수정</a>
+							<button class="community-delete" onclick="deleteCommunity('${cList.communityNo}');">삭제</button>
+						</div>
+					</c:when>
+					<c:when test="${userType == 'SYSTEM_MANAGER'}">
+						<div class="community-setting">					
+							<button class="community-delete" onclick="deleteCommunity('${cList.communityNo}');">삭제</button>
+						</div>
+					</c:when>				
+				</c:choose>
 				<c:if test="${userNo == cList.userNo}">
-				    <div class="community-setting">
-				        <a href="/community/modify?boardNo=${cList.communityNo}" class="community-modify">수정</a>
-				        <button class="community-delete" onclick="deleteCommunity('${cList.communityNo}');">삭제</button>
-				    </div>
 				</c:if>
 				<!-- 댓글 wrapper -->
 				<div class="comment-wrapper">
@@ -137,14 +170,17 @@
 		const communityUserNo = "${cList.userNo}";
 		const communityNo = "${cList.communityNo}"; // 현재 게시글 번호
 		const userNo = "${userNo}"; // 로그인한 유저 번호 (세션 등에서 가져옴)
+		const userType = "${userType}";
 
 		document.addEventListener("DOMContentLoaded", function() {
 			getCommentList(); 
 		});
 
+		
+
 		function clip(){
-			var url = '';    // <a>태그에서 호출한 함수인 clip 생성
-			var textarea = document.createElement("textarea");  
+			let url = '';    // <a>태그에서 호출한 함수인 clip 생성
+			let textarea = document.createElement("textarea");  
 			//url 변수 생성 후, textarea라는 변수에 textarea의 요소를 생성
 			
 			document.body.appendChild(textarea); //</body> 바로 위에 textarea를 추가(임시 공간이라 위치는 상관 없음)
@@ -320,7 +356,7 @@
 			document.querySelector(".comment-wrapper p").innerText = "댓글 " + list.length + "개";
 
 			if (list.length === 0) {
-				commentListContainer.innerHTML = '<li style="text-align:center; padding: 20px;">작성된 댓글이 없습니다.</li>';
+				commentListContainer.innerHTML = '<li style="text-align:center; padding: 20px; font-weight:500;">작성된 댓글이 없습니다.</li>';
 				return;
 			}
 
@@ -329,7 +365,7 @@
 				
 				// 삭제 버튼 HTML 미리 생성
 				let deleteBtnHtml = '';
-				if (reply.userNo == userNo || reply.userType == 'SYSTEM_MANAGER') {
+				if (reply.userNo == userNo || userType == "SYSTEM_MANAGER") {
 					deleteBtnHtml = `<span class="comment-delete" onclick="deleteReply(\${reply.commentNo})" style="cursor:pointer; font-weight:500; color:#FF3B00;">삭제</span>`;
 				}
 

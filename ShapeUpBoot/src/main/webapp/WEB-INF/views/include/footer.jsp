@@ -17,15 +17,13 @@
         <div class="middle">
             <div class="middle-top">
                 <ul class="footer-menu">
-                    <li><a href="#">이용약관</a></li>
+                    <li><a href="/terms">이용약관</a></li>
                     <li>&#8739;</li>
-                    <li><a href="#"><b>개인정보 처리방침</b></a></li>
+                    <li><a href="#" class="individual"><b>개인정보 처리방침</b></a></li>
                     <li>&#8739;</li>
-                    <li><a href="#"><b>위치기반 서비스 약관</b></a></li>
+                    <li><a href="#" class="locationBased"><b>위치기반 서비스 약관</b></a></li>
                     <li>&#8739;</li>
-                    <li><a href="#"><b>공지사항</b></a></li>
-                    <li>&#8739;</li>
-                    <li><a href="#">고객센터</a></li>
+                    <li><a href="#" class="customerCenter">고객센터</a></li>
                 </ul>
             </div>
             <div class="middle-bottom">
@@ -53,5 +51,24 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelector(".individual").addEventListener("click", (e) => {
+            e.preventDefault;
+            e.stopPropagation;
+            alert("개발중입니다.");
+        });
+
+        document.querySelector(".locationBased").addEventListener("click", (e) => {
+            e.preventDefault;
+            e.stopPropagation;
+            alert("개발중입니다.");
+        });
+        
+        document.querySelector(".customerCenter").addEventListener("click", (e) => {
+            e.preventDefault;
+            e.stopPropagation;
+            alert("개발중입니다.");
+        });
+    </script>
 </body>
 </html>

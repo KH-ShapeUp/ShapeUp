@@ -62,7 +62,87 @@
 		    ORDER BY 
 		    	M.CREATED_AT DESC
 		)
+		WHERE ROWNUM <![CDATA[ <= ]]> 5	       
+	</select>
+	
+	<select id="getCoummityList">
+		SELECT *
+		FROM (
+			SELECT
+			    C.COMMUNITY_NO,
+			    C.COMMUNITY_TITLE,
+			    C.COMMUNITY_TYPE,
+			    C.CREATED_AT,
+			    C.VIEW_COUNT,
+			    C.UPDATED_AT,
+			    C.DELETE_YN,
+			    U.USER_NICKNAME AS userNickName,
+			    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
+			    (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT
+			FROM COMMUNITY_TBL C
+			LEFT JOIN USER_TBL U 
+			    ON C.USER_NO = U.USER_NO
+			LEFT JOIN COMMUNITY_BOARD_LIKE B 
+			    ON C.COMMUNITY_NO = B.COMMUNITY_NO
+			WHERE C.COMMUNITY_TYPE != 'success' AND
+				C.DELETE_YN = 'N'
+			    GROUP BY 
+			    C.COMMUNITY_NO,
+			    C.COMMUNITY_TITLE,
+			    C.COMMUNITY_TYPE,
+			    C.CREATED_AT,
+			    C.DELETE_YN,
+			    C.VIEW_COUNT,
+			    C.UPDATED_AT,
+			    U.USER_NICKNAME
+			ORDER BY C.CREATED_AT DESC
+		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 5
-	       
+	</select>
+	
+	<!-- 성공후기 리스트 -->
+	<select id="getSuccessList">
+		SELECT * 
+		FROM (
+			SELECT 
+	    		C.COMMUNITY_NO,
+	    		C.COMMUNITY_TITLE,
+	    		C.VIEW_COUNT,
+	    		C.CREATED_AT,
+	    		C.GOAL_DATE,
+	    		C.SUCCESS_TYPE,
+	    		C.DELETE_YN,
+	    		U.USER_NICKNAME AS USER_NICKNAME,
+	    		DBMS_LOB.SUBSTR(
+	    			REGEXP_REPLACE(
+	    				REPLACE(C.COMMUNITY_CONTENT, '&amp;nbsp;', ''),
+	    				<![CDATA[ '<[^>]*>' ]]>, ''
+	    			), 100, 1
+	    		) AS COMMUNITY_CONTENT,
+	   		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
+	    		(SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT,
+	    		(SELECT I.IMG_PATH FROM COMMUNITY_IMG_TBL I WHERE I.COMMUNITY_NO = C.COMMUNITY_NO AND ROWNUM = 1) AS THUMBNAIL
+	   		FROM COMMUNITY_TBL C
+	   		JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+	   		WHERE C.DELETE_YN = 'N' AND
+	    		  C.COMMUNITY_TYPE = 'success'					
+			ORDER BY CREATED_AT DESC
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]> 5
+	</select>
+	
+	<select id="getNoticeList">
+		SELECT *
+		FROM (
+		    SELECT 
+		        NOTICE_NO,
+		        NOTICE_TITLE,
+		        NOTICE_CATEGORY,
+		        VIEW_COUNT,
+		        TO_CHAR(CREATED_AT, 'YYYY-mm-dd') AS CREATEDDAY
+		    FROM NOTICE_TBL
+		    ORDER BY CREATED_AT DESC
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]> 5
 	</select>
  </mapper>

@@ -43,13 +43,23 @@
 
 .middle-top .footer-menu li {
     list-style: none;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 .middle-top .footer-menu a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: 12px;
-    font-weight: 400;
+}
+
+.footer-menu button {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.footer-menu button:hover {
+	color: var(--main-color);
 }
 
 .middle-top .footer-menu a:hover {

@@ -32,4 +32,7 @@ public class Notice {
 	private String bannerTitle;
 	private String bannerImgPath;
 	private List<NoticeImage> images;
+	
+	// DB에서 가져온 작성일을 메인페이지에서 yyyy-mm-dd로 표시하기
+	private String createdDay;
 }

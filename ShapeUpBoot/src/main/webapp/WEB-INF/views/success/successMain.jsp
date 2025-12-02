@@ -15,7 +15,10 @@
         <div class="main">
             <div class="board-wrapper">
                 <div class="board-wrapper-left">
-                    <p class="board-title">성공 후기 테이블</p>
+                	<div style="padding: 20px 0px">
+	                    <p class="board-title">성공 후기 테이블</p>
+	                    <span style="font-size:.8rem; color:#222;">총 게시물 : ${TotalCount}</span>
+                	</div>
                     <div class="board-left-top">
                         <input type="hidden" id="currentCategory" value="${param.category}">
                         <div class="search-wrapper">
@@ -26,10 +29,10 @@
                                 </button>
                                 <div class="filter-btn-list">
                                     <button onclick="movePage(1, '')" class="filter-btn">전체</button>				    	
-                                    <button onclick="movePage(1, '운동질문')" class="filter-btn">운동 질문</button>
-                                    <button onclick="movePage(1, '운동꿀팁')" class="filter-btn">운동 꿑팁</button>
-                                    <button onclick="movePage(1, '식단/영양')" class="filter-btn">식단 / 영양</button>
-                                    <button onclick="movePage(1, '운동인증')" class="filter-btn">운동 인증</button>
+                                    <button onclick="movePage(1, '다이어트')" class="filter-btn">다이어트</button>
+                                    <button onclick="movePage(1, '체중감량')" class="filter-btn">체중감량</button>
+                                    <button onclick="movePage(1, '체지방감량')" class="filter-btn">체지방감량</button>
+                                    <button onclick="movePage(1, '골격근증가')" class="filter-btn">골격근증가</button>
                                 </div>
                             </div>
                             <div class="search">
@@ -47,53 +50,75 @@
                     </div>
                     <div class="board-left-bottom">
                         <div class="board-left-content">
-	                        <c:forEach var="sList" items="${sList }">	                  
-	                            <a href="/community/detail?boardNo= ${sList.communityNo}">
-	                                <div class="board-left-card">
-	                                    <div class="left-card-top">
-	                                    <c:choose>
-	                                    	<c:when test="${not empty sList.thumbnail }">
-		                                        <img src="${sList.thumbnail }">		                                        	                               
-	                                    	</c:when>
-	                                    	<c:otherwise>
-	                                    		<img src="../../../resources/img/no-img.png">
-	                                    	</c:otherwise>
-	                                    </c:choose>
-	                                        <span class="goal-category">${sList.successType }</span>
-	                                    </div>
-	                                    <div class="left-card-middle">
-	                                        <div class="left-card-middle-top">
-	                                            <div class="user-img">
-	                                                <img src="../../../resources/img/person.png">
-	                                            </div>
-	                                            <div class="user-info">
-	                                                <div class="user-info-top">
-	                                                    <span class="left-user-nickname">${sList.userNickName }</span>
-	                                                    <div class="left-view">
-	                                                        <i class="fa-regular fa-eye"></i>
-	                                                        <span>${sList.viewCount }</span>
-	                                                    </div>
-	                                                </div>
-	                                                <span class="create-date">${sList.timeAgo }</span>
-	                                            </div>
-	                                        </div>
-	                                        <div class="left-card-middle-content">
-	                                            <span class="left-board-title">${sList.communityTitle }</span>
-	                                            <div class="left-board-content">
-	                                                <div class="content-top">
-	                                                    <i class="fa-regular fa-clock"></i><span>소요기간: ${sList.goalDate }</span>
-	                                                </div>
-	                                                <span class="board-content">${sList.communityContent }</span>
-	                                            </div>
-	                                        </div>
-	                                        <div class="left-card-footer">
-	                                            <div class="viewCount"><i class="fa-regular fa-comment"></i><span>${sList.commentCount }</span></div>
-	                                            <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${sList.likeCount }</span></div>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                            </a>                                                               
-	                        </c:forEach>
+                            <c:choose>
+                                <c:when test="${empty sList}">
+                                    <script>
+                                        Swal.fire({
+                                            icon:'warning',
+                                            title: '검색결과가 없습니다.',
+                                            confirmButtonText: '확인',
+                                            customClass: {
+                                                popup: 'error-popup',
+                                                title: 'error-title',
+                                                text: 'error-text',
+                                                confirmButton: 'error-button'
+                                            },
+                                            didClose: () => {
+                                                location.href="/success";
+                                            }
+                                        });
+                                    </script>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:forEach var="sList" items="${sList }">	                  
+                                        <a href="/community/detail?boardNo= ${sList.communityNo}">
+                                            <div class="board-left-card">
+                                                <div class="left-card-top">
+                                                    <c:choose>
+                                                        <c:when test="${not empty sList.thumbnail }">
+                                                            <img src="${sList.thumbnail }">		                                        	                               
+                                                        </c:when>
+                                                        <c:otherwise>                                                   
+                                                            <img src="../../../resources/img/no-img.png" id="noImg">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <span class="goal-category">${sList.successType }</span>
+                                                </div>
+                                                <div class="left-card-middle">
+                                                    <div class="left-card-middle-top">
+                                                        <div class="user-img">
+                                                            <img src="../../../resources/img/person.png">
+                                                        </div>
+                                                        <div class="user-info">
+                                                            <div class="user-info-top">
+                                                                <span class="left-user-nickname">${sList.userNickName }</span>
+                                                                <div class="left-view">
+                                                                    <i class="fa-regular fa-eye"></i>
+                                                                    <span>${sList.viewCount }</span>
+                                                                </div>
+                                                            </div>
+                                                            <span class="create-date">${sList.timeAgo }</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="left-card-middle-content">
+                                                        <span class="left-board-title">${sList.communityTitle }</span>
+                                                        <div class="left-board-content">
+                                                            <div class="content-top">
+                                                                <i class="fa-regular fa-clock"></i><span>소요기간: ${sList.goalDate }</span>
+                                                            </div>
+                                                            <span class="board-content">${sList.communityContent }</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="left-card-footer">
+                                                        <div class="viewCount"><i class="fa-regular fa-comment"></i><span>${sList.commentCount }</span></div>
+                                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${sList.likeCount }</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>                                                               
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                         <div class="pagination-wrapper">
@@ -128,37 +153,37 @@
                     <div class="board-right-top">
                         <p>인기 게시물</p>
                         <div class="board-right-top-content">
-                        	<c:forEach var="psList" items="${psList }" varStatus="status">
-	                            <a href="/community/detail?boardNo=${psList.communityNo }">
-	                                <div class="board-right-top-card">
-	                                    <div class="right-top-top">
-	                                        <div class="right-user-right">
-	                                        	<c:choose>
-													<c:when test="${status.count == 1 }">
-		                                        	    <img src="../../../resources/img/ranking-1.png">													
-													</c:when>                                        
-													<c:when test="${status.count == 2 }">
-														<img src="../../../resources/img/ranking-2.png">
-													</c:when>
-													<c:when test="${status.count == 3 }">
-														<img src="../../../resources/img/ranking-3.png">
-													</c:when>
-	                                        	</c:choose>
-	                                            <span class="right-category">${psList.successType }</span>
-	                                            <span class="right-user-nickname">${psList.userNickName }</span>
-	                                        </div>
-	                                        <span class="create-date">${psList.timeAgo}</span>
-	                                    </div>
-	                                    <div class="right-top-middle">                                        
-	                                        <span class="right-title">${psList.communityTitle }</span><span class="top-comment">(${psList.commentCount })</span>
-	                                    </div>
-	                                    <div class="right-top-footer">
-	                                        <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${psList.viewCount }</span></spam></div>
-	                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${psList.likeCount }</span></div>
-	                                    </div>
-	                                </div>
-	                            </a>
-                        	</c:forEach>
+                            <c:forEach var="psList" items="${psList }" varStatus="status">
+                                <a href="/community/detail?boardNo=${psList.communityNo }">
+                                    <div class="board-right-top-card">
+                                        <div class="right-top-top">
+                                            <div class="right-user-right">
+                                                <c:choose>
+                                                    <c:when test="${status.count == 1 }">
+                                                        <img src="../../../resources/img/ranking-1.png">													
+                                                    </c:when>                                        
+                                                    <c:when test="${status.count == 2 }">
+                                                        <img src="../../../resources/img/ranking-2.png">
+                                                    </c:when>
+                                                    <c:when test="${status.count == 3 }">
+                                                        <img src="../../../resources/img/ranking-3.png">
+                                                    </c:when>
+                                                </c:choose>
+                                                <span class="right-category">${psList.successType }</span>
+                                                <span class="right-user-nickname">${psList.userNickName }</span>
+                                            </div>
+                                            <span class="create-date">${psList.timeAgo}</span>
+                                        </div>
+                                        <div class="right-top-middle">                                        
+                                            <span class="right-title">${psList.communityTitle }</span><span class="top-comment">(${psList.commentCount })</span>
+                                        </div>
+                                        <div class="right-top-footer">
+                                            <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${psList.viewCount }</span></spam></div>
+                                            <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${psList.likeCount }</span></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </c:forEach>
                         </div>
                     </div>
                     <div class="board-right-bottom">
@@ -191,11 +216,35 @@
         </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
+        function communityAddBtn() {
+            const userNo = document.querySelector("#sessionLogin").value;
+            console.log(userNo);
+    
+            if(!userNo || userNo === "") {
+                Swal.fire({
+                    icon:'warning',
+                    title: '로그인이 필요한 서비스입니다.',
+                    text: '로그인 후 이용해주세요.',
+                    confirmButtonText: '로그인 하러가기',
+                    customClass: {
+                        popup: 'error-popup',
+                        title: 'error-title',
+                        text: 'error-text',
+                        confirmButton: 'error-button'
+                    }, 
+                    didClose: () => {
+                        location.href="/user/login";
+                    }
+                });   
+            } else {
+                location.href='/success/insert';
+            }
+        }
+
         const filterBtn = document.querySelector(".filter-btn-wrapper");
         const filterList = document.querySelector(".filter-btn-list");
-
+        
         filterBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             filterBtn.classList.toggle("active");
@@ -224,60 +273,49 @@
             });
         }
 
-	    function communityAddBtn() {
-	        const userNo = document.querySelector("#sessionLogin").value;
-	        console.log(userNo);
-	
-	        if(!userNo || userNo === "") {
-	            Swal.fire({
-	                icon:'warning',
-	                title: '로그인이 필요한 서비스입니다.',
-	                text: '로그인 후 이용해주세요.',
-	                confirmButtonText: '로그인 하러가기',
-	                customClass: {
-	                    popup: 'error-popup',
-	                    title: 'error-title',
-	                    text: 'error-text',
-	                    confirmButton: 'error-button'
-	                }, 
-	                didClose: () => {
-	                    location.href="/user/login";
-	                }
-	            });   
-	        } else {
-	            location.href='/success/insert';
-	        }
-	    }
 
         function movePage(boardNo, category) {
             if (!boardNo || boardNo === 'undefined') boardNo = 1;
-            // 1. 검색어 가져오기
-            const keyword = document.querySelector("#keyword").value;
-            const search = document.querySelector(".board-left-top");
-            
-            // 2. 카테고리(필터) 가져오기
-            // 인자로 category가 넘어오면 그걸 쓰고, 아니면 기존에 저장된 값(hidden)을 씀
-            const currentCategory = document.getElementById("currentCategory").value;
-            if (category !== undefined && category !== null) {
+
+            // input 엘리먼트를 가져와야 함(value X)
+            const keywordInput = document.querySelector("#keyword");
+
+            // 검색어 가져오기
+            let keyword = "";
+            if (keywordInput && keywordInput.value != null) {
+                keyword = keywordInput.value;
+            }
+
+            // "전체" 클릭한 경우 keyword 초기화
+            if (category === "") {
+                keyword = "";
+                if (keywordInput) keywordInput.value = "";
+            }
+
+            // 카테고리 읽기
+            let currentCategory = document.getElementById("currentCategory").value;
+
+            // category 인자가 있을 때만 카테고리 변경
+            if (category !== undefined) {
                 currentCategory = category;
             }
 
-            // 3. URL 조립 (GET 방식 쿼리 스트링)
-            // Controller에서 받는 파라미터 이름(cPage, keyword, category 등)에 맞춰주세요.
-            const url = "/success";
-            url += "?boardNo=" + boardNo; // 보통 페이지 번호는 cPage, page 등을 쓰지만 작성자님 코드에 맞춰 boardNo 사용
-            
+            // URL 구성
+            let url = "/success";
+            url += "?boardNo=" + boardNo;
+
             if (keyword !== "") {
                 url += "&keyword=" + encodeURIComponent(keyword);
             }
-            
+
             if (currentCategory !== "") {
                 url += "&category=" + encodeURIComponent(currentCategory);
             }
 
-            // 4. 페이지 이동
+            // 이동
             location.href = url;
         }
+
     </script>
 </body>
 </html>
