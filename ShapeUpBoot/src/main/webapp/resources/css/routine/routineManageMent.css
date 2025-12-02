@@ -297,23 +297,23 @@ body {
 .routine-card {
   /* 데스크톱 그리드: 제목/요일(auto) | 메타(1fr) | 액션(auto) */
   display: grid;
-  grid-template-columns: auto 1fr auto; 
-  grid-template-rows: auto auto; 
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
   align-items: center;
   background-color: var(--panel-background);
   border-radius: 8px;
   padding: 15px 20px;
   border: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  position: relative; 
-  gap: 5px 15px; 
+  position: relative;
+  gap: 5px 15px;
 }
 
 /* 유산소 태그 위치 조정 (액션 버튼 공간 확보) (유지) */
 .routine-card .card-header-right {
-  position: absolute; 
-  top: 15px; 
-  right: 50px; 
+  position: absolute;
+  top: 15px;
+  right: 50px;
   z-index: 10;
 }
 
@@ -324,13 +324,13 @@ body {
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: white; 
+  color: white;
 }
 
 /* 카테고리별 색상 정의 (유지) */
 .routine-card .tag-유산소 {
   background-color: var(--color-cardio);
-  color: var(--text-dark); 
+  color: var(--text-dark);
 }
 
 .routine-card .tag-근력 {
@@ -357,7 +357,7 @@ body {
 
 /* 루틴 삭제 버튼 스타일 (유지) */
 /* 이 스타일은 JSP 인라인 스타일로 대체되어 사용됨: .delete-btn-invisible */
-.delete-routine-btn { 
+.delete-routine-btn {
   color: var(--secondary-color);
   cursor: pointer;
   transition: color 0.2s;
@@ -368,17 +368,16 @@ body {
   color: var(--color-sport); /* 호버 시 빨간색으로 변경 */
 }
 
-
 /* 모달 닫기 버튼 (유지) */
 .close-modal-btn {
-    font-size: 1.5rem; /* 모달 닫기 버튼 크기 조정 */
-    color: var(--text-light); 
-    cursor: pointer;
-    transition: color 0.2s;
+  font-size: 1.5rem; /* 모달 닫기 버튼 크기 조정 */
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .close-modal-btn:hover {
-    color: var(--text-dark); 
+  color: var(--text-dark);
 }
 
 /* 루틴 제목 (유지) */
@@ -386,8 +385,8 @@ body {
   font-size: 1.1rem;
   font-weight: 600;
   grid-column: 1 / 2; /* 1열, 1행 */
-  grid-row: 1 / 2; 
-  margin-right: 0; 
+  grid-row: 1 / 2;
+  margin-right: 0;
 }
 
 /* 루틴 요일 (유지) */
@@ -395,7 +394,7 @@ body {
   display: flex;
   gap: 5px;
   grid-column: 1 / 2; /* 1열, 2행 */
-  grid-row: 2 / 3; 
+  grid-row: 2 / 3;
   margin-top: 0;
 }
 
@@ -425,7 +424,7 @@ body {
   grid-column: 2 / 3; /* 2열 */
   grid-row: 2 / 3; /* 2행 */
   text-align: right;
-  align-self: flex-end; 
+  align-self: flex-end;
 }
 
 /* 태그 스타일 (유지) */
@@ -542,31 +541,34 @@ body {
 }
 
 /* ---------------------------------------------------- */
-/* 루틴 추가 모달 스타일 */
+/* 루틴 추가 모달 스타일 (수정 반영) */
 /* ---------------------------------------------------- */
 
 /* 모달 오버레이 */
 .modal-overlay {
-  position: fixed; /* 🚨 **수정됨:** 'none' 대신 'fixed'를 사용하여 화면을 덮습니다. */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
-  display: none; 
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* 모달 컨텐츠 카드 (유지) */
+/* 🚨 수정: 모달 컨텐츠 카드 크기 확장 및 최소 너비 설정 */
 .modal-content-card {
   background-color: white;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  width: 450px; 
-  max-width: 90%;
+  max-width: 650px; /* 🚨 확장된 최대 너비 */
+  width: 90%;
+  min-width: 380px; /* 찌그러짐 방지 */
+  max-height: 90vh; /* 세로 스크롤 가능하게 설정 */
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -587,7 +589,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* 드롭다운 영역 (유지) */
+/* 🚨 수정: 드롭다운 영역 간격 조정 */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -596,7 +598,10 @@ body {
 }
 
 .time-section {
-  grid-template-columns: 1fr 2fr; 
+  display: grid; /* 확실히 grid로 정의 */
+  /* 🚨 수정: 시간 입력 필드 공간을 더 넓게 할당 (1:2 비율) */
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
   margin-bottom: 30px;
 }
 
@@ -624,12 +629,10 @@ body {
   cursor: pointer;
 }
 
-.strength-select {
-  width: 100px;
-}
-
+/* 🚨 수정: 드롭다운 너비 100%로 설정하여 부모 셀에 맞춤 */
+.strength-select,
 .time-select {
-  width: 80px;
+  width: 100%;
 }
 
 /* 시작 시각 입력 필드 (유지) */
@@ -677,14 +680,22 @@ body {
   margin-bottom: 5px;
 }
 
+/* 🚨 수정: 요일 버튼 균등 배치 (크기 40px로 확대) */
 .day-buttons {
   display: flex;
-  gap: 5px;
+  justify-content: space-between; /* 버튼들을 균등하게 배치 */
+  flex-wrap: nowrap; /* 한 줄 유지 */
+  width: 100%;
 }
 
 .day-btn {
-  width: 35px;
-  height: 35px;
+  /* 🚨 버튼 크기 40px로 확대 및 간격 계산 */
+  flex-basis: calc(
+    (100% - 30px) / 7
+  ); /* 100%에서 6개의 5px 마진(30px)을 빼고 7로 나눔 */
+  width: 40px;
+  height: 40px; /* 🚨 높이 40px로 늘림 */
+  margin-right: 5px; /* 각 버튼 사이에 5px 간격 */
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background-color: var(--background-color);
@@ -692,12 +703,18 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  padding: 0;
+}
+
+/* 마지막 버튼의 마진을 제거하여 완벽하게 정렬 */
+.day-buttons .day-btn:last-child {
+  margin-right: 0;
 }
 
 .day-btn.active {
-    background-color: #4e73df;
-    color: white;
-    border-color: #4e73df;
+  background-color: #4e73df;
+  color: white;
+  border-color: #4e73df;
 }
 
 .routine-summary {
@@ -708,8 +725,8 @@ body {
 
 .routine-summary p {
   color: var(--text-dark);
-  font-weight: 500; 
-  transition: color 0.2s; 
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 /* 저장 버튼 (유지) */
@@ -727,13 +744,15 @@ body {
 }
 
 /* ---------------------------------------------------- */
-/* 반응형 디자인 (Media Queries) (유지) */
+/* 반응형 디자인 (Media Queries) */
 /* ---------------------------------------------------- */
 @media (max-width: 992px) {
+  /* 1:2:1 그리드 -> 1열 스택 (유지) */
   .main-content-grid {
     grid-template-columns: 1fr;
   }
 
+  /* 패널 순서 변경 (유지) */
   .main-content-grid > .goals-panel {
     order: -2;
   }
@@ -741,85 +760,170 @@ body {
     order: -1;
   }
 
+  /* 🚨 루틴 카드 레이아웃 개선 (992px 이하) 🚨 */
   .routine-card {
-    /* 모바일 그리드: 카테고리/제목 등 (1fr) | 액션(auto) */
-    grid-template-columns: 1fr auto;
-    /* 행 구조: 1(카테고리/액션), 2(제목), 3(메타), 4(요일) */
-    grid-template-rows: auto auto auto auto; 
-    gap: 8px 10px; 
+    /* 모바일 그리드: 제목/내용(3fr) | 액션(auto) */
+    display: grid;
+    grid-template-columns: 3fr auto; /* 왼쪽(제목/메타/요일): 오른쪽(액션) */
+    grid-template-rows: auto auto auto auto; /* 1: 태그, 2: 제목, 3: 메타, 4: 요일 */
+    gap: 5px 15px; /* 행 간격 5px, 열 간격 15px */
+    padding: 15px;
   }
 
-  /* 1. 카테고리 태그 */
-  .card-header-right {
-    position: static; 
+  /* 태그 위치 조정 (기존 absolute 제거) */
+  .routine-card .card-header-right {
+    position: static;
     grid-column: 1 / 2;
     grid-row: 1 / 2;
     text-align: left;
-    order: 1; 
-  }
-  
-  /* 2. 삭제 버튼 영역 */
-  .routine-actions {
-    grid-column: 2 / 3; 
-    grid-row: 1 / 2;
-    align-self: flex-start;
-    justify-content: flex-end;
-    order: 2;
+    order: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  /* 3. 루틴 제목 */
   .routine-title {
-    grid-column: 1 / 3; /* 2열 모두 차지 */
-    grid-row: 2 / 3; 
+    grid-column: 1 / 2;
+    grid-row: 2 / 3; /* 태그 아래 2행에 위치 */
+    order: 2;
+    font-size: 1.1rem;
+  }
+
+  /* 액션 버튼 영역 (삭제 버튼) */
+  .routine-actions {
+    grid-column: 2 / 3; /* 2열 */
+    grid-row: 1 / 3; /* 1행과 2행에 걸쳐 중앙 정렬 */
+    align-self: center;
+    justify-content: flex-end;
     order: 3;
   }
 
-  /* 4. 주당 칼로리 소모 (모바일) */
+  /* 🚨 수정: .routine-meta 재배치 및 스타일 */
   .routine-meta {
-    grid-column: 1 / 3; 
-    grid-row: 3 / 4; 
-    text-align: left;
-    align-self: flex-start;
+    grid-column: 1 / 2; /* 1열 전체 차지 */
+    grid-row: 3 / 4; /* 제목 아래 3행에 위치 */
     order: 4;
+
+    display: flex;
+    flex-wrap: wrap; /* ⭐ 줄 바꿈 허용 */
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px 15px; /* 아이템 간격 좁힘: 행 8px, 열 15px */
+    font-size: 0.85rem;
+    padding: 5px 0 0;
+    margin-top: 5px;
+    border-top: 1px dashed var(--border-color); /* 제목과 구분선 */
   }
 
-  /* 5. 루틴 요일 (모바일) */
+  /* 상세 메타 아이템의 아이콘 크기 조정 (모바일에서 작게) */
+  .routine-meta .meta-item i {
+    font-size: 0.75rem;
+  }
+
+  /* 주당 칼로리 정보를 가장 아래 줄에 독립적으로 표시하여 강조 */
+  .routine-meta .weekly-kcal-display {
+    margin-left: 0; /* 오른쪽 정렬 해제 */
+    width: 100%; /* ⭐ 단독으로 한 줄 차지 */
+    font-weight: 600;
+    color: var(--color-sport);
+    border-top: 1px solid var(--border-color); /* 메타 정보와 칼로리 구분 */
+    padding-top: 5px;
+    margin-top: 5px;
+  }
+
+  /* 루틴 요일 (가장 아래에 배치) */
   .routine-days {
-    grid-column: 1 / 3; 
-    grid-row: 4 / 5; 
+    grid-column: 1 / 3; /* 전체 너비 차지 */
+    grid-row: 4 / 5; /* 4행에 위치 */
+    margin-top: 10px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
     order: 5;
   }
-
-  .modal-content-card {
-    width: 95%;
-  }
+  /* ... (나머지 992px 이하 스타일 유지) ... */
 }
 
 @media (max-width: 768px) {
+  /* 🚨 768px 이하에서 .routine-card의 그리드 변경 */
+  .routine-card {
+    grid-template-columns: 1fr auto; /* 1열: 내용, 2열: 액션 */
+    grid-template-rows: auto auto auto auto; /* 4행 유지 */
+    gap: 5px 10px;
+  }
+
+  /* 액션 버튼을 오른쪽 상단에 고정 */
+  .routine-actions {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2; /* 1행 상단에 위치 */
+    align-self: flex-start;
+    order: 1;
+  }
+
+  /* 태그, 제목, 메타, 요일은 모두 1열을 차지 */
+  .routine-card .card-header-right,
+  .routine-title,
+  .routine-meta,
+  .routine-days {
+    grid-column: 1 / 2;
+  }
+
+  /* 각 요소의 행 위치와 순서 */
+  .routine-card .card-header-right {
+    grid-row: 1 / 2;
+    order: 2;
+  }
+  .routine-title {
+    grid-row: 2 / 3;
+    order: 3;
+  }
+
+  /* 🚨 .routine-meta의 행 순서 및 스타일 재조정 */
+  .routine-meta {
+    grid-row: 3 / 4; /* 3행에 위치 */
+    order: 4;
+    padding: 5px 0 0; /* 여백 조정 */
+    border-top: none; /* 구분선 제거 */
+  }
+
+  /* 768px 이하에서는 칼로리 구분선 삭제 (더 깔끔하게) */
+  .routine-meta .weekly-kcal-display {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .routine-days {
+    grid-row: 4 / 5;
+    order: 5;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* 나머지 768px 이하 스타일 유지 */
   .page-container {
     padding: 0 10px;
   }
-
   .header-content-placeholder nav {
     display: none;
   }
-
   .form-grid {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
-
   .time-section {
     grid-template-columns: 1fr;
   }
-
-  .strength-select,
-  .time-select {
-    width: 100%;
+  .day-buttons {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
   }
-
-  .day-info-wrapper {
-    flex-direction: column;
-    gap: 20px;
+  .day-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1rem;
+    flex-basis: auto;
+    margin-right: 0;
   }
 
   .routine-summary {
