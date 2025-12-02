@@ -29,7 +29,6 @@
                 <ul class="sub-menu">
                     <li><a href="/community">자유게시판</a></li>
                     <li><a href="/success">성공 인증 게시판</a></li>
-
                     <li><a href="/notice/list">공지사항</a></li>
                 </ul>
             </li>
