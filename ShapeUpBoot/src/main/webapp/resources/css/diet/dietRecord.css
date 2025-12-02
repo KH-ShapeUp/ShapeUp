@@ -343,11 +343,11 @@ body {
 
 .meal-card {
   position: relative;
-  padding: 1rem 1rem 1.1rem;
-  background: linear-gradient(135deg, #fdfdfd, #f5f7fb);
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  box-shadow: var(--shadow-soft);
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.18s ease, box-shadow 0.22s ease;
@@ -378,21 +378,27 @@ body {
 .meal-card-top {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
   margin-bottom: 0.8rem;
 }
 
 .icon-circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  background: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.04), 0 6px 16px rgba(15, 23, 42, 0.08);
+  background: #f5f6f8;
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
 }
 
-.meal-icon { width: 28px; height: 28px; }
+.meal-icon {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 10px;
+}
 
 .meal-text .meal-name {
   font-weight: 800;
@@ -475,19 +481,22 @@ body {
   height: 100%;
   width: 0%;
   border-radius: inherit;
-  background: linear-gradient(135deg, #2f80ff, #6dd3ff);
+  background: #2f80ff;
   transition: width 0.35s ease;
 }
+.meal-card.sunrise { background: #fff; border-top: 4px solid #f2b84b; }
+.meal-card.noon { background: #fff; border-top: 4px solid #2e8cff; }
+.meal-card.evening { background: #fff; border-top: 4px solid #f25c5c; }
+.meal-card.night { background: #fff; border-top: 4px solid #c58c5d; }
 
-.meal-card.sunrise { background: linear-gradient(135deg, #fffaf0, #fff6e8); }
-.meal-card.noon { background: linear-gradient(135deg, #f7fbff, #eef6ff); }
-.meal-card.evening { background: linear-gradient(135deg, #f3f3ff, #eef2ff); }
-.meal-card.night { background: linear-gradient(135deg, #f9f9f9, #f3f3f3); }
-
-.meal-card.sunrise .progress-fill { background: linear-gradient(135deg, #f7c266, #ffd486); }
-.meal-card.noon .progress-fill { background: linear-gradient(135deg, #6dd3ff, #2f80ff); }
-.meal-card.evening .progress-fill { background: linear-gradient(135deg, #8b9bff, #6a7bff); }
-.meal-card.night .progress-fill { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+.meal-card.sunrise .progress-track { background: #fff6d7; }
+.meal-card.sunrise .progress-fill { background: #f2b84b; }
+.meal-card.noon .progress-track { background: #e8f3ff; }
+.meal-card.noon .progress-fill { background: #2e8cff; }
+.meal-card.evening .progress-track { background: #ffe4d9; }
+.meal-card.evening .progress-fill { background: #f25c5c; }
+.meal-card.night .progress-track { background: #f7eedf; }
+.meal-card.night .progress-fill { background: #c58c5d; }
 
 @media (max-width: 1024px) {
   .diet-grid {

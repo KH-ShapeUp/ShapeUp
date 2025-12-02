@@ -37,7 +37,7 @@ const menus = {
       submenu1: { label: "공지사항", path: "/admin/posts/notice" },
       submenu2: { label: "자유 게시판", path: "/admin/posts/submenu2" },
       submenu3: { label: "성공 후기", path: "/admin/posts/submenu3" },
-      submenu4: { label: "질문 / 건의사항", path: "/admin/posts/submenu4" },
+      submenu4: { label: "고객센터 문의 관리", path: "/admin/posts/submenu4" },
       submenu5: { label: "매칭 관리", path : "/admin/posts/matching"},
     },
   },

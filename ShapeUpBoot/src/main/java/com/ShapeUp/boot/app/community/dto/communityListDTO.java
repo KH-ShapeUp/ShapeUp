@@ -18,6 +18,7 @@ public class communityListDTO {
 	private String communityType; 		// 커뮤니티 카테고리
 	private String communityStatus;		// 커뮤니티 게시판 상태
 	private String userNickName;
+	private String userId;
 	private int likeCount;
 	private String timeAgo;      // 상대 시간 문자열
 	private int commentCount;

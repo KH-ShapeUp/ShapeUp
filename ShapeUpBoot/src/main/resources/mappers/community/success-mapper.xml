@@ -17,7 +17,6 @@
 	        UPDATED_AT,
 	        VIEW_COUNT,
 	        COMMUNITY_TYPE,
-	        COMMUNITY_STATUS,
 	        SUCCESS_TYPE,
 	        GOAL_DATE
 	    ) VALUES (
@@ -28,10 +27,9 @@
 	        DEFAULT,
 	        NULL,
 	        0,
-	        #{communityType},
-	        DEFAULT,
-	       	#{successType},
-	        #{goalDate}
+        #{communityType},
+        #{successType},
+        #{goalDate}
 	    )
 	</insert>
 	
@@ -80,7 +78,7 @@
    		FROM COMMUNITY_TBL C
    		JOIN USER_TBL U ON C.USER_NO = U.USER_NO
    		<where>
-	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	NVL(C.DELETE_YN, 'N') = 'N' AND
 	    	C.COMMUNITY_TYPE = 'success'	   
 	    	<if test="category != null and category != ''">
     			AND C.SUCCESS_TYPE = #{category}
@@ -95,7 +93,7 @@
     <select id="getTotalCount">
     	SELECT COUNT(*) FROM COMMUNITY_TBL
     	<where>
-    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		NVL(DELETE_YN, 'N') = 'N' AND
     		COMMUNITY_TYPE = 'success'
     		<if test="category != null and category != ''">
     			AND SUCCESS_TYPE = #{category}
@@ -129,7 +127,7 @@
 		       GROUP BY COMMUNITY_NO
 		   ) CT ON CT.COMMUNITY_NO = C.COMMUNITY_NO
 		   WHERE C.COMMUNITY_TYPE = 'success' AND
-		   C.COMMUNITY_STATUS = 'ACTIVE'
+		   NVL(C.DELETE_YN, 'N') = 'N'
 		   ORDER BY POPULAR_BOARD DESC	
     	)
 	    WHERE ROWNUM <![CDATA[ <= ]]> 3
@@ -151,7 +149,7 @@
 	    		(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT
 	    	FROM COMMUNITY_TBL C
 	    	JOIN USER_TBL U ON C.USER_NO = U.USER_NO
-	    	WHERE C.COMMUNITY_TYPE = 'success'
+	    	WHERE C.COMMUNITY_TYPE = 'success' AND NVL(C.DELETE_YN, 'N') = 'N'
 	    	ORDER BY COMMENT_COUNT DESC
     	)
     	WHERE ROWNUM <![CDATA[ <= 3 ]]>

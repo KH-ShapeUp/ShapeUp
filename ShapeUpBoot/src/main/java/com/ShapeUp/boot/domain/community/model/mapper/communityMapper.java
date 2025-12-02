@@ -55,4 +55,30 @@ public interface communityMapper {
 
 	communityListDTO communityModify(int communityNo);
 
+	/* Admin 전용: 자유게시판 리스트 (삭제 포함) */
+	List<com.ShapeUp.boot.app.community.dto.communityListDTO> selectAdminCommunityList(
+			@org.apache.ibatis.annotations.Param("deleteYn") String deleteYn,
+			@org.apache.ibatis.annotations.Param("category") String category,
+			@org.apache.ibatis.annotations.Param("keyword") String keyword);
+
+	/* Admin 전용: 성공후기 리스트 (COMMUNITY_TYPE='success') */
+	List<com.ShapeUp.boot.app.community.dto.communityListDTO> selectAdminSuccessList(
+			@org.apache.ibatis.annotations.Param("deleteYn") String deleteYn,
+			@org.apache.ibatis.annotations.Param("successType") String successType,
+			@org.apache.ibatis.annotations.Param("keyword") String keyword);
+
+	/* Admin 전용: 이미지 목록 */
+	List<com.ShapeUp.boot.app.community.dto.communityImageDTO> selectImagesByCommunity(int communityNo);
+	com.ShapeUp.boot.app.community.dto.communityImageDTO selectImageById(int imgNo);
+
+	/* Admin 전용: 삭제/복구 */
+	int updateDeleteYn(@org.apache.ibatis.annotations.Param("communityNo") int communityNo,
+					   @org.apache.ibatis.annotations.Param("deleteYn") String deleteYn);
+
+	/* Admin 전용: 등록 추이 */
+	List<java.util.Map<String, Object>> selectCommunityTrend();
+
+	/* Admin 전용: 성공후기 등록 추이 */
+	List<java.util.Map<String, Object>> selectSuccessTrend();
+
 }

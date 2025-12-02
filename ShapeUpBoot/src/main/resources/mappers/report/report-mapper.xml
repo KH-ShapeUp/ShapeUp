@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.report.model.mapper.ReportAdminMapper">
+
+    <resultMap id="reportMap" type="com.ShapeUp.boot.domain.report.model.vo.Report">
+        <id property="reportNo" column="REPORT_NO"/>
+        <result property="reportType" column="REPORT_TYPE"/>
+        <result property="communityNo" column="COMMUNITY_NO"/>
+        <result property="commentNo" column="COMMENT_NO"/>
+        <result property="reporterNo" column="REPORTER_NO"/>
+        <result property="reportReason" column="REPORT_REASON"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="reportStatus" column="REPORT_STATUS"/>
+        <result property="reporterId" column="REPORTER_ID"/>
+        <result property="authorId" column="AUTHOR_ID"/>
+        <result property="commentContent" column="COMMENT_CONTENT"/>
+        <result property="authorNo" column="AUTHOR_NO"/>
+    </resultMap>
+
+    <select id="selectReportByNo" parameterType="int" resultMap="reportMap">
+        SELECT
+            R.REPORT_NO,
+            R.REPORT_TYPE,
+            R.COMMUNITY_NO,
+            R.COMMENT_NO,
+            R.REPORTER_NO,
+            R.REPORT_REASON,
+            R.CREATED_AT,
+            R.REPORT_STATUS,
+            REP.USER_ID   AS REPORTER_ID,
+            COALESCE(AU.USER_ID, CU.USER_ID) AS AUTHOR_ID,
+            CM.COMMENT_CONTENT,
+            COALESCE(CO.USER_NO, CM.USER_NO) AS AUTHOR_NO
+        FROM REPORT_TBL R
+        LEFT JOIN USER_TBL REP ON R.REPORTER_NO = REP.USER_NO
+        LEFT JOIN COMMENT_TBL CM ON R.COMMENT_NO = CM.COMMENT_NO
+        LEFT JOIN COMMUNITY_TBL CO ON R.COMMUNITY_NO = CO.COMMUNITY_NO
+        LEFT JOIN USER_TBL CU ON CO.USER_NO = CU.USER_NO
+        LEFT JOIN USER_TBL AU ON CM.USER_NO = AU.USER_NO
+        WHERE R.REPORT_NO = #{reportNo}
+    </select>
+
+    <select id="selectReports" resultMap="reportMap">
+        SELECT
+            R.REPORT_NO,
+            R.REPORT_TYPE,
+            R.COMMUNITY_NO,
+            R.COMMENT_NO,
+            R.REPORTER_NO,
+            R.REPORT_REASON,
+            R.CREATED_AT,
+            R.REPORT_STATUS,
+            REP.USER_ID   AS REPORTER_ID,
+            COALESCE(AU.USER_ID, CU.USER_ID) AS AUTHOR_ID,
+            CM.COMMENT_CONTENT,
+            COALESCE(CO.USER_NO, CM.USER_NO) AS AUTHOR_NO
+        FROM REPORT_TBL R
+        LEFT JOIN USER_TBL REP ON R.REPORTER_NO = REP.USER_NO
+        LEFT JOIN COMMENT_TBL CM ON R.COMMENT_NO = CM.COMMENT_NO
+        LEFT JOIN COMMUNITY_TBL CO ON R.COMMUNITY_NO = CO.COMMUNITY_NO
+        LEFT JOIN USER_TBL CU ON CO.USER_NO = CU.USER_NO
+        LEFT JOIN USER_TBL AU ON CM.USER_NO = AU.USER_NO
+        <where>
+            <if test="status != null and status != ''">
+                R.REPORT_STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY R.CREATED_AT DESC
+    </select>
+
+    <update id="updateStatus">
+        UPDATE REPORT_TBL
+        SET REPORT_STATUS = #{status},
+            CREATED_AT = CREATED_AT
+        WHERE REPORT_NO = #{reportNo}
+    </update>
+
+    <update id="softDeleteCommunity">
+        UPDATE COMMUNITY_TBL
+        SET DELETE_YN = 'Y'
+        WHERE COMMUNITY_NO = #{communityNo}
+    </update>
+
+    <update id="softDeleteComment">
+        UPDATE COMMENT_TBL
+        SET DELETE_YN = 'Y'
+        WHERE COMMENT_NO = #{commentNo}
+    </update>
+</mapper>

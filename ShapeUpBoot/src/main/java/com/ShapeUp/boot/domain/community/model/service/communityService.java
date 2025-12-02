@@ -40,4 +40,23 @@ public interface communityService {
 	/* 커뮤니티 수정 */
 	communityListDTO communityModify(int communityNo);
 
+	/* Admin 전용: 자유게시판 목록 (삭제 포함) */
+	List<communityListDTO> selectAdminCommunityList(String deleteYn, String category, String keyword);
+
+	/* Admin 전용: 성공후기 목록 */
+	List<communityListDTO> selectAdminSuccessList(String deleteYn, String successType, String keyword);
+
+	/* Admin 전용: 자유게시판 이미지 목록 */
+	List<com.ShapeUp.boot.app.community.dto.communityImageDTO> selectImagesByCommunity(int communityNo);
+	com.ShapeUp.boot.app.community.dto.communityImageDTO selectImageById(int imgNo);
+
+	/* Admin 전용: 삭제/복구 */
+	int updateDeleteYn(int communityNo, String deleteYn);
+
+	/* Admin 전용: 등록 추이 */
+	List<Map<String, Object>> selectCommunityTrend();
+
+	/* Admin 전용: 성공후기 등록 추이 */
+	List<Map<String, Object>> selectSuccessTrend();
+
 }

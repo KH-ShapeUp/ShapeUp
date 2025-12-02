@@ -74,6 +74,11 @@ registry.addInterceptor(new StadiumAccessInterceptor())
     public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + UPLOAD_BASE);
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:C:/shapeup/upload/");
+        // Fallback for bare filenames (e.g., d8bf...png) to C:/shapeup/upload
+        registry.addResourceHandler("/*.*")
+                .addResourceLocations("file:C:/shapeup/upload/");
         // Serve built admin SPA static files
         registry.addResourceHandler("/admin/**")
                 .addResourceLocations("classpath:/static/admin/");

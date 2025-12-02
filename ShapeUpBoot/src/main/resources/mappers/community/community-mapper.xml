@@ -4,7 +4,7 @@
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.communityMapper">
 	<!-- 커뮤니티 게시글 삽입 -->
-	<insert id="successInsert">
+	<insert id="communityInsert">
 	    <selectKey keyProperty="communityNo" resultType="int" order="BEFORE">
 	        SELECT SEQ_COMMUNITY_NO.NEXTVAL FROM DUAL
 	    </selectKey>
@@ -18,7 +18,6 @@
 	        UPDATED_AT,
 	        VIEW_COUNT,
 	        COMMUNITY_TYPE,
-	        COMMUNITY_STATUS,
 	        SUCCESS_TYPE,
 	        GOAL_DATE
 	    ) VALUES (
@@ -29,10 +28,9 @@
 	        DEFAULT,
 	        NULL,
 	        0,
-	        #{communityType},
-	        DEFAULT,
-	        null,
-	        null
+        #{communityType},
+        null,
+        null
 	    )
 	</insert>
 	<!-- 커뮤니티 이미지 삽입 -->
@@ -71,7 +69,6 @@
 		    C.COMMUNITY_TITLE,
 		    C.COMMUNITY_TYPE,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    U.USER_NICKNAME AS userNickName,
@@ -83,7 +80,7 @@
 		LEFT JOIN COMMUNITY_BOARD_LIKE B 
 		    ON C.COMMUNITY_NO = B.COMMUNITY_NO
 	    <where>
-	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	NVL(C.DELETE_YN, 'N') = 'N' AND
 	    	C.COMMUNITY_TYPE != 'success'	   
 	    	<if test="category != null and category != ''">
     			AND COMMUNITY_TYPE = #{category}
@@ -98,7 +95,6 @@
 		    C.COMMUNITY_TITLE,
 		    C.COMMUNITY_TYPE,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    U.USER_NICKNAME
@@ -110,7 +106,7 @@
     <select id="getTotalCount">
     	SELECT COUNT(*) FROM COMMUNITY_TBL 
     	<where>
-    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		NVL(DELETE_YN, 'N') = 'N' AND
     		COMMUNITY_TYPE != 'success'
     		<if test="category != null and category != ''">
     			AND COMMUNITY_TYPE = #{category}
@@ -134,7 +130,6 @@
 		    C.COMMUNITY_TYPE,
 		    C.COMMUNITY_CONTENT,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    C.USER_NO,
@@ -144,7 +139,7 @@
 		JOIN USER_TBL U 
 		    ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMUNITY_NO = #{boardNo} AND 
-		C.COMMUNITY_STATUS = 'ACTIVE'
+		NVL(C.DELETE_YN, 'N') = 'N'
     </select>
    <!-- 좋아요 체크 -->
 	<select id="checkLike">
@@ -181,7 +176,7 @@
 	
 	<!-- 커뮤니티 삭제 -->
 	<update id="communityDelete">
-		UPDATE COMMUNITY_TBL SET COMMUNITY_STATUS = 'DELETE' WHERE COMMUNITY_NO = #{communityNo}
+		UPDATE COMMUNITY_TBL SET DELETE_YN = 'Y' WHERE COMMUNITY_NO = #{communityNo}
 	</update>
 	
 	<!-- 커뮤니티 수정 -->
@@ -192,7 +187,6 @@
 		    C.COMMUNITY_TYPE,
 		    C.COMMUNITY_CONTENT,
 		    C.CREATED_AT,
-		    C.COMMUNITY_STATUS,
 		    C.VIEW_COUNT,
 		    C.UPDATED_AT,
 		    C.USER_NO,
@@ -201,7 +195,7 @@
 		JOIN USER_TBL U 
 		    ON C.USER_NO = U.USER_NO
 	    WHERE C.COMMUNITY_NO = #{communityNo} AND 
-		C.COMMUNITY_STATUS = 'ACTIVE'
+		NVL(C.DELETE_YN, 'N') = 'N'
 	</select>
 	
 	<!-- 커뮤니티 조회수 리스트 -->
@@ -212,14 +206,13 @@
 		        C.COMMUNITY_NO,
 		        C.COMMUNITY_TITLE,
 		    	C.COMMUNITY_TYPE,
-   			    C.COMMUNITY_STATUS,
 		        C.CREATED_AT,
 		        C.VIEW_COUNT,
 		        U.USER_NICKNAME,
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS commentCount
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		    WHERE NVL(C.DELETE_YN, 'N') = 'N'
 		    ORDER BY C.VIEW_COUNT DESC
 		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 3
@@ -233,16 +226,120 @@
 		        C.COMMUNITY_NO,
 		        C.COMMUNITY_TITLE,
 		    	C.COMMUNITY_TYPE,
-   			    C.COMMUNITY_STATUS,
 		        C.CREATED_AT,
 		        C.VIEW_COUNT,
 		        U.USER_NICKNAME,
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENTCOUNT
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.COMMUNITY_STATUS = 'ACTIVE'
+		    WHERE NVL(C.DELETE_YN, 'N') = 'N'
 		    ORDER BY COMMENTCOUNT DESC
 		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 3 
+	</select>
+
+	<!-- Admin: 자유게시판 리스트 (삭제여부 포함) -->
+	<select id="selectAdminCommunityList" resultType="com.ShapeUp.boot.app.community.dto.communityListDTO">
+		SELECT 
+			C.COMMUNITY_NO,
+			C.COMMUNITY_TITLE,
+			C.COMMUNITY_TYPE,
+			C.COMMUNITY_CONTENT,
+			C.CREATED_AT,
+			C.UPDATED_AT,
+			C.VIEW_COUNT,
+			C.DELETE_YN,
+			U.USER_NO,
+			U.USER_ID AS userId,
+			U.USER_NICKNAME AS userNickName,
+			(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS likeCount
+		FROM COMMUNITY_TBL C
+		LEFT JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+		<where>
+			NVL(C.DELETE_YN,'N') = #{deleteYn}
+			AND C.COMMUNITY_TYPE != 'success'
+			<if test="category != null and category != ''">
+				AND C.COMMUNITY_TYPE = #{category}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND C.COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+			</if>
+		</where>
+		ORDER BY C.COMMUNITY_NO DESC
+	</select>
+
+	<!-- Admin: 성공후기 리스트 (COMMUNITY_TYPE='success') -->
+	<select id="selectAdminSuccessList" resultType="com.ShapeUp.boot.app.community.dto.communityListDTO">
+		SELECT 
+			C.COMMUNITY_NO,
+			C.COMMUNITY_TITLE,
+			C.COMMUNITY_TYPE,
+			C.COMMUNITY_CONTENT,
+			C.CREATED_AT,
+			C.UPDATED_AT,
+			C.VIEW_COUNT,
+			C.DELETE_YN,
+			C.SUCCESS_TYPE,
+			C.GOAL_DATE,
+			U.USER_NO,
+			U.USER_ID AS userId,
+			U.USER_NICKNAME AS userNickName,
+			(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS likeCount
+		FROM COMMUNITY_TBL C
+		LEFT JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+		<where>
+			C.COMMUNITY_TYPE = 'success'
+			AND NVL(C.DELETE_YN,'N') = #{deleteYn}
+			<if test="successType != null and successType != ''">
+				AND C.SUCCESS_TYPE = #{successType}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND C.COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+			</if>
+		</where>
+		ORDER BY C.COMMUNITY_NO DESC
+	</select>
+
+	<!-- Admin: 이미지 목록 -->
+	<select id="selectImagesByCommunity" parameterType="int" resultType="com.ShapeUp.boot.app.community.dto.communityImageDTO">
+		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN, COMMUNITY_NO
+		FROM COMMUNITY_IMG_TBL
+		WHERE COMMUNITY_NO = #{communityNo}
+		ORDER BY IMG_NO ASC
+	</select>
+
+	<select id="selectImageById" parameterType="int" resultType="com.ShapeUp.boot.app.community.dto.communityImageDTO">
+		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN, COMMUNITY_NO
+		FROM COMMUNITY_IMG_TBL
+		WHERE IMG_NO = #{imgNo}
+	</select>
+
+	<!-- Admin: 삭제/복구 -->
+	<update id="updateDeleteYn">
+		UPDATE COMMUNITY_TBL
+		SET DELETE_YN = #{deleteYn}
+		WHERE COMMUNITY_NO = #{communityNo}
+	</update>
+
+	<!-- Admin: 등록 추이 (주 단위) -->
+	<select id="selectCommunityTrend" resultType="map">
+		SELECT TO_CHAR(CREATED_AT, 'YYYY\"-\"IW') AS LABEL,
+			   COUNT(*) AS CNT
+		FROM COMMUNITY_TBL
+		WHERE NVL(DELETE_YN,'N') = 'N'
+		  AND COMMUNITY_TYPE != 'success'
+		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"IW')
+		ORDER BY LABEL
+	</select>
+
+	<!-- Admin: 성공후기 등록 추이 (주 단위) -->
+	<select id="selectSuccessTrend" resultType="map">
+		SELECT TO_CHAR(CREATED_AT, 'YYYY\"-\"IW') AS LABEL,
+			   COUNT(*) AS CNT
+		FROM COMMUNITY_TBL
+		WHERE NVL(DELETE_YN,'N') = 'N'
+		  AND COMMUNITY_TYPE = 'success'
+		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"IW')
+		ORDER BY LABEL
 	</select>
  </mapper>

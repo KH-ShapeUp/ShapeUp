@@ -98,7 +98,7 @@
 						style="border-top: 4px solid #F2B84B;" data-diet-type="아침">
 						<a href="/diet">
 							<div class="title">
-								<i class="fa-solid fa-mug-saucer"></i>
+								<img src="/resources/img/diet-img/brackfast.gif" alt="아침" class="diet-icon diet-icon--breakfast" />
 								<div class="title-info">
 									<h3>아침</h3>
 									<p>07:30 AM</p>
@@ -122,7 +122,7 @@
 						style="border-top: 4px solid #2E8CFF;" data-diet-type="점심">
 						<a href="/diet">
 							<div class="title">
-								<i class="fa-solid fa-utensils"></i>
+								<img src="/resources/img/diet-img/lunch.gif" alt="점심" class="diet-icon diet-icon--lunch" />
 								<div class="title-info">
 									<h3>점심</h3>
 									<p>13:30 PM</p>
@@ -146,7 +146,7 @@
 						style="border-top: 4px solid #F25C5C;" data-diet-type="저녁">
 						<a href="/diet">
 							<div class="title">
-								<i class="fa-solid fa-bowl-food"></i>
+								<img src="/resources/img/diet-img/dinner.gif" alt="저녁" class="diet-icon diet-icon--dinner" />
 								<div class="title-info">
 									<h3>저녁</h3>
 									<p>18:30 PM</p>
@@ -170,7 +170,7 @@
 						style="border-top: 4px solid #C58C5D;" data-diet-type="기타">
 						<a href="/diet">
 							<div class="title">
-								<i class="fa-solid fa-cookie-bite"></i>
+								<img src="/resources/img/diet-img/others.gif" alt="간식" class="diet-icon diet-icon--other" />
 								<div class="title-info">
 									<h3>기타</h3>
 									<p>간식 / 음료</p>
@@ -945,18 +945,19 @@
               });
               if (added === 0) {
                 const defaults = [
-                  origin + '/resources/img/ad-img1.gif',
-                  origin + '/resources/img/ad-img2.jpg',
-                  origin + '/resources/img/ad-img3.jpg',
-                  origin + '/resources/img/ad-img4.jpg',
-                  origin + '/resources/img/ad-img5.jpg',
+                  { src: origin + '/resources/img/ad-img1.gif', link: '#' },
+                  { src: origin + '/resources/img/ad-img2.jpg', link: '#' },
+                  { src: origin + '/resources/img/ad-img3.jpg', link: '#' },
+                  { src: origin + '/resources/img/ad-img4.jpg', link: '#' },
+                  { src: origin + '/resources/img/ad-img5.jpg', link: '#' },
+                  { src: origin + '/resources/img/main_banner.png', link: origin + '/intro' },
                 ];
                 console.log('using default slides', defaults);
-                defaults.forEach((src) => {
+                defaults.forEach(({ src, link }) => {
                   const slide = document.createElement('div');
                   slide.className = 'swiper-slide';
                   const a = document.createElement('a');
-                  a.href = '#';
+                  a.href = link || '#';
                   const img = document.createElement('img');
                   img.className = 'ad-img';
                   img.src = src;

@@ -16,6 +16,7 @@
     <div class="menu">
         <ul class="main-menu">
             <li><a href="/">홈</a></li>
+            <li><a href="/intro">소개</a></li>
             <li class="has-submenu">
                 <a>매칭 찾기</a>
                 <ul class="sub-menu">
@@ -115,6 +116,12 @@
                 <a href="#">
                     <span class="material-symbols-outlined">person_search</span>
                     <span>트레이너 매칭</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/intro">
+                    <span class="material-symbols-outlined">info</span>
+                    <span>소개</span>
                 </a>
             </div>
             <div class="list-item">

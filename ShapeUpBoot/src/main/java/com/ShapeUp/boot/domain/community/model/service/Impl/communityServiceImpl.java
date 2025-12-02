@@ -189,4 +189,43 @@ public class communityServiceImpl implements communityService{
 	public communityListDTO communityModify(int communityNo) {
 		return cMapper.communityModify(communityNo);
 	}
+
+	/* Admin: 자유게시판 리스트 (삭제 포함) */
+	@Override
+	public List<communityListDTO> selectAdminCommunityList(String deleteYn, String category, String keyword) {
+		return cMapper.selectAdminCommunityList(deleteYn, category, keyword);
+	}
+
+	@Override
+	public List<communityListDTO> selectAdminSuccessList(String deleteYn, String successType, String keyword) {
+		return cMapper.selectAdminSuccessList(deleteYn, successType, keyword);
+	}
+
+	/* Admin: 이미지 목록 */
+	@Override
+	public List<communityImageDTO> selectImagesByCommunity(int communityNo) {
+		return cMapper.selectImagesByCommunity(communityNo);
+	}
+
+	@Override
+	public communityImageDTO selectImageById(int imgNo) {
+		return cMapper.selectImageById(imgNo);
+	}
+
+	/* Admin: 삭제/복구 */
+	@Override
+	public int updateDeleteYn(int communityNo, String deleteYn) {
+		return cMapper.updateDeleteYn(communityNo, deleteYn);
+	}
+
+	/* Admin: 등록 추이 */
+	@Override
+	public List<Map<String, Object>> selectCommunityTrend() {
+		return cMapper.selectCommunityTrend();
+	}
+
+	@Override
+	public List<Map<String, Object>> selectSuccessTrend() {
+		return cMapper.selectSuccessTrend();
+	}
 }

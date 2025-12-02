@@ -279,27 +279,20 @@
   background-color: #c58c5d;
 }
 
-/* 식단 각각의 디자인 (아이콘, 진행바) */
-/* 아침 */
-.fa-mug-saucer {
-  background-color: #fff6d7;
-  color: #f2b84b;
+/* 식단 아이콘 이미지 */
+.diet-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  padding: 6px;
+  object-fit: cover;
+  background: #f5f6f8;
+  border: 1px solid #e5e7eb;
 }
-/* 점심 */
-.fa-utensils {
-  background-color: #e8f3ff;
-  color: #2e8cff;
-}
-/* 저녁 */
-.fa-bowl-food {
-  background-color: #ffe4d9;
-  color: #f25c5c;
-}
-/* 기타 */
-.fa-cookie-bite {
-  background-color: #f7eedf;
-  color: #c58c5d;
-}
+.diet-icon--breakfast { background-color: #ffffff; }
+.diet-icon--lunch { background-color: #ffffff; }
+.diet-icon--dinner { background-color: #ffffff; }
+.diet-icon--other { background-color: #ffffff; }
 
 /* 식단 로그인 안했을 때 */
 

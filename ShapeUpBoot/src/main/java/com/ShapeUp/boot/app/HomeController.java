@@ -32,6 +32,11 @@ public class HomeController {
 		model.addAttribute("mList", mList);
 		return "index";
 	}
+
+	@GetMapping("/intro")
+	public String introPage() {
+		return "introduce";
+	}
 	
 	@PostMapping("/home")
 	@ResponseBody

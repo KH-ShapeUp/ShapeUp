@@ -27,18 +27,16 @@
 				<h1 class="notice-title">${notice.noticeTitle}</h1>
 			</div>
 
-			<div class="notice-banner notice-banner-${notice.noticeCategory}">
-				<div class="banner-label">${notice.noticeCategory}</div>
-				<div class="banner-icon">
-					<c:choose>
-						<c:when test="${notice.noticeCategory eq '이벤트'}">🎉</c:when>
-						<c:when test="${notice.noticeCategory eq '공지' || notice.noticeCategory eq '공지사항'}">📢</c:when>
-						<c:when test="${notice.noticeCategory eq '제휴' || notice.noticeCategory eq '파트너'}">🤝</c:when>
-						<c:when test="${notice.noticeCategory eq '징계'}">⚠️</c:when>
-						<c:otherwise>ℹ️</c:otherwise>
-					</c:choose>
-				</div>
-			</div>
+			<c:set var="bannerImg">
+				<c:choose>
+					<c:when test="${notice.noticeCategory eq '이벤트'}">/resources/img/notice-top-img/notice_event.png</c:when>
+					<c:when test="${notice.noticeCategory eq '공지' || notice.noticeCategory eq '공지사항'}">/resources/img/notice-top-img/notice_notice.png</c:when>
+					<c:when test="${notice.noticeCategory eq '제휴' || notice.noticeCategory eq '파트너'}">/resources/img/notice-top-img/notice_sponser.png</c:when>
+					<c:when test="${notice.noticeCategory eq '징계'}">/resources/img/notice-top-img/notice_ban.png</c:when>
+					<c:otherwise>/resources/img/notice-top-img/notice_notice.png</c:otherwise>
+				</c:choose>
+			</c:set>
+				<img src="${bannerImg}" alt="${notice.noticeCategory} 배너" class="notice-banner-img" />
 
 			<c:if test="${not empty notice.images}">
 				<div class="notice-hero-list">
