@@ -24,10 +24,10 @@ public interface communityMapper {
 	List<Notice> getNoticeList();
 	
 	/* 커뮤니티 리스트 (페이징) */
-	List<communityListDTO> getCommunityList(RowBounds rowBounds);
+	List<communityListDTO> getCommunityList(RowBounds rowBounds, String category, String keyword);
 	
 	/* 커뮤니티 리스트 총 갯수 가져오기 */
-	int getTotalCount();
+	int getTotalCount(String category, String keyword);
 	
 	/* 댓글 순 */
 	List<communityListDTO> getSortCommentList();

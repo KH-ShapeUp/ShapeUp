@@ -17,10 +17,10 @@ public interface communityService {
 	List<Notice> getNoticeList();
 	
 	/* 커뮤니티 가져오기 */
-	List<communityListDTO> getCommunityList(int currentPage, int boardLimit);
+	List<communityListDTO> getCommunityList(int currentPage, int boardLimit, String category, String keyword);
 
 	/* 커뮤니티 총 개시물 가져오기 */
-	int getTotalCount();
+	int getTotalCount(String category, String keyword);
 
 	/* 댓글순 */
 	List<communityListDTO> getSortCommentList();

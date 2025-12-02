@@ -17,6 +17,7 @@
 }
 
 .community-wrapper {
+    position: relative;
     width: 75%;
     display: flex;
     flex-direction: column;
@@ -27,6 +28,113 @@
     padding: 40px;
     box-sizing: border-box;
 }
+
+.community-wrapper-top {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.comment-user {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+/* 신고 */
+.report {
+    position: relative; /* 자식 요소 위치 잡기 위해 추가 추천 */
+}
+
+.report .more_vert {
+    cursor: pointer;
+    color: #999;
+    font-size: 1rem;
+    user-select: none;
+}
+
+.report-button .flag {
+    font-size: 1rem;
+    margin-right: 5px;
+}
+
+.report-button {
+    display: none;
+    align-items: center;
+    width: 100px;
+    padding: 6px 7px;
+    background-color: #fff;
+    font-size: .8rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: absolute;
+    z-index: 99;
+    top: 25px;
+    left: -60px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.20s ease;
+}
+
+.report-button.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-button.active:hover{
+    background-color: #ececec;
+}
+
+.report-list-wrapper {
+    position: absolute;
+    width: 200px;
+    display: none;
+    z-index: 999;
+    top: 24px;
+    left: -80px;
+}
+
+.report-list-wrapper.active {
+    display: flex;
+}
+
+.report-list span {
+    font-size: .8rem;
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.report-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 12px;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+}
+
+.report-list.active {
+    display: flex;
+}
+
+.report-list button {
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-weight: 500;
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.report-list button:hover {
+    background-color: #ececec;
+}
+
+
 
 /* 카테고리 */
 .community-category,
@@ -301,6 +409,21 @@
 }
 .form-top textarea:focus {
     border-color: var(--main-color); /* 포커스 시 색상 변경 */
+}
+
+.form-top textarea:disabled {
+    background-color: #fff;
+    pointer-events: none;
+}
+
+.form-top textarea::placeholder {
+    font-weight: 500;
+}
+
+.form-bottom button:disabled {
+    background-color: #ccc;
+    color: gray;
+    pointer-events: none;
 }
 
 .form-bottom {

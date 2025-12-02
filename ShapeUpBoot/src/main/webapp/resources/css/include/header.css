@@ -162,6 +162,11 @@
     font-weight: 500;
 }
 
+.sideBtn #userMyPage {
+	text-decoration: none;
+	color:#111;
+}
+
 .user-nickname {
     margin-left: 20px;
     font-size: .9rem;

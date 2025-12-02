@@ -86,11 +86,11 @@ public class communityServiceImpl implements communityService{
 
 	/* 커뮤니티 리스트 가져오기 */
 	@Override
-	public List<communityListDTO> getCommunityList(int currentPage, int boardLimit) {
+	public List<communityListDTO> getCommunityList(int currentPage, int boardLimit, String category, String keyword) {
 		int offset = (currentPage - 1) * boardLimit;
 		RowBounds rowBounds = new RowBounds(offset, boardLimit);
 		
-		List<communityListDTO> cList = cMapper.getCommunityList(rowBounds);
+		List<communityListDTO> cList = cMapper.getCommunityList(rowBounds, category, keyword);
 		 // Timestamp → 상대 시간 변환
 	    for (communityListDTO dto : cList) {
 	        Timestamp ts = dto.getCreatedAt(); // DTO에 Timestamp 컬럼이 있어야 함
@@ -101,8 +101,8 @@ public class communityServiceImpl implements communityService{
 
 	/* 커뮤니티 총 갯수 */
 	@Override
-	public int getTotalCount() {
-		return cMapper.getTotalCount();
+	public int getTotalCount(String category, String keyword) {
+		return cMapper.getTotalCount(category, keyword);
 	}
 	
 	/* 댓글순 */

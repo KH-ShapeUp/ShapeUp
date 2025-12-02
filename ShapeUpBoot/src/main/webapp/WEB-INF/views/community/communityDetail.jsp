@@ -15,33 +15,54 @@
 	<jsp:include page="/WEB-INF/views/include/header.jsp"/>
 		<div class="main">
 			<div class="community-wrapper">
-				<c:choose>
-					<c:when test="${cList.communityType eq '운동질문' }">
-						<div class="community-category-question">
-							<span>${cList.communityType }</span>
+				<div class="community-wrapper-top">
+					<c:choose>
+						<c:when test="${cList.communityType eq '운동질문' }">
+							<div class="community-category-question">
+								<span>${cList.communityType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.communityType eq '운동꿀팁' }">
+							<div class="community-category-tip">
+								<span>${cList.communityType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.communityType eq '식단/영양' }">
+							<div class="community-category-food">
+								<span>${cList.communityType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.communityType eq '운동인증' }">
+							<div class="community-category-certification">
+								<span>${cList.communityType }</span>
+							</div>
+						</c:when>
+						<c:when test="${cList.communityType eq '일상/소통' }">				
+							<div class="community-category">
+								<span>${cList.communityType }</span>
+							</div>
+						</c:when>
+					</c:choose>
+					<div class="report" data-type="board">
+						<span class="material-symbols-outlined more_vert">more_vert</span>
+						
+						<div class="report-button">
+							<span class="material-symbols-outlined flag">flag</span>
+							<span>신고하기</span>
 						</div>
-					</c:when>
-					<c:when test="${cList.communityType eq '운동꿀팁' }">
-						<div class="community-category-tip">
-							<span>${cList.communityType }</span>
+	
+						<div class="report-list-wrapper">
+							<div class="report-list">
+								<span class="reportSecond">신고 유형 선택</span>
+								<button class="report-btn" type="button">정치 발언</button>
+								<button class="report-btn" type="button">성희롱/음담패설</button>
+								<button class="report-btn" type="button">상업 광고</button>
+								<button class="report-btn" type="button">욕설/비하</button>
+								<button class="report-btn" type="button">유출/사기/사칭</button>
+							</div>
 						</div>
-					</c:when>
-					<c:when test="${cList.communityType eq '식단/영양' }">
-						<div class="community-category-food">
-							<span>${cList.communityType }</span>
-						</div>
-					</c:when>
-					<c:when test="${cList.communityType eq '운동인증' }">
-						<div class="community-category-certification">
-							<span>${cList.communityType }</span>
-						</div>
-					</c:when>
-					<c:when test="${cList.communityType eq '일상/소통' }">				
-						<div class="community-category">
-							<span>${cList.communityType }</span>
-						</div>
-					</c:when>
-				</c:choose>
+					</div>
+				</div>
 				<div class="community-title">
 					<span>${cList.communityTitle }</span>
 				</div>
@@ -79,13 +100,26 @@
 				<!-- 댓글 wrapper -->
 				<div class="comment-wrapper">
                     <p>댓글 0개</p> <div class="comment-form">
-                        <div class="form-top">
-                            <img src="../../../resources/img/person.png" width="50">
-                            <textarea name="comment" id="comment-content" placeholder="댓글을 입력해주세요.."></textarea>
-                        </div>
-                        <div class="form-bottom">
-                            <button class="comment-sumbit" type="button" onclick="commentAdd();">등록</button>
-                        </div>
+                    <c:choose>
+                    	<c:when test="${userNo != null }">
+	                        <div class="form-top">
+	                            <img src="../../../resources/img/person.png" width="50">
+	                            <textarea name="comment" id="comment-content" placeholder="댓글을 입력해주세요.."></textarea>                            
+	                        </div>
+	                        <div class="form-bottom">
+	                            <button class="comment-sumbit" type="button" onclick="commentAdd();">등록</button>
+	                        </div>                  
+                    	</c:when>
+                    	<c:when test="${userNo == null }">
+                    		<div class="form-top">
+	                            <img src="../../../resources/img/person.png" width="50">
+	                            <textarea name="comment" id="comment-content" placeholder="로그인후 이용바랍니다." disabled></textarea>                            
+	                        </div>
+	                        <div class="form-bottom">
+	                            <button class="comment-sumbit" type="button" onclick="commentAdd();" disabled>등록</button>
+	                        </div>     
+                    	</c:when>
+                    </c:choose>
                     </div>
 
                     <div class="comment-list">
@@ -100,6 +134,10 @@
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	<script>
+		const communityUserNo = "${cList.userNo}";
+		const communityNo = "${cList.communityNo}"; // 현재 게시글 번호
+		const userNo = "${userNo}"; // 로그인한 유저 번호 (세션 등에서 가져옴)
+
 		document.addEventListener("DOMContentLoaded", function() {
 			getCommentList(); 
 		});
@@ -262,10 +300,7 @@
                 });
 			});
 		}
-		const communityUserNo = "${cList.userNo}";
 		console.log(communityUserNo);
-		const communityNo = "${cList.communityNo}"; // 현재 게시글 번호
-		const userNo = "${userNo}"; // 로그인한 유저 번호 (세션 등에서 가져옴)
 
 		// 1. 댓글 목록 조회 함수
 		function getCommentList() {
@@ -294,7 +329,7 @@
 				
 				// 삭제 버튼 HTML 미리 생성
 				let deleteBtnHtml = '';
-				if (reply.userNo == userNo) {
+				if (reply.userNo == userNo || reply.userType == 'SYSTEM_MANAGER') {
 					deleteBtnHtml = `<span class="comment-delete" onclick="deleteReply(\${reply.commentNo})" style="cursor:pointer; font-weight:500; color:#FF3B00;">삭제</span>`;
 				}
 
@@ -335,10 +370,24 @@
 									<span class="user-name">\${reply.userNickName} \${writerUseNo}</span></span>
 									<span class="comment-writer">\${reply.timeAgo}</span>
 								</div>
-								<div class="report">
-									<button class="report-btn" onclick="reportBtn('\${reply.communityNo}','\${reply.commentNo}','\${communityUserNo}');">
-										<span class="material-symbols-outlined">siren</span>
-									</button>
+								<div class="report" data-comment-no="\${reply.commentNo}">
+									<span class="material-symbols-outlined more_vert">more_vert</span>
+									
+									<div class="report-button">
+										<span class="material-symbols-outlined flag">flag</span>
+										<span>신고하기</span>
+									</div>
+
+									<div class="report-list-wrapper">
+										<div class="report-list">
+											<span class="reportSecond">신고 유형 선택</span>
+											<button class="report-btn" type="button">정치 발언</button>
+											<button class="report-btn" type="button">성희롱/음담패설</button>
+											<button class="report-btn" type="button">상업 광고</button>
+											<button class="report-btn" type="button">욕설/비하</button>
+											<button class="report-btn" type="button">유출/사기/사칭</button>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="comment-text">
@@ -354,6 +403,85 @@
 				commentListContainer.insertAdjacentHTML('beforeend', html);
 			});
 		}
+		document.addEventListener("click", (e) => {
+			// 1. 점 3개(more_vert) 버튼 클릭 시 -> '신고하기' 버튼 토글
+			const moreBtn = e.target.closest(".more_vert");
+			if (moreBtn) {
+				const reportContainer = moreBtn.closest(".report");
+				const reportButton = reportContainer.querySelector(".report-button");
+				const reportListWrapper = reportContainer.querySelector(".report-list-wrapper");
+
+				// 토글 실행
+				reportButton.classList.toggle("active");
+
+				// 점 3개를 눌러서 닫을 때, 열려있던 신고 사유 목록도 같이 닫아주는 것이 자연스러움
+				if (!reportButton.classList.contains("active")) {
+					reportListWrapper.classList.remove("active");
+				}
+				return; // 이벤트 종료
+			}
+
+			// 2. '신고하기' 버튼 클릭 시 -> 신고 사유 목록(리스트) 토글
+			const reportBtnAction = e.target.closest(".report-button");
+			if (reportBtnAction) {
+
+				if(!userNo || userNo == null) {
+					Swal.fire({
+						icon:'warning',
+						title: '로그인이 필요한 서비스입니다.',
+						text: '로그인 후 이용해주세요.',
+						confirmButtonText: '로그인 하러가기',
+						customClass: {
+							popup: 'error-popup',
+							title: 'error-title',
+							text: 'error-text',
+							confirmButton: 'error-button'
+						}, 
+						didClose: () => {
+							location.href="/user/login";
+						}
+					}); 
+					return;
+				}
+				const reportContainer = reportBtnAction.closest(".report");
+				const reportListWrapper = reportContainer.querySelector(".report-list-wrapper");
+				
+				reportListWrapper.classList.toggle("active");
+				return; // 이벤트 종료
+			}
+			
+			const finalReportBtn = e.target.closest(".report-btn");
+			if (finalReportBtn) {
+				const reportContainer = finalReportBtn.closest(".report");
+				const reportListWrapper = reportContainer.querySelector(".report-list-wrapper");
+				const reportButton = reportContainer.querySelector(".report-button"); // '신고하기' 중간 버튼
+				
+				// 1) 리스트 닫기 (필수)
+				reportListWrapper.classList.remove("active");
+				
+				// 2) '신고하기' 버튼도 닫고 다시 점 3개 상태로 돌리려면 아래 줄 주석 해제
+				reportButton.classList.remove("active");
+								
+				
+				const commentNo = reportContainer.dataset.commentNo;
+				const reportReason = finalReportBtn.innerText;
+				// 3) 여기서 실제 신고 처리 로직을 작성합니다 (예: 서버로 전송)
+				console.log(`신고 접수됨: \${finalReportBtn.innerText}`);
+
+				// alert("신고가 접수되었습니다.");
+				// [3] 상황에 맞춰 신고 함수 호출
+				if (commentNo) {
+					// (A) 댓글 번호가 존재하면 -> 댓글 신고
+					reportBtn(commentNo, 'comment', reportReason);
+				} else {
+					// (B) 댓글 번호가 없으면 -> 게시글 신고 (전역변수 communityNo 사용)
+					reportBtn(communityNo, 'board', reportReason);
+				}
+
+				return;
+			}
+		});
+
 
 		// 3. 답글 입력창 토글 함수
 		function toggleReplyForm(btn) {
@@ -370,6 +498,52 @@
 			}
 		}
 
+		// 1. 메인 댓글 입력창 (상단) 엔터키 처리
+		const mainCommentInput = document.querySelector("#comment-content");
+
+		if (mainCommentInput) {
+			mainCommentInput.addEventListener("keydown", function(e) {
+				// 한글 조합 중이거나, Shift+Enter(줄바꿈)인 경우는 제외
+				if (e.isComposing || (e.key === "Enter" && e.shiftKey)) {
+					return; 
+				}
+
+				if (e.key === "Enter") {
+					e.preventDefault(); // 기본 줄바꿈 동작 막기
+					commentAdd(); // 부모번호 0, 깊이 0 (기본값) 실행
+				}
+			});
+		}
+
+		// 2. 대댓글(답글) 입력창 엔터키 처리 (이벤트 위임)
+		// 대댓글 입력창은 동적으로 생길 수 있으므로 document에 이벤트를 겁니다.
+		document.addEventListener("keydown", function(e) {
+			// 이벤트가 발생한 요소가 대댓글 입력창(.reply-content)인지 확인
+			if (e.target.classList.contains("reply-content")) {
+				
+				// 한글 조합 중이거나, Shift+Enter(줄바꿈)인 경우는 제외
+				if (e.isComposing || (e.key === "Enter" && e.shiftKey)) {
+					return;
+				}
+
+				if (e.key === "Enter") {
+					e.preventDefault(); // 줄바꿈 방지
+
+					// 현재 입력창이 속한 영역(.comment-add-input)을 찾음
+					const inputDiv = e.target.closest(".comment-add-input");
+					
+					// 그 영역 안에 있는 '등록 버튼'을 찾아서 클릭 이벤트를 강제로 발생시킴
+					// (이유: commentAdd 함수가 btn, parentNo 등을 인자로 필요로 하기 때문에
+					//  직접 호출하기보다 버튼을 클릭한 것처럼 처리하는 것이 가장 안전합니다.)
+					const submitBtn = inputDiv.querySelector("button"); 
+					// 만약 버튼 태그가 아니라면 클래스명 등으로 선택자를 수정하세요. 예: .btn-register
+					
+					if (submitBtn) {
+						submitBtn.click();
+					}
+				}
+			}
+		});
 		// 4. 댓글/대댓글 등록 함수
 		// parentcommentNo: 0이면 원댓글, 값이 있으면 대댓글
 		// btn: 클릭된 버튼 객체 (대댓글 입력창의 텍스트를 찾기 위해)
@@ -511,25 +685,70 @@
 			})
 		}
 
-		function reportBtn(communityNo, commentNo) {
+		function reportBtn(targetNo, type ,reportReason) {
 			const data = {
-				commentNo : commentNo,
-				communityNo : communityNo,
-				userNo : '${userNo}'
+				reporterNo : '${userNo}',
+				reportReason : reportReason,
+				reportType : type,
+				communityNo: communityNo
 			}
-			
-			console.log(data);
 
-			fetch("comment/report", {
+			// 2. 타입에 따라 번호 할당
+			if (type === 'comment') {
+				data.commentNo = targetNo;   // 댓글 번호
+			}
+
+			console.log("신고 전송:", data);
+		
+			fetch("/report/add", {
 				method: "post",
 				headers: {"Content-Type":"application/json"},
-				body: {
-
+				body: JSON.stringify(data)
+			})
+			.then(res => res.json())
+			.then(result => {
+				if(result > 0) {
+					Swal.fire({
+                        icon:'success',
+                        title: '신고 완료!',
+                        text: '건전한 커뮤니티에 힘써주셔서 감사합니다!',
+                        confirmButtonText: '확인',
+                        customClass: {
+                            popup: 'success-popup',
+                            title: 'success-title',
+                            text: 'success-text',
+                            confirmButton: 'success-button'
+                        }
+                    })
+				} else {
+					Swal.fire({
+						icon:'error',
+						title: '신고 실패..ㅠ',
+						text: '다시 시도해주세요!',
+						confirmButtonText: '확인',
+						customClass: {
+							popup: 'error-popup',
+							title: 'error-title',
+							text: 'error-text',
+							confirmButton: 'error-button'
+						}
+					});
 				}
 			})
-			console.log("게시글 번호" + communityNo)
-			console.log("댓글 번호" + commentNo);
-		
+			.catch(err => {
+				Swal.fire({
+                    icon:'error',
+                    title: '신고 실패..ㅠ',
+                    text: err,
+                    confirmButtonText: '확인',
+                    customClass: {
+                        popup: 'error-popup',
+                        title: 'error-title',
+                        text: 'error-text',
+                        confirmButton: 'error-button'
+                    }
+                });
+			})
 		}
 	</script>
 </body>

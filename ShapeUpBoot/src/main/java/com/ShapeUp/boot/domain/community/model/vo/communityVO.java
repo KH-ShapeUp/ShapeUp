@@ -21,4 +21,8 @@ public class communityVO {
 	private int viewCount; 				// 조회수
 	private String communityType; 		// 커뮤니티 카테고리
 	private String communityStatus;		// 커뮤니티 게시판 상태
+	
+	
+	private String successType;			// 성공 후기에서 사용할 카테고리
+	private String goalDate;				// 성공 후기에서 사용할 소요기간
 }

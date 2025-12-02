@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.community.model.mapper.successMapper">
+	<insert id="successInsert">
+	    <selectKey keyProperty="communityNo" resultType="int" order="BEFORE">
+	        SELECT SEQ_COMMUNITY_NO.NEXTVAL FROM DUAL
+	    </selectKey>
+	
+	    INSERT INTO COMMUNITY_TBL (
+	        COMMUNITY_NO, 
+	        COMMUNITY_TITLE, 
+	        COMMUNITY_CONTENT, 
+	        USER_NO,
+	        CREATED_AT,
+	        UPDATED_AT,
+	        VIEW_COUNT,
+	        COMMUNITY_TYPE,
+	        COMMUNITY_STATUS,
+	        SUCCESS_TYPE,
+	        GOAL_DATE
+	    ) VALUES (
+	        #{communityNo},
+	        #{communityTitle}, 
+	        #{communityContent}, 
+	        #{userNo},
+	        DEFAULT,
+	        NULL,
+	        0,
+	        #{communityType},
+	        DEFAULT,
+	       	#{successType},
+	        #{goalDate}
+	    )
+	</insert>
+	
+	<!-- 커뮤니티 이미지 삽입 -->
+	<insert id="insertSuccessImages" parameterType="java.util.List">
+        INSERT INTO COMMUNITY_IMG_TBL (
+            IMG_NO,
+            IMG_PATH,
+            IMG_RENAME,
+            IMG_ORIGINAL_NAME,
+            IMG_MAIN,
+            COMMUNITY_NO
+        )
+        SELECT SEQ_IMG_NO.NEXTVAL, A.* FROM (
+            <foreach collection="list" item="img" separator="UNION ALL">
+                SELECT 
+                    #{img.imgPath} as IMG_PATH,
+                    #{img.imgRename} as IMG_RENAME,
+                    #{img.imgOriginalName} as IMG_ORIGINAL_NAME,
+                    'N' as IMG_MAIN ,
+                    #{img.communityNo} as COMMUNITY_NO
+                FROM DUAL
+            </foreach>
+        ) A
+    </insert>
+    
+    <!-- 성공후기 불러오기 -->
+    <select id="successList">
+    	SELECT 
+    		C.COMMUNITY_NO,
+    		C.COMMUNITY_TITLE,
+    		C.VIEW_COUNT,
+    		C.CREATED_AT,
+    		C.GOAL_DATE,
+    		C.SUCCESS_TYPE,
+    		U.USER_NICKNAME AS USER_NICKNAME,
+    		DBMS_LOB.SUBSTR(
+    			REGEXP_REPLACE(
+    				REPLACE(C.COMMUNITY_CONTENT, '&amp;nbsp;', ''),
+    				<![CDATA[ '<[^>]*>' ]]>, ''
+    			), 100, 1
+    		) AS COMMUNITY_CONTENT,
+   		    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
+    		(SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT,
+    		(SELECT I.IMG_PATH FROM COMMUNITY_IMG_TBL I WHERE I.COMMUNITY_NO = C.COMMUNITY_NO AND ROWNUM = 1) AS THUMBNAIL
+   		FROM COMMUNITY_TBL C
+   		JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+   		<where>
+	    	C.COMMUNITY_STATUS = 'ACTIVE' AND
+	    	C.COMMUNITY_TYPE = 'success'	   
+	    	<if test="category != null and category != ''">
+    			AND C.SUCCESS_TYPE = #{category}
+    		</if>
+    		<if test="keyword != null and keyword != ''">
+    			AND C.COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+    		</if>
+	    </where> 
+   		ORDER BY C.CREATED_AT DESC
+    </select>
+    
+    <select id="getTotalCount">
+    	SELECT COUNT(*) FROM COMMUNITY_TBL
+    	<where>
+    		COMMUNITY_STATUS = 'ACTIVE' AND
+    		COMMUNITY_TYPE = 'success'
+    		<if test="category != null and category != ''">
+    			AND SUCCESS_TYPE = #{category}
+    		</if>
+    		<if test="keyword != null and keyword != ''">
+    			AND COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+    		</if>
+    	</where>
+    </select>
+    
+    <!-- 인기 게시물 -->
+    <select id="popSuccessList">
+    	SELECT * 
+    	FROM (
+    		SELECT
+	    		C.COMMUNITY_NO,
+	    		C.COMMUNITY_TITLE,
+	    		C.COMMUNITY_TYPE,
+	    		C.SUCCESS_TYPE,
+	    		C.VIEW_COUNT,
+	    		C.CREATED_AT,
+	    		U.USER_NICKNAME,
+	    		GREATEST(C.VIEW_COUNT, NVL(CT.CNT, 0)) AS POPULAR_BOARD,
+	    		(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
+		     	NVL(CT.CNT, 0) AS COMMENT_COUNT
+		   FROM COMMUNITY_TBL C
+		   JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+		   LEFT JOIN (
+		   	   SELECT COMMUNITY_NO, COUNT(*) AS CNT
+		       FROM COMMENT_TBL 
+		       GROUP BY COMMUNITY_NO
+		   ) CT ON CT.COMMUNITY_NO = C.COMMUNITY_NO
+		   WHERE C.COMMUNITY_TYPE = 'success' AND
+		   C.COMMUNITY_STATUS = 'ACTIVE'
+		   ORDER BY POPULAR_BOARD DESC	
+    	)
+	    WHERE ROWNUM <![CDATA[ <= ]]> 3
+    </select>
+    
+    <!-- 댓글 순 -->
+    <select id="commentSuccessList">
+    	SELECT *
+    	FROM (
+    		 SELECT
+	    		C.COMMUNITY_NO,
+	    		C.COMMUNITY_TITLE,
+	    		C.COMMUNITY_TYPE,
+	    		C.SUCCESS_TYPE,
+	    		C.VIEW_COUNT,
+	    		C.CREATED_AT,
+	    		U.USER_NICKNAME,
+	    		(SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT,
+	    		(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT
+	    	FROM COMMUNITY_TBL C
+	    	JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+	    	WHERE C.COMMUNITY_TYPE = 'success'
+	    	ORDER BY COMMENT_COUNT DESC
+    	)
+    	WHERE ROWNUM <![CDATA[ <= 3 ]]>
+    </select>
+ </mapper>

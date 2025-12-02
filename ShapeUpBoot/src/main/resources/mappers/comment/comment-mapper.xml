@@ -13,7 +13,8 @@
             C.PARENT_COMMENT_NO, 
             C.COMMENT_DEPTH, 
             C.DELETE_YN,
-            U.USER_NICKNAME
+            U.USER_NICKNAME,
+            U.USER_TYPE
         FROM COMMENT_TBL C
         JOIN USER_TBL U ON C.USER_NO = U.USER_NO
         WHERE C.COMMUNITY_NO = #{communityNo}
