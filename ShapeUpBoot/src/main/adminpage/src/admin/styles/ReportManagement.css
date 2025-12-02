@@ -118,10 +118,13 @@
   color: #c02020;
 }
 
-.status-pill.status-처리완료,
-.status-pill.status-처리 {
+.status-pill.status-승인 {
   background: #e6f7f0;
   color: #137347;
+}
+.status-pill.status-반려 {
+  background: #ffecec;
+  color: #c02020;
 }
 
 .empty-row {

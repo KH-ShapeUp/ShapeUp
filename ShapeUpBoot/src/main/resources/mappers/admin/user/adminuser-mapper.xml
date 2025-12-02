@@ -45,7 +45,15 @@
   <update id="updateUserStatus">
     UPDATE USER_TBL
     SET STATUS = #{status},
-        UPDATED_AT = COALESCE(#{updatedAt,jdbcType=TIMESTAMP}, SYSTIMESTAMP)
+        UPDATED_AT =
+        <choose>
+          <when test="banDays != null">
+            SYSTIMESTAMP + NUMTODSINTERVAL(#{banDays}, 'DAY')
+          </when>
+          <otherwise>
+            COALESCE(#{updatedAt,jdbcType=TIMESTAMP}, SYSTIMESTAMP)
+          </otherwise>
+        </choose>
     WHERE USER_NO = #{userNo}
   </update>
 

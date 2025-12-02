@@ -33,6 +33,7 @@
 	        null,
 	        null,
 	        DEFAULT
+
 	    )
 	</insert>
 	<!-- 커뮤니티 이미지 삽입 -->
@@ -83,7 +84,9 @@
 		LEFT JOIN COMMUNITY_BOARD_LIKE B 
 		    ON C.COMMUNITY_NO = B.COMMUNITY_NO
 	    <where>
+
 	    	C.DELETE_YN = 'N' AND
+
 	    	C.COMMUNITY_TYPE != 'success'	   
 	    	<if test="category != null and category != ''">
     			AND COMMUNITY_TYPE = #{category}
@@ -246,5 +249,110 @@
 		    ORDER BY COMMENTCOUNT DESC
 		)
 		WHERE ROWNUM <![CDATA[ <= ]]> 3 
+	</select>
+
+	<!-- Admin: 자유게시판 리스트 (삭제여부 포함) -->
+	<select id="selectAdminCommunityList" resultType="com.ShapeUp.boot.app.community.dto.communityListDTO">
+		SELECT 
+			C.COMMUNITY_NO,
+			C.COMMUNITY_TITLE,
+			C.COMMUNITY_TYPE,
+			C.COMMUNITY_CONTENT,
+			C.CREATED_AT,
+			C.UPDATED_AT,
+			C.VIEW_COUNT,
+			C.DELETE_YN,
+			U.USER_NO,
+			U.USER_ID AS userId,
+			U.USER_NICKNAME AS userNickName,
+			(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS likeCount
+		FROM COMMUNITY_TBL C
+		LEFT JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+		<where>
+			NVL(C.DELETE_YN,'N') = #{deleteYn}
+			AND C.COMMUNITY_TYPE != 'success'
+			<if test="category != null and category != ''">
+				AND C.COMMUNITY_TYPE = #{category}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND C.COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+			</if>
+		</where>
+		ORDER BY C.COMMUNITY_NO DESC
+	</select>
+
+	<!-- Admin: 성공후기 리스트 (COMMUNITY_TYPE='success') -->
+	<select id="selectAdminSuccessList" resultType="com.ShapeUp.boot.app.community.dto.communityListDTO">
+		SELECT 
+			C.COMMUNITY_NO,
+			C.COMMUNITY_TITLE,
+			C.COMMUNITY_TYPE,
+			C.COMMUNITY_CONTENT,
+			C.CREATED_AT,
+			C.UPDATED_AT,
+			C.VIEW_COUNT,
+			C.DELETE_YN,
+			C.SUCCESS_TYPE,
+			C.GOAL_DATE,
+			U.USER_NO,
+			U.USER_ID AS userId,
+			U.USER_NICKNAME AS userNickName,
+			(SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS likeCount
+		FROM COMMUNITY_TBL C
+		LEFT JOIN USER_TBL U ON C.USER_NO = U.USER_NO
+		<where>
+			C.COMMUNITY_TYPE = 'success'
+			AND NVL(C.DELETE_YN,'N') = #{deleteYn}
+			<if test="successType != null and successType != ''">
+				AND C.SUCCESS_TYPE = #{successType}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND C.COMMUNITY_TITLE LIKE '%'||#{keyword}||'%'
+			</if>
+		</where>
+		ORDER BY C.COMMUNITY_NO DESC
+	</select>
+
+	<!-- Admin: 이미지 목록 -->
+	<select id="selectImagesByCommunity" parameterType="int" resultType="com.ShapeUp.boot.app.community.dto.communityImageDTO">
+		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN, COMMUNITY_NO
+		FROM COMMUNITY_IMG_TBL
+		WHERE COMMUNITY_NO = #{communityNo}
+		ORDER BY IMG_NO ASC
+	</select>
+
+	<select id="selectImageById" parameterType="int" resultType="com.ShapeUp.boot.app.community.dto.communityImageDTO">
+		SELECT IMG_NO, IMG_PATH, IMG_RENAME, IMG_ORIGINAL_NAME, IMG_MAIN, COMMUNITY_NO
+		FROM COMMUNITY_IMG_TBL
+		WHERE IMG_NO = #{imgNo}
+	</select>
+
+	<!-- Admin: 삭제/복구 -->
+	<update id="updateDeleteYn">
+		UPDATE COMMUNITY_TBL
+		SET DELETE_YN = #{deleteYn}
+		WHERE COMMUNITY_NO = #{communityNo}
+	</update>
+
+	<!-- Admin: 등록 추이 (주 단위) -->
+	<select id="selectCommunityTrend" resultType="map">
+		SELECT TO_CHAR(CREATED_AT, 'YYYY\"-\"IW') AS LABEL,
+			   COUNT(*) AS CNT
+		FROM COMMUNITY_TBL
+		WHERE NVL(DELETE_YN,'N') = 'N'
+		  AND COMMUNITY_TYPE != 'success'
+		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"IW')
+		ORDER BY LABEL
+	</select>
+
+	<!-- Admin: 성공후기 등록 추이 (주 단위) -->
+	<select id="selectSuccessTrend" resultType="map">
+		SELECT TO_CHAR(CREATED_AT, 'YYYY\"-\"IW') AS LABEL,
+			   COUNT(*) AS CNT
+		FROM COMMUNITY_TBL
+		WHERE NVL(DELETE_YN,'N') = 'N'
+		  AND COMMUNITY_TYPE = 'success'
+		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"IW')
+		ORDER BY LABEL
 	</select>
  </mapper>

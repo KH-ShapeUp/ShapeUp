@@ -2,90 +2,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/ReportManagement.css";
 import CustomSelect from "../../common/components/CustomSelect";
-import {
-  ADMIN_REPORT_STORAGE_KEY,
-  STORAGE_EVENTS,
-} from "../../common/utils/storageKeys";
-
-const seedReports = [
-  {
-    id: 1,
-    reporter: "user01",
-    category: "댓글",
-    author: "user02",
-    reason: "비속어 사용",
-    title: "강도 높은 루틴 후기",
-    date: "2025-12-12",
-    status: "대기",
-    content: "댓글에 과도한 비속어가 포함되어 있어 다른 이용자에게 불편을 주고 있습니다.",
-    link: "/mock/reported-post.jsp",
-  },
-  {
-    id: 2,
-    reporter: "user03",
-    category: "게시글",
-    author: "user04",
-    reason: "허위 정보",
-    title: "운동 효과 과장 사례 공유",
-    date: "2025-12-12",
-    status: "반려",
-    content: "과장된 다이어트 후기를 올려 다른 회원들이 혼란을 겪고 있습니다.",
-    link: "/mock/reported-post.jsp",
-  },
-  {
-    id: 3,
-    reporter: "trainer07",
-    category: "게시글",
-    author: "user10",
-    reason: "홍보성 스팸",
-    title: "헬스 제품 광고 모음",
-    date: "2025-12-10",
-    status: "대기",
-    content: "외부 제품 링크만 반복적으로 첨부된 스팸성 게시글입니다.",
-    link: "/mock/reported-post.jsp",
-  },
-];
 
 const categoryOptions = ["전체", "게시글", "댓글"];
 const logStatusOptions = ["전체", "처리 완료", "반려"];
-const penaltyTypeOptions = [
-  { label: "로그인 차단", value: "로그인 차단" },
-  { label: "글쓰기 제한", value: "글쓰기 제한" },
-  { label: "아이디 영구 정지", value: "아이디 영구 정지" },
-];
-const isBrowser = typeof window !== "undefined";
-
-const readReportsStorage = () => {
-  const fallback = seedReports;
-  if (!isBrowser) return fallback;
-  try {
-    const raw = window.localStorage.getItem(ADMIN_REPORT_STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(ADMIN_REPORT_STORAGE_KEY, JSON.stringify(fallback));
-      return fallback;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-  } catch (err) {
-    console.warn("Failed to load admin reports", err);
-  }
-  return fallback;
-};
-
-const persistReports = (reports) => {
-  if (!isBrowser) return;
-  try {
-    window.localStorage.setItem(ADMIN_REPORT_STORAGE_KEY, JSON.stringify(reports));
-    window.dispatchEvent(new Event(STORAGE_EVENTS.ADMIN_REPORTS));
-  } catch (err) {
-    console.warn("Failed to save admin reports", err);
-  }
-};
-
 const ReportManagement = () => {
-  const initialData = useMemo(() => readReportsStorage(), []);
-  const [reports, setReports] = useState(initialData);
-  const [selectedReportId, setSelectedReportId] = useState(initialData[0]?.id ?? null);
+  const [reports, setReports] = useState([]);
+  const [selectedReportId, setSelectedReportId] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("전체");
   const [searchTerm, setSearchTerm] = useState("");
   const [requestSort, setRequestSort] = useState({ key: "id", dir: "asc" });
@@ -94,9 +16,47 @@ const ReportManagement = () => {
   const [showActionModal, setShowActionModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [penaltyDays, setPenaltyDays] = useState(3);
-  const [penaltyType, setPenaltyType] = useState("로그인 차단");
   const [rejectReason, setRejectReason] = useState("");
   const [actionSuccess, setActionSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const res = await fetch("/api/admin/reports");
+        const json = await res.json();
+        const items = Array.isArray(json.items) ? json.items : [];
+        const mapStatus = (s) => {
+          switch (s) {
+            case "Y":
+              return "승인";
+            case "X":
+              return "반려";
+            default:
+              return "대기";
+          }
+        };
+        const mapped = items.map((r) => ({
+          id: r.id,
+          reporter: r.reporter || "",
+          category: r.category || "",
+          author: r.author || "",
+          reason: r.reason || "",
+          title: "-",
+          date: r.date ? (r.date.length > 10 ? r.date.substring(0, 10) : r.date) : "",
+          status: mapStatus(r.status),
+          content: r.commentContent || "신고된 게시글 열람을 이용해주세요.",
+          link: r.link || "#",
+          communityNo: r.communityNo,
+          commentNo: r.commentNo,
+        }));
+        setReports(mapped);
+        setSelectedReportId(mapped[0]?.id ?? null);
+      } catch (err) {
+        console.error("신고 목록 로드 실패", err);
+      }
+    };
+    fetchReports();
+  }, []);
 
   const closeRejectModal = () => {
     setRejectReason("");
@@ -176,6 +136,31 @@ const ReportManagement = () => {
     return sortReports(statusFiltered, logSort);
   }, [filteredReports, logStatusFilter, logSort]);
 
+  // pagination settings (pending)
+  const [pendingPage, setPendingPage] = useState(1);
+  const [pendingSize, setPendingSize] = useState(10);
+  const [pendingPageInput, setPendingPageInput] = useState("");
+  const pendingTotalPages = Math.max(1, Math.ceil(pendingReports.length / pendingSize));
+  const pendingPageItems = useMemo(() => {
+    const start = (pendingPage - 1) * pendingSize;
+    return pendingReports.slice(start, start + pendingSize);
+  }, [pendingReports, pendingPage, pendingSize]);
+
+  // pagination settings (processed)
+  const [procPage, setProcPage] = useState(1);
+  const [procSize, setProcSize] = useState(10);
+  const [procPageInput, setProcPageInput] = useState("");
+  const procTotalPages = Math.max(1, Math.ceil(processedReports.length / procSize));
+  const processedPageItems = useMemo(() => {
+    const start = (procPage - 1) * procSize;
+    return processedReports.slice(start, start + procSize);
+  }, [processedReports, procPage, procSize]);
+
+  useEffect(() => {
+    setPendingPage(1);
+    setProcPage(1);
+  }, [searchTerm, categoryFilter, logStatusFilter]);
+
   useEffect(() => {
     const hit =
       pendingReports.find((r) => r.id === selectedReportId) ||
@@ -185,65 +170,46 @@ const ReportManagement = () => {
     }
   }, [pendingReports, processedReports, selectedReportId]);
 
-  useEffect(() => {
-    if (!isBrowser) return;
-    const sync = () => setReports(readReportsStorage());
-    const handler = (event) => {
-      if (event.key && event.key !== ADMIN_REPORT_STORAGE_KEY) return;
-      sync();
-    };
-    window.addEventListener("storage", handler);
-    window.addEventListener(STORAGE_EVENTS.ADMIN_REPORTS, sync);
-    return () => {
-      window.removeEventListener("storage", handler);
-      window.removeEventListener(STORAGE_EVENTS.ADMIN_REPORTS, sync);
-    };
-  }, []);
-
-  const updateReports = (updater) => {
-    setReports((prev) => {
-      const next = typeof updater === "function" ? updater(prev) : updater;
-      persistReports(next);
-      return next;
-    });
-  };
-
   const selectedReport = reports.find((report) => report.id === selectedReportId) || null;
 
   const handleActionConfirm = () => {
     if (!selectedReport) return;
-    updateReports((prev) =>
-      prev.map((report) =>
-        report.id === selectedReport.id
-          ? {
-              ...report,
-              status: "처리 완료",
-              actionNote: `${penaltyType} ${penaltyDays}일`,
-            }
-          : report
-      )
-    );
-    setActionSuccess(true);
-    setTimeout(() => {
-      setShowActionModal(false);
-      setActionSuccess(false);
-    }, 1000);
+    const qs = new URLSearchParams({
+      banDays: String(penaltyDays),
+      userStatus: "정지",
+    }).toString();
+    fetch(`/api/admin/reports/${selectedReport.id}/approve?${qs}`, { method: "POST" })
+      .then(() => {
+        setReports((prev) =>
+          prev.map((report) =>
+            report.id === selectedReport.id
+              ? { ...report, status: "승인", actionNote: `로그인 차단 ${penaltyDays}일` }
+              : report
+          )
+        );
+        setActionSuccess(true);
+        setTimeout(() => {
+          setShowActionModal(false);
+          setActionSuccess(false);
+        }, 1000);
+      })
+      .catch(console.error);
   };
 
   const handleRejectConfirm = () => {
     if (!selectedReport) return;
-    updateReports((prev) =>
-      prev.map((report) =>
-        report.id === selectedReport.id
-          ? {
-              ...report,
-              status: "반려",
-              rejectNote: rejectReason || "사유 미입력",
-            }
-          : report
-      )
-    );
-    closeRejectModal();
+    fetch(`/api/admin/reports/${selectedReport.id}/reject`, { method: "POST" })
+      .then(() => {
+        setReports((prev) =>
+          prev.map((report) =>
+            report.id === selectedReport.id
+              ? { ...report, status: "반려", rejectNote: rejectReason || "사유 미입력" }
+              : report
+          )
+        );
+        closeRejectModal();
+      })
+      .catch(console.error);
   };
 
   const toggleSort = (setter) => (key) => {
@@ -277,6 +243,11 @@ const ReportManagement = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <select value={pendingSize} onChange={(e) => { setPendingSize(Number(e.target.value)); setPendingPage(1); }}>
+                {[5, 10, 20, 50].map((sz) => (
+                  <option key={sz} value={sz}>{sz}개</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -305,7 +276,7 @@ const ReportManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {pendingReports.map((report) => (
+              {pendingPageItems.map((report) => (
                 <tr
                   key={report.id}
                   className={report.id === selectedReportId ? "active" : ""}
@@ -329,6 +300,45 @@ const ReportManagement = () => {
               )}
             </tbody>
           </table>
+          <div className="pagination">
+            <button
+              type="button"
+              onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
+              disabled={pendingPage === 1}
+            >
+              이전
+            </button>
+            <span>{pendingPage} / {pendingTotalPages}</span>
+            <input
+              type="number"
+              min="1"
+              max={pendingTotalPages}
+              value={pendingPageInput}
+              placeholder="페이지 입력"
+              onChange={(e) => setPendingPageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const v = Number(e.currentTarget.value);
+                  if (!Number.isNaN(v) && v >= 1 && v <= pendingTotalPages) {
+                    setPendingPage(v);
+                    setPendingPageInput("");
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setPendingPage((p) => Math.min(pendingTotalPages, p + 1))}
+              disabled={pendingPage === pendingTotalPages}
+            >
+              다음
+            </button>
+            <select value={pendingSize} onChange={(e) => setPendingSize(Number(e.target.value))}>
+              {[5, 10, 20, 50].map((sz) => (
+                <option key={sz} value={sz}>{sz}개</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* 신고 처리 기록 */}
@@ -341,6 +351,11 @@ const ReportManagement = () => {
                 options={logStatusOptions}
                 onChange={setLogStatusFilter}
               />
+              <select value={procSize} onChange={(e) => { setProcSize(Number(e.target.value)); setProcPage(1); }}>
+                {[5, 10, 20, 50].map((sz) => (
+                  <option key={sz} value={sz}>{sz}개</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -372,7 +387,7 @@ const ReportManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {processedReports.map((report) => (
+              {processedPageItems.map((report) => (
                 <tr
                   key={report.id}
                   className={report.id === selectedReportId ? "active" : ""}
@@ -401,6 +416,45 @@ const ReportManagement = () => {
               )}
             </tbody>
           </table>
+          <div className="pagination">
+            <button
+              type="button"
+              onClick={() => setProcPage((p) => Math.max(1, p - 1))}
+              disabled={procPage === 1}
+            >
+              이전
+            </button>
+            <span>{procPage} / {procTotalPages}</span>
+            <input
+              type="number"
+              min="1"
+              max={procTotalPages}
+              value={procPageInput}
+              placeholder="페이지 입력"
+              onChange={(e) => setProcPageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const v = Number(e.currentTarget.value);
+                  if (!Number.isNaN(v) && v >= 1 && v <= procTotalPages) {
+                    setProcPage(v);
+                    setProcPageInput("");
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setProcPage((p) => Math.min(procTotalPages, p + 1))}
+              disabled={procPage === procTotalPages}
+            >
+              다음
+            </button>
+            <select value={procSize} onChange={(e) => { setProcSize(Number(e.target.value)); setProcPage(1); }}>
+              {[5, 10, 20, 50].map((sz) => (
+                <option key={sz} value={sz}>{sz}개</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -441,9 +495,9 @@ const ReportManagement = () => {
               </a>
               {selectedReport.status === "반려" ? (
                 <div className="reject-banner">반려된 신고입니다.</div>
-              ) : selectedReport.status === "처리 완료" ? (
-                <div className="processed-banner">
-                  처리된 신고입니다.
+              ) : selectedReport.status === "승인" ? (
+                <div className="processed-banner" style={{ background: "#e6f9ea", color: "#1d5c3a" }}>
+                  승인되었습니다.
                   {selectedReport.actionNote && (
                     <span className="processed-note">{selectedReport.actionNote}</span>
                   )}
@@ -492,11 +546,7 @@ const ReportManagement = () => {
                   onChange={(e) => setPenaltyDays(Math.max(1, Number(e.target.value)))}
                 />
                 <span>일 동안</span>
-                <CustomSelect
-                  value={penaltyType}
-                  options={penaltyTypeOptions}
-                  onChange={setPenaltyType}
-                />
+                <span className="penalty-label">로그인 차단</span>
               </div>
             </div>
             <div className="modal-footer">

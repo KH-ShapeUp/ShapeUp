@@ -252,7 +252,7 @@ const PostNotice = () => {
       <BoardManager
         boardTitle="공지사항"
         initialPosts={posts}
-        categories={["공지", "업데이트", "이벤트", "제휴"]}
+        categories={["공지", "이벤트", "제휴", "징계"]}
         chartLabels={["11월 1주", "11월 2주", "11월 3주", "11월 4주", "12월 1주"]}
         chartData={chartData}
         chartDatasetLabel="공지 등록 수"
@@ -279,29 +279,29 @@ const PostNotice = () => {
         </div>
 
         <div className="compose-row">
-          <div className="compose-field">
-            <label>제목</label>
-            <input
-              type="text"
-              placeholder="제목을 입력하세요"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (errors.title) setErrors((prev) => ({ ...prev, title: false }));
-              }}
-              style={errors.title ? { borderColor: "red" } : {}}
-            />
-          </div>
-          <div className="compose-field narrow">
-            <label>카테고리</label>
-            <CustomSelect
+        <div className="compose-field">
+          <label>제목</label>
+          <input
+            type="text"
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (errors.title) setErrors((prev) => ({ ...prev, title: false }));
+            }}
+            style={errors.title ? { borderColor: "red" } : {}}
+          />
+        </div>
+        <div className="compose-field narrow">
+          <label>카테고리</label>
+          <CustomSelect
               value={category}
-              options={["공지", "업데이트", "이벤트", "제휴"].map((c) => ({ label: c, value: c }))}
+              options={["공지", "이벤트", "제휴", "징계"].map((c) => ({ label: c, value: c }))}
               onChange={setCategory}
               size="sm"
             />
-          </div>
         </div>
+      </div>
 
         {category === "이벤트" && (
           <div className="compose-row">

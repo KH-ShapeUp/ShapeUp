@@ -3,9 +3,27 @@ import BoardManager from "../components/BoardManager";
 
 const formatDate = (val) => {
   if (!val) return "";
+  const fromNumber = (num) => {
+    const d = new Date(num);
+    if (Number.isNaN(d.getTime())) return null;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${y}.${m}.${dd}`;
+  };
+
+  // 숫자(timestamp)인 경우
+  const num = Number(val);
+  if (!Number.isNaN(num) && String(val).length >= 10) {
+    const formatted = fromNumber(num);
+    if (formatted) return formatted;
+  }
+
+  // 문자열 날짜인 경우
   const str = String(val);
   if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10).replace(/-/g, ".");
-  return str;
+  const parsed = fromNumber(Date.parse(str));
+  return parsed || str;
 };
 
 const mapLevelText = (val) => {

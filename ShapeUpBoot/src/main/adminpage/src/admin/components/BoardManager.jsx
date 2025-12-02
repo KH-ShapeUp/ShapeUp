@@ -52,6 +52,7 @@ const BoardManager = ({
   const [titleQuery, setTitleQuery] = useState("");
   const [advancedFilter, setAdvancedFilter] = useState("전체");
   const [advancedQuery, setAdvancedQuery] = useState("");
+  const [bannerFilter, setBannerFilter] = useState("전체");
   const [sort, setSort] = useState({ key: "id", dir: "asc" });
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
@@ -89,6 +90,7 @@ const BoardManager = ({
   }, [categories]);
 
   const advancedOptions = useMemo(() => ["전체", "날짜", "제목", "작성자"], []);
+  const bannerOptions = useMemo(() => ["전체", "배너 노출 O", "배너 노출 X"], []);
   const pageSizeOptions = useMemo(() => ["5", "10", "30", "50"], []);
 
   const defaultColumns = useMemo(
@@ -224,8 +226,17 @@ const BoardManager = ({
       }
     };
 
+    const matchesBanner = (post) => {
+      if (bannerFilter === "전체") return true;
+      const yn = (post.bannerYn || "").toUpperCase();
+      if (bannerFilter === "배너 노출 O") return yn === "Y";
+      if (bannerFilter === "배너 노출 X") return yn === "N" || yn === "";
+      return true;
+    };
+
     const searched = posts
       .filter((post) => categoryFilter === "전체" || post.category === categoryFilter)
+      .filter(matchesBanner)
       .filter(matchesPrimary)
       .filter(matchesAdvanced);
 
@@ -237,7 +248,7 @@ const BoardManager = ({
       else cmp = collator.compare(String(va), String(vb));
       return sort.dir === "asc" ? cmp : -cmp;
     });
-  }, [posts, categoryFilter, titleQuery, advancedFilter, advancedQuery, sort]);
+  }, [posts, categoryFilter, bannerFilter, titleQuery, advancedFilter, advancedQuery, sort]);
 
   const totalPosts = filteredPosts.length;
   const totalPages = Math.max(1, Math.ceil(totalPosts / pageSize));
@@ -248,7 +259,7 @@ const BoardManager = ({
   useEffect(() => {
     setPage(1);
     setPageInput("");
-  }, [categoryFilter, titleQuery, advancedFilter, advancedQuery, pageSize]);
+  }, [categoryFilter, bannerFilter, titleQuery, advancedFilter, advancedQuery, pageSize]);
 
   useEffect(() => {
     setPage((prev) => Math.min(prev, totalPages));
@@ -315,6 +326,12 @@ const BoardManager = ({
                 placeholder="추가 검색어 입력"
                 value={advancedQuery}
                 onChange={(e) => setAdvancedQuery(e.target.value)}
+              />
+              <CustomSelect
+                value={bannerFilter}
+                options={bannerOptions.map((option) => ({ label: option, value: option }))}
+                onChange={setBannerFilter}
+                size="sm"
               />
             </div>
           </div>
@@ -636,7 +653,7 @@ const BoardManager = ({
                   />
                   {bannerFile && <p className="banner-file-name">{bannerFile.name}</p>}
                   {!bannerFile && bannerPreview && (
-                    <div className="image-thumb" style={{ marginTop: "6px" }}>
+                    <div className="image-thumb banner-thumb">
                       <img src={bannerPreview} alt="배너" />
                     </div>
                   )}

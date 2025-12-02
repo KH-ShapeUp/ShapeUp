@@ -52,6 +52,11 @@ public class HomeController {
 		model.addAttribute("nList", nList);
 		return "index";
 	}
+
+	@GetMapping("/intro")
+	public String introPage() {
+		return "introduce";
+	}
 	
 	/* 매칭 신청 버튼 */
 	@PostMapping("/home")

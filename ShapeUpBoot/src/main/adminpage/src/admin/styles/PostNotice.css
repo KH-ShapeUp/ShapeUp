@@ -91,6 +91,19 @@
   background: #1f51c8;
 }
 
+/* compact buttons (e.g., 이동 버튼) */
+.primary-btn.small {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.delete-btn.small {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
 .compose-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -257,6 +270,19 @@
 .toggle.on .knob { transform: translateX(22px); }
 .banner-fields .compose-field { margin-bottom: 10px; }
 .banner-file-name { margin-top: 6px; color: #374151; font-weight: 700; }
+.banner-thumb {
+  width: 140px;
+  height: 80px;
+  border: 1px solid #d3d9e5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.banner-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 .posts-header {
   display: flex;
