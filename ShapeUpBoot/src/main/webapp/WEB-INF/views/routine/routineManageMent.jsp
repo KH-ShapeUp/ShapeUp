@@ -231,6 +231,9 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
               <option value="50">50분</option>
               <option value="55">55분</option>
               <option value="60">60분</option>
+              <option value="75">75분</option>
+              <option value="90">90분</option>
+              <option value="120">120분</option>
             </select>
           </div>
 
