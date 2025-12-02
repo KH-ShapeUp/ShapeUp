@@ -124,17 +124,19 @@
                 </a>
             </div>
             <div class="list-item">
-<<<<<<< HEAD
+
                 <a href="/success">
-=======
+
                 <a href="/notice/list">
                     <span class="material-symbols-outlined">campaign</span>
                     <span>공지사항</span>
                 </a>
             </div>
             <div class="list-item">
+
                 <a href="/success">
->>>>>>> refs/remotes/origin/Kimjaeseung
+
+
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
                 </a>

@@ -9,7 +9,7 @@
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f8f8f8;
-  padding: 20px 0;
+
 }
 
 .mypage-container {
@@ -24,7 +24,6 @@ body {
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 30px;
   text-align: center;
 }
 

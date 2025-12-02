@@ -48,9 +48,7 @@ public class UserController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RequestPermissionService requestPermissionService;
 
-    /* ================================
-        이메일 인증
-    ================================ */
+    // 이메일 인증
     @ResponseBody
     @PostMapping("/user/sendEmailCode")
     public Map<String, Object> sendEmailCode(@RequestParam String email, HttpSession session) {
@@ -618,9 +616,7 @@ public class UserController {
         return visible + masked;
     }
 
-    /* ================================
-        비밀번호 찾기 🔥 수정됨
-    ================================ */
+    // 비밀번호 찾기
     @GetMapping("/user/searchPw")
     public String searchPwForm() {
         return "user/searchPw";
@@ -655,30 +651,30 @@ public class UserController {
             int result = userService.updateUserPassword(user.getUserId(), encodedPw);
 
             if (result > 0) {
-                log.info("✅ DB 비밀번호 업데이트 성공");
+                log.info(" DB 비밀번호 업데이트 성공");
 
                 // 5) 이메일 발송
                 String userEmail = user.getUserEmail();
                 boolean emailSent = mailService.sendTempPassword(userEmail, tempPw);
 
                 if (emailSent) {
-                    log.info("✅ 임시 비밀번호 이메일 발송 성공 - email: {}", maskEmail(userEmail));
+                    log.info("임시 비밀번호 이메일 발송 성공 - email: {}", maskEmail(userEmail));
                     response.put("success", true);
                     response.put("email", maskEmail(userEmail));
                     response.put("message", "임시 비밀번호를 이메일로 발송했습니다.");
                 } else {
-                    log.error("❌ 이메일 발송 실패");
+                    log.error("이메일 발송 실패");
                     response.put("success", false);
                     response.put("message", "이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.");
                 }
             } else {
-                log.error("❌ DB 비밀번호 업데이트 실패");
+                log.error("DB 비밀번호 업데이트 실패");
                 response.put("success", false);
                 response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
             }
 
         } catch (Exception e) {
-            log.error("❌ 비밀번호 찾기 오류", e);
+            log.error("비밀번호 찾기 오류", e);
             response.put("success", false);
             response.put("message", "오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
