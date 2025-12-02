@@ -29,6 +29,16 @@
                 <ul class="sub-menu">
                     <li><a href="/community">자유게시판</a></li>
                     <li><a href="/success">성공 인증 게시판</a></li>
+
+                    <li><a href="/notice/list">공지사항</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a>내 활동 관리</a>
+                <ul class="sub-menu">
+                    <li><a href="/diet">칼로리</a></li>
+                    <li><a href="/activity">활동</a></li>
+                    <li><a href="/routine">루틴</a></li>
                 </ul>
             </li>
         </ul>
@@ -115,7 +125,17 @@
                 </a>
             </div>
             <div class="list-item">
+<<<<<<< HEAD
                 <a href="/success">
+=======
+                <a href="/notice/list">
+                    <span class="material-symbols-outlined">campaign</span>
+                    <span>공지사항</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="#">
+>>>>>>> refs/remotes/origin/Kimjaeseung
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
                 </a>
@@ -124,6 +144,24 @@
                 <a href="/map">
                     <span class="material-symbols-outlined">map_search</span>
                     <span>시설 지도</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/diet">
+                    <span class="material-symbols-outlined">restaurant</span>
+                    <span>칼로리</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/activity">
+                    <span class="material-symbols-outlined">directions_walk</span>
+                    <span>활동</span>
+                </a>
+            </div>
+            <div class="list-item">
+                <a href="/routine">
+                    <span class="material-symbols-outlined">playlist_add_check</span>
+                    <span>루틴</span>
                 </a>
             </div>
             <div class="list-item">

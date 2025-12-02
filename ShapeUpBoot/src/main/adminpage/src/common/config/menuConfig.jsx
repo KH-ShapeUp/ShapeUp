@@ -10,6 +10,7 @@ const menus = {
       submenu1: { label: "회원 관리", path: "/admin/members/user" },
       submenu2: { label: "회원 신고 관리", path: "/admin/members/report" },
       trainerReport: { label: "트레이너 신고 관리", path: "/admin/members/trainer-report" },
+      roleRequest: { label: "권한 요청", path: "/admin/members/role-request" },
     },
   },
   trainers: {

@@ -12,98 +12,364 @@
 </head>
 <body class="activity-record">
   <jsp:include page="/WEB-INF/views/include/header.jsp"/>
-  <main class="activity-main">
-    <h1 class="page-title">오늘의 운동</h1>
-    
-    <div class="layout">
-      <section class="left-col">
-        <section class="summary-card card">
-          <div class="summary-top">
-            <div class="date-inline">
-              <button class="calendar-btn" type="button">📅</button>
-              <span class="today-text">2025.11.11</span>
-            </div>
-            <button class="add-btn-lg" onclick="openActivityModal()">활동 추가하기</button>
-          </div>
-          
-          <div class="summary-grid">
-            <div class="summary-item">
-              <div class="label">총 운동 시간</div>
-              <div class="value">60 분</div>
-            </div>
-            <div class="summary-item">
-              <div class="label">총 소모 칼로리</div>
-              <div class="value">600 kcal</div>
-            </div>
-            <div class="summary-item">
-              <div class="label">운동 횟수</div>
-              <div class="value">2 회</div>
-            </div>
-          </div>
-        </section>
+  <main class="activity-record-main">
+    <section class="page-header">
+      <div>
+        <h2>오늘의 운동</h2>
+        <p class="page-subtitle">운동 시간을 기록하고, 목표를 향해 나아가세요.</p>
+      </div>
+      <button class="primary-cta" type="button" onclick="openActivityModal()">활동 추가</button>
+    </section>
 
-        <div class="category-tabs">
-          <button class="active">전체</button>
-          <button>스포츠</button>
-          <button>유산소</button>
-          <button>근력</button>
-          <button>스트레칭</button>
-        </div>
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr><th>운동명</th><th>활동 시간</th><th>소모 칼로리</th><th>삭제</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>런닝</td><td>30 분</td><td>300 kcal</td><td>◎</td></tr>
-              <tr><td>런닝</td><td>30 분</td><td>300 kcal</td><td>◎</td></tr>
-              <tr><td>런닝</td><td>30 분</td><td>300 kcal</td><td>◎</td></tr>
-              <tr><td>런닝</td><td>30 분</td><td>300 kcal</td><td>◎</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card progress-card">
-          <div class="section-title">진행도</div>
-          <div class="progress-track"><div class="progress-bar"></div></div>
-          <div class="progress-meta"><span>30%</span><span>600 kcal / 2000 kcal</span></div>
-        </div>
-      </section>
-
-      <section class="right-col">
-        <div class="card ratio-card">
-          <div class="section-title">비율</div>
-          <div class="ratio-chart">스포츠/유산소/근력/스트레칭 비율</div>
-          <div class="ratio-legend">
-            <div class="item"><span class="ratio-dot"></span><span>스포츠</span></div>
-            <div class="item"><span class="ratio-dot"></span><span>유산소</span></div>
-            <div class="item"><span class="ratio-dot"></span><span>근력</span></div>
-            <div class="item"><span class="ratio-dot"></span><span>스트레칭</span></div>
-          </div>
-        </div>
-        <div class="card weekly-card">
-          <div class="section-title">주간 소모 칼로리</div>
-          <div class="chart-placeholder">그래프 영역</div>
-          <div class="weekly-target">이번 주 목표 90% 달성</div>
-        </div>
-      </section>
+    <div class="date-controls wide">
+      <button type="button" class="nav-btn" id="act-date-prev-btn" aria-label="이전 날짜">←</button>
+      <div class="date-pill" id="act-date-prev">--</div>
+      <div class="date-pill active" id="act-date-today">--</div>
+      <div class="date-pill" id="act-date-next">--</div>
+      <button type="button" class="nav-btn" id="act-date-next-btn" aria-label="다음 날짜">→</button>
+      <button type="button" class="calendar-fab" id="act-calendar-btn" aria-label="달력 열기">
+        <span class="calendar-icon">📅</span>
+      </button>
+      <input type="date" id="act-date-picker" class="date-input-anchor" aria-label="날짜 선택" />
     </div>
+
+    <section class="activity-grid">
+      <div class="summary-panel card">
+        <div class="summary-top">
+          <div class="chip"><span class="thumb">💪</span> 오늘의 운동 요약</div>
+          <div class="summary-date" id="act-summary-date">--</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card time">
+            <p class="stat-label">총 운동 시간</p>
+            <p class="stat-value" id="total-minutes">0 분</p>
+            <span class="stat-sub">목표 90분</span>
+          </div>
+          <div class="stat-card kcal">
+            <p class="stat-label">총 소모 칼로리</p>
+            <p class="stat-value" id="total-kcal">0 kcal</p>
+            <span class="stat-sub">목표 800 kcal</span>
+          </div>
+          <div class="stat-card count">
+            <p class="stat-label">운동 횟수</p>
+            <p class="stat-value" id="total-count">0 회</p>
+            <span class="stat-sub">운동 추가 버튼으로 기록</span>
+          </div>
+        </div>
+        <div class="progress-panel">
+          <div class="progress-meta">
+            <span>칼로리 진행도</span>
+            <span id="progress-label">0 / 800 kcal</span>
+          </div>
+          <div class="progress-track"><span class="progress-fill" id="progress-fill"></span></div>
+        </div>
+      </div>
+
+      <div class="chart-panel card">
+        <div class="panel-header">
+          <div>
+            <p class="panel-title">운동 비율</p>
+            <p class="panel-sub">종목별 소모 칼로리를 확인하세요.</p>
+          </div>
+          <button type="button" class="ghost-btn small" onclick="openActivityModal()">추가</button>
+        </div>
+        <div class="chart-placeholder">
+          <canvas id="act-donut" width="240" height="240" aria-label="운동 비율 차트"></canvas>
+        </div>
+        <div class="legend">
+          <span><span class="dot sports"></span>스포츠</span>
+          <span><span class="dot cardio"></span>유산소</span>
+          <span><span class="dot strength"></span>근력</span>
+          <span><span class="dot stretch"></span>스트레칭</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="log-panel card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">운동 기록</p>
+          <p class="panel-sub">추가/삭제 후 새로고침 없이 바로 반영됩니다.</p>
+        </div>
+        <button class="ghost-btn small" type="button" onclick="openActivityModal()">운동 추가</button>
+      </div>
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>운동명</th>
+              <th>분류</th>
+              <th>시간</th>
+              <th>칼로리</th>
+              <th>강도</th>
+              <th>삭제</th>
+            </tr>
+          </thead>
+          <tbody id="activity-log-body">
+            <tr class="empty-row"><td colspan="6">기록된 운동이 없습니다. 운동을 추가해보세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
   <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
   <jsp:include page="/WEB-INF/views/activity/tools/activityList.jsp"/>
   <jsp:include page="/WEB-INF/views/activity/tools/activityInsertModal.jsp"/>
+  <jsp:include page="/WEB-INF/views/activity/tools/activityDeleteModal.jsp"/>
+  <jsp:include page="/WEB-INF/views/activity/tools/activityToast.jsp"/>
 </body>
 
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
-		const activityBackdrop = document.getElementById('activity-list-backdrop');
-		
-		if (activityBackdrop) activityBackdrop.style.display = 'none';
-		
-		
-		/* document.querySelector('add-btn-lg'). */
-	})
+  let actCurrentDate = null;
+  const actGoals = { minutes: 90, kcal: 800 };
+  let actDonutChart = null;
+  let actLogs = [];
+  const activityTypeLabel = { 'SPORTS': '스포츠', 'WEIGHT': '근력', 'CARDIO': '유산소', 'STRETCH': '스트레칭' };
+
+  const safeStr = (v, fallback = '') => {
+    if (v === null || v === undefined) return fallback;
+    if (typeof v === 'boolean') return fallback;
+    const s = String(v).trim();
+    return s.length ? s : fallback;
+  };
+  const safeNum = (v, fallback = 0) => {
+    const n = Number(v);
+    return isNaN(n) ? fallback : n;
+  };
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function getTodayIso() {
+    const d = new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+  function formatDisplay(d) {
+    return d.getFullYear() + '.' + pad2(d.getMonth() + 1) + '.' + pad2(d.getDate());
+  }
+  function setActDates(baseDate) {
+    const target = baseDate ? new Date(baseDate) : new Date();
+    const prev = new Date(target); prev.setDate(target.getDate() - 1);
+    const next = new Date(target); next.setDate(target.getDate() + 1);
+    document.getElementById('act-date-prev').textContent = formatDisplay(prev);
+    document.getElementById('act-date-today').textContent = formatDisplay(target);
+    document.getElementById('act-date-next').textContent = formatDisplay(next);
+    document.getElementById('act-summary-date').textContent = formatDisplay(target);
+    return target.getFullYear() + '-' + pad2(target.getMonth() + 1) + '-' + pad2(target.getDate());
+  }
+
+  function renderLogTable(logs = []) {
+    const tbody = document.getElementById('activity-log-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!logs.length) {
+      const tr = document.createElement('tr');
+      tr.className = 'empty-row';
+      const td = document.createElement('td');
+      td.colSpan = 6;
+      td.textContent = '기록된 운동이 없습니다. 운동을 추가해보세요.';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+    logs.forEach((log) => {
+      const display = (v) => {
+        if (v === null || v === undefined || v === '' || v === false || v === true) return '-';
+        const s = String(v).trim();
+        return s.length ? s : '-';
+      };
+      const tr = document.createElement('tr');
+      const name = display(log.name);
+      const type = display(log.type);
+      const minutesVal = display(log.minutes);
+      const kcalVal = display(log.kcal);
+      const intensity = display(log.intensityLabel);
+      const logId = log.logId || '';
+      const html =
+        '<td>' + name + '</td>' +
+        '<td>' + type + '</td>' +
+        '<td>' + minutesVal + (minutesVal === '-' ? '' : ' 분') + '</td>' +
+        '<td>' + kcalVal + (kcalVal === '-' ? '' : ' kcal') + '</td>' +
+        '<td>' + intensity + '</td>' +
+        '<td><button class="ghost-btn tiny" type="button" data-log-id="' + logId + '">삭제</button></td>';
+      tr.innerHTML = html;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('button[data-log-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-log-id');
+        if (!id) return;
+        openActivityDeleteModal(id);
+      });
+    });
+  }
+
+  function renderSummary(totals = {}) {
+    const totalMinutes = Number(totals.totalMinutes) || 0;
+    const totalKcal = Number(totals.totalKcal) || 0;
+    const count = Number(totals.count) || 0;
+    document.getElementById('total-minutes').textContent = totalMinutes + ' 분';
+    document.getElementById('total-kcal').textContent = totalKcal + ' kcal';
+    document.getElementById('total-count').textContent = count + ' 회';
+    const goalKcal = actGoals.kcal || 800;
+    const pct = goalKcal > 0 ? Math.min(100, Math.round((totalKcal / goalKcal) * 100)) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = totalKcal + ' / ' + goalKcal + ' kcal';
+  }
+
+  function renderDonut(logs = []) {
+    const ctx = document.getElementById('act-donut');
+    if (!ctx || !window.Chart) return;
+    const typeOrder = ['스포츠', '유산소', '근력', '스트레칭'];
+    const colors = ['#2f80ff', '#ff9fb2', '#8b9bff', '#ffce73'];
+    const totals = { '스포츠': 0, '유산소': 0, '근력': 0, '스트레칭': 0 };
+    logs.forEach((log) => {
+      const t = (log.type || '').trim();
+      if (totals[t] !== undefined) {
+        totals[t] += Number(log.kcal) || 0;
+      }
+    });
+    const dataArr = typeOrder.map((t) => totals[t] || 0);
+    const hasData = dataArr.some((v) => v > 0);
+    const safeData = hasData ? dataArr : [1,1,1,1];
+    const cfg = {
+      type: 'doughnut',
+      data: {
+        labels: typeOrder,
+        datasets: [{
+          data: safeData,
+          backgroundColor: colors,
+          borderColor: '#f7f8fb',
+          borderWidth: 3,
+          hoverOffset: 8,
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: { legend: { display: false } }
+      }
+    };
+    if (actDonutChart) {
+      actDonutChart.data.datasets[0].data = safeData;
+      actDonutChart.update();
+    } else {
+      actDonutChart = new Chart(ctx, cfg);
+    }
+  }
+
+  function formatIntensityLabel(val) {
+    const n = Number(val);
+    if (n <= 0.85) return '약하게';
+    if (n >= 1.2) return '강하게';
+    return '보통';
+  }
+
+  async function loadActivityLogs(dateStr) {
+    const safeDate = dateStr || getTodayIso();
+    try {
+      const res = await fetch('/activity/logs?date=' + encodeURIComponent(safeDate));
+      if (!res.ok) throw new Error('logs failed');
+      const json = await res.json();
+      const logs = json.logs || [];
+      actLogs = logs.map((l) => {
+        const typeCode = safeStr(l.activityType || l.type, '').toUpperCase();
+        const typeLabel = activityTypeLabel[typeCode] || safeStr(l.activityType || l.type, '-');
+        const minutes = safeNum(l.durationMin || l.minutes, 0);
+        const kcal = safeNum(l.calories || l.kcal, 0);
+        const intensityVal = l.intensityFactor != null ? safeNum(l.intensityFactor, 1) : safeNum(l.intensity, 1);
+        return {
+          logId: l.logId,
+          name: safeStr(l.activityName || l.name, '이름 없음'),
+          type: typeLabel || '-',
+          minutes,
+          kcal,
+          intensity: intensityVal,
+          intensityLabel: formatIntensityLabel(intensityVal)
+        };
+      });
+      renderLogTable(actLogs);
+    } catch (err) {
+      console.error('load logs failed', err);
+      actLogs = [];
+      renderLogTable(actLogs);
+    }
+  }
+
+  async function loadActivitySummary(dateStr) {
+    const safeDate = dateStr || getTodayIso();
+    try {
+      const res = await fetch('/activity/summary?date=' + encodeURIComponent(safeDate));
+      if (!res.ok) throw new Error('summary failed');
+      const json = await res.json();
+      const totals = json.totals || {};
+      const totalMinutes = Number(totals.totalMinutes) || 0;
+      const totalKcal = Number(totals.totalKcal) || 0;
+      const count = Number(totals.count) || 0;
+      document.getElementById('total-minutes').textContent = totalMinutes + ' 분';
+      document.getElementById('total-kcal').textContent = totalKcal + ' kcal';
+      document.getElementById('total-count').textContent = count + ' 회';
+      const goalKcal = actGoals.kcal || 800;
+      const pct = goalKcal > 0 ? Math.min(100, Math.round((totalKcal / goalKcal) * 100)) : 0;
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = totalKcal + ' / ' + goalKcal + ' kcal';
+      const byType = json.byType || [];
+      const merged = byType.map(t => ({
+        name: t.activityType || '',
+        type: t.activityType || '',
+        minutes: 0,
+        kcal: t.kcal || 0,
+        intensity: '-'
+      }));
+      renderDonut(merged);
+    } catch (err) {
+      console.error('load summary failed', err);
+      renderSummary({});
+      renderDonut([]);
+    }
+  }
+
+  async function deleteLog(logId) {
+    try {
+      const res = await fetch('/activity/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logIds: [logId] })
+      });
+      if (!res.ok) throw new Error('delete failed');
+      await loadActivityLogs(actCurrentDate || getTodayIso());
+      await loadActivitySummary(actCurrentDate || getTodayIso());
+      showActivityToast('삭제되었습니다.');
+    } catch (err) {
+      console.error('delete log failed', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const picker = document.getElementById('act-date-picker');
+    actCurrentDate = setActDates();
+    if (picker) picker.value = actCurrentDate;
+    loadActivityLogs(actCurrentDate);
+    loadActivitySummary(actCurrentDate);
+
+    document.getElementById('act-calendar-btn')?.addEventListener('click', () => picker && picker.showPicker && picker.showPicker());
+    picker?.addEventListener('change', (e) => {
+      const val = e.target.value || getTodayIso();
+      actCurrentDate = setActDates(val);
+      loadActivityLogs(actCurrentDate);
+      loadActivitySummary(actCurrentDate);
+    });
+
+    const moveDate = (offset) => {
+      const base = actCurrentDate ? new Date(actCurrentDate) : new Date();
+      base.setDate(base.getDate() + offset);
+      const iso = base.getFullYear() + '-' + pad2(base.getMonth() + 1) + '-' + pad2(base.getDate());
+      if (picker) picker.value = iso;
+      actCurrentDate = setActDates(iso);
+      loadActivityLogs(actCurrentDate);
+      loadActivitySummary(actCurrentDate);
+    };
+    document.getElementById('act-date-prev-btn')?.addEventListener('click', () => moveDate(-1));
+    document.getElementById('act-date-next-btn')?.addEventListener('click', () => moveDate(1));
+  });
 </script>
 </html>
 

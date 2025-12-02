@@ -17,12 +17,21 @@ const PostNotice = () => {
   const [files, setFiles] = useState([]);
   const [filePreviews, setFilePreviews] = useState([]);
   const [modal, setModal] = useState({ open: false, status: "confirm" });
+  const [bannerToggle, setBannerToggle] = useState(false);
+  const [bannerTitle, setBannerTitle] = useState("");
+  const [bannerFile, setBannerFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleFiles = (e) => {
     const fileList = Array.from(e.target.files || []);
     setFiles(fileList);
     setFilePreviews(fileList.map((f) => ({ name: f.name, url: URL.createObjectURL(f) })));
+  };
+  const handleBannerFile = (e) => {
+    const f = e.target.files?.[0];
+    setBannerFile(f || null);
+    setBannerPreview(f ? URL.createObjectURL(f) : "");
   };
 
   const resetForm = () => {
@@ -33,6 +42,10 @@ const PostNotice = () => {
     setContent("");
     setFiles([]);
     setFilePreviews([]);
+    setBannerToggle(false);
+    setBannerTitle("");
+    setBannerFile(null);
+    setBannerPreview("");
     setErrors({});
   };
 
@@ -44,6 +57,23 @@ const PostNotice = () => {
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const dd = String(d.getDate()).padStart(2, "0");
     return `${y}.${m}.${dd}`;
+  };
+
+  const uploadBanner = async (noticeNo, file, title, enabled) => {
+    if (!noticeNo || !file || !enabled) return;
+    try {
+      const form = new FormData();
+      form.append("bannerTitle", title || "");
+      form.append("bannerYn", enabled ? "Y" : "N");
+      form.append("file", file);
+      await fetch(`${API_BASE}/api/admin/notices/${noticeNo}/banner`, {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("배너 업로드 실패", err);
+    }
   };
 
   const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
@@ -71,6 +101,9 @@ const PostNotice = () => {
         startDate: n.eventStart ? normalizeDate(n.eventStart) : undefined,
         endDate: n.eventEnd ? normalizeDate(n.eventEnd) : undefined,
         content: n.noticeContent,
+        bannerYn: n.bannerYn === "Y" ? "Y" : "N",
+        bannerTitle: n.bannerTitle || "",
+        bannerImgPath: resolveUrl(n.bannerImgPath || ""),
         images: Array.isArray(n.images)
           ? n.images.map((img) => ({ ...img, imgPath: resolveUrl(img.imgPath) }))
           : [],
@@ -143,6 +176,9 @@ const PostNotice = () => {
           credentials: "include",
         });
       }
+      if (bannerToggle && bannerFile && created.noticeNo) {
+        await uploadBanner(created.noticeNo, bannerFile, bannerTitle, bannerToggle);
+      }
       setModal({ open: true, status: "done" });
       resetForm();
       setTimeout(() => {
@@ -184,19 +220,23 @@ const PostNotice = () => {
   };
 
   const handleUpdatePost = async (post) => {
-    await fetch(`${API_BASE}/api/admin/notices/${post.id}`, {
+    const payload = {
+      noticeTitle: post.title,
+      noticeContent: post.content || "",
+      noticeCategory: post.category || "공지",
+      eventStart: post.startDate || null,
+      eventEnd: post.endDate || null,
+    };
+    const res = await fetch(`${API_BASE}/api/admin/notices/${post.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({
-        noticeTitle: post.title,
-        noticeContent: post.content || "",
-        category: post.category,
-        evStartAt: post.startDate || null,
-        evEndDate: post.endDate || null,
-      }),
+      body: JSON.stringify(payload),
     });
-    fetchNotices();
+    if (!res.ok) {
+      throw new Error(`update failed ${res.status}`);
+    }
+    await fetchNotices();
   };
 
   const handleDeletePost = async (id) => {
@@ -222,6 +262,7 @@ const PostNotice = () => {
         onUploadImages={handleUploadImages}
         onUpdatePost={handleUpdatePost}
         onDeletePost={handleDeletePost}
+        onUploadBanner={uploadBanner}
       />
 
       <div className="notice-compose-card">
@@ -316,6 +357,40 @@ const PostNotice = () => {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="banner-section">
+          <div className="banner-header">
+            <label>공지사항 배너 노출</label>
+            <div
+              className={`toggle ${bannerToggle ? "on" : "off"}`}
+              onClick={() => setBannerToggle((v) => !v)}
+            >
+              <span className="knob" />
+            </div>
+          </div>
+          <div className="banner-fields">
+            <div className="compose-field">
+              <label>배너 제목</label>
+              <input
+                type="text"
+                placeholder="배너에 표시할 제목"
+                value={bannerTitle}
+                onChange={(e) => setBannerTitle(e.target.value)}
+              />
+            </div>
+            <div className="compose-field">
+              <label>배너 이미지</label>
+              <input type="file" accept="image/*" onChange={handleBannerFile} />
+              {bannerFile && <p className="banner-file-name">{bannerFile.name}</p>}
+              {bannerPreview && (
+                <div className="image-thumb" style={{ marginTop: "6px" }}>
+                  <img src={bannerPreview} alt="배너 미리보기" />
+                </div>
+              )}
+            </div>
+          </div>
+          <p className="muted small">배너 업로드 경로: uploads/notice/{"{userid}"}/banner/</p>
         </div>
       </div>
 

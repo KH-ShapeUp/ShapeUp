@@ -39,8 +39,8 @@ public class DietServiceImpl implements DietService{
 	}
 
 	@Override
-	public Map<String, Double> sumKcalByDate(String dietDate) {
-		List<Map<String, Object>> rows = dMapper.sumKcalByDate(dietDate);
+	public Map<String, Double> sumKcalByDate(String dietDate, int userNo) {
+		List<Map<String, Object>> rows = dMapper.sumKcalByDate(dietDate, userNo);
 		Map<String, Double> result = new HashMap<>();
 		if (rows != null) {
 			for (Map<String, Object> row : rows) {
@@ -61,8 +61,8 @@ public class DietServiceImpl implements DietService{
 	}
 
 	@Override
-	public Map<String, Double> sumNutritionTotalsByDate(String dietDate) {
-		Map<String, Object> row = dMapper.sumNutritionTotalsByDate(dietDate);
+	public Map<String, Double> sumNutritionTotalsByDate(String dietDate, int userNo) {
+		Map<String, Object> row = dMapper.sumNutritionTotalsByDate(dietDate, userNo);
 		Map<String, Double> result = new HashMap<>();
 		if (row != null) {
 			result.put("kcal", toDouble(row.get("totalKcal"), row.get("TOTALKCAL")));
@@ -71,6 +71,17 @@ public class DietServiceImpl implements DietService{
 			result.put("fat", toDouble(row.get("totalFat"), row.get("TOTALFAT")));
 		}
 		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> findDietItems(String dietDate, String dietType, int userNo) {
+		return dMapper.selectDietItems(dietDate, dietType, userNo);
+	}
+
+	@Override
+	public int deleteDietItems(List<Integer> dietNos, int userNo) {
+		if (dietNos == null || dietNos.isEmpty()) return 0;
+		return dMapper.deleteDietItems(dietNos, userNo);
 	}
 
 	private Double toDouble(Object primary, Object secondary) {

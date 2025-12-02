@@ -47,4 +47,6 @@ public interface NoticeMapper {
 	int deleteNotice(int noticeNo);
 
 	List<java.util.Map<String, Object>> selectNoticeTrend();
+
+	List<Notice> selectLatestNotices(@Param("limit") int limit);
 }

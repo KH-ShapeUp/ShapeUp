@@ -121,6 +121,11 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
+	public java.util.List<Notice> selectLatestNotices(int limit) {
+		return noticeMapper.selectLatestNotices(limit);
+	}
+
+	@Override
 	public List<Notice> selectNoticeList(int currentPage, int boardCountPerPage,
 										String category, String searchType, String searchKeyword) {
 		int startRow = (currentPage - 1) * boardCountPerPage + 1;
@@ -139,4 +144,3 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 }
-

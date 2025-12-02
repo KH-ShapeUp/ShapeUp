@@ -10,6 +10,54 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <link rel="stylesheet" href="../../resources/css/index.css">
+<style>
+/* 홈 공지 카드 전용 정렬 */
+.home-notice .notice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  align-items: flex-start;
+}
+.home-notice .notice-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-bottom: 4px;
+}
+.home-notice .pill {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 78px;
+}
+.home-notice .notice-writeDate {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111;
+}
+.home-notice .notice-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+.home-notice .notice-middle h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+.home-notice .notice-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+</style>
 </head>
 <body>
 	<div class="container">
@@ -19,31 +67,7 @@
 			<div class="ad-wrapper">
 				<div class="swiper mySwiper">
 					<div class="swiper-wrapper">
-						<div class="swiper-slide">
-							<a href="#"> <img alt="광고이미지1"
-								src="/resources/img/ad-img1.jpg" class="ad-img">
-							</a>
-						</div>
-						<div class="swiper-slide">
-							<a href="#"> <img class="ad-img" alt="광고이미지2"
-								src="/resources/img/ad-img2.jpg"></img>
-							</a>
-						</div>
-						<div class="swiper-slide">
-							<a href="#"> <img class="ad-img" alt="광고이미지3"
-								src="/resources/img/ad-img3.jpg"></img>
-							</a>
-						</div>
-						<div class="swiper-slide">
-							<a href="#"> <img class="ad-img" alt="광고이미지4"
-								src="/resources/img/ad-img4.jpg"></img>
-							</a>
-						</div>
-						<div class="swiper-slide">
-							<a href="#"> <img class="ad-img" alt="광고이미지5"
-								src="/resources/img/ad-img5.jpg"></img>
-							</a>
-						</div>
+						<!-- 동적 배너 슬라이드가 주입됩니다 -->
 					</div>
 					<div class="swiper-button-next"></div>
 					<div class="swiper-button-prev"></div>
@@ -71,8 +95,8 @@
 					<!-- 로그인 안했을 때 식단 표시 끝 -->
 					<!-- 아침 -->
 					<div class="user-diet-record"
-						style="border-top: 4px solid #F2B84B;">
-						<a href="morning">
+						style="border-top: 4px solid #F2B84B;" data-diet-type="아침">
+						<a href="/diet">
 							<div class="title">
 								<i class="fa-solid fa-mug-saucer"></i>
 								<div class="title-info">
@@ -82,7 +106,7 @@
 							</div>
 							<div class="info">
 								<div class="cal">섭취칼로리</div>
-								<h2 class="cal-num">450</h2>
+								<h2 class="cal-num" id="home-cal-breakfast">0</h2>
 							</div>
 							<div class="progress" id="progressWrapper-m">
 								<div class="progress-out" id="progressOut-m">
@@ -95,8 +119,8 @@
 
 					<!-- 점심 -->
 					<div class="user-diet-record"
-						style="border-top: 4px solid #2E8CFF;">
-						<a href="lunch">
+						style="border-top: 4px solid #2E8CFF;" data-diet-type="점심">
+						<a href="/diet">
 							<div class="title">
 								<i class="fa-solid fa-utensils"></i>
 								<div class="title-info">
@@ -106,7 +130,7 @@
 							</div>
 							<div class="info">
 								<div class="cal">섭취칼로리</div>
-								<h2 class="cal-num">650</h2>
+								<h2 class="cal-num" id="home-cal-lunch">0</h2>
 							</div>
 							<div class="progress" id="progressWrapper-l">
 								<div class="progress-out" id="progressOut-l">
@@ -119,8 +143,8 @@
 
 					<!-- 저녁 -->
 					<div class="user-diet-record"
-						style="border-top: 4px solid #F25C5C;">
-						<a href="dinner">
+						style="border-top: 4px solid #F25C5C;" data-diet-type="저녁">
+						<a href="/diet">
 							<div class="title">
 								<i class="fa-solid fa-bowl-food"></i>
 								<div class="title-info">
@@ -130,7 +154,7 @@
 							</div>
 							<div class="info">
 								<div class="cal">섭취칼로리</div>
-								<h2 class="cal-num">350</h2>
+								<h2 class="cal-num" id="home-cal-dinner">0</h2>
 							</div>
 							<div class="progress" id="progressWrapper-d">
 								<div class="progress-out" id="progressOut-d">
@@ -143,8 +167,8 @@
 
 					<!-- 기타 -->
 					<div class="user-diet-record"
-						style="border-top: 4px solid #C58C5D;">
-						<a href="other">
+						style="border-top: 4px solid #C58C5D;" data-diet-type="기타">
+						<a href="/diet">
 							<div class="title">
 								<i class="fa-solid fa-cookie-bite"></i>
 								<div class="title-info">
@@ -154,7 +178,7 @@
 							</div>
 							<div class="info">
 								<div class="cal">섭취칼로리</div>
-								<h2 class="cal-num">50</h2>
+								<h2 class="cal-num" id="home-cal-etc">0</h2>
 							</div>
 							<div class="progress" id="progressWrapper-o">
 								<div class="progress-out" id="progressOut-o">
@@ -464,123 +488,13 @@
 					<!-- 공지 사항 -->
 					<div class="post-left-notice">
 						<div class="goal-wrapper-title">
-							<span>공지사항 & 이벤트</span> <a href="/matching" class="all-page-btn"
+							<span>공지사항 & 이벤트</span> <a href="/notice/list" class="all-page-btn"
 								id="notice-all-list-btn">더보기 <i
 								class="fa-solid fa-arrow-right"></i>
 							</a>
 						</div>
-						<div class="notice-content">
-							<a href="#" class="notice-ahref">
-								<div class="notice-card">
-									<div class="notice-top">
-										<span class="notice-category-e">이벤트</span> <span
-											class="notice-writeDate">2025.10.08</span>
-									</div>
-									<div class="notice-main">
-										<div class="notice-middle">
-											<h4>
-												시스템 정기 점검 안내 <span class="notice-comment">(30)</span>
-											</h4>
-										</div>
-										<div class="notice-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a> <a href="#" class="notice-ahref">
-								<div class="notice-card">
-									<div class="notice-top">
-										<span class="notice-category-e">이벤트</span> <span
-											class="notice-writeDate">2025.10.08</span>
-									</div>
-									<div class="notice-main">
-										<div class="notice-middle">
-											<h4>
-												시스템 정기 점검 안내 <span class="notice-comment">(30)</span>
-											</h4>
-										</div>
-										<div class="notice-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a> <a href="#" class="notice-ahref">
-								<div class="notice-card">
-									<div class="notice-top">
-										<span class="notice-category-c">제휴</span> <span
-											class="notice-writeDate">2025.10.08</span>
-									</div>
-									<div class="notice-main">
-										<div class="notice-middle">
-											<h4>
-												시스템 정기 점검 안내 <span class="notice-comment">(30)</span>
-											</h4>
-										</div>
-										<div class="notice-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a> <a href="#" class="notice-ahref">
-								<div class="notice-card">
-									<div class="notice-top">
-										<span class="notice-category-n">공지</span> <span
-											class="notice-writeDate">2025.10.08</span>
-									</div>
-									<div class="notice-main">
-										<div class="notice-middle">
-											<h4>
-												시스템 정기 점검 안내 <span class="notice-comment">(30)</span>
-											</h4>
-										</div>
-										<div class="notice-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a> <a href="#" class="notice-ahref">
-								<div class="notice-card">
-									<div class="notice-top">
-										<span class="notice-category-d">징계</span> <span
-											class="notice-writeDate">2025.10.08</span>
-									</div>
-									<div class="notice-main">
-										<div class="notice-middle">
-											<h4>
-												시스템 정기 점검 안내 <span class="notice-comment">(30)</span>
-											</h4>
-										</div>
-										<div class="notice-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</a>
+						<div class="notice-content home-notice" id="home-notice-list">
+							<!-- 최신 공지 5개가 동적으로 렌더링됩니다 -->
 						</div>
 					</div>
 
@@ -716,6 +630,144 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 	<script>
+		const isHomeDietLoggedIn = ${empty sessionScope.userNo ? 'false' : 'true'};
+		const HOME_MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
+
+		function pad2(n) { return (n < 10 ? '0' : '') + n; }
+		function getTodayIso() {
+			const d = new Date();
+			return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+		}
+
+		async function loadHomeDietSummary() {
+			const typeMap = {
+				'아침': { calEl: document.getElementById('home-cal-breakfast'), progressEl: document.getElementById('progressIn-m') },
+				'점심': { calEl: document.getElementById('home-cal-lunch'), progressEl: document.getElementById('progressIn-l') },
+				'저녁': { calEl: document.getElementById('home-cal-dinner'), progressEl: document.getElementById('progressIn-d') },
+				'기타': { calEl: document.getElementById('home-cal-etc'), progressEl: document.getElementById('progressIn-o') },
+			};
+
+			const resetAll = () => {
+				Object.values(typeMap).forEach(({ calEl, progressEl }) => {
+					if (calEl) calEl.textContent = '0';
+					if (progressEl) progressEl.style.width = '0%';
+				});
+			};
+
+			if (!isHomeDietLoggedIn) {
+				resetAll();
+				return;
+			}
+
+			const safeDate = getTodayIso();
+			resetAll();
+
+			try {
+				const res = await fetch('/diet/summary?date=' + encodeURIComponent(safeDate));
+				if (!res.ok) throw new Error('summary failed');
+				const json = await res.json();
+				const data = json.data || {};
+				const totals = json.totals || {};
+				const totalKcal = Number(totals.kcal || totals.totalKcal) || Object.values(data).reduce((acc, cur) => acc + (Number(cur) || 0), 0);
+
+				Object.entries(data).forEach(([rawType, val]) => {
+					const type = (rawType || '').trim();
+					const target = typeMap[type];
+					if (!target) return;
+					const kcal = Number(val) || 0;
+					if (target.calEl) target.calEl.textContent = kcal.toString();
+					if (target.progressEl) {
+						const goal = HOME_MEAL_GOALS[type];
+						let pct = 0;
+						if (goal && goal > 0) {
+							pct = Math.min(100, Math.round((kcal / goal) * 100));
+						} else if (totalKcal > 0) {
+							pct = Math.min(100, Math.round((kcal / totalKcal) * 100));
+						} else if (kcal > 0) {
+							pct = 100;
+						}
+						target.progressEl.style.width = pct + '%';
+					}
+				});
+			} catch (err) {
+				console.error('home diet summary load failed', err);
+				resetAll();
+			}
+		}
+
+		function formatDate(ts) {
+			if (!ts) return '';
+			try {
+				const d = new Date(ts);
+				if (!Number.isNaN(d.getTime())) {
+					return d.getFullYear() + '.' + pad2(d.getMonth() + 1) + '.' + pad2(d.getDate());
+				}
+				return String(ts).split('T')[0] || '';
+			} catch {
+				return '';
+			}
+		}
+
+		async function loadHomeNotice() {
+			const wrap = document.getElementById('home-notice-list');
+			if (!wrap) return;
+			wrap.innerHTML = '';
+			try {
+				const res = await fetch('/api/notices/latest?limit=5');
+				if (!res.ok) throw new Error('latest notice fail');
+				const json = await res.json();
+				const items = Array.isArray(json.items) ? json.items : [];
+				if (!items.length) {
+					wrap.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>';
+					return;
+				}
+				items.forEach((n) => {
+					const a = document.createElement('a');
+					a.className = 'notice-ahref';
+					a.href = '/notice/detail?noticeNo=' + n.noticeNo;
+					const card = document.createElement('div');
+					card.className = 'notice-card';
+					const top = document.createElement('div');
+					top.className = 'notice-top';
+					const catSpan = document.createElement('span');
+					const cat = n.noticeCategory || '공지';
+					catSpan.className = 'pill pill-' + cat;
+					catSpan.textContent = cat;
+					const dateSpan = document.createElement('span');
+					dateSpan.className = 'notice-writeDate';
+					dateSpan.textContent = formatDate(n.createdAt) || '';
+					top.appendChild(catSpan);
+					top.appendChild(dateSpan);
+
+					const main = document.createElement('div');
+					main.className = 'notice-main';
+					const mid = document.createElement('div');
+					mid.className = 'notice-middle';
+					const h4 = document.createElement('h4');
+					const viewCount = n.viewCount != null ? n.viewCount : 0;
+					h4.textContent = n.noticeTitle || '제목 없음';
+					mid.appendChild(h4);
+
+					const icon = document.createElement('div');
+					icon.className = 'notice-icon';
+					const views = document.createElement('div');
+					views.innerHTML = '<i class="fa-solid fa-eye"></i> <span>' + viewCount + '</span>';
+					icon.appendChild(views);
+
+					main.appendChild(mid);
+					main.appendChild(icon);
+
+					card.appendChild(top);
+					card.appendChild(main);
+					a.appendChild(card);
+					wrap.appendChild(a);
+				});
+			} catch (err) {
+				console.error(err);
+				wrap.innerHTML = '<p class="empty">공지 로드에 실패했습니다.</p>';
+			}
+		}
+
 		function macthingApplyBtn(matchingNo, userNo) {
 			Swal.fire({
 				title: '해당 매칭을 신청하시겠습니까?',
@@ -832,33 +884,137 @@
 			});
 		}
 
-		document.addEventListener('DOMContentLoaded', function() {
-            var swiper = new Swiper(".mySwiper", {
-                direction: "horizontal", 
-                loop: true,
-                autoplay: {
-                    delay: 1000, 
-                    disableOnInteraction: false,
-                },
-                pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                },
-            });
-            
-            const sliderEl = document.querySelector('.mySwiper');
-            // 마우스올렸을때 정지
-            sliderEl.addEventListener('mouseenter', () => {
-            	swiper.autoplay.stop();
-            });
-            // 마우스내렸을때 실행
-            sliderEl.addEventListener('mouseleave', () => {
-            	swiper.autoplay.start();
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.querySelector('.mySwiper .swiper-wrapper');
+            let swiperInstance = null;
+
+            const origin = window.location.origin || '';
+            const createSlides = (items) => {
+              if (!wrapper) return 0;
+              wrapper.innerHTML = '';
+              const resolveSrc = (path) => {
+                if (!path || path === 'false') return '';
+                if (typeof path !== 'string') return '';
+                if (path.startsWith('http')) return path;
+                const normalized = path.startsWith('/') ? path : '/' + path;
+                return origin + normalized;
+              };
+              const data = Array.isArray(items) ? items : [];
+              let added = 0;
+              data.forEach((b) => {
+                let src = resolveSrc(b.imgPath);
+                const title = (!b.bannerTitle || String(b.bannerTitle).toLowerCase() === 'false') ? '배너' : b.bannerTitle;
+                if (!src) {
+                  src = origin + '/resources/img/ad-img1.gif';
+                }
+                const noticeStr = (b.noticeNo ?? '').toString().trim();
+                const hasNotice = noticeStr !== '' && noticeStr.toLowerCase() !== 'false';
+                const link = hasNotice ? origin + "/notice/detail?noticeNo=" + encodeURIComponent(noticeStr) : '#';
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                const anchor = document.createElement('a');
+                anchor.href = link;
+                anchor.setAttribute('data-notice', hasNotice ? noticeStr : '');
+                if (!hasNotice) {
+                  anchor.addEventListener('click', (e) => e.preventDefault());
+                } else {
+                  anchor.addEventListener('click', function(e) {
+                    const n = this.getAttribute('data-notice');
+                    if (!n) {
+                      e.preventDefault();
+                      return;
+                    }
+                    this.href = origin + "/notice/detail?noticeNo=" + encodeURIComponent(n);
+                  });
+                }
+                const img = document.createElement('img');
+                img.className = 'ad-img';
+                img.setAttribute('data-src', src);
+                img.alt = title;
+                img.src = src;
+                img.addEventListener('error', function() {
+                  console.error('banner img load fail', this.getAttribute('data-src'), '-> fallback');
+                  this.onerror = null;
+                  this.src = origin + '/resources/img/ad-img1.gif';
+                });
+                anchor.appendChild(img);
+                slide.appendChild(anchor);
+                wrapper.appendChild(slide);
+                console.log('slide add', { noticeNo: b.noticeNo, noticeStr, link: anchor.href, src: img.src, title });
+                added += 1;
+              });
+              if (added === 0) {
+                const defaults = [
+                  origin + '/resources/img/ad-img1.gif',
+                  origin + '/resources/img/ad-img2.jpg',
+                  origin + '/resources/img/ad-img3.jpg',
+                  origin + '/resources/img/ad-img4.jpg',
+                  origin + '/resources/img/ad-img5.jpg',
+                ];
+                console.log('using default slides', defaults);
+                defaults.forEach((src) => {
+                  const slide = document.createElement('div');
+                  slide.className = 'swiper-slide';
+                  const a = document.createElement('a');
+                  a.href = '#';
+                  const img = document.createElement('img');
+                  img.className = 'ad-img';
+                  img.src = src;
+                  img.alt = '배너';
+                  a.appendChild(img);
+                  slide.appendChild(a);
+                  wrapper.appendChild(slide);
+                });
+                added = defaults.length;
+              }
+              if (wrapper.children.length === 1) {
+                wrapper.appendChild(wrapper.children[0].cloneNode(true));
+              }
+              console.log('total slides after create', wrapper.children.length);
+              return wrapper.children.length;
+            };
+
+            const initSwiper = () => {
+              if (swiperInstance) return swiperInstance;
+              swiperInstance = new Swiper(".mySwiper", {
+                  direction: "horizontal",
+                  loop: true,
+                  autoplay: {
+                      delay: 1000,
+                      disableOnInteraction: false,
+                  },
+                  pagination: {
+                      el: ".swiper-pagination",
+                      clickable: true,
+                  },
+                  navigation: {
+                      nextEl: ".swiper-button-next",
+                      prevEl: ".swiper-button-prev",
+                  },
+              });
+              const sliderEl = document.querySelector('.mySwiper');
+              sliderEl.addEventListener('mouseenter', () => swiperInstance.autoplay.stop());
+              sliderEl.addEventListener('mouseleave', () => swiperInstance.autoplay.start());
+              return swiperInstance;
+            };
+
+            // 배너 불러오기 후 슬라이드 생성 -> Swiper 초기화
+            const apiBase = window.location.origin || '';
+            fetch(apiBase + '/api/banners/active')
+              .then(res => res.ok ? res.json() : [])
+              .then(banners => {
+                console.log('active banners', banners);
+                createSlides(banners);
+                initSwiper().update();
+              })
+              .catch(() => {
+                console.warn('banner fetch failed, using defaults');
+                createSlides([]);
+                initSwiper().update();
+              });
+
+            loadHomeDietSummary();
+            loadHomeNotice();
         });
 	</script>
 </body>

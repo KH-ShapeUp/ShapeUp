@@ -692,6 +692,7 @@
   flex-direction: column;
   gap: 14.5px;
   transition: all 0.15s ease;
+  font-weight: normal;
 }
 
 .notice-card:hover {
@@ -706,8 +707,10 @@
 .notice-top {
   display: flex;
   flex-direction: row;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
+  margin: 0 !important;
+  padding-left: 0;
 }
 
 /* 공지 사항 카테고리가 nomral 일 때 */
@@ -760,6 +763,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  font-weight: 300;
 }
 
 .notice-icon {
@@ -782,6 +786,7 @@
 
 .notice-middle h4 {
   padding-bottom: 5px;
+  font-weight: 300;
 }
 
 .notice-middle .notice-comment {
@@ -935,6 +940,23 @@
     cursor: not-allowed;
     pointer-events: none;
 }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  min-width: 78px;
+}
+.pill-공지, .pill-공지사항 { background: linear-gradient(90deg, #ff8b5f, #ff6262); }
+.pill-이벤트 { background: linear-gradient(90deg, #46c2ff, #2b6de2); }
+.pill-제휴, .pill-파트너 { background: linear-gradient(90deg, #7ce79b, #1fad6b); }
+.pill-징계 { background: linear-gradient(90deg, #6a6f7d, #414654); }
+.pill-default { background: #888; }
 
 @media screen and (max-width: 768px) {
   .main {
@@ -1034,4 +1056,6 @@
   .goal-card {
     padding: 15px;
   }
+
+  
 }

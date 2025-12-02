@@ -5,6 +5,7 @@
       <div class="header-top">
         <h3>음식 검색</h3>
         <div class="header-actions">
+          <button type="button" class="ghost-btn fasting-modal-btn" onclick="applyFastingFromList()">단식</button>
           <button type="button" class="ghost-btn" onclick="openCustomModalFromList()">직접 입력</button>
           <button type="button" class="close-btn" onclick="closeDietListModal()">✕</button>
         </div>
@@ -34,6 +35,8 @@
 <script>
   const dietListState = {
     selectedFoods: [],
+    existingFoods: [],
+    removedDietNos: [],
     listElement: null,
     dietType: '아침',
   };
@@ -70,6 +73,7 @@
     backdrop.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     applyLoginStateToDietModal();
+    loadExistingDietItems();
     if (!dietListState.listElement) {
       dietListState.listElement = document.getElementById('diet-list-container');
     }
@@ -91,6 +95,13 @@
     if (typeof openCustomModal === 'function') {
       openCustomModal();
     }
+  }
+
+  function applyFastingFromList() {
+    if (typeof window.toggleFastingByType === 'function') {
+      window.toggleFastingByType(dietListState.dietType || window.lastSelectedDietType || '기타');
+    }
+    closeDietListModal();
   }
 
   function renderFoodList(items = [], emptyMessage = '검색 결과가 없습니다') {
@@ -151,17 +162,29 @@
       const displayName = (food && food.name) ? String(food.name) : '선택 없음';
 
       const chip = document.createElement('div');
-      chip.className = 'selected-chip';
+      chip.className = 'selected-chip' + (food.existing ? ' existing-chip' : '');
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'chip-name';
       nameSpan.textContent = displayName;
+
+      if (food.existing) {
+        const badge = document.createElement('span');
+        badge.className = 'chip-badge';
+        badge.textContent = '기존';
+        chip.appendChild(badge);
+      }
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'chip-remove';
       removeBtn.textContent = '✕';
       removeBtn.addEventListener('click', () => {
+        if (food.existing && food.dietNo) {
+          if (!dietListState.removedDietNos.includes(food.dietNo)) {
+            dietListState.removedDietNos.push(food.dietNo);
+          }
+        }
         dietListState.selectedFoods.splice(index, 1);
         renderSelectedList();
       });
@@ -242,11 +265,52 @@
 
   async function submitSelectedFoods() {
     closeDietListModal();
-    if (!dietListState.selectedFoods.length) return;
+    const newFoods = dietListState.selectedFoods.filter(f => !f.existing);
+    const removed = dietListState.removedDietNos || [];
+    const hasDeletes = removed.length > 0;
+    const hasInserts = newFoods.length > 0;
+    if (!hasDeletes && !hasInserts) {
+      renderSelectedList();
+      return;
+    }
+
+    // 삭제 먼저
+    if (hasDeletes) {
+      try {
+        const resDel = await fetch('/diet/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dietNos: removed }),
+        });
+        if (resDel.status === 401) {
+          alert('로그인이 필요합니다.');
+          return;
+        }
+        if (!resDel.ok) throw new Error('삭제 실패');
+        if (!hasInserts) {
+          if (typeof refreshDietSummary === "function") {
+            refreshDietSummary();
+          }
+          loadExistingDietItems();
+          return;
+        }
+      } catch (err) {
+        console.error('식단 삭제 실패', err);
+        // 삭제 실패 시 저장 중단
+        return;
+      }
+    }
+
+    if (!hasInserts) {
+      dietListState.removedDietNos = [];
+      loadExistingDietItems();
+      return;
+    }
+
     const payload = {
       dietType: dietListState.dietType || '기타',
       dietDate: getSelectedDietDate(),
-      items: dietListState.selectedFoods.map((f) => ({
+      items: newFoods.map((f) => ({
         foodNames: f.name,
         name: f.name,
         foodCd: f.foodCd,
@@ -260,14 +324,53 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      if (res.status === 401) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
       if (!res.ok) throw new Error('저장 실패');
       dietListState.selectedFoods = [];
+      dietListState.removedDietNos = [];
       renderSelectedList();
       if (typeof refreshDietSummary === "function") {
         refreshDietSummary();
       }
+      loadExistingDietItems();
     } catch (err) {
       console.error('식단 저장 실패', err);
+    }
+  }
+
+  async function loadExistingDietItems() {
+    const date = getSelectedDietDate();
+    const type = dietListState.dietType || '기타';
+    const pendingNew = dietListState.selectedFoods.filter(f => !f.existing);
+    try {
+      const res = await fetch('/diet/items?date=' + encodeURIComponent(date) + '&type=' + encodeURIComponent(type));
+      if (!res.ok) throw new Error('load failed');
+      const json = await res.json();
+      const items = json.items || [];
+      const existingFoods = items.map((item) => ({
+        dietNo: item.dietNo,
+        name: item.foodNames || item.name || '이름 없음',
+        foodCd: item.foodCd || null,
+        kcal: Number(item.kcal) || 0,
+        carb: Number(item.carb) || 0,
+        protein: Number(item.protein) || 0,
+        fat: Number(item.fat) || 0,
+        servingSize: Number(item.amount || item.servingSize || 0) || 0,
+        existing: true,
+      }));
+      dietListState.existingFoods = existingFoods;
+      dietListState.selectedFoods = [...existingFoods, ...pendingNew];
+      dietListState.removedDietNos = [];
+      renderSelectedList();
+    } catch (err) {
+      console.error('기존 식단 불러오기 실패', err);
+      dietListState.selectedFoods = [...pendingNew];
+      dietListState.existingFoods = [];
+      dietListState.removedDietNos = [];
+      renderSelectedList();
     }
   }
 
@@ -301,5 +404,9 @@
   window.closeDietListModal = closeDietListModal;
   window.openCustomModalFromList = openCustomModalFromList;
   window.receiveDietFromInsert = receiveDietFromInsert;
-  window.setDietType = (type) => { dietListState.dietType = type || '기타'; };
+  window.setDietType = (type) => { 
+    const safeType = type || '기타';
+    dietListState.dietType = safeType;
+    window.lastSelectedDietType = safeType;
+  };
 </script>

@@ -1,0 +1,58 @@
+ .role-requests {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+}
+.role-requests__top {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 18px;
+}
+.pending-card, .detail-card, .completed-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 18px;
+}
+.section-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.muted { color: #6b7280; font-weight: 700; font-size: 0.95rem; }
+.count-pill { padding: 6px 10px; border-radius: 999px; background: #eef2ff; color: #1d4ed8; font-weight: 800; }
+.count-pill.alt { background: #ecfdf3; color: #16a34a; }
+.pending-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; max-height: 460px; overflow-y: auto; }
+.pending-item { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; cursor: pointer; }
+.pending-item.active { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.2); }
+.pending-item__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.pending-name { font-weight: 800; }
+.pending-meta { display: flex; flex-direction: column; gap: 2px; color: #6b7280; font-weight: 700; font-size: 0.95rem; }
+.detail-body { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.detail-row { display: flex; gap: 10px; }
+.detail-row label { flex: 0 0 90px; font-weight: 800; color: #374151; }
+.detail-row .value { flex: 1; padding: 10px; border-radius: 10px; background: #f9fafb; border: 1px solid #e5e7eb; font-weight: 700; }
+.detail-row .value.reason { min-height: 80px; }
+.detail-row .attach-link { color: #2563eb; font-weight: 800; text-decoration: underline; }
+.detail-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.btn-ghost, .btn-primary { border-radius: 10px; padding: 10px 16px; font-weight: 800; cursor: pointer; border: 1px solid #d1d5db; background: #fff; }
+.btn-primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+.btn-ghost { color: #374151; }
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+.role-table { width: 100%; border-collapse: collapse; }
+.role-table th, .role-table td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+.role-table tr:hover { background: #f9fafb; }
+.role-table tr.clickable { cursor: pointer; }
+.empty { text-align: center; color: #9ca3af; padding: 20px 0; }
+.role-badge { padding: 6px 10px; border-radius: 999px; font-weight: 800; font-size: 0.9rem; }
+.role-badge.pending { background: #fff7ed; color: #c2410c; }
+.role-badge.approved { background: #ecfdf3; color: #15803d; }
+.role-badge.rejected { background: #fef2f2; color: #b91c1c; }
+.role-modal { display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.35); z-index: 2000; position: fixed; inset: 0; }
+.role-modal__box { background: #fff; padding: 18px; border-radius: 12px; min-width: 280px; box-shadow: 0 12px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 10px; }
+.role-modal__box textarea { width: 100%; min-height: 80px; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px; resize: vertical; }
+.role-modal__actions { display: flex; justify-content: flex-end; gap: 10px; }
+.role-toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: rgba(17,24,39,0.9); color: #fff; padding: 12px 16px; border-radius: 12px; font-weight: 800; box-shadow: 0 10px 24px rgba(0,0,0,0.2); z-index: 2100; }
+
+.clickable { cursor: pointer; }
+
+@media (max-width: 1024px) {
+  .role-requests__top { grid-template-columns: 1fr; }
+}

@@ -38,6 +38,7 @@
 			COALESCE(SUM(KCAL),0) AS "totalKcal"
 		FROM DIET_TBL
 		WHERE DIET_DATE = #{dietDate}
+		AND USER_NO = #{userNo}
 		GROUP BY DIET_TYPE
 	</select>
 
@@ -59,5 +60,35 @@
 		FROM DIET_TBL d
 		LEFT JOIN FOOD_API_TBL f ON d.FOOD_CD = f.FOOD_CD
 		WHERE d.DIET_DATE = #{dietDate}
+		AND d.USER_NO = #{userNo}
 	</select>
+
+	<select id="selectDietItems" resultType="map">
+		SELECT
+			d.DIET_NO AS "dietNo",
+			d.DIET_DATE AS "dietDate",
+			d.DIET_TYPE AS "dietType",
+			d.FOOD_NAMES AS "foodNames",
+			d.FOOD_CD AS "foodCd",
+			COALESCE(d.AMOUNT, 0) AS "amount",
+			COALESCE(d.KCAL, 0) AS "kcal",
+			COALESCE(f.CARB,0) * (CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END) AS "carb",
+			COALESCE(f.PROTEIN,0) * (CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END) AS "protein",
+			COALESCE(f.FAT,0) * (CASE WHEN NVL(f.SERVING_SIZE,0) = 0 THEN NVL(d.AMOUNT,1) ELSE NVL(d.AMOUNT,0) / f.SERVING_SIZE END) AS "fat"
+		FROM DIET_TBL d
+		LEFT JOIN FOOD_API_TBL f ON d.FOOD_CD = f.FOOD_CD
+		WHERE d.DIET_DATE = #{dietDate}
+		AND d.DIET_TYPE = #{dietType}
+		AND d.USER_NO = #{userNo}
+		ORDER BY d.DIET_NO ASC
+	</select>
+
+	<delete id="deleteDietItems">
+		DELETE FROM DIET_TBL
+		WHERE USER_NO = #{userNo}
+		AND DIET_NO IN
+		<foreach item="no" collection="dietNos" open="(" separator="," close=")">
+			#{no}
+		</foreach>
+	</delete>
  </mapper>

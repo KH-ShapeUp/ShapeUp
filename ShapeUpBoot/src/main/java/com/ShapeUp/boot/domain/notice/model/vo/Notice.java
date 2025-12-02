@@ -28,5 +28,8 @@ public class Notice {
 	private String eventStart;
 	private String eventEnd;
 	private Integer viewCount;
+	private String bannerYn;
+	private String bannerTitle;
+	private String bannerImgPath;
 	private List<NoticeImage> images;
 }

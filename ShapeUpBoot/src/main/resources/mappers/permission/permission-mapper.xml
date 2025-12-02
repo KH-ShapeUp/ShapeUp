@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ShapeUp.boot.domain.permission.model.mapper.PermissionMapper">
+
+    <sql id="selectColumns">
+        r.REQUEST_NO   AS "requestNo",
+        r.USER_NO      AS "userNo",
+        r.REQUEST_TYPE AS "requestType",
+        r.REQUEST_STATUS AS "requestStatus",
+        r.REQUEST_REASON AS "requestReason",
+        r.BUSINESS_NAME AS "businessName",
+        r.BUSINESS_NUMBER AS "businessNumber",
+        r.CERTIFICATE_TYPE AS "certificateType",
+        r.CERTIFICATE_NUMBER AS "certificateNumber",
+        r.ATTACHMENT_PATH AS "attachmentPath",
+        r.ATTACHMENT_ORIGIN AS "attachmentOrigin",
+        r.ATTACHMENT_RENAME AS "attachmentRename",
+        TO_CHAR(r.CREATED_AT, 'YYYY-MM-DD\"T\"HH24:MI:SS')   AS "createdAt",
+        TO_CHAR(r.UPDATED_AT, 'YYYY-MM-DD\"T\"HH24:MI:SS')   AS "updatedAt",
+        TO_CHAR(r.PROCESSED_AT, 'YYYY-MM-DD\"T\"HH24:MI:SS') AS "processedAt",
+        r.REJECT_REASON AS "rejectReason",
+        u.USER_NAME AS "userName",
+        u.USER_ID AS "userId"
+    </sql>
+
+    <select id="findByStatus" resultType="map">
+        SELECT
+            <include refid="selectColumns"/>
+        FROM REQUEST_PERMISSION r
+        JOIN USER_TBL u ON r.USER_NO = u.USER_NO
+        <where>
+            <if test="status != null and status != ''">
+                r.REQUEST_STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY r.CREATED_AT DESC
+    </select>
+
+    <select id="findById" resultType="map">
+        SELECT
+            <include refid="selectColumns"/>
+        FROM REQUEST_PERMISSION r
+        JOIN USER_TBL u ON r.USER_NO = u.USER_NO
+        WHERE r.REQUEST_NO = #{requestNo}
+    </select>
+
+    <update id="approve">
+        UPDATE REQUEST_PERMISSION
+        SET REQUEST_STATUS = '변경',
+            UPDATED_AT = SYSTIMESTAMP,
+            PROCESSED_AT = SYSTIMESTAMP,
+            REJECT_REASON = NULL
+        WHERE REQUEST_NO = #{requestNo}
+    </update>
+
+    <update id="applyRoleToUser">
+        UPDATE USER_TBL
+        SET USER_TYPE = (
+            SELECT REQUEST_TYPE
+            FROM REQUEST_PERMISSION
+            WHERE REQUEST_NO = #{requestNo}
+        )
+        WHERE USER_NO = (
+            SELECT USER_NO
+            FROM REQUEST_PERMISSION
+            WHERE REQUEST_NO = #{requestNo}
+        )
+    </update>
+
+    <update id="reject">
+        UPDATE REQUEST_PERMISSION
+        SET REQUEST_STATUS = '반려',
+            UPDATED_AT = SYSTIMESTAMP,
+            PROCESSED_AT = SYSTIMESTAMP,
+            REJECT_REASON = #{rejectReason}
+        WHERE REQUEST_NO = #{requestNo}
+    </update>
+
+ </mapper>

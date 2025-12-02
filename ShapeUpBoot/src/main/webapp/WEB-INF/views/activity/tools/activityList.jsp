@@ -130,7 +130,7 @@
 
       const kcalSpan = document.createElement('span');
       kcalSpan.className = 'activity-kcal';
-      kcalSpan.textContent = `${activity.kcal} kcal`;
+      kcalSpan.textContent = (activity.kcal || 0) + ' kcal';
 
       const addBtn = document.createElement('button');
       addBtn.type = 'button';
@@ -217,6 +217,11 @@
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('저장 실패');
+      activityListState.selectedActivities = [];
+      renderSelectedActivities();
+      const targetDate = window.actCurrentDate || (typeof getTodayIso === 'function' ? getTodayIso() : null);
+      if (typeof loadActivityLogs === 'function') loadActivityLogs(targetDate);
+      if (typeof loadActivitySummary === 'function') loadActivitySummary(targetDate);
     } catch (err) {
       console.error('활동 저장 실패', err);
     }

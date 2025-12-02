@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,6 @@ import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -53,9 +54,14 @@ public class DietController {
 	
 	@PostMapping("/insert")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> saveDiet(@RequestBody DietSaveRequest request){
+	public ResponseEntity<Map<String, Object>> saveDiet(@RequestBody DietSaveRequest request, HttpSession session){
 		if(request == null || request.getItems() == null || request.getItems().isEmpty()) {
 			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "NO_ITEMS"));
+		}
+		
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of("success", false, "message", "LOGIN_REQUIRED"));
 		}
 		
 		String dietDate = sanitizeDate(request.getDietDate());
@@ -63,7 +69,6 @@ public class DietController {
 				? "기타"
 				: request.getDietType();
 		
-		int userNo = 2; // TODO: 로그인 사용자 정보 연동
 		int inserted = 0;
 		for(Item item : request.getItems()) {
 			DietVo diet = new DietVo();
@@ -82,10 +87,19 @@ public class DietController {
 	
 	@GetMapping("/summary")
 	@ResponseBody
-	public Map<String, Object> getSummary(@RequestParam(value="date", required=false) String date) {
+	public ResponseEntity<Map<String, Object>> getSummary(@RequestParam(value="date", required=false) String date, HttpSession session) {
 		String targetDate = sanitizeDate(date);
-		Map<String, Double> raw = dService.sumKcalByDate(targetDate);
-		Map<String, Double> totals = dService.sumNutritionTotalsByDate(targetDate);
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of(
+				"date", targetDate,
+				"data", Map.of(),
+				"totals", Map.of(),
+				"loggedIn", false
+			));
+		}
+		Map<String, Double> raw = dService.sumKcalByDate(targetDate, userNo);
+		Map<String, Double> totals = dService.sumNutritionTotalsByDate(targetDate, userNo);
 		Map<String, Double> data = new HashMap<>();
 		if (raw != null) {
 			raw.forEach((k, v) -> {
@@ -95,11 +109,76 @@ public class DietController {
 				}
 			});
 		}
-		return Map.of(
+		return ResponseEntity.ok(Map.of(
 			"date", targetDate,
 			"data", data,
-			"totals", totals != null ? totals : Map.of()
-		);
+			"totals", totals != null ? totals : Map.of(),
+			"loggedIn", true
+		));
+	}
+
+	@GetMapping("/items")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getDietItems(
+		@RequestParam(value="date", required=false) String date,
+		@RequestParam(value="type", required=false) String dietType,
+		HttpSession session
+	) {
+		String targetDate = sanitizeDate(date);
+		String targetType = (dietType == null || dietType.isBlank()) ? "기타" : dietType.trim();
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of(
+				"items", List.of(),
+				"loggedIn", false
+			));
+		}
+		List<Map<String, Object>> items = dService.findDietItems(targetDate, targetType, userNo);
+		return ResponseEntity.ok(Map.of(
+			"items", items != null ? items : List.of(),
+			"loggedIn", true
+		));
+	}
+
+	@PostMapping("/delete")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> deleteDiet(@RequestBody Map<String, Object> body, HttpSession session) {
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of("success", false, "message", "LOGIN_REQUIRED"));
+		}
+		Object raw = body.get("dietNos");
+		if (!(raw instanceof List<?> rawList) || rawList.isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "NO_ITEMS"));
+		}
+		List<Integer> dietNos = rawList.stream()
+			.filter(o -> o != null)
+			.map(Object::toString)
+			.map(String::trim)
+			.filter(s -> !s.isBlank())
+			.map(Integer::valueOf)
+			.toList();
+		if (dietNos.isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "NO_ITEMS"));
+		}
+		int deleted = dService.deleteDietItems(dietNos, userNo);
+		return ResponseEntity.ok(Map.of("success", true, "deleted", deleted));
+	}
+
+	private Integer extractUserNo(HttpSession session) {
+		if (session == null) return null;
+		Object raw = session.getAttribute("userNo");
+		if (raw instanceof Number) {
+			return ((Number) raw).intValue();
+		}
+		if (raw instanceof String) {
+			try {
+				return Integer.parseInt(((String) raw).trim());
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 
@@ -123,9 +202,12 @@ public class DietController {
 			case "간식":
 			case "snack":
 			case "SNACK":
-				return "간식";
+			case "기타":
+			case "etc":
+			case "ETC":
+				return "기타";
 			default:
-				return null;
+				return "기타";
 		}
 	}
 	

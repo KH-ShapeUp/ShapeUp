@@ -21,6 +21,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import com.ShapeUp.boot.domain.banner.model.service.BannerService;
+import com.ShapeUp.boot.domain.banner.model.vo.Banner;
+
 @RestController
 @RequestMapping("/api/admin/notices")
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class NoticeApiController {
 
     private final NoticeService noticeService;
+    private final BannerService bannerService;
     private static final DateTimeFormatter ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Path UPLOAD_ROOT = Paths.get(System.getProperty("user.dir"), "uploads", "notice");
 
@@ -38,6 +42,18 @@ public class NoticeApiController {
     ) {
         int total = noticeService.getTotalCount(null, null, null);
         List<Notice> items = noticeService.selectNoticeList(page, size, null, null, null);
+        if (items != null) {
+            for (Notice n : items) {
+                if (n.getNoticeNo() != null) {
+                    Banner b = bannerService.getByNoticeNo(n.getNoticeNo());
+                    if (b != null) {
+                        n.setBannerYn(b.getBannerYn());
+                        n.setBannerTitle(b.getBannerTitle());
+                        n.setBannerImgPath(b.getImgPath());
+                    }
+                }
+            }
+        }
         Map<String, Object> body = new HashMap<>();
         body.put("total", total);
         body.put("items", items);

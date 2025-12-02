@@ -14,8 +14,12 @@ public interface DietService {
 
 	int insertDietList(List<DietVo> diets);
 
-	Map<String, Double> sumKcalByDate(String dietDate);
+	Map<String, Double> sumKcalByDate(String dietDate, int userNo);
 
-	Map<String, Double> sumNutritionTotalsByDate(String dietDate);
+	Map<String, Double> sumNutritionTotalsByDate(String dietDate, int userNo);
+
+	List<Map<String, Object>> findDietItems(String dietDate, String dietType, int userNo);
+
+	int deleteDietItems(List<Integer> dietNos, int userNo);
 
 }
