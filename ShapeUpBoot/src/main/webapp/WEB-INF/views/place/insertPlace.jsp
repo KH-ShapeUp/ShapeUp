@@ -22,7 +22,7 @@
 	<main class="container">
 		<h1 class="page-title">시설 신규 등록</h1>
 		<form id="placeRegistrationForm" class="registration-form"
-			action="${pageContext.request.contextPath}/place/create"
+			action="${pageContext.request.contextPath}/place/insert"
 			method="POST" enctype="multipart/form-data">
 			<!-- 기본 정보 -->
 			<section class="form-section basic-info">
@@ -44,12 +44,7 @@
 							<option value="기타 스포츠">기타 스포츠</option>
 						</select>
 					</div>
-					<div class="input-group">
-						<label for="placePrice">이용 가격 (월/시간 기준)</label> <input
-							type="number" id="placePrice" name="placePrice"
-							placeholder="숫자만 입력" />
 					</div>
-				</div>
 				<div class="input-group">
 					<label for="phone">연락처 <span class="required">*</span></label> <input
 						type="text" id="phone" name="phone" maxlength="20"
@@ -58,6 +53,28 @@
 			</section>
 
 			<hr />
+			<section class="form-section operation-info">
+                <h2>운영 시간 및 휴무일</h2>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="openTime">여는 시간 (HH:MM)</label>
+                        <input type="text" id="openTime" name="openTime" 
+                               placeholder="예: 09:00" maxlength="5" />
+                    </div>
+                    <div class="input-group">
+                        <label for="closeTime">닫는 시간 (HH:MM)</label>
+                        <input type="text" id="closeTime" name="closeTime" 
+                               placeholder="예: 22:00" maxlength="5" />
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="holiday">휴무일 및 특이사항</label>
+                    <input type="text" id="holiday" name="holiday" maxlength="100"
+                           placeholder="예: 매주 일요일 정기 휴무, 설날/추석 연휴 휴무" />
+                </div>
+            </section>
+            
+            <hr />
 
 			<!-- 상세 정보 -->
 			<section class="form-section detail-info">

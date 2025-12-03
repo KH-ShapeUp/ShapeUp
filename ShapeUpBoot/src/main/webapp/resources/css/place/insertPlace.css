@@ -1,223 +1,197 @@
-/* style.css */
+/*
+ * 파일: insertPlace.css
+ * 시설 등록 폼의 기본 스타일
+ */
 
-/* 기본 스타일 초기화 및 폰트 설정 */
+/* -------------------- 1. 기본 설정 및 레이아웃 -------------------- */
+
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #f4f7f6;
-  color: #333;
-  line-height: 1.6;
-  margin: 0;
-  padding: 20px;
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
 }
 
 .container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px; /* 폼의 최대 폭 설정 */
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .page-title {
-  text-align: center;
-  color: #1a73e8;
-  margin-bottom: 30px;
-  font-size: 2em;
+    text-align: center;
+    color: #007bff; /* 주요 색상 */
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
-/* 폼 섹션 스타일 */
-.form-section {
-  padding: 20px 0;
+hr {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 30px 0;
 }
+
+/* -------------------- 2. 섹션 및 그룹 -------------------- */
 
 .form-section h2 {
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  color: #007bff;
-  font-size: 1.4em;
+    color: #555;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    padding-left: 5px;
+    border-left: 4px solid #007bff;
 }
 
-.required {
-  color: #dc3545;
-  margin-left: 5px;
-}
-
-/* 입력 그룹 */
 .input-group {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .input-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
 }
 
+.required {
+    color: #dc3545; /* 빨간색 별표 */
+    font-weight: normal;
+}
+
+/* 가로 정렬이 필요한 경우 (예: 분류-가격) */
 .input-row {
-  display: flex;
-  gap: 20px;
+    display: flex;
+    gap: 20px; /* 요소 간의 간격 */
 }
 
 .input-row .input-group {
-  flex: 1; /* 가로로 나란히 배치 */
+    flex: 1; /* 가로 공간을 균등하게 차지 */
 }
 
-/* 텍스트, 숫자, 선택 입력 필드 */
+/* -------------------- 3. 폼 컨트롤 스타일 -------------------- */
+
 input[type="text"],
 input[type="number"],
-textarea,
-select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 1em;
-  transition: border-color 0.3s;
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 1em;
 }
 
 input[type="text"]:focus,
 input[type="number"]:focus,
-textarea:focus,
-select:focus {
-  border-color: #1a73e8;
-  box-shadow: 0 0 5px rgba(26, 115, 232, 0.3);
-  outline: none;
+select:focus,
+textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    outline: none;
 }
 
 textarea {
-  resize: vertical;
+    resize: vertical;
 }
 
-/* 주소 검색 그룹 */
+/* -------------------- 4. 위치 정보 및 버튼 -------------------- */
+
 .address-input-group {
     display: flex;
     gap: 10px;
-    /* align-items: flex-end;  <-- 기존 값 */
-    align-items: center; /* <-- **수직 중앙 정렬로 변경** */
-    margin-bottom: 15px;
+    align-items: flex-end;
 }
 
-.address-input-group .road-name-group {
-  flex-grow: 1;
+.road-name-group {
+    flex-grow: 1;
 }
 
-/* 버튼 스타일 */
 .btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  white-space: nowrap;
-  height: 45px;
-  line-height: 1.5;
-}
-
-.btn-primary {
-  background-color: #1a73e8;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #1764cc;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+    height: 44px; /* input 필드와 높이 맞추기 */
 }
 
 .btn-search-address {
-  background-color: #007bff;
-  color: white;
-  margin-bottom: -20px;
+    background-color: #6c757d;
+    color: white;
 }
 
 .btn-search-address:hover {
-  background-color: #0056b3;
+    background-color: #5a6268;
 }
 
-/* 최종 동작 버튼 컨테이너 */
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding-top: 30px;
+/* 지도 컨테이너 스타일 */
+#mapContainer {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    text-align: center;
+    line-height: 400px; /* 텍스트를 수직 중앙에 배치 */
+    color: #888;
 }
 
-/* 지도 영역 */
-.map-placeholder {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fafafa;
-}
+/* -------------------- 5. 이미지 및 액션 버튼 -------------------- */
 
-.map-container {
-  width: 100%;
-  height: 300px; /* 지도가 표시될 높이 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #999;
-  background-color: #e9e9e9;
-  border-radius: 6px;
-}
-
-/* 이미지 업로드 영역 */
 .guide-text {
-  font-size: 0.9em;
-  color: #666;
-  margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 15px;
 }
 
 .image-preview {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  min-height: 100px;
-  padding: 10px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  margin-top: 15px;
-  background-color: #fcfcfc;
-  justify-content: center;
-  align-items: center;
-  color: #999;
-}
-.image-preview .image-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    min-height: 100px;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding: 10px;
+    text-align: center;
+    color: #999;
 }
 
-/* 반응형 조정 */
-@media (max-width: 600px) {
-  .container {
-    margin: 20px;
-    padding: 20px;
-  }
+.action-buttons {
+    text-align: center;
+    margin-top: 40px;
+}
 
-  .input-row {
-    flex-direction: column;
-    gap: 0;
-  }
+.action-buttons .btn {
+    margin: 0 10px;
+    padding: 12px 25px;
+    font-weight: bold;
+}
 
-  .address-input-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
 
-  .btn-search-address {
-    width: 100%;
-  }
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e6ea;
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.place.mapper.PlaceMapper">
+	<insert id="insertPlace" parameterType="com.ShapeUp.boot.domain.place.vo.Place">
+		<selectKey keyProperty="placeNo" resultType="int" order="BEFORE">
+			SELECT SEQ_PLACE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PLACE_TBL(
+			PLACE_NO,
+			PLACE_NAME,
+			PLACE_TYPE,
+			PHONE,
+			PLACE_INFO,
+			PLACE_ROAD_NAME,
+			PLACE_LOCAL_NAME,
+			LATITUDE,
+			LONGITUDE,
+			CREATED_AT,
+			OPEN_TIME,
+			CLOSE_TIME,
+			HOLIDAY
+		) VALUES(
+			#{placeNo},
+			#{placeName},
+			#{placeType},
+			#{phone},
+			#{placeInfo},
+			#{placeRoadName},
+			#{placeLocalName},
+			#{latitude},
+			#{longitude},
+			SYSDATE,
+			#{openTime},
+			#{closeTime},
+			#{holiday}
+		)
+	</insert>
+</mapper>
