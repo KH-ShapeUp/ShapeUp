@@ -4,18 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>시설 신규 등록</title>
-    <!-- 카카오 지도 SDK -->
+    <link rel="stylesheet" href="/resources/css/place/insertPlace.css" />
     <script
       type="text/javascript"
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f7deb3a806ca7664155378171a6f8121&libraries=services"
     ></script>
-
-           
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <link rel="stylesheet" href="/resources/css/place/insertPlace.css" />
   </head>
   <body>
     <header id="mainHeader"></header>
+
     <main class="container">
       <h1 class="page-title">시설 신규 등록</h1>
       <form
@@ -125,16 +123,12 @@
               type="text"
               id="placeLocalName"
               name="placeLocalName"
-              readonly
-              placeholder="지번 주소 (선택 사항)"
+              placeholder="지번 주소 (상세 주소 입력 가능)"
             />
           </div>
 
           <div class="map-placeholder">
-                                   
-            <div id="mapContainer" style="width: 500px; height: 400px">
-              주소 검색 후 지도가 표시됩니다.
-            </div>
+            <div id="mapContainer">주소 검색 후 지도가 표시됩니다.</div>
           </div>
         </section>
 
@@ -175,38 +169,71 @@
         </div>
       </form>
     </main>
+
     <script>
       let map;
       let marker;
       let geocoder;
+      let openedPopupWindow = null;
 
       /**
-       * 1. Daum 우편번호 서비스 팝업 실행
+       * 1. 주소검색 팝업 열기 (새 창 + 닫힘 보장 로직)
        */
       function execDaumPostcode() {
-        new daum.Postcode({
-          oncomplete: function (data) {
-            const roadNameInput = document.getElementById("placeRoadName");
-            const localNameInput = document.getElementById("placeLocalName");
+        try {
+          const postcode = new daum.Postcode({
+            oncomplete: function (data) {
+              document.getElementById("placeRoadName").value = data.roadAddress;
+              document.getElementById("placeLocalName").value =
+                data.jibunAddress || "";
+              searchAddrToCoords(data.roadAddress);
 
-            // 주소 필드 업데이트
-            roadNameInput.value = data.roadAddress;
-            localNameInput.value = data.jibunAddress || "";
+              // 닫기 로직: 팝업이 닫히지 않을 때를 대비하여 명시적으로 닫기 시도
+              try {
+                // 팝업 윈도우 객체를 사용하여 닫기
+                if (openedPopupWindow && !openedPopupWindow.closed) {
+                  openedPopupWindow.close();
+                }
+              } catch (e) {
+                console.warn("팝업 닫기 오류 발생:", e);
+                // 팝업이 부모 창과 다른 도메인이거나 보안 문제로 닫히지 않을 수 있음.
+              }
+            },
+            onclose: function (state) {
+              // API에 의해 팝업이 닫힐 때 실행됨 (레이어 닫힘 로직은 state='COMPLETE'에서 실행)
+              console.log("Daum Postcode onclose:", state);
+            },
+          });
 
-            // 좌표 검색 함수 호출
-            searchAddrToCoords(data.roadAddress);
-          },
-        }).open();
+          // 새 창 옵션 (크기와 위치 지정)
+          const popUpOptions = {
+            left: window.screen.width / 2 - 250,
+            top: window.screen.height / 2 - 300,
+            width: 500,
+            height: 600,
+          };
+
+          // open() 호출 및 반환된 window 객체 저장
+          openedPopupWindow = postcode.open(popUpOptions);
+
+          if (!openedPopupWindow) {
+            alert(
+              "팝업이 차단되었습니다. 브라우저의 팝업 허용 후 다시 시도해주세요."
+            );
+          }
+        } catch (err) {
+          console.error("execDaumPostcode 실행 오류:", err);
+          alert("주소 검색 창을 열 수 없습니다. (콘솔 확인)");
+        }
       }
 
       /**
-       * 2. 주소 문자열을 위도/경도 좌표로 변환하고 지도에 표시
+       * 2. 주소 -> 좌표 변환 및 지도 업데이트
        */
       function searchAddrToCoords(address) {
         const latitudeInput = document.getElementById("latitude");
         const longitudeInput = document.getElementById("longitude");
 
-        // Geocoder 객체가 없으면 생성 (스크립트 로드 타이밍 문제 대비)
         if (!geocoder) {
           geocoder = new kakao.maps.services.Geocoder();
         }
@@ -215,16 +242,22 @@
           if (status === kakao.maps.services.Status.OK) {
             let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-            // 위도/경도 필드 업데이트
             latitudeInput.value = result[0].y;
             longitudeInput.value = result[0].x;
 
-            // 지도 및 마커 업데이트
-            map.setCenter(coords);
-            marker.setPosition(coords);
-            map.relayout();
+            if (map) {
+              map.setCenter(coords);
+              marker.setPosition(coords);
+              // 지도가 숨겨져 있다가 나타날 경우 relayout 호출
+              try {
+                map.relayout();
+              } catch (e) {
+                /* 무시 */
+              }
+            }
           } else {
             console.error("좌표 변환 실패:", status);
+            alert("주소를 지도에 표시하는 데 실패했습니다.");
             latitudeInput.value = "";
             longitudeInput.value = "";
           }
@@ -232,37 +265,33 @@
       }
 
       /**
-       * 3. 맵 초기화 함수
+       * 3. 맵 초기화
        */
       function initMap() {
         const mapContainer = document.getElementById("mapContainer");
-
-        // 지도 초기화 옵션
+        if (!mapContainer) return;
         const mapOption = {
           center: new kakao.maps.LatLng(37.566826, 126.9786567), // 서울 시청 초기 좌표
           level: 3,
         };
-
-        // 지도 객체, Geocoder, 마커 생성
         map = new kakao.maps.Map(mapContainer, mapOption);
         geocoder = new kakao.maps.services.Geocoder();
         marker = new kakao.maps.Marker({ map: map });
       }
 
       /**
-       * 4. 이미지 미리보기 (기존 기능 복원)
+       * 4. 이미지 미리보기
        */
       function setupImagePreview() {
         const fileInput = document.getElementById("placeImages");
         const previewContainer = document.getElementById("imagePreview");
+        if (!fileInput) return;
 
         fileInput.addEventListener("change", function () {
           previewContainer.innerHTML = "업로드된 이미지 미리보기";
           const files = this.files;
 
-          if (files.length > 0) {
-            previewContainer.innerHTML = "";
-          }
+          if (files.length > 0) previewContainer.innerHTML = "";
 
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -271,7 +300,6 @@
               reader.onload = function (e) {
                 const imgWrapper = document.createElement("div");
                 imgWrapper.classList.add("image-item");
-
                 const img = document.createElement("img");
                 img.src = e.target.result;
                 img.style.width = "100px";
@@ -280,14 +308,12 @@
                 img.style.borderRadius = "6px";
                 img.style.border =
                   i === 0 ? "3px solid #1a73e8" : "1px solid #ddd";
-
                 const label = document.createElement("span");
                 label.innerText = i === 0 ? "대표" : "서브";
                 label.style.fontSize = "0.8em";
                 label.style.marginTop = "4px";
                 label.style.textAlign = "center";
                 label.style.color = i === 0 ? "#1a73e8" : "#555";
-
                 imgWrapper.appendChild(img);
                 imgWrapper.appendChild(label);
                 previewContainer.appendChild(imgWrapper);
@@ -298,14 +324,13 @@
         });
       }
 
-      // 카카오 지도 SDK 로드 확인 후 initMap 실행
       window.onload = function () {
         if (window.kakao && window.kakao.maps) {
           initMap();
-          setupImagePreview(); // 이미지 미리보기도 로드 시점에 실행
+          setupImagePreview();
         } else {
           console.error(
-            "Kakao Maps SDK 로드에 문제가 발생했습니다. 지도 기능이 작동하지 않을 수 있습니다."
+            "Kakao Maps SDK 로드 오류. 지도가 작동하지 않을 수 있습니다."
           );
           setupImagePreview();
         }
