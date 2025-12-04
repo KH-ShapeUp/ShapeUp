@@ -4,6 +4,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
+import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -136,5 +137,33 @@ public interface UserMapper {
      * 사용자 권한(USER_TYPE) 변경
      */
     int updateUserType(@Param("userNo") int userNo, @Param("userType") String userType);
+    
+    /**
+     * 프로필 이미지 조회
+     * @param userNo 사용자 번호
+     * @return 프로필 이미지 정보
+     */
+    UserProfileImageVO selectProfileImage(int userNo);
+    
+    /**
+     * 프로필 이미지 등록
+     * @param profileImage 프로필 이미지 정보
+     * @return 등록 결과 (1: 성공, 0: 실패)
+     */
+    int insertProfileImage(UserProfileImageVO profileImage);
+    
+    /**
+     * 프로필 이미지 삭제 (메인 이미지만)
+     * @param userNo 사용자 번호
+     * @return 삭제 결과 (1: 성공, 0: 실패)
+     */
+    int deleteProfileImage(int userNo);
+    
+    /**
+     * 사용자의 모든 프로필 이미지 삭제
+     * @param userNo 사용자 번호
+     * @return 삭제된 행 수
+     */
+    int deleteAllProfileImages(int userNo);
 
 }

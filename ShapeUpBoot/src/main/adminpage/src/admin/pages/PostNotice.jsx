@@ -3,7 +3,7 @@ import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
 import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 import CustomSelect from "../../common/components/CustomSelect";
-
+import.meta.env.VITE_API_BASE || ""
 const PostNotice = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ const PostNotice = () => {
     }
   };
 
-  const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
+  // const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
 
   const fetchNotices = async () => {
     setLoading(true);

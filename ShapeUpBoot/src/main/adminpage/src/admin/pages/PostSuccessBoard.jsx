@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
+import.meta.env.VITE_API_BASE || ""
 
-const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
+// const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
 const successCategories = ["다이어트", "근력증가", "체지방 감량"];
 const isImage = (name = "") => /\.(png|jpe?g|gif|webp|svg)$/i.test(name);
 const buildUrl = (path) => {

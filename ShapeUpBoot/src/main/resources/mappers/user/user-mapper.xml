@@ -21,7 +21,52 @@
         <result property="userNickname" column="USER_NICKNAME"/>
         <result property="status" column="STATUS"/>
     </resultMap>
+	
+	<select id="selectProfileImage" parameterType="int" resultType="com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO">
+        SELECT 
+            IMG_NO as imgNo,
+            IMG_PATH as imgPath,
+            IMG_RENAME as imgRename,
+            IMG_ORIGINAL_NAME as imgOriginalName,
+            IMG_MAIN as imgMain,
+            USER_NO as userNo
+        FROM USER_PROFILE_IMG_TBL
+        WHERE USER_NO = #{userNo}
+        AND IMG_MAIN = 'Y'
+    </select>
 
+    <!-- 프로필 이미지 등록 -->
+    <insert id="insertProfileImage" parameterType="com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO">
+        INSERT INTO USER_PROFILE_IMG_TBL (
+            IMG_NO,
+            IMG_PATH,
+            IMG_RENAME,
+            IMG_ORIGINAL_NAME,
+            IMG_MAIN,
+            USER_NO
+        ) VALUES (
+            SEQ_USER_PROFIL_IMG_NO.NEXTVAL,
+            #{imgPath},
+            #{imgRename},
+            #{imgOriginalName},
+            #{imgMain},
+            #{userNo}
+        )
+    </insert>
+
+    <!-- 프로필 이미지 삭제 (메인 이미지만) -->
+    <delete id="deleteProfileImage" parameterType="int">
+        DELETE FROM USER_PROFILE_IMG_TBL
+        WHERE USER_NO = #{userNo}
+        AND IMG_MAIN = 'Y'
+    </delete>
+
+    <!-- 특정 사용자의 모든 프로필 이미지 삭제 -->
+    <delete id="deleteAllProfileImages" parameterType="int">
+        DELETE FROM USER_PROFILE_IMG_TBL
+        WHERE USER_NO = #{userNo}
+    </delete>
+	
     <select id="countEmail" parameterType="string" resultType="int">
         SELECT COUNT(*) 
         FROM USER_TBL 

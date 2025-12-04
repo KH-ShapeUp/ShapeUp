@@ -68,6 +68,52 @@
 
       <!-- 사용자 정보 콘텐츠 -->
       
+      <!-- 프로필 이미지 섹션 -->
+      <div class="info-section">
+        <h2 class="section-title">프로필 이미지</h2>
+        
+        <div class="profile-image-container">
+          <div class="profile-image-wrapper">
+            <img id="profileImagePreview" 
+                 src="${not empty profileImage ? pageContext.request.contextPath.concat(profileImage.imgPath).concat('/').concat(profileImage.imgRename) : pageContext.request.contextPath.concat('/resources/images/default-profile.png')}" 
+                 alt="프로필 이미지"
+                 class="profile-image">
+            <div class="profile-image-overlay" onclick="document.getElementById('profileImageInput').click()">
+              <span>📷</span>
+              <span>변경</span>
+            </div>
+          </div>
+          
+          <div class="profile-image-actions">
+            <input type="file" 
+                   id="profileImageInput" 
+                   accept="image/jpeg,image/png,image/jpg" 
+                   style="display: none;" 
+                   onchange="previewProfileImage(this)">
+            <button class="btn btn-edit" onclick="document.getElementById('profileImageInput').click()">
+              이미지 선택
+            </button>
+            <button class="btn btn-save" id="uploadProfileBtn" style="display: none;" onclick="uploadProfileImage()">
+              저장
+            </button>
+            <button class="btn btn-cancel" id="cancelProfileBtn" style="display: none;" onclick="cancelProfileImage()">
+              취소
+            </button>
+            <c:if test="${not empty profileImage}">
+              <button class="btn btn-delete" onclick="deleteProfileImage()">
+                삭제
+              </button>
+            </c:if>
+          </div>
+          
+          <div class="profile-image-info">
+            <small>JPG, PNG 파일만 가능 (최대 5MB)</small>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+      
       <!-- 기본 정보 섹션 -->
       <div class="info-section">
         <h2 class="section-title">기본 정보</h2>
@@ -351,6 +397,123 @@
 <script>
 const contextPath = '${pageContext.request.contextPath}';
 let pendingRequest = null;
+let selectedProfileFile = null;
+let originalProfileImageSrc = '';
+
+// ========== 프로필 이미지 관련 함수 ==========
+function previewProfileImage(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const fileSize = file.size / 1024 / 1024; // MB
+    
+    // 파일 크기 체크 (5MB)
+    if (fileSize > 5) {
+      showModal('파일 크기는 5MB를 초과할 수 없습니다.');
+      input.value = '';
+      return;
+    }
+    
+    // 파일 형식 체크
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      showModal('JPG, PNG 파일만 업로드 가능합니다.');
+      input.value = '';
+      return;
+    }
+    
+    selectedProfileFile = file;
+    
+    // 미리보기
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('profileImagePreview');
+      originalProfileImageSrc = preview.src; // 원본 저장
+      preview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    
+    // 버튼 표시 변경
+    document.getElementById('uploadProfileBtn').style.display = 'inline-block';
+    document.getElementById('cancelProfileBtn').style.display = 'inline-block';
+  }
+}
+
+function uploadProfileImage() {
+  if (!selectedProfileFile) {
+    showModal('선택된 파일이 없습니다.');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('profileImage', selectedProfileFile);
+  
+  fetch(contextPath + '/user/uploadProfileImage', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('프로필 이미지가 변경되었습니다.');
+      selectedProfileFile = null;
+      document.getElementById('uploadProfileBtn').style.display = 'none';
+      document.getElementById('cancelProfileBtn').style.display = 'none';
+      document.getElementById('profileImageInput').value = '';
+      
+      // 페이지 새로고침 또는 삭제 버튼 표시
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    } else {
+      showModal(data.message || '프로필 이미지 변경에 실패했습니다.');
+      cancelProfileImage();
+    }
+  })
+  .catch(err => {
+    console.error('프로필 이미지 업로드 오류:', err);
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
+    cancelProfileImage();
+  });
+}
+
+function cancelProfileImage() {
+  const preview = document.getElementById('profileImagePreview');
+  preview.src = originalProfileImageSrc || contextPath + '/resources/images/default-profile.png';
+  
+  document.getElementById('profileImageInput').value = '';
+  selectedProfileFile = null;
+  
+  document.getElementById('uploadProfileBtn').style.display = 'none';
+  document.getElementById('cancelProfileBtn').style.display = 'none';
+}
+
+function deleteProfileImage() {
+  if (!confirm('프로필 이미지를 삭제하시겠습니까?')) {
+    return;
+  }
+  
+  fetch(contextPath + '/user/deleteProfileImage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('프로필 이미지가 삭제되었습니다.');
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    } else {
+      showModal(data.message || '프로필 이미지 삭제에 실패했습니다.');
+    }
+  })
+  .catch(err => {
+    console.error('프로필 이미지 삭제 오류:', err);
+    showModal('오류가 발생했습니다. 다시 시도해주세요.');
+  });
+}
 
 // ========== 쪽지함 알림 시스템 ==========
 (function() {
