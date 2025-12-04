@@ -388,7 +388,7 @@ function displayInfowindow(marker, place) {
 		position: marker.getPosition(),
 		map: map,
 		yAnchor: 1.4 // 마커 위쪽으로 띄우기
-	});;
+	});
 }
 
 function closeOverlay() {

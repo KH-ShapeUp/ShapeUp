@@ -131,19 +131,13 @@
                 </a>
             </div>
             <div class="list-item">
-
-                <a href="/success">
-
                 <a href="/notice/list">
                     <span class="material-symbols-outlined">campaign</span>
                     <span>공지사항</span>
                 </a>
             </div>
             <div class="list-item">
-
                 <a href="/success">
-
-
                     <span class="material-symbols-outlined">rewarded_ads</span>
                     <span>성공 인증 게시판</span>
                 </a>
@@ -173,7 +167,7 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="/user/myPage">
+                <a href="/user/updateUserInfo">
                     <span class="material-symbols-outlined">settings_account_box</span>
                     <span>설정</span>
                 </a>

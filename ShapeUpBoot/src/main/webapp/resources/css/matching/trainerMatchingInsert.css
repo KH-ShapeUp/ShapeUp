@@ -1,0 +1,330 @@
+@charset "UTF-8";
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+/***지도*****/
+/* 지도 전체 컨테이너 */
+.map-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%; /* 부모 요소 높이에 맞춤 */
+    overflow: hidden;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* 메뉴 전체 래퍼 (검색창 + 리스트) - 지도 위에 투명하게 덮어씌움 */
+#menu_wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 검색창은 위로, 리스트는 아래로 밀어냄 */
+    pointer-events: none; /* 이 영역의 빈 공간을 클릭하면 지도가 클릭되게 함 */
+}
+
+/* 상단 검색창 디자인 */
+#menu_wrap .option {
+    pointer-events: auto; /* 검색창은 클릭 가능해야 함 */
+    background: rgba(255, 255, 255, 0.7);
+    margin: 15px; /* 상단 여백 */
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#menu_wrap .option form {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+#menu_wrap .option input {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+}
+
+#menu_wrap .option button {
+    background: var(--main-color); /* 버튼 색상 (프로젝트 테마에 맞춰 수정 가능) */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#menu_wrap .option button:hover {
+    background: #007cf9;
+}
+
+/* --- 하단 검색 결과 리스트 래퍼 --- */
+.bottom-list-wrap {
+    background: rgba(255, 255, 255, 0.98);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    pointer-events: auto; /* 중요: 리스트 클릭 가능 */
+    max-height: 40%; /* 전체 화면의 40%까지만 올라오게 제한 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 리스트 스타일 */
+#placesList {
+    overflow-y: auto; /* 내부 스크롤 */
+    padding: 10px;
+    margin: 0;
+}
+
+#placesList::-webkit-scrollbar {
+    display: none; 
+}
+
+#placesList li {
+    list-style: none;
+}
+
+#placesList .item {
+    position: relative;
+    border-bottom: 1px solid #eee;
+    overflow: hidden;
+    cursor: pointer;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#placesList .item:hover {
+    background: #e2e2e2;
+}
+
+#placesList .item-inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#placesList .item-inner h5{
+    font-size: 1rem;
+    padding-bottom: 3px;
+}
+
+#placesList .item-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 5px 0px;
+    gap: 5px;
+}
+
+#placesList .item-name,
+#placesList .item-jibun {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: .9rem;
+    font-weight: 500;
+    color: #888;
+}
+
+#placesList .item-wrapper i {
+    margin-right: 8px;
+}
+
+#placesList .tel {
+    font-weight: 500;
+    color: var(--main-color);
+}
+
+/* ★ 수정됨: 커스텀 마커 아이콘 스타일 (기존 스프라이트 제거됨) */
+#placesList .item-inner-top img {
+    width: 30px;
+    height: 30px;
+    margin-left: -10px;
+}
+
+#placesList .item-inner-top {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 페이지네이션 디자인 */
+#pagination {
+    text-align: center;
+    padding: 10px 0;
+    background: #fff; /* 배경색 명시 */
+}
+
+#pagination a {
+    display: inline-block;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+#pagination .on {
+    text-decoration: underline;
+    font-weight: bold;
+    background: var(--main-color);
+    color: #fff;
+}
+
+/* --- 커스텀 인포윈도우 (말풍선) 스타일 --- */
+.custom-iw {
+    background: #fff;
+    padding: 8px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* 그림자 진하게 */
+    text-align: center;
+    position: relative;
+    bottom: 50px; /* ★중요: 마커 높이만큼 위로 띄움 (마커가 60px이므로 적절히 조절) */
+    min-width: 150px;
+}
+
+.custom-iw .title {
+    display: block;
+    font-weight: 600;
+    font-size: .9rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+
+.custom-iw::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* 박스 바로 아래 */
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 10px solid #fff; /* 화살표 색상 */
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+}
+/**********/
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.matching-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.matching {
+    background-color: #fff;
+    border-radius: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+
+.matching-right {
+    display: flex;
+    background-color: #fff;
+    padding: 20px;
+    height: auto;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    border-radius: 12px;
+    flex: 1;
+}
+
+.matching-footer {
+    margin-top: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.form-group label, .form-title, .label  {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.form-group input, textarea {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border: 1.5px solid var(--main-color);
+}
+
+.form-group #matchingContent {
+    height: 20vh;
+    resize: none;
+}
+
+.btn-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-row button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: .9rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn-row #save-btn {
+    background-color: var(--main-color);
+}
+
+.btn-row #cancel-btn {
+    background-color: var(--border-color);
+    color: #666;
+}

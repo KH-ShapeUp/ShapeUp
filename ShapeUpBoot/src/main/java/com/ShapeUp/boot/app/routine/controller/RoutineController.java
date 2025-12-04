@@ -28,7 +28,7 @@ public class RoutineController {
 	
 	private final RoutineService rService;
 
-	@GetMapping("")
+	@GetMapping("/list")
 	public String showRoutineList(
 			@ModelAttribute Routine routine
 			, Model model) {
