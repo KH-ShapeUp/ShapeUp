@@ -36,4 +36,25 @@
 			#{holiday}
 		)
 	</insert>
+	
+	<insert id="insertPlaceImage" parameterType="com.ShapeUp.boot.domain.place.vo.PlaceImageVo">
+		<selectKey keyProperty="imgNo" resultType = "int" order="BEFORE">
+			SELECT SEQ_PLACE_IMG_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PLACE_IMG_TBL(
+			IMG_NO,
+			PLACE_NO,
+			IMG_PATH,
+			IMG_ORIGINAL_NAME,
+			IMG_RENAME,
+			IMG_MAIN
+		) VALUES(
+			#{imgNo},
+			#{placeNo},
+			#{imgPath},
+			#{imgOriginalName},
+			#{imgRename},
+			#{imgMain}
+		)
+	</insert>
 </mapper>

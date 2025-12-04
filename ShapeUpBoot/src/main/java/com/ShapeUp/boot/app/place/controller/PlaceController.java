@@ -53,4 +53,9 @@ public class PlaceController {
             return "redirect:/place/insert";
 		}
 	}
+	
+	@GetMapping("list")
+	public String listPlace(Model model) {
+		return "place/placeList";
+	}
 }

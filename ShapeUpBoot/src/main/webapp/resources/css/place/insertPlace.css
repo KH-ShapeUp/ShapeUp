@@ -6,75 +6,75 @@
 /* -------------------- 1. 기본 설정 및 레이아웃 -------------------- */
 
 body {
-    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+  font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
 .container {
-    width: 100%;
-    max-width: 800px; /* 폼의 최대 폭 설정 */
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px; /* 폼의 최대 폭 설정 */
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .page-title {
-    text-align: center;
-    color: #007bff; /* 주요 색상 */
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+  text-align: center;
+  color: #007bff; /* 주요 색상 */
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
 }
 
 hr {
-    border: 0;
-    border-top: 1px solid #ddd;
-    margin: 30px 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 30px 0;
 }
 
 /* -------------------- 2. 섹션 및 그룹 -------------------- */
 
 .form-section h2 {
-    color: #555;
-    font-size: 1.4em;
-    margin-bottom: 20px;
-    padding-left: 5px;
-    border-left: 4px solid #007bff;
+  color: #555;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  padding-left: 5px;
+  border-left: 4px solid #007bff;
 }
 
 .input-group {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .input-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #444;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #444;
 }
 
 .required {
-    color: #dc3545; /* 빨간색 별표 */
-    font-weight: normal;
+  color: #dc3545; /* 빨간색 별표 */
+  font-weight: normal;
 }
 
 /* 가로 정렬이 필요한 경우 (예: 분류-가격) */
 .input-row {
-    display: flex;
-    gap: 20px; /* 요소 간의 간격 */
+  display: flex;
+  gap: 20px; /* 요소 간의 간격 */
 }
 
 .input-row .input-group {
-    flex: 1; /* 가로 공간을 균등하게 차지 */
+  flex: 1; /* 가로 공간을 균등하게 차지 */
 }
 
 /* -------------------- 3. 폼 컨트롤 스타일 -------------------- */
@@ -83,115 +83,139 @@ input[type="text"],
 input[type="number"],
 select,
 textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    font-size: 1em;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 1em;
 }
 
 input[type="text"]:focus,
 input[type="number"]:focus,
 select:focus,
 textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-    outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  outline: none;
 }
 
 textarea {
-    resize: vertical;
+  resize: vertical;
 }
 
 /* -------------------- 4. 위치 정보 및 버튼 -------------------- */
 
 .address-input-group {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
 }
 
 .road-name-group {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s;
-    height: 44px; /* input 필드와 높이 맞추기 */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s;
+  height: 44px; /* input 필드와 높이 맞추기 */
 }
 
 .btn-search-address {
-    background-color: #6c757d;
-    color: white;
+  background-color: #6c757d;
+  color: white;
 }
 
 .btn-search-address:hover {
-    background-color: #5a6268;
+  background-color: #5a6268;
 }
 
 /* 지도 컨테이너 스타일 */
 #mapContainer {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    overflow: hidden;
-    background-color: #e0e0e0;
-    text-align: center;
-    line-height: 400px; /* 텍스트를 수직 중앙에 배치 */
-    color: #888;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  text-align: center;
+  line-height: 400px; /* 텍스트를 수직 중앙에 배치 */
+  color: #888;
 }
 
 /* -------------------- 5. 이미지 및 액션 버튼 -------------------- */
 
 .guide-text {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: -10px;
-    margin-bottom: 15px;
+  font-size: 0.9em;
+  color: #666;
+  margin-top: -10px;
+  margin-bottom: 15px;
 }
 
 .image-preview {
-    min-height: 100px;
-    border: 2px dashed #ccc;
-    border-radius: 6px;
-    margin-top: 10px;
-    padding: 10px;
-    text-align: center;
-    color: #999;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  min-height: 100px;
+  align-items: center;
+}
+.preview-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 설정 */
+}
+.main-tag {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #007bff;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  z-index: 10;
 }
 
 .action-buttons {
-    text-align: center;
-    margin-top: 40px;
+  text-align: center;
+  margin-top: 40px;
 }
 
 .action-buttons .btn {
-    margin: 0 10px;
-    padding: 12px 25px;
-    font-weight: bold;
+  margin: 0 10px;
+  padding: 12px 25px;
+  font-weight: bold;
 }
 
 .btn-primary {
-    background-color: #007bff;
-    color: white;
+  background-color: #007bff;
+  color: white;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .btn-secondary {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ccc;
 }
 
 .btn-secondary:hover {
-    background-color: #e2e6ea;
+  background-color: #e2e6ea;
 }
