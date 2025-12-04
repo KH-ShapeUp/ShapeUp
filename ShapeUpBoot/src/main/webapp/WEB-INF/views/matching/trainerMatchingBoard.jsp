@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri ="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,54 +62,54 @@
                         </div>
                     </div>
                     <div class="matching-board">
-                        <div class="matching-content">
-                            <div class="matching-card">
-                                <div class="matching-card-top">
-                                    <div class="card-top-left">
-                                        <img src="../../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-top-right">
-                                        <div>
-                                            <span class="userName">윤태혁</span>
-                                            <span class="price">60,000원/회</span>
-                                        </div>
-                                        <span class="createDay">4시간전</span>
-                                    </div>                                    
-                                </div>
-                                <div class="matching-review">
-                                    <img src="../../../resources/img/star.png">
-                                    <span class="reviewAvg">4.5</span>
-                                    <span class="reviewCount">(20)</span>
-                                </div>
-                                <div class="category-wrapper">
-                                    <span class="category"># 다이어트</span>
-                                </div>
-                                <div class="matching-middle">
-                                    <span class="matching-title">세미 pt 인원 모집합니다!</span>
-                                    <span class="matching-content">체계적인 근력 운동과 식단 관리로 건강한 체형을 만들어드립니다.</span>
-                                </div>
-                                <div class="matching-footer">
-                                    <div class="location">
-                                        <span class="material-symbols-outlined">location_on</span>
-	                                    <span class="location-txt">서울 강남구</span>
-                                    </div>
-                                    <div class="time">
-                                        <span class="material-symbols-outlined">schedule</span>
-                                        <span class="time-txt">평일 오전/오후</span>
-                                    </div>
-                                    <div class="badge">
-                                        <span class="material-symbols-outlined">editor_choice</span>
-                                        <span class="badge-txt">5년</span>
-                                    </div>                        
-                                    <div class="user">
-                                        <span class="material-symbols-outlined">groups</span>
-                                        <span class="userCount">0/10명</span>
-                                    </div>
-                                </div>                            
-                                <div class="btn-row">
-                                    <button type="button" class="apply-btn">신청하기</button>
-                                </div>
-                            </div>            
+                        <div class="matching-content-wrapper">
+	                        <c:forEach var="mList" items="${mList }">                
+	                            <div class="matching-card">
+	                                <div class="matching-card-top">
+	                                    <div class="card-top-left">
+	                                        <img src="../../../resources/img/person.png">
+	                                    </div>
+	                                    <div class="card-top-right">
+	                                        <div>
+	                                            <span class="userName">${mList.userName }</span>
+	                                            <span class="price">${mList.matchingPrice}원/회</span>
+	                                        </div>
+	                                        <span class="createDay">${mList.timeAgo }</span>
+	                                    </div>                                    
+	                                </div>
+	                                <div class="matching-review">
+	                                    <img src="../../../resources/img/star.png">
+	                                    <span class="reviewAvg">4.5</span>
+	                                    <span class="reviewCount">(20)</span>
+	                                </div>
+	                                <div class="category-wrapper">
+	                                    <span class="category"># ${mList.partnerType }</span>
+	                                </div>
+	                                <div class="matching-middle">
+	                                    <span class="matching-title">${mList.matchingTitle }</span>
+	                                    <span class="matching-content">${mList.matchingContent }</span>
+	                                </div>
+	                                <div class="matching-footer">
+	                                    <div class="location">
+	                                        <span class="material-symbols-outlined">location_on</span>
+		                                    <span class="location-txt">${mList.matchingLocation }</span>
+	                                    </div>
+	                                    <div class="time">
+	                                        <span class="material-symbols-outlined">schedule</span>
+	                                        <span class="time-txt">${mList.matchingTime }</span>
+	                                    </div>
+	                                    <div class="badge">
+	                                        <span class="material-symbols-outlined">editor_choice</span>
+	                                        <span class="badge-txt">${mList.career }</span>
+	                                    </div>                        
+	                                    <div class="user">
+	                                        <span class="material-symbols-outlined">groups</span>
+	                                        <span class="userCount">${mList.applicationCount}/${mList.matchingUserCount }</span>
+	                                    </div>
+	                                </div>                            
+									<a href="/trainer/matching/detail?boardNo=${mList.matchingNo }" class="detail-btn">상세보기</a>
+	                            </div>            
+	                        </c:forEach>
                         </div>
                     </div>
                 </div>

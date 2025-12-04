@@ -148,15 +148,15 @@
 }
 
 /* 카드 */
-.matching-content {
+.matching-content-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
 }
 
 .matching-card {
-    flex: 1;
-    min-height: 350px;       /* 카드 높이 고정 */
+    height: 100%;            /* 그리드 셀 높이에 맞춰 꽉 채움 */
+    min-height: 350px;       /* 최소 높이 유지 */
     background-color: #fff;
     border-radius: 12px;
     border: 1px solid #ddd;
@@ -246,6 +246,7 @@
     display: flex;
     gap: 5px;
     flex-direction: column;
+    flex: 1;
 }
 
 .matching-middle .matching-title {
@@ -295,29 +296,26 @@
     color: #444;
 }
 
-.btn-row {
+.detail-btn {
     width: 100%;
-}
-
-.btn-row .apply-btn {
-    width: 100%;
-    border: none;
     border-radius: 8px;
     background-color: #0A84FF;
     color: #fff;
     font-size: 1rem;
     font-weight: 500;
+    text-align: center;
+    text-decoration: none;
     padding: 8px;
     cursor: pointer;
     margin-top: 10px;
     transition: all 0.2s ease-in-out;
 }
 
-.apply-btn:hover {
+.detail-btn:hover {
     background-color: #0054d6;
 }
 
-.apply-btn:active {
+.detail-btn:active {
     transform: scale(0.98);
     filter: brightness(1.05);
 }

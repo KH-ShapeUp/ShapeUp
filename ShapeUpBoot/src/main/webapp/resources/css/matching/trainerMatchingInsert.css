@@ -5,6 +5,10 @@
     --border-color : #ddd;
     --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
+
+.main {
+	gap:20px;
+}
 /***지도*****/
 /* 지도 전체 컨테이너 */
 .map-wrap {
@@ -257,6 +261,7 @@
     box-shadow: var(--box-shadow);
 }
 
+
 .matching-right {
     display: flex;
     background-color: #fff;
@@ -271,8 +276,13 @@
 .matching-footer {
     margin-top: 10px;
 }
-
+.form-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
 .form-group {
+    width: 100%;
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
