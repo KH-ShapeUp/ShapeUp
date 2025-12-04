@@ -510,6 +510,12 @@ const MembersUser = () => {
 
   return (
     <div className="members-container">
+    <header className="title-header">
+        <div>
+          <h2>회원 관리</h2>
+          <p>회원 정보를 조회하고 상태를 변경하거나 비밀번호를 초기화하세요.</p>
+        </div>
+      </header>
       <div className="members-list">
         <div className="list-header">
           <span>회원 목록 <em className="count-label">(총 회원수 : {totalMembers.toLocaleString()}명)</em></span>

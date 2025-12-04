@@ -186,7 +186,13 @@ const PostFreeBoard = () => {
   );
 
   return (
-    <>
+    <div className="posts-page">
+      <header className="title-header">
+        <div>
+          <h2>자유 게시판 관리</h2>
+          <p>자유 게시판 글을 조회하고 삭제/복구를 처리하세요.</p>
+        </div>
+      </header>
       <BoardManager
         boardTitle="자유 게시판 게시물 관리"
         initialPosts={activePosts}
@@ -240,7 +246,7 @@ const PostFreeBoard = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

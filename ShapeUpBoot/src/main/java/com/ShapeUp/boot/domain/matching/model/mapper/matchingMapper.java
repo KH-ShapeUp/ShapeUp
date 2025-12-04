@@ -3,6 +3,7 @@ package com.ShapeUp.boot.domain.matching.model.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
@@ -26,10 +27,18 @@ public interface matchingMapper{
 	List<ActivityVO> searchCategory(String keyword);
 	
 	/* 매칭 리스트 */
-	List<matchingListDTO> matchingList(RowBounds rowBounds, String location, String time, String level, String sort);
+	List<matchingListDTO> matchingList(RowBounds rowBounds,
+			@Param("location") String location,
+			@Param("time") String time,
+			@Param("level") String level,
+			@Param("sort") String sort,
+			@Param("deleteYn") String deleteYn);
 
 	/* 매칭 게시판 카운트 */
-	int getTotalCount(String location, String time, String level);
+	int getTotalCount(@Param("location") String location,
+			@Param("time") String time,
+			@Param("level") String level,
+			@Param("deleteYn") String deleteYn);
 
 	/* 매칭 신청 */
 	int matchinApplication(matchingApplicationDTO mAppDSTO);
@@ -39,5 +48,7 @@ public interface matchingMapper{
 
 	/* 매칭 중복 방지 */
 	int getMatchDedupe(int loginUserNo, int matchingNo);
+
+	int updateDeleteYn(@Param("matchingNo") int matchingNo, @Param("deleteYn") String deleteYn);
 
 }

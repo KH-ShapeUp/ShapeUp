@@ -22,10 +22,13 @@ public interface matchingService {
 
 	/* 매칭 리스트 */
 	List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit, String location, String time, 
-			String level, String sort);
+			String level, String sort, String deleteYn);
 	
 	/* 매칭 게시판 카운트 */
-	int getTotalCount(String location, String time, String level);
+	int getTotalCount(String location, String time, String level, String deleteYn);
+
+	/* 매칭 삭제/복구 */
+	int updateDeleteYn(int matchingNo, String deleteYn);
 
 	/* 매칭 신청 */
 	int matchApplication(matchingApplicationDTO mAppDTO);

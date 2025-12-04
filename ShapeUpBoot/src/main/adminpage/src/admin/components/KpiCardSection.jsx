@@ -25,6 +25,17 @@ const KpiCardSection = () => {
         if (!res.ok) throw new Error("fail");
         const data = await res.json();
         const todayKey = new Date().toISOString().slice(0, 10);
+        const normalizeDateKey = (val) => {
+          if (!val) return "";
+          const num = Number(val);
+          if (!Number.isNaN(num)) {
+            const d = new Date(num);
+            if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+          }
+          const d = new Date(val);
+          if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+          return String(val).slice(0, 10);
+        };
         let todayJoin = 0;
         let todayWithdraw = 0;
         let userCount = 0;
@@ -50,6 +61,41 @@ const KpiCardSection = () => {
           stadiumManagerCount,
           trainerCount,
         }));
+
+        // 오늘 매칭 수 (모든 페이지 조회)
+        const fetchTodayMatching = async () => {
+          let page = 1;
+          let maxPage = 1;
+          let count = 0;
+          do {
+            const resMatch = await fetch(`/matching/list?page=${page}&deleteYn=N`, { credentials: "include" });
+            if (!resMatch.ok) break;
+            const payload = await resMatch.json();
+            const list = Array.isArray(payload.mList) ? payload.mList : [];
+            list.forEach((m) => {
+              const createdKey = normalizeDateKey(m.createdAt);
+              if (createdKey === todayKey) count += 1;
+            });
+            maxPage = payload.maxPage || 1;
+            page += 1;
+          } while (page <= maxPage);
+          return count;
+        };
+
+        // 오늘 신고 요청 수
+        const fetchTodayReports = async () => {
+          const resRpt = await fetch("/api/admin/reports", { credentials: "include" });
+          if (!resRpt.ok) return 0;
+          const json = await resRpt.json();
+          const items = Array.isArray(json.items) ? json.items : [];
+          return items.reduce((acc, r) => {
+            const dateKey = normalizeDateKey(r.date);
+            return dateKey === todayKey ? acc + 1 : acc;
+          }, 0);
+        };
+
+        const [todayMatching, reportCount] = await Promise.all([fetchTodayMatching(), fetchTodayReports()]);
+        setMetrics((prev) => ({ ...prev, todayMatching, reportCount }));
       } catch (e) {
         // ignore errors, keep zeros
       } finally {

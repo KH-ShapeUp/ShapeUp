@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/RoleRequests.css";
+import CustomSelect from "../../common/components/CustomSelect";
 
   const roleLabel = {
     TRAINER: "트레이너",
@@ -25,8 +26,51 @@ const MembersRoleRequest = () => {
   const [toast, setToast] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
   const [approveNote, setApproveNote] = useState("");
+  // pagination - pending/done
+  const [pendingPage, setPendingPage] = useState(1);
+  const [pendingSize, setPendingSize] = useState(10);
+  const [pendingPageInput, setPendingPageInput] = useState("");
+  const [donePage, setDonePage] = useState(1);
+  const [doneSize, setDoneSize] = useState(10);
+  const [donePageInput, setDonePageInput] = useState("");
+  const [pendingSearch, setPendingSearch] = useState("");
+  const [doneSearch, setDoneSearch] = useState("");
 
   const selected = useMemo(() => pending.find((p) => p.id === selectedId) ?? null, [pending, selectedId]);
+  const matchesSearch = (row, term) => {
+    const t = term.trim().toLowerCase();
+    if (!t) return true;
+    return [row.name, row.username, row.requestedRole, row.status]
+      .filter(Boolean)
+      .some((field) => String(field).toLowerCase().includes(t));
+  };
+
+  const filteredPending = useMemo(
+    () => pending.filter((row) => matchesSearch(row, pendingSearch)),
+    [pending, pendingSearch]
+  );
+  const filteredDone = useMemo(
+    () => done.filter((row) => matchesSearch(row, doneSearch)),
+    [done, doneSearch]
+  );
+
+  const pendingTotalPages = Math.max(1, Math.ceil(filteredPending.length / pendingSize));
+  const pendingPageItems = useMemo(() => {
+    const start = (pendingPage - 1) * pendingSize;
+    return filteredPending.slice(start, start + pendingSize);
+  }, [filteredPending, pendingPage, pendingSize]);
+  const doneTotalPages = Math.max(1, Math.ceil(filteredDone.length / doneSize));
+  const donePageItems = useMemo(() => {
+    const start = (donePage - 1) * doneSize;
+    return filteredDone.slice(start, start + doneSize);
+  }, [filteredDone, donePage, doneSize]);
+
+  useEffect(() => {
+    setPendingPage((p) => Math.min(p, pendingTotalPages));
+  }, [pendingTotalPages]);
+  useEffect(() => {
+    setDonePage((p) => Math.min(p, doneTotalPages));
+  }, [doneTotalPages]);
 
   useEffect(() => {
     const load = async () => {
@@ -209,20 +253,42 @@ const MembersRoleRequest = () => {
 
   return (
     <div className="role-requests">
+          <header className="title-header">
+        <div>
+          <h2>권한 관리</h2>
+          <p>권한 요청을 확인하고, 권한을 부여하거나 반려할 수 있어요.</p>
+        </div>
+      </header>
       <div className="role-requests__top">
         <div className="pending-card">
           <div className="section-header">
             <div>
-              <h3>권한 요청</h3>
-              <p className="muted">요청된 회원 목록에서 권한을 변경하거나 반려하세요.</p>
+              <h3>권한 요청</h3>            
             </div>
-            <div className="count-pill">대기 {pending.length}명</div>
+            <div className="header-actions">
+              <div className="count-pill">대기 {pending.length}명</div>
+              <CustomSelect
+                className="page-size-select"
+                value={String(pendingSize)}
+                options={[5, 10, 20, 50].map((sz) => ({ label: `${sz}개`, value: String(sz) }))}
+                onChange={(val) => { setPendingSize(Number(val)); setPendingPage(1); }}
+                size="sm"
+              />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="검색어 입력"
+                value={pendingSearch}
+                onChange={(e) => { setPendingSearch(e.target.value); setPendingPage(1); }}
+              />
+            </div>              
+
           </div>
           <div className="pending-list">
             {pending.length === 0 ? (
               <div className="empty">대기 중인 요청이 없습니다.</div>
             ) : (
-              pending.map((req) => (
+              pendingPageItems.map((req) => (
                 <div
                   key={req.id}
                   className={`pending-item ${selectedId === req.id ? "active" : ""}`}
@@ -240,13 +306,50 @@ const MembersRoleRequest = () => {
               ))
             )}
           </div>
+          {pending.length > 0 && (
+            <div className="pagination-controls">
+              <button
+                type="button"
+                onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
+                disabled={pendingPage === 1}
+              >
+                이전
+              </button>
+              <span className="pagination-status">{pendingPage}/{pendingTotalPages}</span>
+              <input
+                type="number"
+                min="1"
+                max={pendingTotalPages}
+                className="pagination-input"
+                value={pendingPageInput}
+                placeholder="페이지 입력"
+                onChange={(e) => setPendingPageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const v = Number(e.currentTarget.value);
+                    if (!Number.isNaN(v) && v >= 1 && v <= pendingTotalPages) {
+                      setPendingPage(v);
+                      setPendingPageInput("");
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setPendingPage((p) => Math.min(pendingTotalPages, p + 1))}
+                disabled={pendingPage === pendingTotalPages}
+              >
+                다음
+              </button>
+
+            </div>
+          )}
         </div>
 
         <div className="detail-card">
           <div className="section-header">
             <div>
               <h3>회원 상태 수정</h3>
-              <p className="muted">요청 상세를 확인하고 처리하세요.</p>
             </div>
           </div>
           {selected ? (
@@ -275,13 +378,28 @@ const MembersRoleRequest = () => {
         </div>
       </div>
 
-      <div className="completed-card">
-        <div className="section-header">
-          <div>
-            <h3>완료된 사항</h3>
-            <p className="muted">변경/반려된 요청 내역입니다.</p>
+        <div className="completed-card">
+          <div className="section-header">
+            <div>
+              <h3>완료된 사항</h3>
+            </div>
+          <div className="header-actions">
+            <div className="count-pill alt">완료 {done.length}건</div>
+            <CustomSelect
+              className="page-size-select"
+              value={String(doneSize)}
+              options={[5, 10, 20, 50].map((sz) => ({ label: `${sz}개`, value: String(sz) }))}
+              onChange={(val) => { setDoneSize(Number(val)); setDonePage(1); }}
+              size="sm"
+            />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="검색어 입력"
+              value={doneSearch}
+              onChange={(e) => { setDoneSearch(e.target.value); setDonePage(1); }}
+            />
           </div>
-          <div className="count-pill alt">완료 {done.length}건</div>
         </div>
         <div className="table-wrap">
           <table className="role-table">
@@ -298,7 +416,7 @@ const MembersRoleRequest = () => {
               {done.length === 0 ? (
                 <tr><td colSpan={5} className="empty">완료된 요청이 없습니다.</td></tr>
               ) : (
-                done.map((row) => (
+                donePageItems.map((row) => (
                   <tr key={row.id} className="clickable" onClick={() => openDoneDetail(row)}>
                     <td>{row.id}</td>
                     <td>{row.name}</td>
@@ -310,6 +428,43 @@ const MembersRoleRequest = () => {
               )}
             </tbody>
           </table>
+          {done.length > 0 && (
+            <div className="pagination-controls">
+              <button
+                type="button"
+                onClick={() => setDonePage((p) => Math.max(1, p - 1))}
+                disabled={donePage === 1}
+              >
+                이전
+              </button>
+              <span className="pagination-status">{donePage}/{doneTotalPages}</span>
+              <input
+                type="number"
+                min="1"
+                max={doneTotalPages}
+                className="pagination-input"
+                value={donePageInput}
+                placeholder="페이지 입력"
+                onChange={(e) => setDonePageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const v = Number(e.currentTarget.value);
+                    if (!Number.isNaN(v) && v >= 1 && v <= doneTotalPages) {
+                      setDonePage(v);
+                      setDonePageInput("");
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setDonePage((p) => Math.min(doneTotalPages, p + 1))}
+                disabled={donePage === doneTotalPages}
+              >
+                다음
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

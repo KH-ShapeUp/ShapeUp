@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
-import.meta.env.VITE_API_BASE || ""
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  (typeof window !== "undefined" && window.location.port === "5173" ? "http://localhost:8080" : "");
 
 // const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
 const successCategories = ["다이어트", "근력증가", "체지방 감량"];
@@ -181,7 +184,13 @@ const PostSuccessBoard = () => {
   );
 
   return (
-    <>
+    <div className="posts-page">
+        <header className="title-header">
+        <div>
+          <h2>성공 후기 관리</h2>
+          <p>성공 후기 게시글을 조회하고 삭제/복구를 처리하세요.</p>
+        </div>
+      </header>
       <BoardManager
         boardTitle="성공 후기 게시물 관리"
         initialPosts={activePosts}
@@ -209,6 +218,7 @@ const PostSuccessBoard = () => {
       />
 
       {actionModal.open && (
+
         <div className="modal-overlay">
           <div className="modal delete">
             <div className="modal-header">
@@ -235,7 +245,7 @@ const PostSuccessBoard = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
