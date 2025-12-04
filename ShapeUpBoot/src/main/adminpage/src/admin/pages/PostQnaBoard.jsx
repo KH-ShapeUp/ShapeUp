@@ -214,8 +214,15 @@ const PostQnaBoard = () => {
   const buttonLabel = selectedPost?.status === "완료" ? "답변 수정" : "답변하기";
 
   return (
-    <div className="posts-container qna-board">
-      <div className="posts-list">
+    <div className="posts-page">
+      <div className="posts-container qna-board">
+        <header className="title-header">
+          <div>
+            <h2>문의/건의 관리</h2>
+            <p>회원 문의와 건의를 확인하고 답변을 남겨주세요.</p>
+          </div>
+        </header>
+        <div className="posts-list">
         <div className="qna-block">
           <div className="qna-block-header">
             <span>대기 중 질문 / 건의</span>
@@ -385,6 +392,7 @@ const PostQnaBoard = () => {
         <div className="chart-area">
           <canvas ref={chartRef}></canvas>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -104,10 +104,10 @@ const SendGuideline = () => {
 
   return (
     <div className="guideline-page">
-      <header className="guideline-header">
+    <header className="title-header">
         <div>
-          <h2>운영 지침 보내기</h2>
-          <p>시설 관리자에게 전달할 지침을 작성해 전송하세요.</p>
+          <h2>회원 관리</h2>
+          <p>회원 정보를 조회하고 상태를 변경하거나 비밀번호를 초기화하세요.</p>
         </div>
       </header>
 

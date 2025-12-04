@@ -92,6 +92,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+          <header className="title-header">
+        <div>
+          <h2>메인 화면 대시보드</h2>
+          <p>한 눈에 사이트 상태를 확인할 수 있어요.</p>
+        </div>
+      </header>
       <div className="top-section">
         <ChartCard title="일일 방문량" data={visitData} labels={chartLabels} />
         <ChartCard title="일일 회원 수" data={memberData} labels={chartLabels} />

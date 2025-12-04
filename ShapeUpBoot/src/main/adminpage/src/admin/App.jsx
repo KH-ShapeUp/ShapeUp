@@ -45,24 +45,24 @@ function App() {
         const res = await fetch("/api/session/user-type", { credentials: "include" });
         if (!res.ok) {
           alert("잘못된 접근입니다.");
-          window.location.href = "http://192.168.52.24:8080";
+          window.location.href = "http://localhost:8080";
           return;
         }
         const data = await res.json();
         if (data.userType !== "SYSTEM_MANAGER") {
           if (data.userType === "STADIUM_MANAGER") {
             alert("잘못된 접근입니다.");
-            window.location.href = "http://192.168.52.24:8080/stadium";
+            window.location.href = "http://localhost:8080/stadium";
             return;
           }
           alert("잘못된 접근입니다.");
-          window.location.href = "http://192.168.52.24:8080";
+          window.location.href = "http://localhost:8080";
           return;
         }
         setAuthChecked(true);
       } catch (e) {
         alert("잘못된 접근입니다.");
-        window.location.href = "http://192.168.52.24:8080";
+        window.location.href = "http://localhost:8080";
       }
     };
     checkAuth();

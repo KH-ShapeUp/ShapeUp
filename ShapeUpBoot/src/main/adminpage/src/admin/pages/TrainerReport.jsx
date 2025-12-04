@@ -56,11 +56,19 @@ const logFilterOptions = [
 const TrainerReport = () => {
   const [reports, setReports] = useState(() => readStorageArray(TRAINER_REPORT_STORAGE_KEY));
   const [selectedId, setSelectedId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [pendingSearchTerm, setPendingSearchTerm] = useState("");
+  const [processedSearchTerm, setProcessedSearchTerm] = useState("");
   const [logFilter, setLogFilter] = useState("전체");
   const [rejectModal, setRejectModal] = useState({ open: false, reason: "", message: "" });
   const [deleteModal, setDeleteModal] = useState({ open: false, message: "" });
   const [feedback, setFeedback] = useState("");
+  // pagination
+  const [pendingPage, setPendingPage] = useState(1);
+  const [pendingSize, setPendingSize] = useState(10);
+  const [pendingPageInput, setPendingPageInput] = useState("");
+  const [procPage, setProcPage] = useState(1);
+  const [procSize, setProcSize] = useState(10);
+  const [procPageInput, setProcPageInput] = useState("");
 
   const updateReports = (updater) => {
     setReports((prev) => {
@@ -104,8 +112,16 @@ const TrainerReport = () => {
     return () => clearTimeout(timer);
   }, [feedback]);
 
-  const matchesSearch = (report) => {
-    const term = searchTerm.trim().toLowerCase();
+  const matchesSearch = (report, term) => {
+    const t = term.trim().toLowerCase();
+    if (!t) return true;
+    return [report.title, report.facility, report.reviewer, report.reportReason]
+      .filter(Boolean)
+      .some((field) => field.toLowerCase().includes(t));
+  };
+
+  const matchesPendingSearch = (report) => {
+    const term = pendingSearchTerm.trim().toLowerCase();
     if (!term) return true;
     return [report.title, report.facility, report.reviewer, report.reportReason]
       .filter(Boolean)
@@ -114,16 +130,39 @@ const TrainerReport = () => {
 
   const pendingReports = useMemo(() => {
     return reports
-      .filter((report) => report.status === "대기" && matchesSearch(report))
+      .filter((report) => report.status === "대기" && matchesPendingSearch(report))
       .sort((a, b) => new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime());
-  }, [reports, searchTerm]);
+  }, [reports, pendingSearchTerm]);
+  const pendingTotalPages = Math.max(1, Math.ceil(pendingReports.length / pendingSize));
+  const pendingPageItems = useMemo(() => {
+    const start = (pendingPage - 1) * pendingSize;
+    return pendingReports.slice(start, start + pendingSize);
+  }, [pendingReports, pendingPage, pendingSize]);
 
   const processedReports = useMemo(() => {
     return reports
-      .filter((report) => report.status !== "대기" && matchesSearch(report))
+      .filter((report) => report.status !== "대기" && matchesSearch(report, processedSearchTerm))
       .filter((report) => (logFilter === "전체" ? true : report.status === logFilter))
       .sort((a, b) => new Date(b.resolvedAt || b.reportedAt).getTime() - new Date(a.resolvedAt || a.reportedAt).getTime());
-  }, [reports, searchTerm, logFilter]);
+  }, [reports, processedSearchTerm, logFilter]);
+  const procTotalPages = Math.max(1, Math.ceil(processedReports.length / procSize));
+  const processedPageItems = useMemo(() => {
+    const start = (procPage - 1) * procSize;
+    return processedReports.slice(start, start + procSize);
+  }, [processedReports, procPage, procSize]);
+
+  useEffect(() => {
+    setPendingPage(1);
+  }, [pendingSearchTerm]);
+  useEffect(() => {
+    setProcPage(1);
+  }, [processedSearchTerm, logFilter]);
+  useEffect(() => {
+    setPendingPage((p) => Math.min(p, pendingTotalPages));
+  }, [pendingTotalPages]);
+  useEffect(() => {
+    setProcPage((p) => Math.min(p, procTotalPages));
+  }, [procTotalPages]);
 
   const selectedReport = reports.find((report) => report.id === selectedId) ?? null;
 
@@ -201,8 +240,8 @@ const TrainerReport = () => {
           <input
             type="text"
             placeholder="시설 / 리뷰 제목 / 회원 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={pendingSearchTerm}
+            onChange={(e) => setPendingSearchTerm(e.target.value)}
           />
         </div>
       </header>
@@ -223,7 +262,7 @@ const TrainerReport = () => {
               </tr>
             </thead>
             <tbody>
-              {pendingReports.map((report) => (
+              {pendingPageItems.map((report) => (
                 <tr
                   key={report.id}
                   className={report.id === selectedId ? "active" : ""}
@@ -244,6 +283,41 @@ const TrainerReport = () => {
               )}
             </tbody>
           </table>
+          <div className="pagination-controls">
+            <button
+              type="button"
+              onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
+              disabled={pendingPage === 1}
+            >
+              이전
+            </button>
+            <span className="pagination-status">{pendingPage}/{pendingTotalPages}</span>
+            <input
+              type="number"
+              min="1"
+              max={pendingTotalPages}
+              className="pagination-input"
+              value={pendingPageInput}
+              placeholder="페이지 입력"
+              onChange={(e) => setPendingPageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const v = Number(e.currentTarget.value);
+                  if (!Number.isNaN(v) && v >= 1 && v <= pendingTotalPages) {
+                    setPendingPage(v);
+                    setPendingPageInput("");
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setPendingPage((p) => Math.min(pendingTotalPages, p + 1))}
+              disabled={pendingPage === pendingTotalPages}
+            >
+              다음
+            </button>
+          </div>
         </article>
 
         <article className="trainer-card">
@@ -270,7 +344,7 @@ const TrainerReport = () => {
               </tr>
             </thead>
             <tbody>
-              {processedReports.map((report) => (
+              {processedPageItems.map((report) => (
                 (() => {
                   const statusClass = report.status.replace(/\s+/g, "-");
                   return (
@@ -300,6 +374,41 @@ const TrainerReport = () => {
               )}
             </tbody>
           </table>
+          <div className="pagination-controls">
+            <button
+              type="button"
+              onClick={() => setProcPage((p) => Math.max(1, p - 1))}
+              disabled={procPage === 1}
+            >
+              이전
+            </button>
+            <span className="pagination-status">{procPage}/{procTotalPages}</span>
+            <input
+              type="number"
+              min="1"
+              max={procTotalPages}
+              className="pagination-input"
+              value={procPageInput}
+              placeholder="페이지 입력"
+              onChange={(e) => setProcPageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const v = Number(e.currentTarget.value);
+                  if (!Number.isNaN(v) && v >= 1 && v <= procTotalPages) {
+                    setProcPage(v);
+                    setProcPageInput("");
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setProcPage((p) => Math.min(procTotalPages, p + 1))}
+              disabled={procPage === procTotalPages}
+            >
+              다음
+            </button>
+          </div>
         </article>
       </section>
 

@@ -72,10 +72,10 @@
 	        MATCHING_TBL M
 	        JOIN ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
 	        JOIN USER_TBL U ON M.USER_NO = U.USER_NO
-	
+
 	    WHERE 
 	        A.USE_YN = 'Y'
-	        AND M.DELETE_YN = 'N'
+	        AND NVL(M.DELETE_YN,'N') = #{deleteYn}
 	       
 		    <if test="location != null and location != ''">
 		        AND M.MATCHING_LOCATION = #{location}
@@ -121,10 +121,11 @@
 	</select>
 
  	
- 	<!-- 매칭 게시판 카운트 -->
- 	<select id="getTotalCount">
- 		SELECT COUNT(*) FROM MATCHING_TBL 
- 		<where>
+	<!-- 매칭 게시판 카운트 -->
+	<select id="getTotalCount">
+		SELECT COUNT(*) FROM MATCHING_TBL 
+		<where>
+            NVL(DELETE_YN,'N') = #{deleteYn}
 	        <if test="location != null and location != ''">
 	            AND MATCHING_LOCATION LIKE '%' || #{location} || '%'
 	        </if>
@@ -135,8 +136,14 @@
 	            AND MATCHING_LEVEL = #{level}
 	        </if>
 	    </where>
-	    ORDER BY CREATED_AT DESC
  	</select>
+
+	<!-- 매칭 삭제/복구 -->
+	<update id="updateDeleteYn">
+		UPDATE MATCHING_TBL
+		SET DELETE_YN = #{deleteYn}
+		WHERE MATCHING_NO = #{matchingNo}
+	</update>
  	
  	<!-- 매칭 신청 버튼(삽입) -->
  	<insert id="matchinApplication">

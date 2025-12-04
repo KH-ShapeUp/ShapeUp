@@ -2,8 +2,38 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto 300px;
+  gap: 24px;
+  padding: 0;
+  width: 100%;
+}
+.posts-page {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  padding: 20px;
+  padding: 20px 24px 28px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  width: 100%;
+  grid-column: 1 / -1;
+}
+.title-header h2 {
+  margin: 0 0 4px;
+}
+.title-header p {
+  margin: 0;
+  color: #6c7288;
 }
 
 /* 게시물 카드 */
@@ -28,7 +58,7 @@
 .posts-chart { grid-column: 2 / 3; grid-row: 2 / 3; }
 
 .notice-compose-card {
-  margin: 16px 20px 28px;
+  margin: 16px 0 28px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -321,14 +351,28 @@
 
 .posts-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.95rem;
+  overflow: hidden;
+  border: 1px solid #e5e8f0;
+  border-radius: 12px;
 }
 .posts-table th, .posts-table td {
-  border-bottom: 1px solid #ddd;
-  padding: 8px;
+  border-bottom: 1px solid #e5e8f0;
+  padding: 12px 10px;
   text-align: center;
   white-space: nowrap;
+  background: #fff;
+}
+.posts-table thead th:first-child { border-top-left-radius: 12px; }
+.posts-table thead th:last-child { border-top-right-radius: 12px; }
+.posts-table tbody tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+.posts-table tbody tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+.posts-table thead th {
+  background: linear-gradient(180deg, #f8f9fc 0%, #f0f2f7 100%);
+  font-weight: 700;
+  color: #4b5563;
 }
 .posts-table th.sortable {
   cursor: pointer;

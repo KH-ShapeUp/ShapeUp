@@ -1,9 +1,30 @@
 .members-container {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 20px;
   padding: 20px;
   width: 100%;
+}
+
+.title-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  animation: members-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  width: 100%;
+  grid-column: 1 / -1;
+}
+.title-header h2 {
+  margin: 0 0 4px;
+}
+.title-header p {
+  margin: 0;
+  color: #6c7288;
 }
 
 .members-list, .members-detail, .members-chart {
@@ -15,6 +36,8 @@
   will-change: transform, opacity;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.members-list { grid-column: 1 / 2; }
+.members-detail { grid-column: 2 / 3; }
 
 .members-detail {
   position: relative;
