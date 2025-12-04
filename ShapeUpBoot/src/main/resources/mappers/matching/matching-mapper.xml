@@ -6,7 +6,9 @@
  	<!-- 매칭 삽입 -->
  	<insert id="matchingInsert">
  		INSERT INTO MATCHING_TBL VALUES (SEQ_MATCH_NO.NEXTVAL, #{userNo}, #{matchingTitle}, #{matchingContent}, DEFAULT, NULL, DEFAULT,
- 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, #{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice})
+ 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, 
+ 		#{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice},
+ 		NULL, NULL, NULL)
  	</insert>
  	
  	<!-- 매칭 카테고리 리스트 -->
@@ -76,6 +78,7 @@
 	    WHERE 
 	        A.USE_YN = 'Y'
 	        AND M.DELETE_YN = 'N'
+	        AND M.MATCHING_TYPE = 'NOMAL'
 	       
 		    <if test="location != null and location != ''">
 		        AND M.MATCHING_LOCATION = #{location}
@@ -125,6 +128,8 @@
  	<select id="getTotalCount">
  		SELECT COUNT(*) FROM MATCHING_TBL 
  		<where>
+ 			MATCHING_TYPE = 'NOMAL' AND
+ 			DELETE_YN = 'N'
 	        <if test="location != null and location != ''">
 	            AND MATCHING_LOCATION LIKE '%' || #{location} || '%'
 	        </if>

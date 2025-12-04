@@ -56,9 +56,9 @@
 		        JOIN ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
 		        JOIN USER_TBL U ON M.USER_NO = U.USER_NO
 		
-		    WHERE 
-		        A.USE_YN = 'Y'
+		    WHERE A.USE_YN = 'Y'
 		        AND M.DELETE_YN = 'N'
+		        AND M.MATCHING_TYPE = 'NOMAL'
 		    ORDER BY 
 		    	M.CREATED_AT DESC
 		)
