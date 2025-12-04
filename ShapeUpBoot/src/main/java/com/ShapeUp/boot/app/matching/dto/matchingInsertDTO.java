@@ -22,4 +22,8 @@ public class matchingInsertDTO {
 	private int userNo;					// 작성자 번호
 	private int matchingUserCount;		// 모집인원
 	private int activityId;				// 활동 카테고리
+	// 트레이닝 매칭때 사용
+	private double latitude;				// 위도			
+	private double longitude;				// 경도
+	private String locationUrl;
 }

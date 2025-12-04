@@ -327,6 +327,8 @@
 	        BUSINESS_NUMBER,
 	        CERTIFICATE_TYPE,
 	        CERTIFICATE_NUMBER,
+	        CAREER,                    <!-- ⭐ 활동 기간 -->
+	        CAREER_DETAIL,             <!-- ⭐ 상세 경력 -->
 	        ATTACHMENT_PATH,
 	        ATTACHMENT_ORIGIN,
 	        ATTACHMENT_RENAME,
@@ -338,9 +340,11 @@
 	        DEFAULT,
 	        #{requestReason},
 	        #{businessName,jdbcType=VARCHAR},
-			#{businessNumber,jdbcType=VARCHAR},
-			#{certificateType,jdbcType=VARCHAR},
-			#{certificateNumber,jdbcType=VARCHAR},
+	        #{businessNumber,jdbcType=VARCHAR},
+	        #{certificateType,jdbcType=VARCHAR},
+	        #{certificateNumber,jdbcType=VARCHAR},
+	        #{career,jdbcType=VARCHAR},           <!-- ⭐ 활동 기간 -->
+	        #{careerDetail,jdbcType=VARCHAR},     <!-- ⭐ 상세 경력 -->
 	        #{attachmentPath},
 	        #{attachmentOrigin},
 	        #{attachmentRename},
@@ -398,7 +402,6 @@
 	    ORDER BY CREATED_AT DESC
 	</select>
 	
-	<!-- 신청 번호로 조회 -->
 	<select id="selectRequestByNo" resultType="RequestPermissionVO">
 	    SELECT 
 	        r.REQUEST_NO,
@@ -410,6 +413,8 @@
 	        r.BUSINESS_NUMBER,
 	        r.CERTIFICATE_TYPE,
 	        r.CERTIFICATE_NUMBER,
+	        r.CAREER,                    <!-- ⭐ 추가 -->
+	        r.CAREER_DETAIL,             <!-- ⭐ 추가 -->
 	        r.ATTACHMENT_PATH,
 	        r.ATTACHMENT_ORIGIN,
 	        r.ATTACHMENT_RENAME,

@@ -6,7 +6,9 @@
  	<!-- 매칭 삽입 -->
  	<insert id="matchingInsert">
  		INSERT INTO MATCHING_TBL VALUES (SEQ_MATCH_NO.NEXTVAL, #{userNo}, #{matchingTitle}, #{matchingContent}, DEFAULT, NULL, DEFAULT,
- 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, #{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice})
+ 		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, 
+ 		#{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice},
+ 		NULL, NULL, NULL)
  	</insert>
  	
  	<!-- 매칭 카테고리 리스트 -->
@@ -72,10 +74,12 @@
 	        MATCHING_TBL M
 	        JOIN ACTIVITY_TBL A ON M.ACTIVITY_ID = A.ACTIVITY_ID
 	        JOIN USER_TBL U ON M.USER_NO = U.USER_NO
-	
+
 	    WHERE 
 	        A.USE_YN = 'Y'
 	        AND M.DELETE_YN = 'N'
+	        AND M.MATCHING_TYPE = 'NOMAL'
+
 	       
 		    <if test="location != null and location != ''">
 		        AND M.MATCHING_LOCATION = #{location}
@@ -121,10 +125,13 @@
 	</select>
 
  	
+
  	<!-- 매칭 게시판 카운트 -->
  	<select id="getTotalCount">
  		SELECT COUNT(*) FROM MATCHING_TBL 
  		<where>
+ 			MATCHING_TYPE = 'NOMAL' AND
+ 			DELETE_YN = 'N'
 	        <if test="location != null and location != ''">
 	            AND MATCHING_LOCATION LIKE '%' || #{location} || '%'
 	        </if>
@@ -135,8 +142,14 @@
 	            AND MATCHING_LEVEL = #{level}
 	        </if>
 	    </where>
-	    ORDER BY CREATED_AT DESC
  	</select>
+
+	<!-- 매칭 삭제/복구 -->
+	<update id="updateDeleteYn">
+		UPDATE MATCHING_TBL
+		SET DELETE_YN = #{deleteYn}
+		WHERE MATCHING_NO = #{matchingNo}
+	</update>
  	
  	<!-- 매칭 신청 버튼(삽입) -->
  	<insert id="matchinApplication">

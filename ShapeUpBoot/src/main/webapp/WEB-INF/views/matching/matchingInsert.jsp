@@ -387,7 +387,7 @@
                             confirmButton: 'success-button'
                         },
                         didClose: () => {
-                            location.href="/matching/board?ts=" + new Date().getTime();
+                            location.href="/matching/board";
                         }
                     });                 
                 } else {

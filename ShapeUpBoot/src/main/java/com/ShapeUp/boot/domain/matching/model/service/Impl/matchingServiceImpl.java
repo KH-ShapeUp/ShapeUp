@@ -48,18 +48,23 @@ public class matchingServiceImpl implements matchingService{
 	/* 매칭 리스트 */
 	@Override
 	public List<matchingListDTO> matchingList(int currentPage, int matchBoardLimit, 
-			String location, String time, String level, String sort) {
+			String location, String time, String level, String sort, String deleteYn) {
 		int offset = (currentPage - 1) * matchBoardLimit;
 		RowBounds rowBounds = new RowBounds(offset, matchBoardLimit);
-		List<matchingListDTO> mList =  mMapper.matchingList(rowBounds, location, time, level, sort);
+		List<matchingListDTO> mList =  mMapper.matchingList(rowBounds, location, time, level, sort, deleteYn);
 		return mList;
 	}
 	
 	/* 매칭 게시판 카운트 */
 	@Override
-	public int getTotalCount(String location, String time, String level) {
-		int getTotalCount = mMapper.getTotalCount(location, time, level);
+	public int getTotalCount(String location, String time, String level, String deleteYn) {
+		int getTotalCount = mMapper.getTotalCount(location, time, level, deleteYn);
 		return getTotalCount;
+	}
+
+	@Override
+	public int updateDeleteYn(int matchingNo, String deleteYn) {
+		return mMapper.updateDeleteYn(matchingNo, deleteYn);
 	}
 	
 	/* 매칭 신청 */

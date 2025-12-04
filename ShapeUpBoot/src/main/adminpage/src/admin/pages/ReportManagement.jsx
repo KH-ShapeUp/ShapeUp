@@ -9,7 +9,8 @@ const ReportManagement = () => {
   const [reports, setReports] = useState([]);
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("전체");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [pendingSearchTerm, setPendingSearchTerm] = useState("");
+  const [processedSearchTerm, setProcessedSearchTerm] = useState("");
   const [requestSort, setRequestSort] = useState({ key: "id", dir: "asc" });
   const [logSort, setLogSort] = useState({ key: "id", dir: "asc" });
   const [logStatusFilter, setLogStatusFilter] = useState("전체");
@@ -63,28 +64,13 @@ const ReportManagement = () => {
     setShowRejectModal(false);
   };
 
-  const filteredReports = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    return reports.filter((report) => {
-      const matchCategory =
-        categoryFilter === "전체" ? true : report.category === categoryFilter;
-
-      const matchSearch = term
-        ? [
-            report.reporter,
-            report.author,
-            report.title,
-            report.reason,
-            report.status,
-            report.category,
-          ]
-            .filter(Boolean)
-            .some((field) => field.toLowerCase().includes(term))
-        : true;
-
-      return matchCategory && matchSearch;
-    });
-  }, [reports, categoryFilter, searchTerm]);
+  const matchesSearch = (report, term) => {
+    const t = term.trim().toLowerCase();
+    if (!t) return true;
+    return [report.reporter, report.author, report.title, report.reason, report.status, report.category]
+      .filter(Boolean)
+      .some((field) => field.toLowerCase().includes(t));
+  };
 
   const sortReports = (list, sort) => {
     const collator = new Intl.Collator("ko");
@@ -123,18 +109,28 @@ const ReportManagement = () => {
   };
 
   const pendingReports = useMemo(() => {
-    const pending = filteredReports.filter((report) => report.status === "대기");
-    return sortReports(pending, requestSort);
-  }, [filteredReports, requestSort]);
+    const pending = reports.filter((report) => report.status === "대기");
+    const filtered = pending.filter(
+      (r) =>
+        (categoryFilter === "전체" || r.category === categoryFilter) &&
+        matchesSearch(r, pendingSearchTerm)
+    );
+    return sortReports(filtered, requestSort);
+  }, [reports, categoryFilter, pendingSearchTerm, requestSort]);
 
   const processedReports = useMemo(() => {
-    const processed = filteredReports.filter((report) => report.status !== "대기");
+    const processed = reports.filter((report) => report.status !== "대기");
     const statusFiltered =
       logStatusFilter === "전체"
         ? processed
         : processed.filter((report) => report.status === logStatusFilter);
-    return sortReports(statusFiltered, logSort);
-  }, [filteredReports, logStatusFilter, logSort]);
+    const filtered = statusFiltered.filter(
+      (r) =>
+        (categoryFilter === "전체" || r.category === categoryFilter) &&
+        matchesSearch(r, processedSearchTerm)
+    );
+    return sortReports(filtered, logSort);
+  }, [reports, categoryFilter, processedSearchTerm, logStatusFilter, logSort]);
 
   // pagination settings (pending)
   const [pendingPage, setPendingPage] = useState(1);
@@ -158,8 +154,11 @@ const ReportManagement = () => {
 
   useEffect(() => {
     setPendingPage(1);
+  }, [pendingSearchTerm, categoryFilter]);
+
+  useEffect(() => {
     setProcPage(1);
-  }, [searchTerm, categoryFilter, logStatusFilter]);
+  }, [processedSearchTerm, categoryFilter, logStatusFilter]);
 
   useEffect(() => {
     const hit =
@@ -226,6 +225,12 @@ const ReportManagement = () => {
 
   return (
     <div className="report-container">
+          <header className="title-header">
+        <div>
+          <h2>회원 신고 관리</h2>
+          <p>회원들의 신고를 확인하고 조치하세요.</p>
+        </div>
+      </header>
       <div className="report-tables">
         {/* 신고 요청 리스트 */}
         <div className="report-section">
@@ -240,14 +245,15 @@ const ReportManagement = () => {
               <input
                 type="text"
                 placeholder="검색어 입력"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={pendingSearchTerm}
+                onChange={(e) => setPendingSearchTerm(e.target.value)}
               />
-              <select value={pendingSize} onChange={(e) => { setPendingSize(Number(e.target.value)); setPendingPage(1); }}>
-                {[5, 10, 20, 50].map((sz) => (
-                  <option key={sz} value={sz}>{sz}개</option>
-                ))}
-              </select>
+              <CustomSelect
+                value={String(pendingSize)}
+                options={[5, 10, 20, 50].map((sz) => ({ label: `${sz}개`, value: String(sz) }))}
+                onChange={(val) => { setPendingSize(Number(val)); setPendingPage(1); }}
+                size="sm"
+              />
             </div>
           </div>
 
@@ -300,7 +306,7 @@ const ReportManagement = () => {
               )}
             </tbody>
           </table>
-          <div className="pagination">
+          <div className="pagination-controls">
             <button
               type="button"
               onClick={() => setPendingPage((p) => Math.max(1, p - 1))}
@@ -308,11 +314,12 @@ const ReportManagement = () => {
             >
               이전
             </button>
-            <span>{pendingPage} / {pendingTotalPages}</span>
+            <span className="pagination-status">{pendingPage} / {pendingTotalPages}</span>
             <input
               type="number"
               min="1"
               max={pendingTotalPages}
+              className="pagination-input"
               value={pendingPageInput}
               placeholder="페이지 입력"
               onChange={(e) => setPendingPageInput(e.target.value)}
@@ -333,11 +340,6 @@ const ReportManagement = () => {
             >
               다음
             </button>
-            <select value={pendingSize} onChange={(e) => setPendingSize(Number(e.target.value))}>
-              {[5, 10, 20, 50].map((sz) => (
-                <option key={sz} value={sz}>{sz}개</option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -351,11 +353,18 @@ const ReportManagement = () => {
                 options={logStatusOptions}
                 onChange={setLogStatusFilter}
               />
-              <select value={procSize} onChange={(e) => { setProcSize(Number(e.target.value)); setProcPage(1); }}>
-                {[5, 10, 20, 50].map((sz) => (
-                  <option key={sz} value={sz}>{sz}개</option>
-                ))}
-              </select>
+                <input
+                  type="text"
+                  placeholder="검색어 입력"
+                  value={processedSearchTerm}
+                  onChange={(e) => setProcessedSearchTerm(e.target.value)}
+                />
+              <CustomSelect
+                value={String(procSize)}
+                options={[5, 10, 20, 50].map((sz) => ({ label: `${sz}개`, value: String(sz) }))}
+                onChange={(val) => { setProcSize(Number(val)); setProcPage(1); }}
+                size="sm"
+              />
             </div>
           </div>
 
@@ -416,7 +425,7 @@ const ReportManagement = () => {
               )}
             </tbody>
           </table>
-          <div className="pagination">
+          <div className="pagination-controls">
             <button
               type="button"
               onClick={() => setProcPage((p) => Math.max(1, p - 1))}
@@ -424,11 +433,12 @@ const ReportManagement = () => {
             >
               이전
             </button>
-            <span>{procPage} / {procTotalPages}</span>
+            <span className="pagination-status">{procPage} / {procTotalPages}</span>
             <input
               type="number"
               min="1"
               max={procTotalPages}
+              className="pagination-input"
               value={procPageInput}
               placeholder="페이지 입력"
               onChange={(e) => setProcPageInput(e.target.value)}
@@ -449,11 +459,6 @@ const ReportManagement = () => {
             >
               다음
             </button>
-            <select value={procSize} onChange={(e) => { setProcSize(Number(e.target.value)); setProcPage(1); }}>
-              {[5, 10, 20, 50].map((sz) => (
-                <option key={sz} value={sz}>{sz}개</option>
-              ))}
-            </select>
           </div>
         </div>
       </div>

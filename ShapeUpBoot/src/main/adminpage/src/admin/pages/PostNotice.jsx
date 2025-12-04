@@ -3,7 +3,10 @@ import BoardManager from "../components/BoardManager";
 import "../styles/PostNotice.css";
 import { BOARD_STORAGE_KEYS } from "../../common/utils/storageKeys";
 import CustomSelect from "../../common/components/CustomSelect";
-import.meta.env.VITE_API_BASE || ""
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  (typeof window !== "undefined" && window.location.port === "5173" ? "http://localhost:8080" : "");
 const PostNotice = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -248,7 +251,13 @@ const PostNotice = () => {
   };
 
   return (
-    <>
+    <div className="posts-page">
+      <header className="title-header">
+        <div>
+          <h2>공지사항 관리</h2>
+          <p>공지/이벤트/제휴/징계를 작성하고 배너를 설정하세요.</p>
+        </div>
+      </header>
       <BoardManager
         boardTitle="공지사항"
         initialPosts={posts}
@@ -414,7 +423,7 @@ const PostNotice = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.tags.shaded.org.apache.regexp.recompile;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -84,18 +85,19 @@ public class matchingController {
 			@RequestParam(required = false, defaultValue = "") String location,
 			@RequestParam(required = false, defaultValue = "") String time,
 			@RequestParam(required = false, defaultValue = "") String level,
-			@RequestParam(required = false, defaultValue = "") String sort) {
+			@RequestParam(required = false, defaultValue = "") String sort,
+			@RequestParam(required = false, defaultValue = "N") String deleteYn) {
 		
 		int matchBoardLimit = 5;
 		int naviLimit = 5;
 		
-		int getTotalCount = mService.getTotalCount(location, time, level);
+		int getTotalCount = mService.getTotalCount(location, time, level, deleteYn);
 		
 		int maxPage = (int)Math.ceil((double)getTotalCount/matchBoardLimit);
 		int startNavi = ((currentPage - 1)/naviLimit) * naviLimit + 1;
 		int endNavi = (startNavi-1) + naviLimit;
 		if(endNavi > maxPage) {endNavi = maxPage;}
-		List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit, location, time, level, sort);
+		List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit, location, time, level, sort, deleteYn);
 		System.out.println("가져온 매칭 리스트" + mList);
 		
 		// 매칭 신청 인원 카운트
@@ -146,5 +148,12 @@ public class matchingController {
 		
 		mAppDTO.setMatchingAppliNo(loginUserNo);
 		return mService.matchApplication(mAppDTO);
+	}
+
+	// 매칭 삭제/복구 (deleteYn: Y/N)
+	@RequestMapping(value = "/matching/delete", method = { RequestMethod.POST, RequestMethod.PATCH })
+	@ResponseBody
+	public int updateDeleteYn(@RequestParam int matchingNo, @RequestParam String deleteYn) {
+		return mService.updateDeleteYn(matchingNo, deleteYn);
 	}
 }

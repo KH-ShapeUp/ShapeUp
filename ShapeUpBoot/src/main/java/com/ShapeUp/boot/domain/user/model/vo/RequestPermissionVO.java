@@ -26,7 +26,8 @@ public class RequestPermissionVO {
     // 트레이너용
     private String certificateType;     // 자격증 종류
     private String certificateNumber;   // 자격증 번호
-    
+    private String career;              // ⭐ 활동 기간
+    private String careerDetail;
     // 첨부파일
     private String attachmentPath;      // 첨부파일 경로
     private String attachmentOrigin;    // 첨부파일 원본명

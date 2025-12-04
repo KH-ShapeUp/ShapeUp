@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 import com.ShapeUp.boot.app.diet.dto.Item;
 import com.ShapeUp.boot.app.diet.dto.DietSaveRequest;
-
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
@@ -36,13 +34,10 @@ import lombok.RequiredArgsConstructor;
 public class DietController {
 	
 	private final DietService dService;
-	private final GoalService goalService; // ← 이 줄 추가
+	private final GoalService goalService;
 
 	@GetMapping
 	public String dietPage() {
-		
-		//로그인 유저 정보 받아오기
-		
 		return "diet/dietRecord";
 	}
 
@@ -169,10 +164,10 @@ public class DietController {
 	}
 
 	// ========================================
-	// 목표 칼로리 조회 API (새로 추가된 부분)
+	// 목표 칼로리 조회 API (식사별 목표 포함)
 	// ========================================
 	/**
-	 * 목표 칼로리 조회
+	 * 목표 칼로리 조회 - 총 목표 + 식사별 목표
 	 * GET /diet/goal
 	 */
 	@GetMapping("/goal")
@@ -190,34 +185,107 @@ public class DietController {
 		try {
 			GoalVO goal = goalService.getGoalByUserNo(userNo);
 			
-			if (goal == null || goal.getGoalCalorie() == null) {
-				// 목표가 설정되지 않은 경우 0 반환
-				return ResponseEntity.ok(Map.of(
-					"success", true,
-					"goalCalorie", 0,
-					"GOAL_CALORIE", 0,
-					"loggedIn", true
-				));
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", true);
+			response.put("loggedIn", true);
+			
+			if (goal == null) {
+				// 목표가 설정되지 않은 경우 기본값 반환
+				response.put("goalCalorie", 2230);
+				response.put("GOAL_CALORIE", 2230);
+				response.put("goalCalorieMorning", 500);
+				response.put("goalCalorieLunch", 680);
+				response.put("goalCalorieDinner", 550);
+				response.put("goalCalorieEtc", 500);
+			} else {
+				// 총 목표 칼로리
+				int goalCalorie = (goal.getGoalCalorie() != null) ? goal.getGoalCalorie() : 2230;
+				response.put("goalCalorie", goalCalorie);
+				response.put("GOAL_CALORIE", goalCalorie);
+				
+				// 식사별 목표 칼로리 (없으면 기본값)
+				response.put("goalCalorieMorning", 
+					(goal.getGoalCalorieMorning() != null) ? goal.getGoalCalorieMorning() : 500);
+				response.put("goalCalorieLunch", 
+					(goal.getGoalCalorieLunch() != null) ? goal.getGoalCalorieLunch() : 680);
+				response.put("goalCalorieDinner", 
+					(goal.getGoalCalorieDinner() != null) ? goal.getGoalCalorieDinner() : 550);
+				response.put("goalCalorieEtc", 
+					(goal.getGoalCalorieEtc() != null) ? goal.getGoalCalorieEtc() : 500);
 			}
 			
-			int goalCalorie = goal.getGoalCalorie();
-			return ResponseEntity.ok(Map.of(
-				"success", true,
-				"goalCalorie", goalCalorie,
-				"GOAL_CALORIE", goalCalorie,
-				"loggedIn", true
-			));
+			return ResponseEntity.ok(response);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body(Map.of(
 				"success", false,
-				"message", "INTERNAL_ERROR",
+				"message", "INTERNAL_ERROR: " + e.getMessage(),
 				"loggedIn", true
 			));
 		}
 	}
 
+	// ========================================
+	// 식사별 목표 칼로리 저장 API (새로 추가)
+	// ========================================
+	/**
+	 * 식사별 목표 칼로리 저장
+	 * POST /diet/saveGoals
+	 */
+	@PostMapping("/saveGoals")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> saveGoalCalorie(
+			@RequestBody Map<String, Integer> goalData,
+			HttpSession session) {
+		
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of(
+				"success", false,
+				"message", "LOGIN_REQUIRED"
+			));
+		}
+
+		try {
+			// 기존 목표 조회
+			GoalVO goal = goalService.getGoalByUserNo(userNo);
+			
+			if (goal == null) {
+				// 새로 생성
+				goal = new GoalVO();
+				goal.setUserNo(userNo);
+			}
+			
+			// 목표 칼로리 설정
+			goal.setGoalCalorie(goalData.get("goalCalorie"));
+			goal.setGoalCalorieMorning(goalData.get("goalCalorieMorning"));
+			goal.setGoalCalorieLunch(goalData.get("goalCalorieLunch"));
+			goal.setGoalCalorieDinner(goalData.get("goalCalorieDinner"));
+			goal.setGoalCalorieEtc(goalData.get("goalCalorieEtc"));
+
+			// 저장 또는 업데이트
+			GoalVO savedGoal = goalService.saveOrUpdateGoal(goal);
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", savedGoal != null);
+			response.put("message", savedGoal != null ? "목표 칼로리가 저장되었습니다." : "저장에 실패했습니다.");
+			
+			return ResponseEntity.ok(response);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", false);
+			response.put("message", "오류가 발생했습니다: " + e.getMessage());
+			return ResponseEntity.status(500).body(response);
+		}
+	}
+
+	// ========================================
+	// Private Helper Methods
+	// ========================================
+	
 	private Integer extractUserNo(HttpSession session) {
 		if (session == null) return null;
 		Object raw = session.getAttribute("userNo");
@@ -233,8 +301,6 @@ public class DietController {
 		}
 		return null;
 	}
-	
-
 	
 	private String normalizeMealKey(String raw) {
 		if (raw == null) return null;
@@ -274,5 +340,4 @@ public class DietController {
 			return LocalDate.now().toString();
 		}
 	}
-
 }
