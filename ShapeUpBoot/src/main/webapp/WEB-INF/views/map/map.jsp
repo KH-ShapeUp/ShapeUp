@@ -39,6 +39,6 @@
         </div>
     </div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1382c885f22984e6547b8e00aa6fab29&libraries=services"></script>
-    <script src="../../resources/js/map.js"></script>
+    <script src="../../../resources/js/map.js"></script>
 </body>
 </html>

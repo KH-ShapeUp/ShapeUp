@@ -164,13 +164,17 @@
 }
 
 #myPage {
+    border-radius: 8px;
+    padding: 8px 13px;
 	text-decoration: none;
 	color:#111;
 	font-weight: 500;
+    transition: all 0.3s;
 }
 
 #myPage:hover {
-	color: #0A84FF; 
+	color: #FFF;
+    background-color: #0A84FF; 
 }
 
 .user-nickname {

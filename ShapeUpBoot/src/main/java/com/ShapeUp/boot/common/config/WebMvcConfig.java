@@ -4,6 +4,7 @@ import com.ShapeUp.boot.common.interceptor.AdminAccessInterceptor;
 import com.ShapeUp.boot.common.interceptor.StadiumAccessInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
@@ -71,21 +72,26 @@ registry.addInterceptor(new StadiumAccessInterceptor())
     }
 
     @Override
-    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + UPLOAD_BASE);
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // [중요 수정 부분] 이미지 업로드 경로 매핑
+        
+        // 1. 현재 프로젝트의 절대 경로(루트) 가져오기
+        String projectPath = System.getProperty("user.dir");
+
+        // 2. 브라우저 URL "/upload/**" 요청 시 -> 실제 폴더 "프로젝트루트/uploads/community/" 참조
+        // file:/// 접두어 필수 (Windows/Mac 호환 및 외부 경로 참조용)
         registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:C:/shapeup/upload/");
-        // Fallback for bare filenames (e.g., d8bf...png) to C:/shapeup/upload
-        registry.addResourceHandler("/*.*")
-                .addResourceLocations("file:C:/shapeup/upload/");
-        // Serve built admin SPA static files
+                .addResourceLocations("file:///" + projectPath + "/uploads/community/");
+
+        // 3. SPA(Admin) 정적 리소스 설정 (빌드된 리액트/뷰 파일 등)
         registry.addResourceHandler("/admin/**")
                 .addResourceLocations("classpath:/static/admin/");
-        // Serve built stadium SPA static files (if present)
+
+        // 4. SPA(Stadium) 정적 리소스 설정
         registry.addResourceHandler("/stadium/**")
                 .addResourceLocations("classpath:/static/stadium/");
-        // Serve JSP resources (css/js/img) under webapp/resources
+
+        // 5. JSP용 리소스 설정
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
     }

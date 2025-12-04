@@ -6,76 +6,24 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
+<link rel="stylesheet" href="../../../resources/css/matching/trainerMatchingBoard.css">
 </head>
-<style>
-    .location-filter {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-header {
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 7px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.filter-btn-wrapper {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    width: 200px;
-    z-index: 100;
-}
-
-.filter-btn-wrapper.hidden {
-    display: none;
-}
-
-.filter-btn {
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #f8f8f8;
-    cursor: pointer;
-}
-
-.filter-btn:hover {
-    background: #eee;
-}
-
-.search-submit {
-    margin-left: 10px;
-}
-
-</style>
 <body>
     <div class="container">
         <jsp:include page="/WEB-INF/views/include/header.jsp"/>
             <div class="main">
                 <div class="matching-board-wrapper">
                     <div class="matching-title-top">
-                        <p>트레이닝 모집</p>
+                        <p class="title">트레이닝 모집</p>
                     </div>
                     <div class="search-wrapper">
                         <form action="#" method="get">
                             <input type="hidden" name="location" id="location-value">
 
                             <div class="location-filter">
-                                <span class="label" id="matching-label">지역</span>
+                                <span class="material-symbols-outlined">location_on</span>
 
-                                <button type="button" id="drop-header">
+                                <button type="button" id="location-drop">
                                     <span class="loctiond-btn">전체</span>
                                     <i class="fa-solid fa-angle-down"></i>
                                 </button>
@@ -99,17 +47,76 @@
                                     <button class="filter-btn location-filter-btn" value="제주">제주</button>
                                 </div>
                             </div>
-
-                            <span class="material-symbols-outlined">search</span>
-                            <input type="text" name="keyword" id="keyword" placeholder="제목이나 키워드로 검색해주세요..">
+                            <div class="search">
+                                <span class="material-symbols-outlined">search</span>
+                                <input type="text" name="keyword" id="keyword" placeholder="카테고리, 제목으로 검색해주세요..">
+                            </div>
                         </form>
+                        <div class="matching-add-wrapper">
+                            <a href="javascript:void(0)" onclick="matchingAddBtn();">
+                                <input type="hidden" id="sessionLogin" value="${userNo}">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>매칭 등록</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="matching-board">
+                        <div class="matching-content">
+                            <div class="matching-card">
+                                <div class="matching-card-top">
+                                    <div class="card-top-left">
+                                        <img src="../../../resources/img/person.png">
+                                    </div>
+                                    <div class="card-top-right">
+                                        <div>
+                                            <span class="userName">윤태혁</span>
+                                            <span class="price">60,000원/회</span>
+                                        </div>
+                                        <span class="createDay">4시간전</span>
+                                    </div>                                    
+                                </div>
+                                <div class="matching-review">
+                                    <img src="../../../resources/img/star.png">
+                                    <span class="reviewAvg">4.5</span>
+                                    <span class="reviewCount">(20)</span>
+                                </div>
+                                <div class="category-wrapper">
+                                    <span class="category"># 다이어트</span>
+                                </div>
+                                <div class="matching-middle">
+                                    <span class="matching-title">세미 pt 인원 모집합니다!</span>
+                                    <span class="matching-content">체계적인 근력 운동과 식단 관리로 건강한 체형을 만들어드립니다.</span>
+                                </div>
+                                <div class="matching-footer">
+                                    <div class="location">
+                                        <span class="material-symbols-outlined">location_on</span>
+	                                    <span class="location-txt">서울 강남구</span>
+                                    </div>
+                                    <div class="time">
+                                        <span class="material-symbols-outlined">schedule</span>
+                                        <span class="time-txt">평일 오전/오후</span>
+                                    </div>
+                                    <div class="badge">
+                                        <span class="material-symbols-outlined">editor_choice</span>
+                                        <span class="badge-txt">5년</span>
+                                    </div>                        
+                                    <div class="user">
+                                        <span class="material-symbols-outlined">groups</span>
+                                        <span class="userCount">0/10명</span>
+                                    </div>
+                                </div>                            
+                                <div class="btn-row">
+                                    <button type="button" class="apply-btn">신청하기</button>
+                                </div>
+                            </div>            
+                        </div>
                     </div>
                 </div>
             </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
     <script>
-        const headerBtn = document.getElementById("drop-header");
+        const headerBtn = document.getElementById("location-drop");
         const dropdown = document.getElementById("location-filter");
         const hiddenInput = document.getElementById("location-value");
         const headerText = document.querySelector(".location-btn-text");
@@ -123,25 +130,42 @@
         document.querySelectorAll(".location-filter-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const value = btn.value;
-
-                // 숨겨진 input에 반영
                 hiddenInput.value = value;
-
-                // 드롭다운 헤더 텍스트 변경
                 headerText.textContent = value === "" ? "전체" : value;
-
-                // 선택 후 드롭다운 닫기
                 dropdown.classList.add("hidden");
             });
         });
 
-        // 드롭다운 외부 클릭 시 닫기
         document.addEventListener("click", (e) => {
             if (!headerBtn.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.add("hidden");
             }
         });
 
+        function matchingAddBtn() {
+            const userNo = document.querySelector("#sessionLogin").value;
+            console.log(userNo);
+
+            if(!userNo || userNo === "") {
+                Swal.fire({
+                    icon:'warning',
+                    title: '로그인이 필요한 서비스입니다.',
+                    text: '로그인 후 이용해주세요.',
+                    confirmButtonText: '로그인 하러가기',
+                    customClass: {
+                        popup: 'error-popup',
+                        title: 'error-title',
+                        text: 'error-text',
+                        confirmButton: 'error-button'
+                    }, 
+                    didClose: () => {
+                        location.href="/user/login";
+                    }
+                });   
+            } else {
+                location.href='/trainer/matching/insert';
+            }
+        }
     </script>
 </body>
 </html>

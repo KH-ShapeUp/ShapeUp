@@ -128,7 +128,7 @@
 	    		  C.COMMUNITY_TYPE = 'success'					
 			ORDER BY CREATED_AT DESC
 		)
-		WHERE ROWNUM <![CDATA[ <= ]]> 5
+		WHERE ROWNUM <![CDATA[ <= ]]> 6
 	</select>
 	
 	<select id="getNoticeList">

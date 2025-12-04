@@ -1,0 +1,323 @@
+/* 게시글 wrapper */
+.matching-board-wrapper {
+    width: 100%;
+}
+
+/* 상단 타이틀 */
+.matching-title-top .title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* 검색바 전체 */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 18px;
+}
+
+/* form 내부 */
+.search-wrapper form {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* 지역 드롭다운 영역 */
+.location-filter {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 6px;
+}
+
+/* 지역 아이콘 */
+.location-filter .material-symbols-outlined {
+    font-size: 23px;
+    color: #666;
+}
+
+/* 드롭다운 헤더 버튼 */
+#location-drop {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: .2s;
+}
+
+#location-drop:hover {
+    background: #efefef;
+}
+
+/* 드롭다운 리스트 */
+.filter-btn-wrapper {
+    position: absolute;
+    top: 43px;
+    left: 30px;
+    width: 220px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.filter-btn-wrapper.hidden {
+    display: none;
+}
+
+/* 지역 버튼 */
+.filter-btn {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.filter-btn:hover {
+    background: #eaeaea;
+}
+
+/* 검색창 */
+.search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.search span {
+    font-size: 22px;
+    color: #666;
+}
+
+.search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 1rem;
+}
+
+.search input::placeholder {
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.matching-board-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 매칭 등록 버튼 */
+.matching-add-wrapper a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #0A84FF;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.matching-add-wrapper a:hover {
+    background: #0054d6;
+}
+
+.matching-add-wrapper i {
+    font-size: 16px;
+}
+
+/* 카드 */
+.matching-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.matching-card {
+    flex: 1;
+    min-height: 350px;       /* 카드 높이 고정 */
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.matching-card-top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-top-left img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.card-top-right {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-top-right div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card-top-right .userName {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.card-top-right .price {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0A84FF;
+}
+
+.card-top-right .createDay {
+    font-size: .9rem;
+    color: #444;
+}
+
+.matching-review {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.matching-review img {
+    width: 20px;
+    height: 20px;
+}
+
+.matching-review .reviewAvg {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.matching-review .reviewCount {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #999;
+}
+
+.category {
+    border-radius: 999px;
+    padding: 4px 8px;
+    background-color: #D6EBFF;
+    color: #0A84FF;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.matching-middle {
+    width: 100%;
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+}
+
+.matching-middle .matching-title {
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 550;
+}
+
+.matching-middle .matching-content {
+    width: 100%;
+    font-size: .9rem;
+    font-weight: 500;
+    color: #444;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;   /* 최대 줄 수 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.matching-footer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.matching-footer .location,
+.matching-footer .time,
+.matching-footer .badge,
+.matching-footer .user {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.matching-footer .material-symbols-outlined {
+    font-size: 1rem;
+    color: #444;
+    font-weight: 500;
+    margin-top: 3px;
+}
+
+.matching-footer span:nth-last-child(1) {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #444;
+}
+
+.btn-row {
+    width: 100%;
+}
+
+.btn-row .apply-btn {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background-color: #0A84FF;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+.apply-btn:hover {
+    background-color: #0054d6;
+}
+
+.apply-btn:active {
+    transform: scale(0.98);
+    filter: brightness(1.05);
+}

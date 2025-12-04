@@ -11,54 +11,6 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <link rel="stylesheet" href="../../resources/css/index.css">
-<style>
-/* 홈 공지 카드 전용 정렬 */
-.home-notice .notice-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 18px;
-  align-items: flex-start;
-}
-.home-notice .notice-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-start;
-  margin-bottom: 4px;
-}
-.home-notice .pill {
-  height: 28px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  min-width: 78px;
-}
-.home-notice .notice-writeDate {
-  font-size: 15px;
-  font-weight: 800;
-  color: #111;
-}
-.home-notice .notice-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
-}
-.home-notice .notice-middle h4 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #111;
-}
-.home-notice .notice-icon {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-</style>
 </head>
 <body>
 	<div class="container">
@@ -300,188 +252,49 @@
 							<span>다른 회원들의 성공 스토리를 확인하세요.</span>
 						</div>
 						<div class="goal-all">
-							<a href="#" class="all-page-btn" id="goal-all-list-btn">더보기 <i
-								class="fa-solid fa-arrow-right"></i>
+							<a href="/success" class="all-page-btn" id="goal-all-list-btn">더보기 
+								<i class="fa-solid fa-arrow-right"></i>
 							</a>
 						</div>
 					</div>
 
 					<div class="goal-content">
-						<a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png" alt="">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
+						<c:forEach var="sList" items="${sList }">						
+							<a href="/community/detail?boardNo=${sList.communityNo}">
+								<div class="goal-card">
+									<div class="goal-card-top">
+										<div class="goal-profile-img">
+											<img src="../../resources/img/person.png" alt="">
+										</div>
+										<div class="goal-profile-info">
+											<span>${sList.userNickName }</span> 
+											<span>${sList.timeAgo }</span>
 										</div>
 									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
-								</div>
-							</div>
-						</a> <a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
+	
+									<div class="goal-main">
+										<div class="goal-title">
+											<h4>${sList.communityTitle }</h4>
+											<div class="goal-icon">
+												<div class="goal-view">
+													<i class="fa-regular fa-eye"></i> <span>${sList.viewCount }</span>
+												</div>
+												<div class="goal-good">
+													<i class="fa-regular fa-thumbs-up"></i> <span>${sList.likeCount }</span>
+												</div>
+												<div class="goal-comment">
+													<i class="fa-regular fa-comment"></i>
+													<span>${sList.commentCount }</span>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
-								</div>
-							</div>
-						</a> <a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png" alt="">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
+										<div class="goal-middle">
+											<div class="goal-content">${sList.communityContent }</div>										
 										</div>
 									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
 								</div>
-							</div>
-						</a> <a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png" alt="">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
-								</div>
-							</div>
-						</a> <a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png" alt="">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
-								</div>
-							</div>
-						</a> <a href="#">
-							<div class="goal-card">
-								<div class="goal-card-top">
-									<div class="goal-profile-img">
-										<img src="../../resources/img/person.png" alt="">
-									</div>
-									<div class="goal-profile-info">
-										<span>윤태혁</span> <span>2025.10.31</span>
-									</div>
-								</div>
-
-								<div class="goal-main">
-									<div class="goal-title">
-										<h4>3개월만에 20kg 감량</h4>
-										<div class="goal-icon">
-											<div class="goal-view">
-												<i class="fa-solid fa-eye"></i> <span>1,203</span>
-											</div>
-											<div class="goal-good">
-												<i class="fa-solid fa-thumbs-up"></i> <span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="goal-middle">
-										<div class="goal-content">아침엔 고구마와 방울토마토, 점심엔...</div>
-										<span class="goal-comment">(120)</span>
-									</div>
-								</div>
-							</div>
-						</a>
+							</a>
+						</c:forEach>
 					</div>
 				</div>
 
@@ -494,131 +307,96 @@
 								class="fa-solid fa-arrow-right"></i>
 							</a>
 						</div>
-						<div class="notice-content home-notice" id="home-notice-list">
-							<!-- 최신 공지 5개가 동적으로 렌더링됩니다 -->
+						<div class="notice-content">
+							<c:forEach var="nList" items="${nList }">
+								<a href="/notice/detail?noticeNo=${nList.noticeNo }" class="notice-ahref">
+			                        <div class="notice-card">
+			                           	<div class="notice-top">
+			                              	<c:choose>
+												<c:when test="${nList.noticeCategory eq '이벤트' }">
+													<span class="notice-category-e pill">${nList.noticeCategory }</span> 												
+												</c:when>
+												<c:when test="${nList.noticeCategory eq '제휴' }">
+													<span class="notice-category-c pill">${nList.noticeCategory }</span>
+												</c:when>
+												<c:when test="${nList.noticeCategory eq '징계'}">
+													<span class="notice-category-d pill">${nList.noticeCategory }</span>
+												</c:when>
+												<c:otherwise>
+													<span class="notice-category-n pill">${nList.noticeCategory }</span>
+												</c:otherwise>
+											</c:choose>
+			                              	<span class="notice-writeDate">${nList.createdDay }</span>
+			                           	</div>
+			                           	<div class="notice-main">
+											<div class="notice-middle">
+												<h4>
+												${nList.noticeTitle }
+												</h4>
+											</div>
+											<div class="notice-icon">
+												<div>
+													<i class="fa-regular fa-eye"></i> <span>${nList.viewCount }</span>
+												</div>			                                
+											</div>
+			                           	</div>
+			                        </div>
+								</a>							
+							</c:forEach>
 						</div>
 					</div>
 
 					<!-- 자유게시판 -->
 					<div class="post-right-free">
 						<div class="post-wrapper-title">
-							<span>자유 게시판</span> <a href="/matching" class="all-page-btn"
-								id="free-board-list-btn">더보기 <i
-								class="fa-solid fa-arrow-right"></i>
+							<span>커뮤니티</span> 
+							<a href="/matching/board" class="all-page-btn"
+								id="free-board-list-btn">더보기 
+								<i class="fa-solid fa-arrow-right"></i>
 							</a>
 						</div>
 						<div class="post-content">
-							<a href="#" class="post-ahref">
-								<div class="post-card">
-									<div class="post-header">
-										<div class="post-header-left">
-											<span class="post-category">자유 게시판</span> <span
-												class="post-nickName">윤태혁</span> <span
-												class="post-writeDate">2025.01.25</span>
-										</div>
-										<div class="post-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i><span>1,203</span>
+							<c:forEach var="cList" items="${cList }">
+								<a href="/community/detail?boardNo=${cList.communityNo }" class="post-ahref">
+									<div class="post-card">
+										<div class="post-header">
+											<div class="post-header-left">
+												<c:choose>
+                                                    <c:when test="${cList.communityType eq '운동질문' }">
+                                                        <span class="post-category-question">${cList.communityType }</span>
+                                                    </c:when>
+                                                    <c:when test="${cList.communityType eq '운동꿀팁' }">
+                                                        <span class="post-category-tip">${cList.communityType }</span>
+                                                    </c:when>
+                                                    <c:when test="${cList.communityType eq '식단/영양' }">
+                                                        <span class="post-category-food">${cList.communityType }</span>
+                                                    </c:when>
+                                                    <c:when test="${cList.communityType eq '운동인증' }">
+                                                        <span class="post-category-certification">${cList.communityType }</span>
+                                                    </c:when>
+                                                    <c:when test="${cList.communityType eq '일상/소통' }">
+                                                        <span class="post-category">${cList.communityType }</span>
+                                                    </c:when>
+                                                </c:choose>			
+												<span class="post-nickName">${cList.userNickName }</span> 
+												<span class="post-writeDate">${cList.timeAgo }</span>
 											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i><span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="post-middle">
-										<span class="post-title">등운동시 광배에 자극이 없어요..</span> <span
-											class="post-comment">(10)</span>
-									</div>
-								</div>
-							</a> <a href="#" class="post-ahref">
-								<div class="post-card">
-									<div class="post-header">
-										<div class="post-header-left">
-											<span class="post-category">자유 게시판</span> <span
-												class="post-nickName">윤태혁</span> <span
-												class="post-writeDate">2025.01.25</span>
-										</div>
-										<div class="post-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i><span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i><span>38</span>
+											<div class="post-icon">
+												<div>
+													<i class="fa-regular fa-eye"></i><span>${cList.viewCount }</span>
+												</div>
+												<div>
+													<i class="fa-regular fa-thumbs-up"></i><span>${cList.likeCount }</span>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="post-middle">
-										<span class="post-title">등운동시 광배에 자극이 없어요..</span> <span
-											class="post-comment">(10)</span>
-									</div>
-								</div>
-							</a> <a href="#" class="post-ahref">
-								<div class="post-card">
-									<div class="post-header">
-										<div class="post-header-left">
-											<span class="post-category">자유 게시판</span> <span
-												class="post-nickName">윤태혁</span> <span
-												class="post-writeDate">2025.01.25</span>
-										</div>
-										<div class="post-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i><span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i><span>38</span>
-											</div>
+										<div class="post-middle">
+											<span class="post-title">${cList.communityTitle }</span> 
+											<span class="post-comment">(${cList.commentCount })</span>
 										</div>
 									</div>
-									<div class="post-middle">
-										<span class="post-title">등운동시 광배에 자극이 없어요..</span> <span
-											class="post-comment">(10)</span>
-									</div>
-								</div>
-							</a> <a href="#" class="post-ahref">
-								<div class="post-card">
-									<div class="post-header">
-										<div class="post-header-left">
-											<span class="post-category">자유 게시판</span> <span
-												class="post-nickName">윤태혁</span> <span
-												class="post-writeDate">2025.01.25</span>
-										</div>
-										<div class="post-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i><span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i><span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="post-middle">
-										<span class="post-title">등운동시 광배에 자극이 없어요..</span> <span
-											class="post-comment">(10)</span>
-									</div>
-								</div>
-							</a> <a href="#" class="post-ahref">
-								<div class="post-card">
-									<div class="post-header">
-										<div class="post-header-left">
-											<span class="post-category">자유 게시판</span> <span
-												class="post-nickName">윤태혁</span> <span
-												class="post-writeDate">2025.01.25</span>
-										</div>
-										<div class="post-icon">
-											<div>
-												<i class="fa-solid fa-eye"></i><span>1,203</span>
-											</div>
-											<div>
-												<i class="fa-solid fa-thumbs-up"></i><span>38</span>
-											</div>
-										</div>
-									</div>
-									<div class="post-middle">
-										<span class="post-title">등운동시 광배에 자극이 없어요..</span> <span
-											class="post-comment">(10)</span>
-									</div>
-								</div>
-							</a>
+								</a>
+							</c:forEach>							
 						</div>
 					</div>
 				</div>

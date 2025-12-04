@@ -105,9 +105,10 @@ public class communityController {
 	@PostMapping("/community/image-upload")
 	@ResponseBody
 	public Map<String, Object> uploadImage(@RequestParam("image") MultipartFile uploadFile) {
-	    
+		
+		String projectPath = System.getProperty("user.dir");
 	    // 저장할 경로 
-	    String uploadFolder = "C:\\shapeup\\upload\\";
+		String uploadFolder = projectPath + "/uploads/community/";
 	    
 	    // 폴더가 없으면 자동으로 생성
         File folder = new File(uploadFolder);
