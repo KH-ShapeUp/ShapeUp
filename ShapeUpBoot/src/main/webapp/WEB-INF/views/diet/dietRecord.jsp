@@ -46,8 +46,10 @@
               <div class="donut-overlay">섭취량</div>
               <div class="donut-center">
                 <p class="center-title">탄단지 비율</p>
-                <p class="center-kcal" id="total-kcal">0 Kcal</p>
-                <p class="center-caption">오늘 총 섭취 칼로리</p>
+                <p class="center-kcal">
+                  <span id="total-kcal">0</span> / <span id="goal-kcal">0</span> Kcal
+                </p>
+                <p class="center-caption">오늘 총 섭취 칼로리 / 목표 칼로리</p>
               </div>
             </div>
             <div class="macro-cards">
@@ -170,6 +172,7 @@
   let macroChart = null;
   let currentDietDate = null;
   let currentTotalKcal = 0;
+  let currentGoalKcal = 0;
   const MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -247,6 +250,39 @@
     }
   }
 
+  async function fetchGoalCalorie() {
+    try {
+      const res = await fetch('/diet/goal');
+      if (res.status === 401) {
+        // 로그인하지 않은 경우 0으로 표시
+        console.log('Not logged in, showing goal as 0');
+        const goalEl = document.getElementById('goal-kcal');
+        if (goalEl) {
+          goalEl.textContent = '0';
+        }
+        currentGoalKcal = 0;
+        return 0;
+      }
+      if (!res.ok) throw new Error('goal failed');
+      const json = await res.json();
+      const goalCalorie = Number(json.goalCalorie || json.GOAL_CALORIE || 0);
+      currentGoalKcal = goalCalorie;
+      const goalEl = document.getElementById('goal-kcal');
+      if (goalEl) {
+        goalEl.textContent = goalCalorie;
+      }
+      return goalCalorie;
+    } catch (err) {
+      console.error('failed to load goal calorie', err);
+      const goalEl = document.getElementById('goal-kcal');
+      if (goalEl) {
+        goalEl.textContent = '0';
+      }
+      currentGoalKcal = 0;
+      return 0;
+    }
+  }
+
   async function fetchDietSummary(dateStr) {
     const targets = {
       '아침': document.getElementById('kcal-breakfast'),
@@ -275,7 +311,7 @@
       const totalKcalValue = Number(totals.kcal || totals.totalKcal || totalFromMeals) || 0;
       currentTotalKcal = totalKcalValue;
       const totalEl = document.getElementById('total-kcal');
-      if (totalEl) totalEl.textContent = totalKcalValue + ' Kcal';
+      if (totalEl) totalEl.textContent = totalKcalValue;
 
       Object.entries(targets).forEach(([key, el]) => {
         const val = Number(mealValues[key]) || 0;
@@ -389,6 +425,15 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => {
+    // ========================================
+    // 로그인 체크 - 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+    // ========================================
+    if (!window.isDietLoggedIn) {
+      alert('로그인이 필요한 서비스입니다.');
+      window.location.href = '/user/login'; 
+      return;
+    }
+
     ['diet-list-backdrop','modal-backdrop','custom-backdrop'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
@@ -426,7 +471,12 @@
     currentDietDate = todayIso;
     const picker = document.getElementById('diet-date-picker');
     if (picker) picker.value = todayIso;
-    fetchDietSummary(todayIso);
+    
+    // 목표 칼로리 먼저 로드
+    fetchGoalCalorie().then(() => {
+      // 그 다음 식단 요약 로드
+      fetchDietSummary(todayIso);
+    });
 
     const calendarBtn = document.getElementById('diet-calendar-btn');
     if (calendarBtn && picker) {

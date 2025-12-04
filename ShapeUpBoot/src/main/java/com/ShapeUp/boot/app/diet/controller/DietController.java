@@ -25,6 +25,8 @@ import com.ShapeUp.boot.app.diet.dto.DietSaveRequest;
 import com.ShapeUp.boot.domain.diet.model.service.DietService;
 import com.ShapeUp.boot.domain.diet.model.vo.DietVo;
 import com.ShapeUp.boot.domain.diet.model.vo.FoodApi;
+import com.ShapeUp.boot.domain.goal.model.service.GoalService;
+import com.ShapeUp.boot.domain.goal.model.vo.GoalVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class DietController {
 	
 	private final DietService dService;
+	private final GoalService goalService; // ← 이 줄 추가
 
 	@GetMapping
 	public String dietPage() {
@@ -165,6 +168,56 @@ public class DietController {
 		return ResponseEntity.ok(Map.of("success", true, "deleted", deleted));
 	}
 
+	// ========================================
+	// 목표 칼로리 조회 API (새로 추가된 부분)
+	// ========================================
+	/**
+	 * 목표 칼로리 조회
+	 * GET /diet/goal
+	 */
+	@GetMapping("/goal")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getGoalCalorie(HttpSession session) {
+		Integer userNo = extractUserNo(session);
+		if (userNo == null) {
+			return ResponseEntity.status(401).body(Map.of(
+				"success", false,
+				"message", "LOGIN_REQUIRED",
+				"loggedIn", false
+			));
+		}
+		
+		try {
+			GoalVO goal = goalService.getGoalByUserNo(userNo);
+			
+			if (goal == null || goal.getGoalCalorie() == null) {
+				// 목표가 설정되지 않은 경우 0 반환
+				return ResponseEntity.ok(Map.of(
+					"success", true,
+					"goalCalorie", 0,
+					"GOAL_CALORIE", 0,
+					"loggedIn", true
+				));
+			}
+			
+			int goalCalorie = goal.getGoalCalorie();
+			return ResponseEntity.ok(Map.of(
+				"success", true,
+				"goalCalorie", goalCalorie,
+				"GOAL_CALORIE", goalCalorie,
+				"loggedIn", true
+			));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body(Map.of(
+				"success", false,
+				"message", "INTERNAL_ERROR",
+				"loggedIn", true
+			));
+		}
+	}
+
 	private Integer extractUserNo(HttpSession session) {
 		if (session == null) return null;
 		Object raw = session.getAttribute("userNo");
@@ -221,4 +274,5 @@ public class DietController {
 			return LocalDate.now().toString();
 		}
 	}
+
 }

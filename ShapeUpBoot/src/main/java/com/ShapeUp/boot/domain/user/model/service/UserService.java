@@ -1,6 +1,7 @@
 package com.ShapeUp.boot.domain.user.model.service;
 
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
+import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
 public interface UserService {
@@ -61,4 +62,32 @@ public interface UserService {
     int updateUserInterest(int userNo, String interests, String times);
     
     int updateUserType(int userNo, String userType);
+    
+    /**
+     * 프로필 이미지 조회
+     * @param userNo 사용자 번호
+     * @return 프로필 이미지 정보
+     */
+    UserProfileImageVO getProfileImage(int userNo);
+    
+    /**
+     * 프로필 이미지 등록
+     * @param profileImage 프로필 이미지 정보
+     * @return 등록 결과 (1: 성공, 0: 실패)
+     */
+    int insertProfileImage(UserProfileImageVO profileImage);
+    
+    /**
+     * 프로필 이미지 삭제
+     * @param userNo 사용자 번호
+     * @return 삭제 결과 (1: 성공, 0: 실패)
+     */
+    int deleteProfileImage(int userNo);
+    
+    /**
+     * 사용자의 모든 프로필 이미지 삭제
+     * @param userNo 사용자 번호
+     * @return 삭제 결과
+     */
+    int deleteAllProfileImages(int userNo);
 }

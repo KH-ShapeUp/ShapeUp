@@ -1,12 +1,15 @@
 package com.ShapeUp.boot.domain.user.model.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.ShapeUp.boot.domain.user.model.mapper.UserMapper;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
+import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -197,5 +200,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateUserType(int userNo, String userType) {
         return userMapper.updateUserType(userNo, userType);
+    }
+    
+    @Override
+    public UserProfileImageVO getProfileImage(int userNo) {
+        return userMapper.selectProfileImage(userNo);
+    }
+    
+    @Override
+    @Transactional
+    public int insertProfileImage(UserProfileImageVO profileImage) {
+        return userMapper.insertProfileImage(profileImage);
+    }
+    
+    @Override
+    @Transactional
+    public int deleteProfileImage(int userNo) {
+        return userMapper.deleteProfileImage(userNo);
+    }
+    
+    @Override
+    @Transactional
+    public int deleteAllProfileImages(int userNo) {
+        return userMapper.deleteAllProfileImages(userNo);
     }
 }

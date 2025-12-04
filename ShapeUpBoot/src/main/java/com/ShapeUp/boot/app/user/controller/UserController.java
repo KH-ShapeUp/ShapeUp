@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ShapeUp.boot.app.user.mail.MailService;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
+import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;  // ⭐ 추가
 
 
 @Slf4j
@@ -47,6 +49,10 @@ public class UserController {
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RequestPermissionService requestPermissionService;
+    
+    // ⭐⭐⭐ 프로필 이미지 업로드 경로 설정
+    private static final String PROFILE_UPLOAD_PATH = "C:/ShapeUp/uploads/profile/";
+    private static final String PROFILE_CONTEXT_PATH = "/uploads/profile";
 
     // 이메일 인증
     @ResponseBody
@@ -99,7 +105,7 @@ public class UserController {
         int count = userService.checkNicknameDuplicate(nickname);
         boolean isDuplicate = count > 0;
         
-        response.put("available", !isDuplicate);  // true면 사용 가능
+        response.put("available", !isDuplicate);
         response.put("message", isDuplicate ? "이미 사용 중인 닉네임입니다." : "사용 가능한 닉네임입니다.");
         
         log.info("✅ 닉네임 사용 가능 여부: {}", !isDuplicate);
@@ -116,7 +122,7 @@ public class UserController {
         int count = userService.checkUserIdDuplicate(userid);
         boolean isDuplicate = count > 0;
         
-        response.put("available", !isDuplicate);  // true면 사용 가능
+        response.put("available", !isDuplicate);
         response.put("message", isDuplicate ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
         
         log.info("✅ 아이디 사용 가능 여부: {}", !isDuplicate);
@@ -148,16 +154,13 @@ public class UserController {
     ================================ */
     @GetMapping("/user/signupInsertInfo")
     public String signupInsertInfo(HttpSession session, Model model) {
-        // ✅ 소셜 로그인 여부 확인
         Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
         
         if (isSocialLogin != null && isSocialLogin) {
-            // 소셜 로그인 정보를 모델에 추가
             model.addAttribute("isSocialLogin", true);
             model.addAttribute("socialName", session.getAttribute("socialName"));
             model.addAttribute("socialEmail", session.getAttribute("socialEmail"));
         } else {
-            // 일반 회원가입
             model.addAttribute("isSocialLogin", false);
         }
         
@@ -180,12 +183,10 @@ public class UserController {
     ) {
         log.info("회원가입 정보 입력 - 닉네임: {}", nickname);
 
-        // ✅ 소셜 로그인 여부 확인
         Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
         boolean socialLogin = (isSocialLogin != null && isSocialLogin);
 
         if (!socialLogin) {
-            // 일반 회원 검증
             if (!password.equals(password2)) {
                 return "redirect:/user/signupInsertInfo?error=password";
             }
@@ -242,14 +243,13 @@ public class UserController {
             @RequestParam String nickname,
             @RequestParam String birthDate,
             @RequestParam String phone,
-            @RequestParam String genderDigit,  // ✅ 주민등록번호 뒷자리 첫 번째 숫자 (1~4)
+            @RequestParam String genderDigit,
             HttpSession session,
             Model model) {
         
         try {
             log.info("✅ 소셜 로그인 추가 정보 업데이트 시작 - 닉네임: {}", nickname);
             
-            // 세션에서 사용자 정보 가져오기
             UserVO loginUser = (UserVO) session.getAttribute("loginUser");
             
             if (loginUser == null) {
@@ -260,7 +260,6 @@ public class UserController {
             
             log.info("✅ 세션 사용자 확인 - userNo: {}, userId: {}", loginUser.getUserNo(), loginUser.getUserId());
             
-            // 닉네임 중복 체크 (본인 제외)
             if (!nickname.equals(loginUser.getUserNickname())) {
                 int nicknameCount = userService.checkNicknameDuplicate(nickname);
                 if (nicknameCount > 0) {
@@ -270,24 +269,21 @@ public class UserController {
                 }
             }
             
-            // 생년월일 처리 (YYMMDD-G 형식으로 저장)
             String userSerialNo = birthDate + "-" + genderDigit;
             int birthYear = Integer.parseInt(birthDate.substring(0, 2));
             
-            // 주민등록번호 뒷자리로 1900년대생/2000년대생 구분
             if (genderDigit.equals("1") || genderDigit.equals("2")) {
                 birthYear += 1900;
             } else if (genderDigit.equals("3") || genderDigit.equals("4")) {
                 birthYear += 2000;
             } else {
-                birthYear += 2000; // 기본값
+                birthYear += 2000;
             }
             
             int age = java.time.Year.now().getValue() - birthYear + 1;
             
             log.info("✅ 계산된 나이: {}, 주민번호: {}", age, userSerialNo);
             
-            // 사용자 정보 업데이트
             UserVO updateUser = new UserVO();
             updateUser.setUserNo(loginUser.getUserNo());
             updateUser.setUserName(name);
@@ -296,7 +292,6 @@ public class UserController {
             updateUser.setUserPhone(phone);
             updateUser.setUserSerialNo(userSerialNo);
             
-            // DB 업데이트
             int result = userService.updateSocialUserInfo(updateUser);
             
             log.info("✅ DB 업데이트 결과: {}", result);
@@ -304,7 +299,6 @@ public class UserController {
             if (result > 0) {
                 log.info("✅ 소셜 로그인 사용자 정보 업데이트 성공");
                 
-                // 세션의 loginUser 업데이트
                 loginUser.setUserName(name);
                 loginUser.setUserNickname(nickname);
                 loginUser.setUserAge(age);
@@ -313,8 +307,6 @@ public class UserController {
                 
                 session.setAttribute("loginUser", loginUser);
                 session.setAttribute("userNickname", nickname);
-                
-                // ✅ 설문조사 페이지를 위한 세션 설정
                 session.setAttribute("userId", loginUser.getUserId());
                 session.setAttribute("email", loginUser.getUserEmail());
                 session.setAttribute("name", name);
@@ -323,8 +315,6 @@ public class UserController {
                 session.setAttribute("userSerialNo", userSerialNo);
                 session.setAttribute("age", age);
                 
-                // 소셜 로그인 플래그는 유지 (설문 페이지에서 구분 필요)
-                // session.removeAttribute("isSocialLogin"); // 제거하지 않음
                 session.removeAttribute("socialName");
                 session.removeAttribute("socialEmail");
                 
@@ -343,6 +333,7 @@ public class UserController {
             return "redirect:/user/signupInsertInfo";
         }
     }
+    
     /* ================================
         회원가입 - 설문조사
     ================================ */
@@ -373,15 +364,12 @@ public class UserController {
             String userSerialNo = (String) session.getAttribute("userSerialNo");
             Integer age = (Integer) session.getAttribute("age");
 
-            // ✅ 소셜 로그인 사용자는 이미 DB에 있으므로 관심사만 업데이트
             UserVO existingUser = (UserVO) session.getAttribute("loginUser");
             Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
             
             if (existingUser != null && isSocialLogin != null && isSocialLogin) {
-                // 소셜 로그인 사용자 - 관심사만 추가
                 int userNo = existingUser.getUserNo();
                 
-                // ✅ 관심사가 모두 입력된 경우만 INSERT
                 if (interests != null && !interests.isBlank() && 
                     times != null && !times.isBlank() && 
                     addresses != null && !addresses.isBlank()) {
@@ -396,7 +384,6 @@ public class UserController {
                     log.info("⚠️ 소셜 로그인 사용자가 관심사를 입력하지 않음 - 스킵");
                 }
                 
-                // 세션 정리
                 session.removeAttribute("email");
                 session.removeAttribute("userId");
                 session.removeAttribute("name");
@@ -410,7 +397,6 @@ public class UserController {
                 return "redirect:/user/signupSuccess";
             }
 
-            // ✅ 일반 회원가입 - 설문조사 완료 후 DB INSERT
             if (userId == null || password == null || name == null || 
                 nickname == null || email == null || phone == null || 
                 userSerialNo == null || age == null) {
@@ -420,10 +406,8 @@ public class UserController {
 
             log.info("✅ 일반 회원 설문조사 완료 - DB INSERT 시작");
 
-            // 비밀번호 암호화
             String encodedPassword = passwordEncoder.encode(password);
 
-            // UserVO 생성
             UserVO user = new UserVO();
             user.setUserId(userId);
             user.setUserPw(encodedPassword);
@@ -436,7 +420,6 @@ public class UserController {
             user.setUserType("USER");
             user.setStatus("정상");
 
-            // ✅ 회원 정보 INSERT
             int result = userService.insertUser(user);
 
             if (result > 0) {
@@ -445,7 +428,6 @@ public class UserController {
                 int userNo = userService.selectUserNoByUserId(userId);
                 
                 if (userNo > 0) {
-                    // ✅ 관심사가 모두 입력된 경우만 INSERT (선택 사항)
                     if (interests != null && !interests.isBlank() && 
                         times != null && !times.isBlank() && 
                         addresses != null && !addresses.isBlank()) {
@@ -460,7 +442,6 @@ public class UserController {
                         log.info("⚠️ 일반 회원이 관심사를 입력하지 않음 - 스킵");
                     }
                     
-                    // 세션 무효화
                     session.invalidate();
                     
                     log.info("✅ 일반 회원가입 완료");
@@ -493,15 +474,14 @@ public class UserController {
     public String loginProcess(
             @RequestParam String userId,
             @RequestParam String userPw,
-            @RequestParam(required = false) String autoLogin,  // ⭐ 추가
+            @RequestParam(required = false) String autoLogin,
             HttpSession session,
-            HttpServletResponse response,  // ⭐ 추가
+            HttpServletResponse response,
             Model model
     ) {
         UserVO user = userService.selectUserById(userId);
 
         if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
-            // 계정 정지 상태 체크
             if ("정지".equals(user.getStatus())) {
                 java.sql.Timestamp until = user.getUpdatedAt();
                 java.time.Instant now = java.time.Instant.now();
@@ -512,37 +492,30 @@ public class UserController {
                 }
             }
             
-            // 세션에 사용자 정보 저장
             session.setAttribute("userNo", user.getUserNo());
             session.setAttribute("userNickname", user.getUserNickname());
             session.setAttribute("loginUser", user);
             session.setAttribute("userType", user.getUserType());
             session.setAttribute("loginUserEmail", user.getUserEmail());
 
-            // ⭐⭐⭐ 자동 로그인 처리 (여기부터 추가)
             if ("on".equals(autoLogin)) {
-                // userId를 Base64로 인코딩
                 String encodedUserId = Base64.getEncoder()
                         .encodeToString(userId.getBytes());
 
-                // 쿠키 생성 (30일 유지)
                 Cookie cookie = new Cookie("rememberId", encodedUserId);
-                cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+                cookie.setMaxAge(60 * 60 * 24 * 30);
                 cookie.setPath("/");
-                cookie.setHttpOnly(true); // JavaScript 접근 차단
-                // cookie.setSecure(true); // HTTPS 환경에서만 사용
+                cookie.setHttpOnly(true);
 
                 response.addCookie(cookie);
                 
                 log.info("✅ 자동 로그인 쿠키 생성: {}", userId);
             }
-            // ⭐⭐⭐ 여기까지 추가
 
-            // 사용자 타입에 따른 리다이렉트
             if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://localhost:8080/admin";
+                return "redirect:http://192.168.52.24:8080/admin";
             } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://localhost:8080/stadium";
+                return "redirect:http://192.168.52.24:8080/stadium";
             } else {
                 return "redirect:/";
             }
@@ -553,11 +526,9 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session, HttpServletResponse response) {  // ⭐ response 추가
-        // 세션 무효화
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
 
-        // ⭐⭐⭐ 자동 로그인 쿠키 삭제 (여기 추가)
         Cookie cookie = new Cookie("rememberId", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
@@ -616,7 +587,6 @@ public class UserController {
         return visible + masked;
     }
 
-    // 비밀번호 찾기
     @GetMapping("/user/searchPw")
     public String searchPwForm() {
         return "user/searchPw";
@@ -630,7 +600,6 @@ public class UserController {
         try {
             log.info("🔍 비밀번호 찾기 요청 - userId: {}", userId);
 
-            // 1) 아이디로 사용자 조회
             UserVO user = userService.findUserByUserId(userId);
 
             if (user == null) {
@@ -640,20 +609,16 @@ public class UserController {
                 return response;
             }
 
-            // 2) 임시 비밀번호 생성 (8자리 영문+숫자)
             String tempPw = generateTempPassword();
             log.info("✅ 임시 비밀번호 생성 완료");
 
-            // 3) 임시 비밀번호 암호화
             String encodedPw = passwordEncoder.encode(tempPw);
 
-            // 4) DB 업데이트
             int result = userService.updateUserPassword(user.getUserId(), encodedPw);
 
             if (result > 0) {
                 log.info(" DB 비밀번호 업데이트 성공");
 
-                // 5) 이메일 발송
                 String userEmail = user.getUserEmail();
                 boolean emailSent = mailService.sendTempPassword(userEmail, tempPw);
 
@@ -682,9 +647,6 @@ public class UserController {
         return response;
     }
 
-    /**
-     * 임시 비밀번호 생성 (8자리 영문+숫자 조합)
-     */
     private String generateTempPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder tempPw = new StringBuilder();
@@ -697,9 +659,6 @@ public class UserController {
         return tempPw.toString();
     }
 
-    /**
-     * 이메일 마스킹 처리 (abc***@example.com)
-     */
     private String maskEmail(String email) {
         if (email == null || !email.contains("@")) {
             return email;
@@ -722,7 +681,7 @@ public class UserController {
     ================================ */
     
     /**
-     * 회원정보 수정 페이지
+     * 회원정보 수정 페이지 (⭐ 프로필 이미지 조회 추가)
      */
     @GetMapping("/user/updateUserInfo")
     public String updateUserInfo(HttpSession session, Model model) {
@@ -740,7 +699,12 @@ public class UserController {
             return "redirect:/user/login";
         }
         
+        // ⭐⭐⭐ 프로필 이미지 조회 추가
+        UserProfileImageVO profileImage = userService.getProfileImage(userNo);
+        
         model.addAttribute("user", user);
+        model.addAttribute("profileImage", profileImage);  // ⭐ 추가
+        
         return "user/updateUserInfo";
     }
 
@@ -755,7 +719,6 @@ public class UserController {
             return "redirect:/user/login";
         }
         
-        // 사용자 정보 조회
         UserVO user = userService.selectUserByUserNo(userNo);
         
         if (user == null) {
@@ -804,10 +767,8 @@ public class UserController {
                 return response;
             }
             
-            // 이메일 중복 체크
             if (userService.isEmailExists(email)) {
                 UserVO existingUser = userService.selectUserByEmail(email);
-                // 본인의 이메일이 아닌 경우
                 if (existingUser.getUserNo() != userNo) {
                     response.put("success", false);
                     response.put("message", "이미 사용 중인 이메일입니다.");
@@ -815,7 +776,6 @@ public class UserController {
                 }
             }
             
-            // 이메일 업데이트
             int result = userService.updateUserEmail(userNo, email);
             
             if (result > 0) {
@@ -853,7 +813,6 @@ public class UserController {
                 return response;
             }
             
-            // 전화번호 업데이트
             int result = userService.updateUserPhone(userNo, phone);
             
             if (result > 0) {
@@ -895,7 +854,6 @@ public class UserController {
                 return response;
             }
             
-            // 현재 사용자 정보 조회
             UserVO user = userService.selectUserByUserNo(userNo);
             
             if (user == null) {
@@ -904,17 +862,14 @@ public class UserController {
                 return response;
             }
             
-            // 현재 비밀번호 확인
             if (!passwordEncoder.matches(currentPassword, user.getUserPw())) {
                 response.put("success", false);
                 response.put("message", "현재 비밀번호가 일치하지 않습니다.");
                 return response;
             }
             
-            // 새 비밀번호 암호화
             String encodedNewPassword = passwordEncoder.encode(newPassword);
             
-            // 비밀번호 업데이트
             int result = userService.updateUserPasswordByUserNo(userNo, encodedNewPassword);
             
             if (result > 0) {
@@ -952,7 +907,6 @@ public class UserController {
                 return response;
             }
             
-            // 현재 사용자 정보 조회
             UserVO user = userService.selectUserByUserNo(userNo);
             
             if (user == null) {
@@ -961,14 +915,12 @@ public class UserController {
                 return response;
             }
             
-            // 비밀번호 확인
             if (!passwordEncoder.matches(password, user.getUserPw())) {
                 response.put("success", false);
                 response.put("message", "비밀번호가 일치하지 않습니다.");
                 return response;
             }
             
-            // 회원 탈퇴 처리 (상태를 '탈퇴'로 변경)
             int result = userService.deleteUser(userNo);
             
             if (result > 0) {
@@ -998,7 +950,6 @@ public class UserController {
             return "redirect:/user/login";
         }
         
-        // 사용자 정보 조회
         UserVO user = userService.selectUserByUserNo(userNo);
         
         if (user == null) {
@@ -1006,13 +957,12 @@ public class UserController {
             return "redirect:/user/login";
         }
         
-        // 기존 관심사 조회
         UserInterestVO userInterest = userService.selectUserInterest(userNo);
         
         model.addAttribute("user", user);
         model.addAttribute("userInterest", userInterest != null ? userInterest : new UserInterestVO());
         
-        return "user/updateInterest";  // ⭐ 여기 수정!
+        return "user/updateInterest";
     }
 
     /**
@@ -1036,15 +986,12 @@ public class UserController {
                 return response;
             }
             
-            // 기존 관심사 확인
             UserInterestVO existingInterest = userService.selectUserInterest(userNo);
             
             int result;
             if (existingInterest != null) {
-                // 업데이트
                 result = userService.updateUserInterest(userNo, interests, times);
             } else {
-                // 새로 등록
                 result = userService.insertUserInterest(userNo, interests, times, "");
             }
             
@@ -1066,11 +1013,174 @@ public class UserController {
         return response;
     }
     
-	 // ===== 1. 필드 추가 =====
-	 // @RequiredArgsConstructor 사용 시 아래 필드를 추가
-	 
-	
-	 // ===== 2. 권한 신청 관련 메서드 추가 =====
+    /* ================================
+        ⭐⭐⭐ 프로필 이미지 관련 메서드 (새로 추가)
+    ================================ */
+    
+    /**
+     * 프로필 이미지 업로드
+     */
+    @PostMapping("/user/uploadProfileImage")
+    @ResponseBody
+    public Map<String, Object> uploadProfileImage(
+            @RequestParam("profileImage") MultipartFile profileImage,
+            HttpSession session) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Integer userNo = (Integer) session.getAttribute("userNo");
+            
+            if (userNo == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return response;
+            }
+            
+            if (profileImage == null || profileImage.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "업로드할 파일이 없습니다.");
+                return response;
+            }
+            
+            // 파일 크기 체크 (5MB)
+            long fileSize = profileImage.getSize();
+            if (fileSize > 5 * 1024 * 1024) {
+                response.put("success", false);
+                response.put("message", "파일 크기는 5MB를 초과할 수 없습니다.");
+                return response;
+            }
+            
+            // 파일 확장자 체크
+            String originalFilename = profileImage.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            
+            if (!extension.equals(".jpg") && !extension.equals(".jpeg") && !extension.equals(".png")) {
+                response.put("success", false);
+                response.put("message", "JPG, PNG 파일만 업로드 가능합니다.");
+                return response;
+            }
+            
+            // 파일명 생성 (UUID + 타임스탬프)
+            String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            String uuid = UUID.randomUUID().toString().substring(0, 8);
+            String renamedFilename = "profile_" + userNo + "_" + timestamp + "_" + uuid + extension;
+            
+            // 업로드 디렉토리 생성
+            File dir = new File(PROFILE_UPLOAD_PATH);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            
+            // 파일 저장
+            File destinationFile = new File(PROFILE_UPLOAD_PATH + renamedFilename);
+            profileImage.transferTo(destinationFile);
+            
+            // DB에 저장할 이미지 정보 생성
+            UserProfileImageVO profileImageDto = new UserProfileImageVO();
+            profileImageDto.setUserNo(userNo);
+            profileImageDto.setImgPath(PROFILE_CONTEXT_PATH);
+            profileImageDto.setImgRename(renamedFilename);
+            profileImageDto.setImgOriginalName(originalFilename);
+            profileImageDto.setImgMain("Y");
+            
+            // 기존 프로필 이미지가 있다면 삭제
+            UserProfileImageVO existingImage = userService.getProfileImage(userNo);
+            if (existingImage != null) {
+                // 기존 파일 삭제
+                File oldFile = new File(PROFILE_UPLOAD_PATH + existingImage.getImgRename());
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
+                // DB에서 기존 이미지 삭제
+                userService.deleteProfileImage(userNo);
+            }
+            
+            // 새 프로필 이미지 DB에 저장
+            int result = userService.insertProfileImage(profileImageDto);
+            
+            if (result > 0) {
+                log.info("✅ 프로필 이미지 업로드 성공 - userNo: {}, file: {}", userNo, renamedFilename);
+                response.put("success", true);
+                response.put("message", "프로필 이미지가 변경되었습니다.");
+                response.put("imagePath", PROFILE_CONTEXT_PATH + renamedFilename);
+            } else {
+                // DB 저장 실패 시 업로드된 파일 삭제
+                destinationFile.delete();
+                response.put("success", false);
+                response.put("message", "프로필 이미지 저장에 실패했습니다.");
+            }
+            
+        } catch (IOException e) {
+            log.error("❌ 파일 업로드 중 오류", e);
+            response.put("success", false);
+            response.put("message", "파일 업로드 중 오류가 발생했습니다.");
+        } catch (Exception e) {
+            log.error("❌ 프로필 이미지 변경 오류", e);
+            response.put("success", false);
+            response.put("message", "프로필 이미지 변경 중 오류가 발생했습니다.");
+        }
+        
+        return response;
+    }
+    
+    /**
+     * 프로필 이미지 삭제
+     */
+    @PostMapping("/user/deleteProfileImage")
+    @ResponseBody
+    public Map<String, Object> deleteProfileImage(HttpSession session) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Integer userNo = (Integer) session.getAttribute("userNo");
+            
+            if (userNo == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return response;
+            }
+            
+            // 기존 프로필 이미지 조회
+            UserProfileImageVO existingImage = userService.getProfileImage(userNo);
+            
+            if (existingImage == null) {
+                response.put("success", false);
+                response.put("message", "삭제할 프로필 이미지가 없습니다.");
+                return response;
+            }
+            
+            // 실제 파일 삭제
+            File file = new File(PROFILE_UPLOAD_PATH + existingImage.getImgRename());
+            if (file.exists()) {
+                file.delete();
+            }
+            
+            // DB에서 이미지 정보 삭제
+            int result = userService.deleteProfileImage(userNo);
+            
+            if (result > 0) {
+                log.info("✅ 프로필 이미지 삭제 성공 - userNo: {}", userNo);
+                response.put("success", true);
+                response.put("message", "프로필 이미지가 삭제되었습니다.");
+            } else {
+                response.put("success", false);
+                response.put("message", "프로필 이미지 삭제에 실패했습니다.");
+            }
+            
+        } catch (Exception e) {
+            log.error("❌ 프로필 이미지 삭제 오류", e);
+            response.put("success", false);
+            response.put("message", "프로필 이미지 삭제 중 오류가 발생했습니다.");
+        }
+        
+        return response;
+    }
+    
+    /* ================================
+        권한 신청 관련
+    ================================ */
 	
 	 /**
 	  * 권한 신청 처리
@@ -1098,7 +1208,6 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 이미 대기 중인 신청이 있는지 확인
 	         RequestPermissionVO pendingRequest = requestPermissionService.getPendingRequestByUserNo(userNo);
 	         if (pendingRequest != null) {
 	             response.put("success", false);
@@ -1106,7 +1215,6 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 파일 업로드 처리
 	         String uploadPath = saveFile(attachmentFile);
 	         
 	         if (uploadPath == null) {
@@ -1115,7 +1223,6 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // RequestPermissionVO 생성
 	         RequestPermissionVO request = new RequestPermissionVO();
 	         request.setUserNo(userNo);
 	         request.setRequestType(requestType);
@@ -1128,7 +1235,6 @@ public class UserController {
 	         request.setAttachmentOrigin(attachmentFile.getOriginalFilename());
 	         request.setAttachmentRename(new File(uploadPath).getName());
 	         
-	         // DB 저장
 	         int result = requestPermissionService.insertRequestPermission(request);
 	         
 	         if (result > 0) {
@@ -1157,16 +1263,13 @@ public class UserController {
 	         return null;
 	     }
 	     
-	     // 업로드 경로 설정 (실제 환경에 맞게 수정 필요)
 	     String uploadDir = "C:/ShapeUp/uploads/permissions/";
 	     
-	     // 디렉토리 생성
 	     File dir = new File(uploadDir);
 	     if (!dir.exists()) {
 	         dir.mkdirs();
 	     }
 	     
-	     // 파일명 생성 (중복 방지)
 	     String originalFilename = file.getOriginalFilename();
 	     String extension = "";
 	     if (originalFilename != null && originalFilename.contains(".")) {
@@ -1177,7 +1280,6 @@ public class UserController {
 	     String timestamp = sdf.format(new Date());
 	     String savedFilename = timestamp + extension;
 	     
-	     // 파일 저장
 	     File destFile = new File(uploadDir + savedFilename);
 	     file.transferTo(destFile);
 	     
@@ -1220,7 +1322,6 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 신청 정보 조회 (본인 확인)
 	         RequestPermissionVO request = requestPermissionService.getRequestByNo(requestNo);
 	         
 	         if (request == null || request.getUserNo() != userNo) {
@@ -1269,7 +1370,6 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 현재 사용자 정보 조회
 	         UserVO user = userService.selectUserByUserNo(userNo);
 	         
 	         if (user == null) {
@@ -1278,23 +1378,19 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 이미 일반 사용자인 경우
 	         if ("USER".equals(user.getUserType())) {
 	             response.put("success", false);
 	             response.put("message", "이미 일반 사용자입니다.");
 	             return response;
 	         }
 	         
-	         // USER_TYPE을 USER로 변경
 	         int result = userService.updateUserType(userNo, "USER");
 	         
 	         if (result > 0) {
 	             log.info("✅ 권한 포기 완료 - userNo: {}, 기존 권한: {}", userNo, user.getUserType());
 	             
-	             // 세션의 userType 업데이트
 	             session.setAttribute("userType", "USER");
 	             
-	             // loginUser도 업데이트
 	             user.setUserType("USER");
 	             session.setAttribute("loginUser", user);
 	             
@@ -1327,13 +1423,11 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 대기 중인 신청 조회
 	         RequestPermissionVO pendingRequest = requestPermissionService.selectPendingRequestByUserNo(userNo);
 	         
 	         if (pendingRequest != null) {
 	             response.put("hasPending", true);
 	             
-	             // 신청 정보를 간단한 맵으로 변환
 	             Map<String, Object> requestInfo = new HashMap<>();
 	             requestInfo.put("requestNo", pendingRequest.getRequestNo());
 	             requestInfo.put("requestType", pendingRequest.getRequestType());
@@ -1356,13 +1450,6 @@ public class UserController {
 	     return response;
 	 }
 	 
-	 /**
-	  * UserController.java에 추가할 메서드
-	  */
-
-	 /**
-	  * 최근 처리된 신청 확인 (승인/반려 알림용)
-	  */
 	 @GetMapping("/user/checkRecentRequest")
 	 @ResponseBody
 	 public Map<String, Object> checkRecentRequest(HttpSession session) {
@@ -1376,15 +1463,12 @@ public class UserController {
 	             return response;
 	         }
 	         
-	         // 사용자의 최근 신청 내역 조회
 	         List<RequestPermissionVO> requests = requestPermissionService.selectRequestsByUserNo(userNo);
 	         
-	         // 승인 또는 반려 상태이면서 아직 확인하지 않은 신청 찾기
 	         RequestPermissionVO recentRequest = null;
 	         for (RequestPermissionVO request : requests) {
 	             String status = request.getRequestStatus();
 	             if ("승인".equals(status) || "반려".equals(status)) {
-	                 // 세션에 이미 확인한 신청인지 체크
 	                 String checkedKey = "checked_request_" + request.getRequestNo();
 	                 Boolean isChecked = (Boolean) session.getAttribute(checkedKey);
 	                 
@@ -1422,9 +1506,6 @@ public class UserController {
 	     return response;
 	 }
 
-	 /**
-	  * 알림 확인 처리 (세션에 확인 표시)
-	  */
 	 @PostMapping("/user/markNotificationRead")
 	 @ResponseBody
 	 public Map<String, Object> markNotificationRead(@RequestBody Map<String, Integer> payload, 
@@ -1435,7 +1516,6 @@ public class UserController {
 	         Integer requestNo = payload.get("requestNo");
 	         
 	         if (requestNo != null) {
-	             // 세션에 확인 표시
 	             String checkedKey = "checked_request_" + requestNo;
 	             session.setAttribute(checkedKey, true);
 	             

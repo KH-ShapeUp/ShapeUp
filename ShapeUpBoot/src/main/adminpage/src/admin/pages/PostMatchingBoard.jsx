@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import BoardManager from "../components/BoardManager";
-
+import.meta.env.VITE_API_BASE || ""
 const formatDate = (val) => {
   if (!val) return "";
   const fromNumber = (num) => {
@@ -40,7 +40,7 @@ const PostMatchingBoard = () => {
   const [chartLabels, setChartLabels] = useState([]);
   const [chartData, setChartData] = useState([]);
   const categories = useMemo(() => ["모집중", "마감", "완료", "삭제"], []);
-  const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
+  // const API_BASE = window.location.port === "5173" ? "http://localhost:8080" : "";
   const columns = useMemo(
     () => [
       { key: "id", label: "번호", sortable: "id", width: "6%" },
