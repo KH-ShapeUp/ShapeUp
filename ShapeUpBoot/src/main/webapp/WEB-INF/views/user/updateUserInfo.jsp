@@ -75,7 +75,7 @@
         <div class="profile-image-container">
           <div class="profile-image-wrapper">
             <img id="profileImagePreview" 
-                 src="${not empty profileImage ? pageContext.request.contextPath.concat(profileImage.imgPath).concat('/').concat(profileImage.imgRename) : pageContext.request.contextPath.concat('/resources/images/default-profile.png')}" 
+                 src="${not empty profileImage ? pageContext.request.contextPath.concat(profileImage.imgPath).concat('/').concat(profileImage.imgRename) : pageContext.request.contextPath.concat('/resources/img/default-profile.png')}" 
                  alt="프로필 이미지"
                  class="profile-image">
             <div class="profile-image-overlay" onclick="document.getElementById('profileImageInput').click()">
@@ -373,6 +373,18 @@
         </div>
         
         <div class="form-field">
+          <label>활동 기간<span class="required">*</span></label>
+          <input type="text" name="career" required placeholder="예: 5년, 3년 6개월, 2년" maxlength="100">
+          <div class="hint">트레이너로 활동한 총 기간을 입력해주세요</div>
+        </div>
+        
+        <div class="form-field">
+          <label>상세 경력<span class="required">*</span></label>
+          <textarea name="careerDetail" required placeholder="상세 경력을 작성해주세요&#10;예: 2020.01 ~ 2023.12 ○○ 헬스장 트레이너&#10;     - 1:1 PT 지도 (100회 이상)&#10;     - 그룹 레슨 진행&#10;&#10;     2024.01 ~ 현재 △△ 피트니스 센터 수석 트레이너&#10;     - 신입 트레이너 교육 담당&#10;     - 운동 프로그램 기획" rows="6"></textarea>
+          <div class="hint">근무 기간, 근무처, 담당 업무 등을 자세히 작성해주세요</div>
+        </div>
+        
+        <div class="form-field">
           <label>신청 사유</label>
           <textarea name="requestReason" placeholder="신청 사유를 작성해주세요"></textarea>
         </div>
@@ -478,7 +490,7 @@ function uploadProfileImage() {
 
 function cancelProfileImage() {
   const preview = document.getElementById('profileImagePreview');
-  preview.src = originalProfileImageSrc || contextPath + '/resources/images/default-profile.png';
+  preview.src = originalProfileImageSrc || contextPath + '/resources/img/default-profile.png';
   
   document.getElementById('profileImageInput').value = '';
   selectedProfileFile = null;

@@ -51,8 +51,8 @@ public class UserController {
     private final RequestPermissionService requestPermissionService;
     
     // ⭐⭐⭐ 프로필 이미지 업로드 경로 설정
-    private static final String PROFILE_UPLOAD_PATH = "C:/ShapeUp/uploads/profile/";
-    private static final String PROFILE_CONTEXT_PATH = "/uploads/profile";
+    private static final String PROFILE_UPLOAD_PATH = System.getProperty("user.dir") + "/uploads/profile/";
+    private static final String PROFILE_CONTEXT_PATH = "/upload/profile";  // ⭐ /upload로 시작
 
     // 이메일 인증
     @ResponseBody
@@ -1185,75 +1185,79 @@ public class UserController {
 	 /**
 	  * 권한 신청 처리
 	  */
-	 @PostMapping("/user/requestPermission")
-	 @ResponseBody
-	 public Map<String, Object> requestPermission(
-	         @RequestParam("requestType") String requestType,
-	         @RequestParam("requestReason") String requestReason,
-	         @RequestParam(value = "businessName", required = false) String businessName,
-	         @RequestParam(value = "businessNumber", required = false) String businessNumber,
-	         @RequestParam(value = "certificateType", required = false) String certificateType,
-	         @RequestParam(value = "certificateNumber", required = false) String certificateNumber,
-	         @RequestParam("attachmentFile") MultipartFile attachmentFile,
-	         HttpSession session) {
-	     
-	     Map<String, Object> response = new HashMap<>();
-	     
-	     try {
-	         Integer userNo = (Integer) session.getAttribute("userNo");
-	         
-	         if (userNo == null) {
-	             response.put("success", false);
-	             response.put("message", "로그인이 필요합니다.");
-	             return response;
-	         }
-	         
-	         RequestPermissionVO pendingRequest = requestPermissionService.getPendingRequestByUserNo(userNo);
-	         if (pendingRequest != null) {
-	             response.put("success", false);
-	             response.put("message", "이미 처리 대기 중인 신청이 있습니다.");
-	             return response;
-	         }
-	         
-	         String uploadPath = saveFile(attachmentFile);
-	         
-	         if (uploadPath == null) {
-	             response.put("success", false);
-	             response.put("message", "파일 업로드에 실패했습니다.");
-	             return response;
-	         }
-	         
-	         RequestPermissionVO request = new RequestPermissionVO();
-	         request.setUserNo(userNo);
-	         request.setRequestType(requestType);
-	         request.setRequestReason(requestReason);
-	         request.setBusinessName(businessName);
-	         request.setBusinessNumber(businessNumber);
-	         request.setCertificateType(certificateType);
-	         request.setCertificateNumber(certificateNumber);
-	         request.setAttachmentPath(uploadPath);
-	         request.setAttachmentOrigin(attachmentFile.getOriginalFilename());
-	         request.setAttachmentRename(new File(uploadPath).getName());
-	         
-	         int result = requestPermissionService.insertRequestPermission(request);
-	         
-	         if (result > 0) {
-	             log.info("✅ 권한 신청 완료 - userNo: {}, type: {}", userNo, requestType);
-	             response.put("success", true);
-	             response.put("message", "권한 신청이 완료되었습니다.");
-	         } else {
-	             response.put("success", false);
-	             response.put("message", "권한 신청에 실패했습니다.");
-	         }
-	         
-	     } catch (Exception e) {
-	         log.error("❌ 권한 신청 오류", e);
-	         response.put("success", false);
-	         response.put("message", "오류가 발생했습니다.");
-	     }
-	     
-	     return response;
-	 }
+    @PostMapping("/user/requestPermission")
+    @ResponseBody
+    public Map<String, Object> requestPermission(
+            @RequestParam("requestType") String requestType,
+            @RequestParam("requestReason") String requestReason,
+            @RequestParam(value = "businessName", required = false) String businessName,
+            @RequestParam(value = "businessNumber", required = false) String businessNumber,
+            @RequestParam(value = "certificateType", required = false) String certificateType,
+            @RequestParam(value = "certificateNumber", required = false) String certificateNumber,
+            @RequestParam(value = "career", required = false) String career,                    // ⭐ 추가
+            @RequestParam(value = "careerDetail", required = false) String careerDetail,        // ⭐ 추가
+            @RequestParam("attachmentFile") MultipartFile attachmentFile,
+            HttpSession session) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Integer userNo = (Integer) session.getAttribute("userNo");
+            
+            if (userNo == null) {
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다.");
+                return response;
+            }
+            
+            RequestPermissionVO pendingRequest = requestPermissionService.getPendingRequestByUserNo(userNo);
+            if (pendingRequest != null) {
+                response.put("success", false);
+                response.put("message", "이미 처리 대기 중인 신청이 있습니다.");
+                return response;
+            }
+            
+            String uploadPath = saveFile(attachmentFile);
+            
+            if (uploadPath == null) {
+                response.put("success", false);
+                response.put("message", "파일 업로드에 실패했습니다.");
+                return response;
+            }
+            
+            RequestPermissionVO request = new RequestPermissionVO();
+            request.setUserNo(userNo);
+            request.setRequestType(requestType);
+            request.setRequestReason(requestReason);
+            request.setBusinessName(businessName);
+            request.setBusinessNumber(businessNumber);
+            request.setCertificateType(certificateType);
+            request.setCertificateNumber(certificateNumber);
+            request.setCareer(career);                         // ⭐ 추가
+            request.setCareerDetail(careerDetail);             // ⭐ 추가
+            request.setAttachmentPath(uploadPath);
+            request.setAttachmentOrigin(attachmentFile.getOriginalFilename());
+            request.setAttachmentRename(new File(uploadPath).getName());
+            
+            int result = requestPermissionService.insertRequestPermission(request);
+            
+            if (result > 0) {
+                log.info("✅ 권한 신청 완료 - userNo: {}, type: {}", userNo, requestType);
+                response.put("success", true);
+                response.put("message", "권한 신청이 완료되었습니다.");
+            } else {
+                response.put("success", false);
+                response.put("message", "권한 신청에 실패했습니다.");
+            }
+            
+        } catch (Exception e) {
+            log.error("❌ 권한 신청 오류", e);
+            response.put("success", false);
+            response.put("message", "오류가 발생했습니다.");
+        }
+        
+        return response;
+    }
 	
 	 /**
 	  * 파일 저장 메서드
