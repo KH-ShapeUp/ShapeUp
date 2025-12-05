@@ -10,7 +10,6 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인 | ShapeUp</title>
-    <jsp:include page="/WEB-INF/views/include/head.jsp"/> 
     <link rel="stylesheet" href="../../../resources/css/user/login.css">
 </head>
 <body>

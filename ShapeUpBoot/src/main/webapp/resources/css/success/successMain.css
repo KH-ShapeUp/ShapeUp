@@ -36,6 +36,7 @@
     position: relative;
 }
 
+
 .board-left-top .search {
     flex: 1;
     display: flex;
@@ -148,7 +149,7 @@
     border-color: var(--main-color);
 }
 
-.board-left-top a {
+.board-left-top #communityHref  {
     display: flex;
     padding: 8px 15px;
     align-items: center;
@@ -156,9 +157,14 @@
     border-radius: 8px;
     background-color: var(--main-color);
     color: #fff;
+    font-weight: 500;
     text-decoration: none;
     gap: 5px;
     font-size: .9rem;
+}
+
+#communityHref  i {
+	margin-top : 3px;
 }
 
 .board-left-content {

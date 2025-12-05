@@ -130,12 +130,12 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 14px;
+    padding: 8px 15px;
     background: #0A84FF;
     color: #fff;
     border-radius: 8px;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     transition: .2s;
 }
 
@@ -227,7 +227,7 @@
 }
 
 .matching-review .reviewCount {
-    font-size: 1rem;
+    font-size: .85rem;
     font-weight: 500;
     color: #999;
 }

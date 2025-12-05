@@ -47,7 +47,7 @@
                     </div>												
                     <div class="btn-row">
                         <button class="save-btn">저장</button>
-                        <button class="cancel-btn">취소</button>
+                        <button class="cancel-btn" onclick="cancel();">취소</button>
                     </div>
                 </div>
             </div>
@@ -179,6 +179,26 @@
                 });
             })
         });
+
+        function cancel() {
+            Swal.fire({
+				title: '작성을 취소하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '예',
+				cancelButtonText: '아니요',
+				customClass: {
+					popup: 'success-popup',
+					title: 'success-title',
+					confirmButton: 'success-button',
+					cancelButton: 'cancel-button'
+				}
+            })
+            .then(result => {
+                if(result.isConfirmed) {
+                    window.history.back();
+                }
+            })
+        }
     </script>
 </body>
 </html>

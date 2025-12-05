@@ -15,6 +15,14 @@
     gap: 20px;
 }
 
+.errMsg {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #ff3b00;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 .community {
     display: flex;
     flex-direction: column;
@@ -140,9 +148,9 @@
 }
 
 .btn-row button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 8px 20px;
+    font-size: .9rem;
+    font-weight: 500;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -159,8 +167,8 @@
 }
 
 .cancel-btn {
-    background-color: #e9ecef;
-    color: #333;
+    background-color: #ddd;
+    color: #666;
 }
 
 .cancel-btn:hover {

@@ -1,1 +1,261 @@
 @charset "UTF-8";
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+/* 커스텀 오버레이 스타일 */
+/* 오버레이 기본 스타일 */
+.overlay-info {
+    width: 220px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+/* 상단 정보 영역 */
+.overlay-info .info-top {
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: #f5f5f5;
+}
+
+/* 장소 이름 */
+.overlay-info .info-top strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+}
+
+
+/* 하단 버튼 영역 */
+.overlay-info .info-footer {
+    display: flex;
+    border-top: 1px solid #eee;
+}
+
+.overlay-info .info-footer a {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #0A84FF;
+    border-right: 1px solid #eee;
+    transition: 0.2s all ease-in-out;
+    background-color: #fff;
+}
+
+.overlay-info .info-footer a:last-child {
+    border-right: none;
+}
+
+.overlay-info .info-footer a:hover {
+    background-color: #e6f0ff;
+    color: #0046b8;
+}
+
+/************/
+.board-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.board-wrapper-left {
+    max-height: 520px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    flex: 1;
+    gap: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+}
+
+.left-top {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+.user-img img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.user-info .user-name {
+    font-size: 1rem;
+    font-weight: 550;
+}
+
+.user-info .created-date {
+    font-size: .85rem;
+    font-weight: 500;
+    color: #444;
+}
+.matching-category {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.matching-category .info {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.category {
+    border-radius: 999px;
+    padding: 4px 8px;
+    background-color: #D6EBFF;
+    color: #0A84FF;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+
+.user-view {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.user-view img {
+    height: 18px;
+    width: 18px;
+}
+
+.user-view .viewAvg {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.user-view .viewCount {
+    font-size: .85rem;
+    font-weight: 500;
+    color: #999;
+}
+.left-middle {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.left-title {
+    font-size: 1rem;
+    color: #111;
+    font-weight: 600;
+}
+
+.left-content {
+    font-size: .9rem;
+    color: #444;
+    font-weight: 500;
+}
+
+.matching-footer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.matching-info {
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.matching-footer .location,
+.matching-footer .time,
+.matching-footer .badge,
+.matching-footer .user {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.matching-footer .material-symbols-outlined {
+    font-size: 1rem;
+    color: #444;
+    font-weight: 500;
+    margin-top: 3px;
+}
+
+.matching-footer .location-txt,
+.matching-footer .time-txt,
+.matching-footer .badge-txt,
+.matching-footer .user-txt {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #444;
+}
+
+#applyBtn {
+    width: 100%;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border: none;
+    color: #fff;
+    background-color: var(--main-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+/* 커리어 디테일 */
+.badge {
+    cursor: pointer;
+    user-select: none;
+}
+
+.badge-title {
+    font-size: .85rem;
+    font-weight: 600;
+}
+.career-detail {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+/* 정보 부분 */
+
+.board-wrapper-right {
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    height: 80vh;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 2;
+}
+
+#map {
+    position: absolute;
+    width: 100%;
+    height: 80vh;
+}
+
