@@ -27,6 +27,7 @@ public class commentVO {
 	private String userType;
 	
 	private String timeAgo;      // 상대 시간 문자열
+	private String userProfileImg;
 	
 	 
 

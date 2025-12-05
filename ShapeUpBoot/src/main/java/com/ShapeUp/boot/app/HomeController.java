@@ -13,6 +13,7 @@ import com.ShapeUp.boot.app.community.dto.communityListDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 import com.ShapeUp.boot.app.success.dto.successListDTO;
+import com.ShapeUp.boot.domain.community.model.vo.communityVO;
 import com.ShapeUp.boot.domain.home.model.service.homeService;
 import com.ShapeUp.boot.domain.matching.model.service.matchingService;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
@@ -91,4 +92,6 @@ public class HomeController {
 	public String mapPage() {
 		return "map/map";
 	}
+	
 }
+

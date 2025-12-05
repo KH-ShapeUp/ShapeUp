@@ -26,6 +26,13 @@
 		        (SELECT COUNT(*) 
 		        FROM MATCHING_APPLI_TBL A
 		        WHERE A.MATCHING_NO = M.MATCHING_NO) AS APPLICATION_COUNT,
+		        
+		        <!-- ⭐ 프로필 이미지: 경로 + 파일명 -->
+		        (SELECT IMG_PATH || '/' || IMG_RENAME
+		         FROM USER_PROFILE_IMG_TBL 
+		         WHERE USER_NO = M.USER_NO 
+		         AND IMG_MAIN = 'Y'
+		         AND ROWNUM = 1) AS USER_PROFILE_IMG,
 		
 				CASE
 				 -- 1. [마감] 날짜가 지났을 경우
@@ -77,6 +84,12 @@
 			    C.UPDATED_AT,
 			    C.DELETE_YN,
 			    U.USER_NICKNAME AS userNickName,
+			    <!-- ⭐ 프로필 이미지: 경로 + 파일명 -->
+			    (SELECT IMG_PATH || '/' || IMG_RENAME
+			     FROM USER_PROFILE_IMG_TBL 
+			     WHERE USER_NO = C.USER_NO 
+			     AND IMG_MAIN = 'Y'
+			     AND ROWNUM = 1) AS USER_PROFILE_IMG,
 			    (SELECT COUNT(*) FROM COMMUNITY_BOARD_LIKE BL WHERE BL.COMMUNITY_NO = C.COMMUNITY_NO) AS LIKE_COUNT,
 			    (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENT_COUNT
 			FROM COMMUNITY_TBL C
@@ -94,6 +107,7 @@
 			    C.DELETE_YN,
 			    C.VIEW_COUNT,
 			    C.UPDATED_AT,
+			    C.USER_NO,
 			    U.USER_NICKNAME
 			ORDER BY C.CREATED_AT DESC
 		)
@@ -113,6 +127,12 @@
 	    		C.SUCCESS_TYPE,
 	    		C.DELETE_YN,
 	    		U.USER_NICKNAME AS USER_NICKNAME,
+	    		<!-- ⭐ 프로필 이미지: 경로 + 파일명 -->
+	    		(SELECT IMG_PATH || '/' || IMG_RENAME
+	    		 FROM USER_PROFILE_IMG_TBL 
+	    		 WHERE USER_NO = C.USER_NO 
+	    		 AND IMG_MAIN = 'Y'
+	    		 AND ROWNUM = 1) AS USER_PROFILE_IMG,
 	    		DBMS_LOB.SUBSTR(
 	    			REGEXP_REPLACE(
 	    				REPLACE(C.COMMUNITY_CONTENT, '&amp;nbsp;', ''),

@@ -39,7 +39,7 @@
                <!-- 로그인 안했을 때 식단 표시-->
                <c:if test="${empty sessionScope.userNo}">
                   <div class="diet-lock-overlay">
-                     <span class="material-symbols-outlined">lock_person</span>
+                     <span class="material-symbols-outlined">lock</span>
                      <p>칼로리를 입력하려면 로그인이 필요합니다.</p>
                      <a href="/user/login"><button class="btn-login" type="button">로그인</button></a>
                   </div>
@@ -163,8 +163,15 @@
                   <div class="matching-card">
                      <div class="matching-user">
                         <div class="user-profile">
-                           <img src="../../resources/img/person.png" width="50">
-                        </div>
+						    <c:choose>
+						        <c:when test="${not empty mList.userProfileImg}">
+						            <img src="${mList.userProfileImg}" width="50" alt="프로필">
+						        </c:when>
+						        <c:otherwise>
+						            <img src="../../resources/img/default-profile.png" width="50" alt="기본 프로필">
+						        </c:otherwise>
+						    </c:choose>
+						</div>
                         <div class="user-profile-info">
                            <div class="user-profile-top">
                               <div class="user-info">
@@ -263,8 +270,15 @@
                         <div class="goal-card">
                            <div class="goal-card-top">
                               <div class="goal-profile-img">
-                                 <img src="../../resources/img/person.png" alt="">
-                              </div>
+								    <c:choose>
+								        <c:when test="${not empty sList.userProfileImg}">
+								            <img src="${sList.userProfileImg}" alt="프로필">
+								        </c:when>
+								        <c:otherwise>
+								            <img src="../../resources/img/default-profile.png" alt="기본 프로필">
+								        </c:otherwise>
+								    </c:choose>
+								</div>
                               <div class="goal-profile-info">
                                  <span>${sList.userNickName }</span> 
                                  <span>${sList.timeAgo }</span>
@@ -408,6 +422,7 @@
    <script
       src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
    <script>
+   
       const isHomeDietLoggedIn = ${empty sessionScope.userNo ? 'false' : 'true'};
       let HOME_MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
 
@@ -794,6 +809,16 @@
             // ⭐ 목표 칼로리 먼저 로드 -> 식단 요약 로드
             loadHomeGoalCalories().then(() => {
                loadHomeDietSummary();
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 프로필 이미지 로드 실패 시 기본 이미지로 변경
+            document.querySelectorAll('.user-profile img, .goal-profile-img img').forEach(img => {
+                img.onerror = function() {
+                    this.onerror = null; // 무한 루프 방지
+                    this.src = '../../resources/img/default-profile.png';
+                };
             });
         });
    </script>

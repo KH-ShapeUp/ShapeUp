@@ -165,5 +165,7 @@ public interface UserMapper {
      * @return 삭제된 행 수
      */
     int deleteAllProfileImages(int userNo);
+    
+    String selectUserProfileImgPath(int userNo);
 
 }
