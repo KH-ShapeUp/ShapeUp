@@ -26,5 +26,4 @@ public class GoalVO {
     private Integer goalCalorieEtc; 			// 기타 목표 섭취 칼로리
     private Integer goalCalorieActivityDaily; 	// 일일 목표 소모 칼로리 (GOAL_CALORIE_ACTIVITY_DAILY)
     private Integer goalActivityTime;         	// 목표 운동 시간 (GOAL_ACTIVITY_TIME)
-    // hello
 }
