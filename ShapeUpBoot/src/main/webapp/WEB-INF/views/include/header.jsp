@@ -161,7 +161,7 @@
                 </a>
             </div>
             <div class="list-item">
-                <a href="/routine">
+                <a href="/routine/list">
                     <span class="material-symbols-outlined">playlist_add_check</span>
                     <span>루틴</span>
                 </a>

@@ -224,10 +224,11 @@
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS commentCount
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.DELETE_YN = 'N'
+		    WHERE C.DELETE_YN = 'N' AND
+		    C.COMMUNITY_TYPE != 'success'
 		    ORDER BY C.VIEW_COUNT DESC
 		)
-		WHERE ROWNUM <![CDATA[ <= ]]> 3
+		WHERE ROWNUM <![CDATA[ <= ]]> 5
 	</select>
 	
 	<!-- 커뮤니티 댓글 순 리스트 -->
@@ -245,10 +246,11 @@
 		        (SELECT COUNT(*) FROM COMMENT_TBL CT WHERE CT.COMMUNITY_NO = C.COMMUNITY_NO ) AS COMMENTCOUNT
 		    FROM COMMUNITY_TBL C
 		    JOIN USER_TBL U ON U.USER_NO = C.USER_NO
-		    WHERE C.DELETE_YN = 'N'
+		    WHERE C.DELETE_YN = 'N' AND
+		    C.COMMUNITY_TYPE != 'success'
 		    ORDER BY COMMENTCOUNT DESC
 		)
-		WHERE ROWNUM <![CDATA[ <= ]]> 3 
+		WHERE ROWNUM <![CDATA[ <= ]]> 5
 	</select>
 
 	<!-- Admin: 자유게시판 리스트 (삭제여부 포함) -->
