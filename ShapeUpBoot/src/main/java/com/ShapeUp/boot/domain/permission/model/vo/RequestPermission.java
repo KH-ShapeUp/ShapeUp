@@ -22,6 +22,8 @@ public class RequestPermission {
 	private Timestamp updatedAt;
 	private Timestamp processedAt;
 	private String rejectReason;
+	private String career;              // ⭐ 활동 기간
+    private String careerDetail;        // ⭐ 상세 경력
 
 	// joined user info
 	private String userName;

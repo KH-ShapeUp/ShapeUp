@@ -60,10 +60,6 @@
 		              <div class="goal-label">목표 골격근량</div>
 		              <div class="goal-value" id="currentSmm">-</div>
 		            </div>
-		            <div class="goal-item">
-		              <div class="goal-label">목표 칼로리</div>
-		              <div class="goal-value" id="currentCalories">-</div>
-		            </div>
 		          </div>
 		        </div>
 
@@ -135,25 +131,6 @@
 		                required
 		              >
 		              <span class="unit">kg</span>
-		            </div>
-		          </div>
-				  <div class="form-group">
-		            <label for="weeklyCalories">
-		              <span class="label-icon">🔥</span>
-		              목표 칼로리
-		            </label>
-		            <div class="input-wrapper">
-		              <input 
-		                type="number" 
-		                id="weeklyCalories" 
-		                name="weeklyCalories" 
-		                step="100" 
-		                min="0" 
-		                max="50000" 
-		                placeholder="일주일 목표 칼로리를 입력하세요"
-		                required
-		              >
-		              <span class="unit">kcal</span>
 		            </div>
 		          </div>
 		          <div class="button-group">

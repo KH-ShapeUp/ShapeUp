@@ -14,12 +14,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GoalVO {
     
-    private Integer userNo;          // 사용자 번호 (PK)
-    private Double goalWeight;       // 목표 체중
-    private Double goalFat;          // 목표 체지방량
-    private Double goalSmm;          // 목표 골격근량
-    private Timestamp createdAt;     // 생성 시간
-    private Timestamp updatedAt;     // 수정 시간
-    private Integer goalCalorie;     // 주간 목표 칼로리
+    private Integer userNo;          	// 사용자 번호 (PK)
+    private Double goalWeight;       	// 목표 체중
+    private Double goalFat;          	// 목표 체지방량
+    private Double goalSmm;          	// 목표 골격근량
+    private Timestamp createdAt;     	// 생성 시간
+    private Timestamp updatedAt;     	// 수정 시간
+    private Integer goalCalorie;     	// 목표 섭취 칼로리
+    private Integer goalCalorieMorning; // 아침 목표 섭취 칼로리
+    private Integer goalCalorieLunch; 	// 점심 목표 섭취 칼로리
+    private Integer goalCalorieDinner;	// 저녁 목표 섭취 칼로리
+    private Integer goalCalorieEtc; 	// 기타 목표 섭취 칼로리
     
 }

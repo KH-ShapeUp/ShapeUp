@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ShapeUp.boot.domain.goal.model.mapper.GoalMapper">
 
-    <!-- ResultMap 정의 -->
+    <!-- ResultMap 정의 (식사별 목표 칼로리 추가) -->
     <resultMap id="goalResultMap" type="com.ShapeUp.boot.domain.goal.model.vo.GoalVO">
         <id property="userNo" column="USER_NO"/>
         <result property="goalWeight" column="GOAL_WEIGHT"/>
@@ -13,25 +13,34 @@
         <result property="goalCalorie" column="GOAL_CALORIE"/>
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
+        <!-- 식사별 목표 칼로리 추가 -->
+        <result property="goalCalorieMorning" column="GOAL_CALORIE_MORNING"/>
+        <result property="goalCalorieLunch" column="GOAL_CALORIE_LUNCH"/>
+        <result property="goalCalorieDinner" column="GOAL_CALORIE_DINNER"/>
+        <result property="goalCalorieEtc" column="GOAL_CALORIE_ETC"/>
     </resultMap>
 
-    <!-- 사용자 번호로 목표 조회 -->
+    <!-- 사용자 번호로 목표 조회 (식사별 목표 칼로리 포함) -->
     <select id="selectGoalByUserNo" parameterType="int" resultMap="goalResultMap">
-        SELECT 
+        SELECT
             USER_NO,
             GOAL_WEIGHT,
             GOAL_FAT,
             GOAL_SMM,
             GOAL_CALORIE,
             CREATED_AT,
-            UPDATED_AT
-        FROM 
+            UPDATED_AT,
+            GOAL_CALORIE_MORNING,
+            GOAL_CALORIE_LUNCH,
+            GOAL_CALORIE_DINNER,
+            GOAL_CALORIE_ETC
+        FROM
             GOAL_TBL
-        WHERE 
+        WHERE
             USER_NO = #{userNo}
     </select>
 
-    <!-- 목표 등록 -->
+    <!-- 목표 등록 (식사별 목표 칼로리 포함) -->
     <insert id="insertGoal" parameterType="com.ShapeUp.boot.domain.goal.model.vo.GoalVO">
         INSERT INTO GOAL_TBL (
             USER_NO,
@@ -39,6 +48,10 @@
             GOAL_FAT,
             GOAL_SMM,
             GOAL_CALORIE,
+            GOAL_CALORIE_MORNING,
+            GOAL_CALORIE_LUNCH,
+            GOAL_CALORIE_DINNER,
+            GOAL_CALORIE_ETC,
             CREATED_AT,
             UPDATED_AT
         ) VALUES (
@@ -47,21 +60,29 @@
             #{goalFat},
             #{goalSmm},
             #{goalCalorie, jdbcType=NUMERIC},
+            #{goalCalorieMorning, jdbcType=NUMERIC},
+            #{goalCalorieLunch, jdbcType=NUMERIC},
+            #{goalCalorieDinner, jdbcType=NUMERIC},
+            #{goalCalorieEtc, jdbcType=NUMERIC},
             SYSTIMESTAMP,
             SYSTIMESTAMP
         )
     </insert>
 
-    <!-- 목표 수정 -->
+    <!-- 목표 수정 (식사별 목표 칼로리 포함) -->
     <update id="updateGoal" parameterType="com.ShapeUp.boot.domain.goal.model.vo.GoalVO">
         UPDATE GOAL_TBL
-        SET 
+        SET
             GOAL_WEIGHT = #{goalWeight},
             GOAL_FAT = #{goalFat},
             GOAL_SMM = #{goalSmm},
             GOAL_CALORIE = #{goalCalorie, jdbcType=NUMERIC},
+            GOAL_CALORIE_MORNING = #{goalCalorieMorning, jdbcType=NUMERIC},
+            GOAL_CALORIE_LUNCH = #{goalCalorieLunch, jdbcType=NUMERIC},
+            GOAL_CALORIE_DINNER = #{goalCalorieDinner, jdbcType=NUMERIC},
+            GOAL_CALORIE_ETC = #{goalCalorieEtc, jdbcType=NUMERIC},
             UPDATED_AT = SYSTIMESTAMP
-        WHERE 
+        WHERE
             USER_NO = #{userNo}
     </update>
 

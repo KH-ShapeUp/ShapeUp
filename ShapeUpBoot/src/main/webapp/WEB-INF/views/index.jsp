@@ -409,12 +409,67 @@
       src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
    <script>
       const isHomeDietLoggedIn = ${empty sessionScope.userNo ? 'false' : 'true'};
-      const HOME_MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
+      let HOME_MEAL_GOALS = { '아침': 500, '점심': 680, '저녁': 550, '기타': 500 };
 
       function pad2(n) { return (n < 10 ? '0' : '') + n; }
       function getTodayIso() {
          const d = new Date();
          return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+      }
+
+      // ========================================
+      // ⭐ 목표 칼로리 불러오기 (식사별 포함)
+      // ========================================
+      async function loadHomeGoalCalories() {
+         if (!isHomeDietLoggedIn) {
+            console.log('Not logged in, using default goals');
+            return;
+         }
+
+         try {
+            const res = await fetch('/diet/goal');
+            if (res.status === 401) {
+               console.log('Not logged in, using default goals');
+               return;
+            }
+            if (!res.ok) throw new Error('goal failed');
+            const json = await res.json();
+
+            // ⭐ 식사별 목표 업데이트
+            if (json.goalCalorieMorning !== undefined) 
+               HOME_MEAL_GOALS['아침'] = Number(json.goalCalorieMorning) || 500;
+            if (json.goalCalorieLunch !== undefined) 
+               HOME_MEAL_GOALS['점심'] = Number(json.goalCalorieLunch) || 680;
+            if (json.goalCalorieDinner !== undefined) 
+               HOME_MEAL_GOALS['저녁'] = Number(json.goalCalorieDinner) || 550;
+            if (json.goalCalorieEtc !== undefined) 
+               HOME_MEAL_GOALS['기타'] = Number(json.goalCalorieEtc) || 500;
+
+            console.log('Home goals loaded:', HOME_MEAL_GOALS);
+
+            // ⭐ 화면에 목표 표시 업데이트
+            updateHomeGoalDisplay();
+         } catch (err) {
+            console.error('failed to load goal calorie', err);
+         }
+      }
+
+      // ========================================
+      // ⭐ 화면에 식사별 목표 표시 업데이트
+      // ========================================
+      function updateHomeGoalDisplay() {
+         const goalElements = {
+            '아침': document.querySelector('.user-diet-record[data-diet-type="아침"] .meta'),
+            '점심': document.querySelector('.user-diet-record[data-diet-type="점심"] .meta'),
+            '저녁': document.querySelector('.user-diet-record[data-diet-type="저녁"] .meta'),
+            '기타': document.querySelector('.user-diet-record[data-diet-type="기타"] .meta'),
+         };
+
+         Object.entries(goalElements).forEach(([type, el]) => {
+            if (el) {
+               el.textContent = '목표 : ' + HOME_MEAL_GOALS[type] + ' Kcal';
+            }
+         });
       }
 
       async function loadHomeDietSummary() {
@@ -718,6 +773,9 @@
               return swiperInstance;
             };
 
+            // ========================================
+            // ⭐ 페이지 로드 시 실행 순서
+            // ========================================
             // 배너 불러오기 후 슬라이드 생성 -> Swiper 초기화
             const apiBase = window.location.origin || '';
             fetch(apiBase + '/api/banners/active')
@@ -733,10 +791,11 @@
                 initSwiper().update();
               });
 
-            loadHomeDietSummary();
-            loadHomeNotice();
+            // ⭐ 목표 칼로리 먼저 로드 -> 식단 요약 로드
+            loadHomeGoalCalories().then(() => {
+               loadHomeDietSummary();
+            });
         });
    </script>
 </body>
 </html>
->>>>>>> refs/remotes/origin/kwonjinho

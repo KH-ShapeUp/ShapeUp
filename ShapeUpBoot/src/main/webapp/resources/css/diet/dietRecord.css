@@ -55,6 +55,17 @@ body {
   font-size: 0.98rem;
 }
 
+/* ========================================
+   날짜 컨트롤과 목표 설정 버튼 영역
+   ======================================== */
+.diet-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0.8rem auto 1.2rem;
+  flex-wrap: wrap;
+}
+
 .date-controls {
   display: inline-flex;
   align-items: center;
@@ -63,12 +74,12 @@ body {
   padding: 0.6rem 0.75rem;
   border-radius: 999px;
   box-shadow: var(--shadow-soft);
-  margin: 0.8rem auto 1.2rem;
   position: relative;
 }
 
 .date-controls.wide {
-  width: 100%;
+  flex: 1;
+  min-width: 300px;
   max-width: 720px;
   justify-content: center;
 }
@@ -140,6 +151,36 @@ body {
   pointer-events: none;
   width: 1px;
   height: 1px;
+}
+
+/* ========================================
+   목표 칼로리 설정 버튼
+   ======================================== */
+.btn-goal-setting {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-goal-setting:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.btn-goal-setting i {
+  font-size: 1.1rem;
 }
 
 .diet-grid {
@@ -442,6 +483,20 @@ body {
   margin-top: 0.25rem;
 }
 
+/* ========================================
+   식사 카드 목표 표시
+   ======================================== */
+.meal-goal {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  text-align: center;
+}
+
 .fasting-overlay {
   position: absolute;
   inset: 0;
@@ -484,6 +539,7 @@ body {
   background: #2f80ff;
   transition: width 0.35s ease;
 }
+
 .meal-card.sunrise { background: #fff; border-top: 4px solid #f2b84b; }
 .meal-card.noon { background: #fff; border-top: 4px solid #2e8cff; }
 .meal-card.evening { background: #fff; border-top: 4px solid #f25c5c; }
@@ -498,6 +554,215 @@ body {
 .meal-card.night .progress-track { background: #f7eedf; }
 .meal-card.night .progress-fill { background: #c58c5d; }
 
+/* ========================================
+   목표 칼로리 설정 모달 스타일
+   ======================================== */
+.goal-setting-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.goal-modal-content {
+  background-color: #fff;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 520px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.goal-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8f9fb, #ffffff);
+}
+
+.goal-modal-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.goal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f3f5;
+  font-size: 20px;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.goal-close:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+  transform: rotate(90deg);
+}
+
+.goal-modal-body {
+  padding: 28px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.goal-input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fb;
+  border-radius: 14px;
+  transition: all 0.2s;
+}
+
+.goal-input-group:hover {
+  background: #f1f3f5;
+  transform: translateX(2px);
+}
+
+.goal-input-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 100px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.goal-icon-small {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.goal-input-group input[type="number"] {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: right;
+  transition: all 0.2s;
+  background: white;
+}
+
+.goal-input-group input[type="number"]:focus {
+  outline: none;
+  border-color: #2f80ff;
+  box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.1);
+}
+
+.goal-input-group .unit {
+  flex: 0 0 40px;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.goal-total {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #eef6ff, #f0f9ff);
+  border-radius: 14px;
+  text-align: center;
+  border: 2px solid #bfdbfe;
+}
+
+.goal-total strong {
+  display: block;
+  font-size: 1rem;
+  color: #1e40af;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.goal-total-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 4px;
+}
+
+.goal-modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 28px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8f9fb;
+}
+
+.goal-btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.goal-btn-cancel {
+  background: #f1f3f5;
+  color: #64748b;
+}
+
+.goal-btn-cancel:hover {
+  background: #e2e8f0;
+  color: #475569;
+  transform: translateY(-2px);
+}
+
+.goal-btn-save {
+  background: linear-gradient(135deg, #2f80ff, #1e40af);
+  color: white;
+  box-shadow: 0 4px 12px rgba(47, 128, 255, 0.3);
+}
+
+.goal-btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(47, 128, 255, 0.4);
+}
+
+/* ========================================
+   반응형 디자인
+   ======================================== */
 @media (max-width: 1024px) {
   .diet-grid {
     grid-template-columns: 1fr;
@@ -518,8 +783,19 @@ body {
     padding: 0 1rem 1.8rem;
   }
 
+  .diet-header-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .date-controls.wide {
+    min-width: 100%;
     justify-content: space-between;
+  }
+
+  .btn-goal-setting {
+    width: 100%;
+    justify-content: center;
   }
 
   .page-header {
@@ -546,5 +822,25 @@ body {
 
   .donut-card {
     min-height: 280px;
+  }
+
+  /* 모달 반응형 */
+  .goal-modal-content {
+    width: 95%;
+    max-width: 95%;
+  }
+
+  .goal-input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .goal-input-group label {
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .goal-input-group input[type="number"] {
+    text-align: center;
   }
 }
