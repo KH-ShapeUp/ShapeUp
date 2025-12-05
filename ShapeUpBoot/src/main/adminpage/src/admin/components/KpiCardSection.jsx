@@ -36,6 +36,17 @@ const KpiCardSection = () => {
           if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
           return String(val).slice(0, 10);
         };
+        const pickDate = (obj) =>
+          normalizeDateKey(
+            obj.createdAt ||
+              obj.created_at ||
+              obj.joinDate ||
+              obj.regDate ||
+              obj.reg_date ||
+              obj.date ||
+              obj.updatedAt
+          );
+
         let todayJoin = 0;
         let todayWithdraw = 0;
         let userCount = 0;
@@ -43,10 +54,14 @@ const KpiCardSection = () => {
         let trainerCount = 0;
 
         (data || []).forEach((u) => {
-          const created = u.createdAt ? String(u.createdAt).slice(0, 10) : "";
-          const updated = u.updatedAt ? String(u.updatedAt).slice(0, 10) : "";
+          const created = pickDate(u);
+          const updated = normalizeDateKey(u.updatedAt || u.updated_at || u.deletedAt || u.deleted_at);
           if (created === todayKey) todayJoin += 1;
-          if (u.status === "탈퇴" && (updated === todayKey || created === todayKey)) todayWithdraw += 1;
+          const status = (u.status || u.userStatus || "").toUpperCase();
+          const deleted = (u.deleteYn || u.DELETE_YN || "").toUpperCase() === "Y";
+          if ((status === "탈퇴" || status === "WITHDRAW" || deleted) && (updated === todayKey || created === todayKey)) {
+            todayWithdraw += 1;
+          }
           const type = (u.userType || "").toUpperCase();
           if (type === "USER") userCount += 1;
           else if (type === "STADIUM_MANAGER") stadiumManagerCount += 1;
@@ -73,7 +88,9 @@ const KpiCardSection = () => {
             const payload = await resMatch.json();
             const list = Array.isArray(payload.mList) ? payload.mList : [];
             list.forEach((m) => {
-              const createdKey = normalizeDateKey(m.createdAt);
+              const createdKey = normalizeDateKey(
+                m.createdAt || m.created_at || m.matchingDate || m.matchDate || m.date
+              );
               if (createdKey === todayKey) count += 1;
             });
             maxPage = payload.maxPage || 1;
@@ -89,7 +106,9 @@ const KpiCardSection = () => {
           const json = await resRpt.json();
           const items = Array.isArray(json.items) ? json.items : [];
           return items.reduce((acc, r) => {
-            const dateKey = normalizeDateKey(r.date);
+            const dateKey = normalizeDateKey(
+              r.date || r.createdAt || r.reportDate || r.requestedAt || r.created_at
+            );
             return dateKey === todayKey ? acc + 1 : acc;
           }, 0);
         };

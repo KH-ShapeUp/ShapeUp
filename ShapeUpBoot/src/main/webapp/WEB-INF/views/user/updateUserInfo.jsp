@@ -517,9 +517,9 @@ function deleteProfileImage() {
 
 // ========== 쪽지함 알림 시스템 ==========
 (function() {
-  // 알림 목록 로드
+  // 알림 목록 로드 (DB 기반)
   window.loadNotifications = function() {
-    fetch(contextPath + '/user/checkRecentRequest', {
+    fetch(contextPath + '/api/notifications/recent?limit=5', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -527,12 +527,9 @@ function deleteProfileImage() {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.hasRecent) {
-        updateNotificationBadge(1);
-        renderNotificationList([data.request]);
-      } else {
-        updateNotificationBadge(0);
-      }
+      const items = data.items || [];
+      updateNotificationBadge(items.length);
+      renderNotificationList(items);
     })
     .catch(err => {
       console.error('알림 로드 오류:', err);
@@ -573,30 +570,18 @@ function deleteProfileImage() {
   function createNotificationItem(notification) {
     const item = document.createElement('div');
     item.className = 'notification-item unread';
-    item.onclick = () => markAsRead(notification.requestNo);
+    item.onclick = () => markAsRead(notification.notiNo, notification.linkPath);
     
-    const requestTypeText = notification.requestType === 'STADIUM_MANAGER' ? '시설 관리자' : '트레이너';
-    const isApproved = notification.requestStatus === '승인';
-    
-    let statusHTML = '';
-    let messageHTML = '';
-    
-    if (isApproved) {
-      statusHTML = '<div class="notification-status approved">✅ 승인됨</div>';
-      messageHTML = '<div class="notification-message">' + requestTypeText + ' 권한 신청이 승인되었습니다.</div>';
-    } else {
-      statusHTML = '<div class="notification-status rejected">❌ 반려됨</div>';
-      messageHTML = '<div class="notification-message">' + requestTypeText + ' 권한 신청이 반려되었습니다.';
-      if (notification.rejectReason) {
-        messageHTML += '<br><strong>반려 사유:</strong> ' + notification.rejectReason;
-      }
-      messageHTML += '</div>';
-    }
+    const typeText = notification.type === 'ROLE' ? '권한 신청' : (notification.type === 'CONTACT' ? '문의 답변' : notification.type);
+    let statusHTML = '<div class="notification-status approved">🔔 알림</div>';
+    let messageHTML = '<div class="notification-message"><strong>' + (notification.title || typeText) + '</strong><br>' + (notification.message || '') + '</div>';
     
     let timeHTML = '';
-    if (notification.processedAt) {
-      const date = new Date(notification.processedAt);
-      timeHTML = '<div class="notification-time">' + formatNotificationDate(date) + '</div>';
+    if (notification.createdAt) {
+      const date = new Date(notification.createdAt);
+      if (!isNaN(date.getTime())) {
+        timeHTML = '<div class="notification-time">' + formatNotificationDate(date) + '</div>';
+      }
     }
     
     item.innerHTML = statusHTML + messageHTML + timeHTML;
@@ -633,13 +618,13 @@ function deleteProfileImage() {
       }
   }
 
-  function markAsRead(requestNo) {
-    fetch(contextPath + '/user/markNotificationRead', {
+  function markAsRead(notiNo, linkPath) {
+    fetch(contextPath + '/api/notifications/read', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ requestNo: requestNo })
+      body: JSON.stringify({ notiNo: notiNo })
     })
     .then(res => res.json())
     .then(data => {
@@ -647,6 +632,9 @@ function deleteProfileImage() {
         updateNotificationBadge(0);
         toggleDropdown();
         loadNotifications();
+        if (linkPath) {
+          window.location.href = linkPath;
+        }
       }
     })
     .catch(err => {

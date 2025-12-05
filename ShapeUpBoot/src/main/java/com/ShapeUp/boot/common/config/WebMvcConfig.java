@@ -64,6 +64,11 @@ registry.addInterceptor(new StadiumAccessInterceptor())
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600);
+        registry.addMapping("/contact/**")
+                .allowedOrigins("http://localhost:8080", "http://localhost:5173")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowCredentials(true)
+                .maxAge(3600);
         registry.addMapping("/uploads/**")
                 .allowedOrigins("http://localhost:8080", "http://localhost:5173")
                 .allowedMethods("GET")

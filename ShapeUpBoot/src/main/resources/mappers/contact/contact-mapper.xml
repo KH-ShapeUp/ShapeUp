@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.contact.model.mapper.ContactMapper">
+
+    <resultMap id="contactMap" type="com.ShapeUp.boot.domain.contact.model.vo.ContactVO">
+        <id property="contactNo" column="CONTACT_NO"/>
+        <result property="userNo" column="USER_NO"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="userNickname" column="USER_NICKNAME"/>
+        <result property="contactTitle" column="CONTACT_TITLE"/>
+        <result property="contactContent" column="CONTACT_CONTENT"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="status" column="STATUS"/>
+        <result property="answerContent" column="ANSWER_CONTENT"/>
+        <result property="answerAt" column="ANSWER_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="deleteYn" column="DELETE_YN"/>
+    </resultMap>
+
+    <select id="selectContactList" resultMap="contactMap">
+        SELECT
+            c.CONTACT_NO,
+            c.USER_NO,
+            u.USER_ID,
+            u.USER_NICKNAME,
+            c.CONTACT_TITLE,
+            c.CONTACT_CONTENT,
+            c.CATEGORY,
+            c.STATUS,
+            c.ANSWER_CONTENT,
+            c.ANSWER_AT,
+            c.CREATED_AT,
+            c.DELETE_YN
+        FROM CONTACT_TBL c
+        JOIN USER_TBL u ON c.USER_NO = u.USER_NO
+        WHERE NVL(c.DELETE_YN, 'N') = 'N'
+          AND c.USER_NO = #{userNo}
+        ORDER BY c.CONTACT_NO DESC
+    </select>
+
+    <select id="selectContactTotal" resultType="int">
+        SELECT COUNT(*) FROM CONTACT_TBL c
+        WHERE NVL(c.DELETE_YN, 'N') = 'N'
+          AND c.USER_NO = #{userNo}
+    </select>
+
+    <select id="selectContactDetail" resultMap="contactMap">
+        SELECT
+            c.CONTACT_NO,
+            c.USER_NO,
+            u.USER_ID,
+            u.USER_NICKNAME,
+            c.CONTACT_TITLE,
+            c.CONTACT_CONTENT,
+            c.CATEGORY,
+            c.STATUS,
+            c.ANSWER_CONTENT,
+            c.ANSWER_AT,
+            c.CREATED_AT,
+            c.DELETE_YN
+        FROM CONTACT_TBL c
+        JOIN USER_TBL u ON c.USER_NO = u.USER_NO
+        WHERE NVL(c.DELETE_YN, 'N') = 'N'
+          AND c.CONTACT_NO = #{contactNo}
+          AND c.USER_NO = #{userNo}
+    </select>
+
+    <select id="selectContactDetailAdmin" resultMap="contactMap">
+        SELECT
+            c.CONTACT_NO,
+            c.USER_NO,
+            u.USER_ID,
+            u.USER_NICKNAME,
+            c.CONTACT_TITLE,
+            c.CONTACT_CONTENT,
+            c.CATEGORY,
+            c.STATUS,
+            c.ANSWER_CONTENT,
+            c.ANSWER_AT,
+            c.CREATED_AT,
+            c.DELETE_YN
+        FROM CONTACT_TBL c
+        JOIN USER_TBL u ON c.USER_NO = u.USER_NO
+        WHERE NVL(c.DELETE_YN, 'N') = 'N'
+          AND c.CONTACT_NO = #{contactNo}
+    </select>
+
+    <insert id="insertContact">
+        INSERT INTO CONTACT_TBL (
+            CONTACT_NO,
+            USER_NO,
+            CONTACT_TITLE,
+            CONTACT_CONTENT,
+            CATEGORY,
+            STATUS,
+            CREATED_AT,
+            DELETE_YN
+        ) VALUES (
+            SEQ_CONTACT_NO.NEXTVAL,
+            #{userNo},
+            #{contactTitle},
+            #{contactContent},
+            #{category},
+            '대기',
+            SYSTIMESTAMP,
+            'N'
+        )
+    </insert>
+
+    <!-- admin: 전체 조회 -->
+    <select id="selectAll" resultMap="contactMap">
+        SELECT
+            c.CONTACT_NO,
+            c.USER_NO,
+            u.USER_ID,
+            u.USER_NICKNAME,
+            c.CONTACT_TITLE,
+            c.CONTACT_CONTENT,
+            c.CATEGORY,
+            c.STATUS,
+            c.ANSWER_CONTENT,
+            c.ANSWER_AT,
+            c.CREATED_AT,
+            c.DELETE_YN
+        FROM CONTACT_TBL c
+        JOIN USER_TBL u ON c.USER_NO = u.USER_NO
+        <where>
+            NVL(c.DELETE_YN, 'N') = 'N'
+            <if test="status != null &amp;&amp; status != ''">
+                AND c.STATUS = #{status}
+            </if>
+            <if test="category != null &amp;&amp; category != ''">
+                AND c.CATEGORY = #{category}
+            </if>
+        </where>
+        ORDER BY c.CONTACT_NO DESC
+    </select>
+
+    <select id="selectAllTotal" resultType="int">
+        SELECT COUNT(*) FROM CONTACT_TBL c
+        <where>
+            NVL(c.DELETE_YN, 'N') = 'N'
+            <if test="status != null &amp;&amp; status != ''">
+                AND c.STATUS = #{status}
+            </if>
+            <if test="category != null &amp;&amp; category != ''">
+                AND c.CATEGORY = #{category}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateAnswer">
+        UPDATE CONTACT_TBL
+        SET ANSWER_CONTENT = #{answerContent},
+            ANSWER_AT = SYSTIMESTAMP,
+            STATUS = #{status}
+        WHERE CONTACT_NO = #{contactNo}
+    </update>
+
+</mapper>

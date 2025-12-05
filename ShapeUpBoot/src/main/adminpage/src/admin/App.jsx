@@ -15,6 +15,7 @@ import SendGuideline from "./pages/SendGuideline";
 import MembersReport from "./pages/ReportManagement";
 import TrainerReport from "./pages/TrainerReport";
 import MembersRoleRequest from "./pages/MembersRoleRequest";
+import PostContactBoard from "./pages/PostContactBoard";
 import "./App.css";
 import "./styles/Dashboard.css";
 
@@ -90,7 +91,7 @@ function App() {
                 "/admin/posts/notice": <PostsNotice />,
                 "/admin/posts/submenu2": <PostFreeBoard />,
                 "/admin/posts/submenu3": <PostSuccessBoard />,
-                "/admin/posts/submenu4": <PostQnaBoard />,
+                "/admin/posts/submenu4": <PostContactBoard />,
                 "/admin/posts/matching": <PostMatchingBoard />,
                 "/admin/feeds/send-guideline": <SendGuideline />,
               };
