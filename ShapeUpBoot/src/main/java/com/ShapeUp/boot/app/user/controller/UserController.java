@@ -941,6 +941,7 @@ public class UserController {
         
         return response;
     }
+
     
     @GetMapping("/user/userInterest")
     public String userInterest(HttpSession session, Model model) {

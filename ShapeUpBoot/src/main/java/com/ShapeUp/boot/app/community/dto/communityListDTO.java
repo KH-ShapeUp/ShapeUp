@@ -24,6 +24,7 @@ public class communityListDTO {
 	private int commentCount;
 	private String successType;
 	private String goalDate;
+	private String userProfileImg;
 	
 	 
 

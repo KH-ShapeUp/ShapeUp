@@ -24,6 +24,7 @@ import com.ShapeUp.boot.domain.activity.model.service.impl.ActivityServiceImpl;
 import com.ShapeUp.boot.domain.community.model.service.communityService;
 import com.ShapeUp.boot.domain.community.model.vo.communityVO;
 import com.ShapeUp.boot.domain.notice.model.vo.Notice;
+import com.ShapeUp.boot.domain.user.model.service.UserService; // ⭐ import 추가
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class communityController {
 
 	private final communityService cService;
+	private final UserService userService;
 	
 	@GetMapping("/community")
 	public String communityPage(HttpSession session, Model model, 
@@ -141,12 +143,19 @@ public class communityController {
 	/* 커뮤니티 디테일 */
 	@GetMapping("/community/detail")
 	public String communityDetailPage(@RequestParam("boardNo")int boardNo, Model model, HttpSession session) {
-		communityListDTO cVO = cService.getCommunityDetail(boardNo);
-		Integer userNo = (Integer)session.getAttribute("userNo");
-		System.out.println("커뮤니티 불러온 데이터:"+cVO);
-		model.addAttribute("userNo", userNo);
-		model.addAttribute("cList", cVO);
-		return "community/communityDetail";
+	    communityListDTO cVO = cService.getCommunityDetail(boardNo);
+	    Integer userNo = (Integer)session.getAttribute("userNo");
+	    
+	    // ⭐ 이 부분이 제대로 추가되었는지 확인!
+	    if (userNo != null) {
+	        String userProfileImg = userService.getUserProfileImg(userNo);
+	        model.addAttribute("userProfileImg", userProfileImg);
+	    }
+	    
+	    System.out.println("커뮤니티 불러온 데이터:"+cVO);
+	    model.addAttribute("userNo", userNo);
+	    model.addAttribute("cList", cVO);
+	    return "community/communityDetail";
 	}
 	
 	/* 커뮤니티 좋아요 */

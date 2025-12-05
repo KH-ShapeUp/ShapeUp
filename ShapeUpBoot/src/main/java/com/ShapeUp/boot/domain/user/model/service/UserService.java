@@ -90,4 +90,11 @@ public interface UserService {
      * @return 삭제 결과
      */
     int deleteAllProfileImages(int userNo);
+    
+    /**
+     * ⭐ 사용자 프로필 이미지 경로 조회 (댓글/게시글용)
+     * @param userNo 사용자 번호
+     * @return 프로필 이미지 전체 경로 (IMG_PATH || '/' || IMG_RENAME)
+     */
+    String getUserProfileImg(int userNo);
 }

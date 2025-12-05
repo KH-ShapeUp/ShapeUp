@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ShapeUp.boot.domain.notification.model.mapper.NotificationMapper">
+
+    <resultMap id="notificationMap" type="com.ShapeUp.boot.domain.notification.model.vo.NotificationVO">
+        <id property="notiNo" column="NOTI_NO"/>
+        <result property="userNo" column="USER_NO"/>
+        <result property="type" column="TYPE"/>
+        <result property="refId" column="REF_ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="message" column="MESSAGE"/>
+        <result property="linkPath" column="LINK_PATH"/>
+        <result property="readYn" column="READ_YN"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ShapeUp.boot.domain.notification.model.vo.NotificationVO">
+        INSERT INTO NOTIFICATION_TBL (
+            NOTI_NO,
+            USER_NO,
+            TYPE,
+            REF_ID,
+            TITLE,
+            MESSAGE,
+            LINK_PATH,
+            READ_YN,
+            CREATED_AT
+        ) VALUES (
+            SEQ_NOTIFICATION_NO.NEXTVAL,
+            #{userNo},
+            #{type},
+            #{refId},
+            #{title},
+            #{message},
+            #{linkPath},
+            NVL(#{readYn}, 'N'),
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <select id="selectRecentUnread" resultMap="notificationMap">
+        SELECT
+            NOTI_NO,
+            USER_NO,
+            TYPE,
+            REF_ID,
+            TITLE,
+            MESSAGE,
+            LINK_PATH,
+            READ_YN,
+            CREATED_AT
+        FROM NOTIFICATION_TBL
+        WHERE USER_NO = #{userNo}
+          AND NVL(READ_YN, 'N') = 'N'
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <update id="markRead">
+        UPDATE NOTIFICATION_TBL
+        SET READ_YN = 'Y'
+        WHERE NOTI_NO = #{notiNo}
+          AND USER_NO = #{userNo}
+    </update>
+
+</mapper>

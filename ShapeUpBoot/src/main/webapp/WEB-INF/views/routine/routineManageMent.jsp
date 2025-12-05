@@ -276,5 +276,6 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
         <button type="submit" class="btn-save">저장</button>
       </form>
     </div>
+    <jsp:include page="/WEB-INF/views/include/footer.jsp" />
   </body>
 </html>
