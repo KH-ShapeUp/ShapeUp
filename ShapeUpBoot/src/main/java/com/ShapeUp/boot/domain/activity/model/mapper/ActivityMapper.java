@@ -25,5 +25,5 @@ public interface ActivityMapper {
 	List<Map<String, Object>> sumKcalByType(@Param("userNo") int userNo, @Param("actionDate") String actionDate);
 
 	int deleteLogs(@Param("userNo") int userNo, @Param("logIds") List<Integer> logIds);
-
+	
 }
