@@ -512,10 +512,11 @@ public class UserController {
                 log.info("✅ 자동 로그인 쿠키 생성: {}", userId);
             }
 
+            // 권한별 진입 페이지 분기 (환경 의존도를 줄이기 위해 상대 경로 사용)
             if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://192.168.52.24:8080/admin";
+                return "redirect:/admin";
             } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
-                return "redirect:http://192.168.52.24:8080/stadium";
+                return "redirect:/stadium";
             } else {
                 return "redirect:/";
             }

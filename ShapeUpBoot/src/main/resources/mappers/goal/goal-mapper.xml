@@ -52,18 +52,22 @@
             GOAL_CALORIE_LUNCH,
             GOAL_CALORIE_DINNER,
             GOAL_CALORIE_ETC,
+            GOAL_CALORIE_ACTIVITY_DAILY,
+            GOAL_ACTIVITY_TIME,
             CREATED_AT,
             UPDATED_AT
         ) VALUES (
             #{userNo},
-            #{goalWeight},
-            #{goalFat},
-            #{goalSmm},
+            #{goalWeight, jdbcType=NUMERIC},       <!-- ⭐ jdbcType 추가 -->
+            #{goalFat, jdbcType=NUMERIC},          <!-- ⭐ jdbcType 추가 -->
+            #{goalSmm, jdbcType=NUMERIC},          <!-- ⭐ jdbcType 추가 -->
             #{goalCalorie, jdbcType=NUMERIC},
             #{goalCalorieMorning, jdbcType=NUMERIC},
             #{goalCalorieLunch, jdbcType=NUMERIC},
             #{goalCalorieDinner, jdbcType=NUMERIC},
             #{goalCalorieEtc, jdbcType=NUMERIC},
+            #{goalCalorieActivityDaily, jdbcType=NUMERIC},
+            #{goalActivityTime, jdbcType=NUMERIC},
             SYSTIMESTAMP,
             SYSTIMESTAMP
         )
@@ -73,14 +77,16 @@
     <update id="updateGoal" parameterType="com.ShapeUp.boot.domain.goal.model.vo.GoalVO">
         UPDATE GOAL_TBL
         SET
-            GOAL_WEIGHT = #{goalWeight},
-            GOAL_FAT = #{goalFat},
-            GOAL_SMM = #{goalSmm},
+            GOAL_WEIGHT = #{goalWeight, jdbcType=NUMERIC},       <!-- ⭐ jdbcType 추가 -->
+            GOAL_FAT = #{goalFat, jdbcType=NUMERIC},             <!-- ⭐ jdbcType 추가 -->
+            GOAL_SMM = #{goalSmm, jdbcType=NUMERIC},             <!-- ⭐ jdbcType 추가 -->
             GOAL_CALORIE = #{goalCalorie, jdbcType=NUMERIC},
             GOAL_CALORIE_MORNING = #{goalCalorieMorning, jdbcType=NUMERIC},
             GOAL_CALORIE_LUNCH = #{goalCalorieLunch, jdbcType=NUMERIC},
             GOAL_CALORIE_DINNER = #{goalCalorieDinner, jdbcType=NUMERIC},
             GOAL_CALORIE_ETC = #{goalCalorieEtc, jdbcType=NUMERIC},
+            GOAL_CALORIE_ACTIVITY_DAILY = #{goalCalorieActivityDaily, jdbcType=NUMERIC},
+            GOAL_ACTIVITY_TIME = #{goalActivityTime, jdbcType=NUMERIC},
             UPDATED_AT = SYSTIMESTAMP
         WHERE
             USER_NO = #{userNo}
