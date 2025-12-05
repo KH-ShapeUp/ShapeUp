@@ -23,7 +23,7 @@
                     <li>&#8739;</li>
                     <li><a href="#" class="locationBased"><b>위치기반 서비스 약관</b></a></li>
                     <li>&#8739;</li>
-                    <li><a href="#" class="customerCenter">고객센터</a></li>
+                    <li><a href="/contact/list" class="customerCenter">고객센터</a></li>
                 </ul>
             </div>
             <div class="middle-bottom">
@@ -59,12 +59,6 @@
         });
 
         document.querySelector(".locationBased").addEventListener("click", (e) => {
-            e.preventDefault;
-            e.stopPropagation;
-            alert("개발중입니다.");
-        });
-        
-        document.querySelector(".customerCenter").addEventListener("click", (e) => {
             e.preventDefault;
             e.stopPropagation;
             alert("개발중입니다.");

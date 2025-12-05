@@ -220,6 +220,7 @@
     border-radius: 8px;
     background-color: var(--main-color);
     color: #fff;
+    font-weight: 500;
     text-decoration: none;
     gap: 5px;
     font-size: .9rem;

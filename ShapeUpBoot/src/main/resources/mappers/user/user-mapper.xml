@@ -532,5 +532,13 @@
             UPDATED_AT = SYSTIMESTAMP
         WHERE USER_NO = #{userNo}
     </update>
+    
+    <select id="selectUserProfileImgPath" resultType="String">
+	    SELECT IMG_PATH || '/' || IMG_RENAME
+	    FROM USER_PROFILE_IMG_TBL
+	    WHERE USER_NO = #{userNo}
+	    AND IMG_MAIN = 'Y'
+	    AND ROWNUM = 1
+	</select>
 	
 </mapper>

@@ -18,7 +18,7 @@
         <h2>오늘의 운동</h2>
         <p class="page-subtitle">운동 시간을 기록하고, 목표를 향해 나아가세요.</p>
       </div>
-      <button class="primary-cta" type="button" onclick="openActivityModal()">활동 추가</button>
+      <button class="primary-cta" type="button" onclick="openGoalSettingModal({ dailyCalorie: actGoals.kcal, activityTime: actGoals.minutes })">목표 설정</button>
     </section>
 
     <div class="date-controls wide">
@@ -43,12 +43,12 @@
           <div class="stat-card time">
             <p class="stat-label">총 운동 시간</p>
             <p class="stat-value" id="total-minutes">0 분</p>
-            <span class="stat-sub">목표 90분</span>
+            <span class="stat-sub">목표 <span id="goal-minutes-display">90</span>분</span>
           </div>
           <div class="stat-card kcal">
             <p class="stat-label">총 소모 칼로리</p>
             <p class="stat-value" id="total-kcal">0 kcal</p>
-            <span class="stat-sub">목표 800 kcal</span>
+            <span class="stat-sub">목표 <span id="goal-kcal-display">800</span> kcal</span>
           </div>
           <div class="stat-card count">
             <p class="stat-label">운동 횟수</p>
@@ -119,10 +119,12 @@
   <jsp:include page="/WEB-INF/views/activity/tools/activityToast.jsp"/>
 </body>
 
+// ... (activityRecord.jsp 상단 HTML 및 <head> 부분은 동일)
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   let actCurrentDate = null;
-  const actGoals = { minutes: 90, kcal: 800 };
+  // 목표값 변수 (목표 설정 모달과 연동)
+  const actGoals = { minutes: 90, kcal: 800 }; 
   let actDonutChart = null;
   let actLogs = [];
   const activityTypeLabel = { 'SPORTS': '스포츠', 'WEIGHT': '근력', 'CARDIO': '유산소', 'STRETCH': '스트레칭' };
@@ -156,8 +158,19 @@
     document.getElementById('act-summary-date').textContent = formatDisplay(target);
     return target.getFullYear() + '-' + pad2(target.getMonth() + 1) + '-' + pad2(target.getDate());
   }
+  
+  // ⭐⭐⭐ 새로 추가된 헬퍼 함수: 단위 문자열에서 숫자만 추출 ⭐⭐⭐
+  const extractNum = (elementId) => {
+      const text = document.getElementById(elementId)?.textContent || '0';
+      // '150 분' 또는 '500 kcal'에서 숫자만 추출
+      const match = text.match(/[\d.]+/);
+      return safeNum(match ? match[0] : 0);
+  }
+  // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+
 
   function renderLogTable(logs = []) {
+    // ... (기존 renderLogTable 함수와 동일)
     const tbody = document.getElementById('activity-log-body');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -203,20 +216,32 @@
     });
   }
 
+  // 목표값을 반영하도록 수정
   function renderSummary(totals = {}) {
     const totalMinutes = Number(totals.totalMinutes) || 0;
     const totalKcal = Number(totals.totalKcal) || 0;
     const count = Number(totals.count) || 0;
-    document.getElementById('total-minutes').textContent = totalMinutes + ' 분';
-    document.getElementById('total-kcal').textContent = totalKcal + ' kcal';
-    document.getElementById('total-count').textContent = count + ' 회';
+    
+    // 목표값 가져오기
+    const goalMinutes = actGoals.minutes || 90;
     const goalKcal = actGoals.kcal || 800;
+    
+    // UI 업데이트
+    document.getElementById('total-minutes').textContent = totalMinutes + ' 분';
+    document.getElementById('goal-minutes-display').textContent = goalMinutes; // 목표 시간 업데이트
+    
+    document.getElementById('total-kcal').textContent = totalKcal + ' kcal';
+    document.getElementById('goal-kcal-display').textContent = goalKcal; // 목표 칼로리 업데이트
+    
+    document.getElementById('total-count').textContent = count + ' 회';
+    
     const pct = goalKcal > 0 ? Math.min(100, Math.round((totalKcal / goalKcal) * 100)) : 0;
     document.getElementById('progress-fill').style.width = pct + '%';
     document.getElementById('progress-label').textContent = totalKcal + ' / ' + goalKcal + ' kcal';
   }
 
   function renderDonut(logs = []) {
+    // ... (기존 renderDonut 함수와 동일)
     const ctx = document.getElementById('act-donut');
     if (!ctx || !window.Chart) return;
     const typeOrder = ['스포츠', '유산소', '근력', '스트레칭'];
@@ -264,6 +289,7 @@
   }
 
   async function loadActivityLogs(dateStr) {
+    // ... (기존 loadActivityLogs 함수와 동일)
     const safeDate = dateStr || getTodayIso();
     try {
       const res = await fetch('/activity/logs?date=' + encodeURIComponent(safeDate));
@@ -293,24 +319,31 @@
       renderLogTable(actLogs);
     }
   }
-
+  
+  // ⭐⭐⭐ 수정된 부분: loadActivitySummary 함수 (운동 추가 시 목표값 초기화 방지) ⭐⭐⭐
   async function loadActivitySummary(dateStr) {
     const safeDate = dateStr || getTodayIso();
     try {
       const res = await fetch('/activity/summary?date=' + encodeURIComponent(safeDate));
       if (!res.ok) throw new Error('summary failed');
       const json = await res.json();
+      
+      const goals = json.goals || {};
+      
+      // 서버에서 받은 값이 0보다 클 경우에만 갱신하고, 그렇지 않으면 기존 actGoals 값을 유지합니다.
+      const newMinutes = safeNum(goals.GOAL_ACTIVITY_TIME || goals.minutes, 0);
+      const newKcal = safeNum(goals.GOAL_CALORIE_ACTIVITY_DAILY || goals.kcal, 0);
+
+      actGoals.minutes = newMinutes > 0 ? newMinutes : actGoals.minutes;
+      actGoals.kcal = newKcal > 0 ? newKcal : actGoals.kcal;
+
       const totals = json.totals || {};
       const totalMinutes = Number(totals.totalMinutes) || 0;
       const totalKcal = Number(totals.totalKcal) || 0;
       const count = Number(totals.count) || 0;
-      document.getElementById('total-minutes').textContent = totalMinutes + ' 분';
-      document.getElementById('total-kcal').textContent = totalKcal + ' kcal';
-      document.getElementById('total-count').textContent = count + ' 회';
-      const goalKcal = actGoals.kcal || 800;
-      const pct = goalKcal > 0 ? Math.min(100, Math.round((totalKcal / goalKcal) * 100)) : 0;
-      document.getElementById('progress-fill').style.width = pct + '%';
-      document.getElementById('progress-label').textContent = totalKcal + ' / ' + goalKcal + ' kcal';
+      
+      renderSummary({ totalMinutes, totalKcal, count });
+      
       const byType = json.byType || [];
       const merged = byType.map(t => ({
         name: t.activityType || '',
@@ -326,6 +359,7 @@
       renderDonut([]);
     }
   }
+  // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
   async function deleteLog(logId) {
     try {
@@ -342,8 +376,27 @@
       console.error('delete log failed', err);
     }
   }
+  
+  // ⭐⭐⭐ 수정된 부분: handleGoalsUpdate 함수 (목표 변경 시 진행도 초기화 방지) ⭐⭐⭐
+  // 목표 설정 모달에서 저장 후 호출될 함수
+  function handleGoalsUpdate(newDailyCalorie, newActivityTime) {
+    actGoals.kcal = newDailyCalorie;
+    actGoals.minutes = newActivityTime;
+    
+    // UI 바로 업데이트 시, 현재 화면에 표시된 총계 값을 정확히 추출하여 사용합니다.
+    renderSummary({ 
+        totalMinutes: extractNum('total-minutes'), // '150 분'에서 150 추출
+        totalKcal: extractNum('total-kcal'),       // '500 kcal'에서 500 추출
+        count: extractNum('total-count')
+    });
+    showActivityToast('목표가 업데이트되었습니다.');
+  }
+  window.handleGoalsUpdate = handleGoalsUpdate;
+  // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+
 
   document.addEventListener('DOMContentLoaded', () => {
+    // ... (기존 DOMContentLoaded 로직은 동일)
     const picker = document.getElementById('act-date-picker');
     actCurrentDate = setActDates();
     if (picker) picker.value = actCurrentDate;
@@ -372,17 +425,4 @@
   });
 </script>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</html>

@@ -378,7 +378,7 @@ function displayInfowindow(marker, place) {
 			</div>
 			<div class="places-url">
 				${directionsLinks}
-				<a href="${place.place_url}" target="_blank">홈페이지</a>
+				<a href="${place.place_url}" target="_blank">상세정보</a>
 			</div>
 		</div>
 	`;

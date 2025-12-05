@@ -224,4 +224,13 @@ public class UserServiceImpl implements UserService {
     public int deleteAllProfileImages(int userNo) {
         return userMapper.deleteAllProfileImages(userNo);
     }
+    
+ // ⭐ 프로필 이미지 경로 조회 (댓글/게시글용)
+    @Override
+    public String getUserProfileImg(int userNo) {
+        log.info("🖼️ Service - 프로필 이미지 경로 조회 - userNo: {}", userNo);
+        String profileImg = userMapper.selectUserProfileImgPath(userNo);
+        log.info("✅ Service - 프로필 이미지: {}", profileImg);
+        return profileImg;
+    }
 }
