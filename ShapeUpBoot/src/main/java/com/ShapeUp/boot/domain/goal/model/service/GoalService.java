@@ -27,5 +27,5 @@ public interface GoalService {
      * @return 삭제 성공 여부
      */
     boolean deleteGoal(Integer userNo);
-    
+    //hello
 }
