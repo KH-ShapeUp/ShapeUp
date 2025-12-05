@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoalVO {
-    //bye
+    //bye //bye
     private Integer userNo;          			// 사용자 번호 (PK)
     private Double goalWeight;       			// 목표 체중
     private Double goalFat;          			// 목표 체지방량
