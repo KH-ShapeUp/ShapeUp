@@ -33,4 +33,5 @@ public class successListDTO {
 
     public String getTimeAgo() { return timeAgo; }
     public void setTimeAgo(String timeAgo) { this.timeAgo = timeAgo; }
+    private String userProfileImg;
 }

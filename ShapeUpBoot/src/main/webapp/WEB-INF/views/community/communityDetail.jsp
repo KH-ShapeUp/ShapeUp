@@ -88,7 +88,15 @@
 				</div>
 				<div class="community-writer">
 					<div class="writer-left">
-						<img src="../../../resources/img/person.png" width="50">
+						<!-- ⭐ 프로필 이미지 수정 -->
+						<c:choose>
+							<c:when test="${not empty cList.userProfileImg}">
+								<img src="${cList.userProfileImg}" width="50" alt="프로필">
+							</c:when>
+							<c:otherwise>
+								<img src="../../../resources/img/default-profile.png" width="50" alt="기본 프로필">
+							</c:otherwise>
+						</c:choose>
 						<span class="nick-name">${cList.userNickName }</span>						
 					</div>
 					<div class="writer-right">
@@ -136,7 +144,15 @@
                     <c:choose>
                     	<c:when test="${userNo != null }">
 	                        <div class="form-top">
-	                            <img src="../../../resources/img/person.png" width="50">
+	                            <!-- ⭐ 댓글 작성자 프로필 이미지 - 로그인한 사용자 -->
+	                            <c:choose>
+									<c:when test="${not empty userProfileImg}">
+										<img src="${userProfileImg}" width="50" alt="프로필">
+									</c:when>
+									<c:otherwise>
+										<img src="../../../resources/img/default-profile.png" width="50" alt="기본 프로필">
+									</c:otherwise>
+								</c:choose>
 	                            <textarea name="comment" id="comment-content" placeholder="댓글을 입력해주세요.."></textarea>                            
 	                        </div>
 	                        <div class="form-bottom">
@@ -145,7 +161,7 @@
                     	</c:when>
                     	<c:when test="${userNo == null }">
                     		<div class="form-top">
-	                            <img src="../../../resources/img/person.png" width="50">
+	                            <img src="../../../resources/img/default-profile.png" width="50">
 	                            <textarea name="comment" id="comment-content" placeholder="로그인후 이용바랍니다." disabled></textarea>                            
 	                        </div>
 	                        <div class="form-bottom">
@@ -171,6 +187,7 @@
 		const communityNo = "${cList.communityNo}"; // 현재 게시글 번호
 		const userNo = "${userNo}"; // 로그인한 유저 번호 (세션 등에서 가져옴)
 		const userType = "${userType}";
+		const sessionUserProfileImg = "${userProfileImg}"; // ⭐ 로그인 사용자 프로필
 
 		document.addEventListener("DOMContentLoaded", function() {
 			getCommentList(); 
@@ -350,95 +367,106 @@
 
 		// 2. 댓글 렌더링 함수 (대댓글 들여쓰기 처리)
 		function renderComments(list) {
-			const commentListContainer = document.querySelector(".comment-list ul");
-			commentListContainer.innerHTML = ""; 
-			
-			document.querySelector(".comment-wrapper p").innerText = "댓글 " + list.length + "개";
+        const commentListContainer = document.querySelector(".comment-list ul");
+        commentListContainer.innerHTML = ""; 
+        
+        document.querySelector(".comment-wrapper p").innerText = "댓글 " + list.length + "개";
 
-			if (list.length === 0) {
-				commentListContainer.innerHTML = '<li style="text-align:center; padding: 20px; font-weight:500;">작성된 댓글이 없습니다.</li>';
-				return;
-			}
+        if (list.length === 0) {
+            commentListContainer.innerHTML = '<li style="text-align:center; padding: 20px; font-weight:500;">작성된 댓글이 없습니다.</li>';
+            return;
+        }
 
-			list.forEach(reply => {
-				const paddingLeft = reply.commentDepth * 40;
-				
-				// 삭제 버튼 HTML 미리 생성
-				let deleteBtnHtml = '';
-				if (reply.userNo == userNo || userType == "SYSTEM_MANAGER") {
-					deleteBtnHtml = `<span class="comment-delete" onclick="deleteReply(\${reply.commentNo})" style="cursor:pointer; font-weight:500; color:#FF3B00;">삭제</span>`;
-				}
+        list.forEach(reply => {
+            const paddingLeft = reply.commentDepth * 40;
+            
+            // ⭐ 댓글 작성자 프로필 이미지
+            const profileImg = reply.userProfileImg 
+                ? reply.userProfileImg 
+                : '/resources/img/person.png';
+            
+            // 삭제 버튼 HTML 미리 생성
+            let deleteBtnHtml = '';
+            if (reply.userNo == userNo || userType == "SYSTEM_MANAGER") {
+                deleteBtnHtml = `<span class="comment-delete" onclick="deleteReply(\${reply.commentNo})" style="cursor:pointer; font-weight:500; color:#FF3B00;">삭제</span>`;
+            }
 
-				// 글쓴이
-				let writerUseNo = '';
-				if(reply.userNo == communityUserNo) {
-					writerUseNo = `<span style="color:#0A84FF; font-weight:600; font-size:.8rem;">(글쓴이)</span>`
-				}
-				// 하단 영역 HTML (답글 버튼 등)
-				let footerHtml = '';
-				if (reply.deleteYn === 'N') { // 정상 댓글일 때만 표시
-					footerHtml = `
-						<div class="comment-footer">
-							<span class="commnet-add" onclick="toggleReplyForm(this)">답글달기</span>
-							\${deleteBtnHtml} 
-						</div>
-						
-						<div class="comment-add-input" style="display:none;">
-							<div class="form-top">
-								<img src="../../../resources/img/person.png" width="50">
-								<textarea class="reply-content" placeholder="답글을 입력해주세요.."></textarea>
-							</div>
-							<div class="form-bottom">
-								<button class="comment-sumbit" type="button" onclick="commentAdd(\${reply.commentNo}, \${reply.commentDepth}, this)">등록</button>
-							</div>
-						</div>
-					`;
-				}
+            // 글쓴이
+            let writerUseNo = '';
+            if(reply.userNo == communityUserNo) {
+                writerUseNo = `<span style="color:#0A84FF; font-weight:600; font-size:.8rem;">(글쓴이)</span>`
+            }
+            
+            // ⭐ 답글 입력창 프로필 이미지 (로그인한 사용자)
+            const replyProfileImg = sessionUserProfileImg 
+                ? sessionUserProfileImg 
+                : '/resources/img/person.png';
+            
+            // 하단 영역 HTML (답글 버튼 등)
+            let footerHtml = '';
+            if (reply.deleteYn === 'N') {
+                footerHtml = `
+                    <div class="comment-footer">
+                        <span class="commnet-add" onclick="toggleReplyForm(this)">답글달기</span>
+                        \${deleteBtnHtml} 
+                    </div>
+                    
+                    <div class="comment-add-input" style="display:none;">
+                        <div class="form-top">
+                            <img src="\${replyProfileImg}" width="50">
+                            <textarea class="reply-content" placeholder="답글을 입력해주세요.."></textarea>
+                        </div>
+                        <div class="form-bottom">
+                            <button class="comment-sumbit" type="button" onclick="commentAdd(\${reply.commentNo}, \${reply.commentDepth}, this)">등록</button>
+                        </div>
+                    </div>
+                `;
+            }
 
-				let html = `
-					<li class="comment-list-wrapper" style="padding-left: \${paddingLeft}px;">
-						<div class="comment-user-info">
-							<img src="../../../resources/img/person.png" width="50">
-						</div>
-						<div class="comment-content-wrapper">
-							<div class="comment-user">
-								<div class="comment-user-wrapper">
-									<span class="user-name">\${reply.userNickName} \${writerUseNo}</span></span>
-									<span class="comment-writer">\${reply.timeAgo}</span>
-								</div>
-								<div class="report" data-comment-no="\${reply.commentNo}">
-									<span class="material-symbols-outlined more_vert">more_vert</span>
-									
-									<div class="report-button">
-										<span class="material-symbols-outlined flag">flag</span>
-										<span>신고하기</span>
-									</div>
+            let html = `
+                <li class="comment-list-wrapper" style="padding-left: \${paddingLeft}px;">
+                    <div class="comment-user-info">
+                        <img src="\${profileImg}" width="50">
+                    </div>
+                    <div class="comment-content-wrapper">
+                        <div class="comment-user">
+                            <div class="comment-user-wrapper">
+                                <span class="user-name">\${reply.userNickName} \${writerUseNo}</span>
+                                <span class="comment-writer">\${reply.timeAgo}</span>
+                            </div>
+                            <div class="report" data-comment-no="\${reply.commentNo}">
+                                <span class="material-symbols-outlined more_vert">more_vert</span>
+                                
+                                <div class="report-button">
+                                    <span class="material-symbols-outlined flag">flag</span>
+                                    <span>신고하기</span>
+                                </div>
 
-									<div class="report-list-wrapper">
-										<div class="report-list">
-											<span class="reportSecond">신고 유형 선택</span>
-											<button class="report-btn" type="button">정치 발언</button>
-											<button class="report-btn" type="button">성희롱/음담패설</button>
-											<button class="report-btn" type="button">상업 광고</button>
-											<button class="report-btn" type="button">욕설/비하</button>
-											<button class="report-btn" type="button">유출/사기/사칭</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="comment-text">
-								<span class="comment-content">
-									\${reply.deleteYn === 'Y' ? '<span style="color:#ccc;">삭제된 댓글입니다.</span>' : reply.commentContent}
-								</span>
-							</div>
-							\${footerHtml}
-						</div>
-					</li>
-				`;
-				
-				commentListContainer.insertAdjacentHTML('beforeend', html);
-			});
-		}
+                                <div class="report-list-wrapper">
+                                    <div class="report-list">
+                                        <span class="reportSecond">신고 유형 선택</span>
+                                        <button class="report-btn" type="button">정치 발언</button>
+                                        <button class="report-btn" type="button">성희롱/음담패설</button>
+                                        <button class="report-btn" type="button">상업 광고</button>
+                                        <button class="report-btn" type="button">욕설/비하</button>
+                                        <button class="report-btn" type="button">유출/사기/사칭</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            <span class="comment-content">
+                                \${reply.deleteYn === 'Y' ? '<span style="color:#ccc;">삭제된 댓글입니다.</span>' : reply.commentContent}
+                            </span>
+                        </div>
+                        \${footerHtml}
+                    </div>
+                </li>
+            `;
+            
+            commentListContainer.insertAdjacentHTML('beforeend', html);
+        });
+    }
 		document.addEventListener("click", (e) => {
 			// 1. 점 3개(more_vert) 버튼 클릭 시 -> '신고하기' 버튼 토글
 			const moreBtn = e.target.closest(".more_vert");
