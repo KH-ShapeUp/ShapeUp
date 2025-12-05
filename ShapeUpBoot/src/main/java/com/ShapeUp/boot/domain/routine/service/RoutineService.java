@@ -15,6 +15,6 @@ public interface RoutineService {
 
 	void insertFullRoutine(Map<String, Object> routineData);
 
-	int deleteRoutine(int routineId);
+	int deleteRoutine(int routineId, int userNo);
 
 }

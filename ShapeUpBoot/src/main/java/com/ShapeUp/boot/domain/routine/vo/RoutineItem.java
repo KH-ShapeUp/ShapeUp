@@ -21,7 +21,7 @@ public class RoutineItem {
 
 	private int routineItmeId;
 	private int routineId;
-	private int activityName;
+	private String activityName;
 	private Time startTime;
 	private int durationMin;
 	private int targetSet;

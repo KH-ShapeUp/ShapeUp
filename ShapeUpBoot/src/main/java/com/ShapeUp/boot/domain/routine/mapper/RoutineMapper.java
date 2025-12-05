@@ -29,5 +29,5 @@ public interface RoutineMapper {
 
 	int selectActivityIdByName(String activityName);
 
-	int deleteRoutine(int routineId);
+	int deleteRoutine(Map<String, Object> params);
 }

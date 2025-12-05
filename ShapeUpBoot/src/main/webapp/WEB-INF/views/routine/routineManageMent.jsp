@@ -25,6 +25,7 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
   </head>
   <body>
     <jsp:include page="/WEB-INF/views/include/header.jsp"/>
+    <input type="hidden" id="currentUserNo" value="${sessionScope.loginUser.userNo }">
     <div class="page-container">
       <div class="page-title">
         <h1>루틴 관리</h1>
