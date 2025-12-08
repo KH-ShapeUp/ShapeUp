@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		".activity-list .activity-item"
 	);
 	const chartCircle = document.querySelector(".ratio-chart .chart-circle"); // 카테고리 비율을 시각화하는 차트 원형
-	// const chartTooltip = document.getElementById('chartTooltip'); // 🚨 [제거]: 툴팁 기능을 제거하므로 변수도 제거
 
 	// 우측 패널 DOM 요소 (목표 및 칼로리)
 	const goalsPanel = document.querySelector(".goals-panel"); // 주간 목표 전체 컨테이너 (data-weekly-goal 속성을 가짐)
@@ -51,9 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const goalInput = document.getElementById("goal-input"); 
 
 	let currentCaloriePerMin = 0.0; // 현재 선택된 활동 종목의 **분당** 칼로리 값
-    
-    // 🚨 [제거]: 툴팁 기능을 제거하므로 툴팁 데이터 변수도 제거
-    // let chartDataSegments = []; 
     
     // 카테고리 색상 정의 (JS에서 사용)
     const categoryColors = {
@@ -247,10 +243,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	// --------------------------------------------------------
-	// 🚨 [제거]: 활동 리스트 강조 로직 (마우스 오버 효과 제거)
+	// [활동 리스트 강조 로직]
 	// --------------------------------------------------------
-    // initializeActivityListEvents() 함수 제거
-    // highlightActivityItem() 함수 제거
+	// 활동 리스트 강조 및 차트 툴팁 기능 관련 코드는 제거되었습니다.
 
 	// --------------------------------------------------------
 	// [카테고리 비율 계산 및 업데이트 (차트)]
@@ -337,19 +332,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			// 루틴이 없을 경우 대비
 			chartCircle.style.setProperty('--_conic-gradient', 'conic-gradient(#f0f0f0 0deg 360deg)');
 		}
-        
-        // 🚨 [제거]: 툴팁 및 리스트 강조 이벤트 초기화 호출 제거
-        // initializeTooltip(); 
-		// initializeActivityListEvents(); 
 	}
-
-
-    // --------------------------------------------------------
-	// 🚨 [제거]: 차트 툴팁 관련 함수 제거
-    // initializeTooltip() 함수 제거
-    // handleChartMouseLeave() 함수 제거
-    // handleChartMouseMove() 함수 제거
-    // --------------------------------------------------------
     
 
 	// --------------------------------------------------------
@@ -397,10 +380,11 @@ document.addEventListener("DOMContentLoaded", function() {
 		const activeDaysCount = activeDays.size; // 실제 활동 요일 수
 
 		// 2. 목표 달성률 계산 및 DOM 업데이트
-		// 🚨 100% 초과 허용 로직
+		// 🚨 [수정된 부분]: Math.min(100, ...) 제한을 제거하여 100% 초과를 허용합니다.
         let progress = 0;
         if (goalTarget > 0) {
-            progress = (activeDaysCount / goalTarget) * 100; // Math.min(100, ...) 제한 제거
+            // 목표 횟수를 초과할 경우 100% 이상으로 계산됩니다. (예: 7/5 * 100 = 140)
+            progress = (activeDaysCount / goalTarget) * 100;
         }
 
 		if (currentGoalCountSpan)
@@ -552,7 +536,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// 페이지 로드 시 우측 패널의 주간 목표 달성 횟수 및 총 예상 칼로리를 계산 및 업데이트
 	updateGoalSummary();
 
-    // 🚨 [추가] 목표 입력 필드 변경 이벤트 리스너
+    // 🚨 목표 입력 필드 변경 이벤트 리스너
     if (goalInput) {
         // 값이 변경(focus 잃음, 엔터)되거나, 키를 누를 때마다 목표 요약 정보를 업데이트하여 달성률 즉시 반영
         goalInput.addEventListener('change', updateGoalSummary); 
