@@ -112,4 +112,19 @@ public class RoutineServiceImpl implements RoutineService {
 	public int deleteRoutine(int routineId) {
 		return rMapper.deleteRoutine(routineId);
 	}
+	
+	// ⭐ 주간 목표 칼로리 조회
+		@Override
+		public Integer getWeeklyGoalCalorie(int userNo) {
+			Integer goalCalorie = rMapper.selectWeeklyGoalCalorie(userNo);
+			// null이면 기본값 3000 반환
+			return goalCalorie != null ? goalCalorie : 3000;
+		}
+
+		// ⭐ 주간 목표 칼로리 업데이트
+		@Override
+		@Transactional
+		public int updateWeeklyGoalCalorie(int userNo, int goalCalorie) {
+			return rMapper.updateWeeklyGoalCalorie(userNo, goalCalorie);
+		}
 }

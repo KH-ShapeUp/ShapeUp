@@ -50,5 +50,7 @@ public interface matchingMapper{
 	int getMatchDedupe(int loginUserNo, int matchingNo);
 
 	int updateDeleteYn(@Param("matchingNo") int matchingNo, @Param("deleteYn") String deleteYn);
+	
+	
 
 }

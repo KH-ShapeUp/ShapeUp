@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인 | ShapeUp</title>
-    <link rel="stylesheet" href="../../../resources/css/user/login.css">
+    <link rel="stylesheet" href="/resources/css/user/login.css">
 </head>
 <body>
 

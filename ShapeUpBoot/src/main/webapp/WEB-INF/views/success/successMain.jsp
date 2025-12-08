@@ -70,48 +70,51 @@
                                     </script>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:forEach var="sList" items="${sList }">	                  
-                                        <a href="/community/detail?boardNo= ${sList.communityNo}">
+                                    <c:forEach var="sList" items="${sList}">	                  
+                                        <a href="/community/detail?boardNo=${sList.communityNo}">
                                             <div class="board-left-card">
                                                 <div class="left-card-top">
                                                     <c:choose>
-                                                        <c:when test="${not empty sList.thumbnail }">
-                                                            <img src="${sList.thumbnail }">		                                        	                               
+                                                        <c:when test="${not empty sList.thumbnail}">
+                                                            <img src="${sList.thumbnail}">		                                        	                               
                                                         </c:when>
                                                         <c:otherwise>                                                   
                                                             <img src="../../../resources/img/no-img.png" id="noImg">
                                                         </c:otherwise>
                                                     </c:choose>
-                                                    <span class="goal-category">${sList.successType }</span>
+                                                    <span class="goal-category">${sList.successType}</span>
                                                 </div>
                                                 <div class="left-card-middle">
                                                     <div class="left-card-middle-top">
                                                         <div class="user-img">
-                                                            <img src="../../../resources/img/person.png">
+                                                            <!-- ⭐ 프로필 이미지 동적 처리 -->
+                                                            <img src="${pageContext.request.contextPath}${not empty sList.userProfileImg ? sList.userProfileImg : '/resources/img/default-profile.png'}" 
+                                                                 alt="프로필 이미지"
+                                                                 onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
                                                         </div>
                                                         <div class="user-info">
                                                             <div class="user-info-top">
-                                                                <span class="left-user-nickname">${sList.userNickName }</span>
+                                                                <span class="left-user-nickname">${sList.userNickName}</span>
                                                                 <div class="left-view">
                                                                     <i class="fa-regular fa-eye"></i>
-                                                                    <span>${sList.viewCount }</span>
+                                                                    <span>${sList.viewCount}</span>
                                                                 </div>
                                                             </div>
-                                                            <span class="create-date">${sList.timeAgo }</span>
+                                                            <span class="create-date">${sList.timeAgo}</span>
                                                         </div>
                                                     </div>
                                                     <div class="left-card-middle-content">
-                                                        <span class="left-board-title">${sList.communityTitle }</span>
+                                                        <span class="left-board-title">${sList.communityTitle}</span>
                                                         <div class="left-board-content">
                                                             <div class="content-top">
-                                                                <i class="fa-regular fa-clock"></i><span>소요기간: ${sList.goalDate }</span>
+                                                                <i class="fa-regular fa-clock"></i><span>소요기간: ${sList.goalDate}</span>
                                                             </div>
-                                                            <span class="board-content">${sList.communityContent }</span>
+                                                            <span class="board-content">${sList.communityContent}</span>
                                                         </div>
                                                     </div>
                                                     <div class="left-card-footer">
-                                                        <div class="viewCount"><i class="fa-regular fa-comment"></i><span>${sList.commentCount }</span></div>
-                                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${sList.likeCount }</span></div>
+                                                        <div class="viewCount"><i class="fa-regular fa-comment"></i><span>${sList.commentCount}</span></div>
+                                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${sList.likeCount}</span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -121,65 +124,65 @@
                             </c:choose>
                         </div>
                     </div>
-                        <div class="pagination-wrapper">
-                            <nav class="pagination">                           	
-                            	<c:if test="${startNavi ne 1 }">                                                
-	                                <button class="back" 
-	                                		onclick="location.href='/success?boarNo=${startNavi - 1}'">
-	                                    <i class="fa-solid fa-arrow-left"></i>
-	                                    <span>이전</span>
-	                                </button>
-                                </c:if>
-                                
-                                <c:forEach begin="${startNavi }" end="${endNavi }" var="n">
-	                                <button 
-						                class="page-num ${currentPage eq n ? 'active' : ''}"
-						                onclick="movePage('${n}')">
-						                ${n}
-						            </button>
-                                </c:forEach>
-                                
-								<c:if test="${endNavi ne maxPage }">
-	                                <button class="next" 
-	                                		onclick="location.href='/success?boardNo=${endNavi + 1}'">
-	                                    <span>이전</span>
-	                                    <i class="fa-solid fa-arrow-right"></i>
-	                                </button>  
-								</c:if>
-                            </nav>
-                        </div>
+                    <div class="pagination-wrapper">
+                        <nav class="pagination">                           	
+                        	<c:if test="${startNavi ne 1}">                                                
+                                <button class="back" 
+                                		onclick="location.href='/success?boarNo=${startNavi - 1}'">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>이전</span>
+                                </button>
+                            </c:if>
+                            
+                            <c:forEach begin="${startNavi}" end="${endNavi}" var="n">
+                                <button 
+				                class="page-num ${currentPage eq n ? 'active' : ''}"
+				                onclick="movePage('${n}')">
+				                ${n}
+				            </button>
+                            </c:forEach>
+                            
+							<c:if test="${endNavi ne maxPage}">
+                                <button class="next" 
+                                		onclick="location.href='/success?boardNo=${endNavi + 1}'">
+                                    <span>다음</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>  
+							</c:if>
+                        </nav>
+                    </div>
                 </div>
                 <div class="board-wrapper-right">
                     <div class="board-right-top">
                         <p>인기 게시물</p>
                         <div class="board-right-top-content">
-                            <c:forEach var="psList" items="${psList }" varStatus="status">
-                                <a href="/community/detail?boardNo=${psList.communityNo }">
+                            <c:forEach var="psList" items="${psList}" varStatus="status">
+                                <a href="/community/detail?boardNo=${psList.communityNo}">
                                     <div class="board-right-top-card">
                                         <div class="right-top-top">
                                             <div class="right-user-right">
                                                 <c:choose>
-                                                    <c:when test="${status.count == 1 }">
+                                                    <c:when test="${status.count == 1}">
                                                         <img src="../../../resources/img/ranking-1.png">													
                                                     </c:when>                                        
-                                                    <c:when test="${status.count == 2 }">
+                                                    <c:when test="${status.count == 2}">
                                                         <img src="../../../resources/img/ranking-2.png">
                                                     </c:when>
-                                                    <c:when test="${status.count == 3 }">
+                                                    <c:when test="${status.count == 3}">
                                                         <img src="../../../resources/img/ranking-3.png">
                                                     </c:when>
                                                 </c:choose>
-                                                <span class="right-category">${psList.successType }</span>
-                                                <span class="right-user-nickname">${psList.userNickName }</span>
+                                                <span class="right-category">${psList.successType}</span>
+                                                <span class="right-user-nickname">${psList.userNickName}</span>
                                             </div>
                                             <span class="create-date">${psList.timeAgo}</span>
                                         </div>
                                         <div class="right-top-middle">                                        
-                                            <span class="right-title">${psList.communityTitle }</span><span class="top-comment">(${psList.commentCount })</span>
+                                            <span class="right-title">${psList.communityTitle}</span><span class="top-comment">(${psList.commentCount})</span>
                                         </div>
                                         <div class="right-top-footer">
-                                            <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${psList.viewCount }</span></spam></div>
-                                            <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${psList.likeCount }</span></div>
+                                            <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${psList.viewCount}</span></div>
+                                            <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${psList.likeCount}</span></div>
                                         </div>
                                     </div>
                                 </a>
@@ -189,22 +192,22 @@
                     <div class="board-right-bottom">
                         <p>댓글 순</p>
                         <div class="board-right-bottom-content">
-                        	<c:forEach var="cmsList" items="${cmsList }">
-	                            <a href="/community/detail?boardNo=${cmsList.communityNo }">
+                        	<c:forEach var="cmsList" items="${cmsList}">
+	                            <a href="/community/detail?boardNo=${cmsList.communityNo}">
 	                                <div class="board-right-bottom-card">
 	                                    <div class="right-bottom-top">
 	                                        <div class="right-user">
-	                                            <span class="right-category">${cmsList.successType }</span>
-	                                            <span class="right-user-nickname">${cmsList.userNickName }</span>
+	                                            <span class="right-category">${cmsList.successType}</span>
+	                                            <span class="right-user-nickname">${cmsList.userNickName}</span>
 	                                        </div>
-	                                        <span class="create-date">${cmsList.timeAgo }</span>
+	                                        <span class="create-date">${cmsList.timeAgo}</span>
 	                                    </div>
 	                                    <div class="right-bottom-middle">                                        
-	                                        <span class="right-title">${cmsList.communityTitle }</span><span class="top-comment">(${cmsList.commentCount })</span>
+	                                        <span class="right-title">${cmsList.communityTitle}</span><span class="top-comment">(${cmsList.commentCount})</span>
 	                                    </div>
 	                                    <div class="right-bottom-footer">
-	                                        <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${cmsList.viewCount }</span></div>
-	                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${cmsList.likeCount }</span></div>
+	                                        <div class="viewCount"><i class="fa-regular fa-eye"></i><span>${cmsList.viewCount}</span></div>
+	                                        <div class="like"><i class="fa-regular fa-thumbs-up"></i><span>${cmsList.likeCount}</span></div>
 	                                    </div>
 	                                </div>
 	                            </a>                 	
@@ -216,6 +219,7 @@
         </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         function communityAddBtn() {
             const userNo = document.querySelector("#sessionLogin").value;

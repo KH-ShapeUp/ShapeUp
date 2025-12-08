@@ -233,4 +233,11 @@ public class UserServiceImpl implements UserService {
         log.info("✅ Service - 프로필 이미지: {}", profileImg);
         return profileImg;
     }
+    
+    @Override
+    public void updateUserStatus(UserVO user) {
+        log.info("사용자 계정 상태 업데이트 - userNo: {}, status: {}", 
+            user.getUserNo(), user.getStatus());
+        userMapper.updateUserStatus(user);
+    }
 }

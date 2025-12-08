@@ -97,4 +97,7 @@ public interface UserService {
      * @return 프로필 이미지 전체 경로 (IMG_PATH || '/' || IMG_RENAME)
      */
     String getUserProfileImg(int userNo);
+    
+    void updateUserStatus(UserVO user) ;
+    
 }

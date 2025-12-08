@@ -35,4 +35,5 @@ public class matchingVO {
 	private String locationUrl;
 	
 	private int activityId;				// 활동 카테고리 id
+	private String userProfileImg;		// 유저 프로필 이미지
 }

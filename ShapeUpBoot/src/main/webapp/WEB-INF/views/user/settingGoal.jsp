@@ -21,8 +21,6 @@
 	    </div>
 
 	    <div class="content-area">
-		      <div id="messageBox" class="message"></div>
-
 		      <!-- 탭 메뉴 -->
 		      <div class="tab-menu">
 		        <a href="${pageContext.request.contextPath}/user/updateUserInfo" class="tab-button">
@@ -72,7 +70,7 @@
 		        </div>
 
 		        <!-- 목표 설정 폼 -->
-		        <form id="goalForm" class="goal-form">
+		        <form id="goalForm" class="goal-form" novalidate>
 		          
 		          <div class="form-group">
 		            <label for="goalWeight">
@@ -88,7 +86,6 @@
 		                min="30" 
 		                max="200" 
 		                placeholder="목표하는 체중을 입력하세요"
-		                required
 		              >
 		              <span class="unit">kg</span>
 		            </div>
@@ -108,7 +105,6 @@
 		                min="0" 
 		                max="100" 
 		                placeholder="목표하는 체지방량을 입력하세요"
-		                required
 		              >
 		              <span class="unit">kg</span>
 		            </div>
@@ -128,7 +124,6 @@
 		                min="0" 
 		                max="100" 
 		                placeholder="목표하는 골격근량을 입력하세요"
-		                required
 		              >
 		              <span class="unit">kg</span>
 		            </div>
@@ -148,8 +143,18 @@
 	     </div>
      </div>
 </div>
+
+<!-- ✅ 모달 창 추가 -->
+<div id="customModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <p id="modalMessage">메시지</p>
+    <button class="modal-btn" onclick="closeModal()">확인</button>
+  </div>
+</div>
+
 <script>
     const contextPath = '${pageContext.request.contextPath}';
+    window.contextPath = contextPath;
 </script>
 
 <script src="${pageContext.request.contextPath}/resources/js/settingGoal.js"></script>

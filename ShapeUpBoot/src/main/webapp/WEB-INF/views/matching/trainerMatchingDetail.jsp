@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,26 +17,37 @@
 					<div class="board-wrapper-left">
 						<div class="left-top">
 							<div class="user-img">
-								<img src="../../../resources/img/person.png">
+								<!-- ⭐ 프로필 이미지 동적 처리 -->
+								<c:choose>
+									<c:when test="${not empty mList.userProfileImg}">
+										<img src="${pageContext.request.contextPath}${mList.userProfileImg}" 
+										     alt="프로필 이미지"
+										     onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
+									</c:when>
+									<c:otherwise>
+										<img src="${pageContext.request.contextPath}/resources/img/default-profile.png" 
+										     alt="기본 프로필">
+									</c:otherwise>
+								</c:choose>
 							</div>
 							<div class="user-info">
-								<span class="user-name">${mList.userName }</span>								
-								<span class="created-date">${mList.timeAgo }</span>
+								<span class="user-name">${mList.userName}</span>								
+								<span class="created-date">${mList.timeAgo}</span>
 							</div>
 						</div>
 						<div class="matching-category">
 							<div class="info">
-								<span class="category"># ${mList.partnerType }</span>
+								<span class="category"># ${mList.partnerType}</span>
 							</div>
 							<div class="user-view">
 								<img src="../../../resources/img/star.png">
 								<span class="viewAvg">4.8</span>
 								<span class="viewCount">(10)</span>
 							</div>
-							<div class="left-title">${mList.matchingTitle }</div>
+							<div class="left-title">${mList.matchingTitle}</div>
 						</div>
 						<div class="left-middle">
-							<dic class="left-content">${mList.matchingContent }</dic>
+							<dic class="left-content">${mList.matchingContent}</dic>
 						</div>
 						<div class="matching-footer">
 							<p class="matching-info">매칭 정보</p>

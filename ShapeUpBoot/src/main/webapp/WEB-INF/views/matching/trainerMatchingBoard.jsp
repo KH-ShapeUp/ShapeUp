@@ -63,18 +63,29 @@
                     </div>
                     <div class="matching-board">
                         <div class="matching-content-wrapper">
-	                        <c:forEach var="mList" items="${mList }">                
+	                        <c:forEach var="mList" items="${mList}">                
 	                            <div class="matching-card">
 	                                <div class="matching-card-top">
 	                                    <div class="card-top-left">
-	                                        <img src="../../../resources/img/person.png">
+	                                        <!-- ⭐ 프로필 이미지 동적 처리 -->
+	                                        <c:choose>
+	                                            <c:when test="${not empty mList.userProfileImg}">
+	                                                <img src="${pageContext.request.contextPath}${mList.userProfileImg}" 
+	                                                     alt="프로필 이미지"
+	                                                     onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
+	                                            </c:when>
+	                                            <c:otherwise>
+	                                                <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" 
+	                                                     alt="기본 프로필">
+	                                            </c:otherwise>
+	                                        </c:choose>
 	                                    </div>
 	                                    <div class="card-top-right">
 	                                        <div>
-	                                            <span class="userName">${mList.userName }</span>
+	                                            <span class="userName">${mList.userName}</span>
 	                                            <span class="price">${mList.matchingPrice}원/회</span>
 	                                        </div>
-	                                        <span class="createDay">${mList.timeAgo }</span>
+	                                        <span class="createDay">${mList.timeAgo}</span>
 	                                    </div>                                    
 	                                </div>
 	                                <div class="matching-review">
@@ -83,31 +94,31 @@
 	                                    <span class="reviewCount">(20)</span>
 	                                </div>
 	                                <div class="category-wrapper">
-	                                    <span class="category"># ${mList.partnerType }</span>
+	                                    <span class="category"># ${mList.partnerType}</span>
 	                                </div>
 	                                <div class="matching-middle">
-	                                    <span class="matching-title">${mList.matchingTitle }</span>
-	                                    <span class="matching-content">${mList.matchingContent }</span>
+	                                    <span class="matching-title">${mList.matchingTitle}</span>
+	                                    <span class="matching-content">${mList.matchingContent}</span>
 	                                </div>
 	                                <div class="matching-footer">
 	                                    <div class="location">
 	                                        <span class="material-symbols-outlined">location_on</span>
-		                                    <span class="location-txt">${mList.matchingLocation }</span>
+		                                    <span class="location-txt">${mList.matchingLocation}</span>
 	                                    </div>
 	                                    <div class="time">
 	                                        <span class="material-symbols-outlined">schedule</span>
-	                                        <span class="time-txt">${mList.matchingTime }</span>
+	                                        <span class="time-txt">${mList.matchingTime}</span>
 	                                    </div>
 	                                    <div class="badge">
 	                                        <span class="material-symbols-outlined">editor_choice</span>
-	                                        <span class="badge-txt">${mList.career }</span>
+	                                        <span class="badge-txt">${mList.career}</span>
 	                                    </div>                        
 	                                    <div class="user">
 	                                        <span class="material-symbols-outlined">groups</span>
-	                                        <span class="userCount">${mList.applicationCount}/${mList.matchingUserCount }</span>
+	                                        <span class="userCount">${mList.applicationCount}/${mList.matchingUserCount}</span>
 	                                    </div>
 	                                </div>                            
-									<a href="/trainer/matching/detail?boardNo=${mList.matchingNo }" class="detail-btn">상세보기</a>
+									<a href="/trainer/matching/detail?boardNo=${mList.matchingNo}" class="detail-btn">상세보기</a>
 	                            </div>            
 	                        </c:forEach>
                         </div>
@@ -116,6 +127,7 @@
             </div>
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         const headerBtn = document.getElementById("location-drop");
         const dropdown = document.getElementById("location-filter");

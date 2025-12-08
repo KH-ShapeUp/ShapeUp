@@ -21,6 +21,7 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
       href="/resources/css/routine/routineManageMent.css"
     />
     <jsp:include page="/WEB-INF/views/include/head.jsp"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/resources/js/routineManagement.js" defer></script>
   </head>
   <body>
@@ -145,12 +146,21 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
               총 예상 소모량: <span id="total-expected-kcal">0</span> kcal
             </div>
 
-            <div class="calorie-target">(목표 주간 소모량: 3,000 kcal)</div>
+            <!-- ⭐ 주간 목표 소모 칼로리 영역 추가 -->
+            <div class="calorie-target-wrapper">
+              <div class="calorie-target">
+                (목표 주간 소모량: <span id="weekly-goal-kcal">3000</span> kcal)
+              </div>
+              <button type="button" class="btn-edit-goal" id="editWeeklyGoalBtn">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 루틴 추가/수정 모달 -->
     <div id="routineModal" class="modal-overlay">
       <form id="routineForm" class="modal-content-card">
         <div class="modal-header">
@@ -232,8 +242,8 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
               <option value="55">55분</option>
               <option value="60">60분</option>
               <option value="75">75분</option>
-              <option value="90">90분</option>
-              <option value="120">120분</option>
+              <option value="90">90분</option>
+              <option value="120">120분</option>
             </select>
           </div>
 
@@ -276,6 +286,133 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
         <button type="submit" class="btn-save">저장</button>
       </form>
     </div>
+
+    <!-- ⭐ 주간 목표 칼로리 수정 모달 -->
+    <div id="weeklyGoalModal" class="modal-overlay">
+      <div class="modal-content-goal">
+        <div class="modal-header">
+          <h3>주간 목표 소모 칼로리 설정</h3>
+          <span class="material-symbols-outlined close-goal-modal-btn">close</span>
+        </div>
+        
+        <div class="goal-input-wrapper">
+          <label for="weeklyGoalInput">주간 목표 칼로리 (kcal)</label>
+          <input 
+            type="number" 
+            id="weeklyGoalInput" 
+            class="goal-input" 
+            min="0" 
+            step="100"
+            placeholder="예: 3000"
+          />
+          <p class="goal-hint">일주일 동안 소모하고 싶은 칼로리를 입력하세요.</p>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel-goal">취소</button>
+          <button type="button" class="btn-save-goal">저장</button>
+        </div>
+      </div>
+    </div>
+
     <jsp:include page="/WEB-INF/views/include/footer.jsp" />
+    
+    <!-- ⭐ 주간 목표 칼로리 스크립트 -->
+    <script>
+      // 페이지 로드 시 목표 칼로리 불러오기
+      document.addEventListener('DOMContentLoaded', function() {
+        loadWeeklyGoalCalorie();
+      });
+
+      // 주간 목표 칼로리 불러오기
+      function loadWeeklyGoalCalorie() {
+        fetch('/routine/goal/weekly')
+          .then(response => response.json())
+          .then(data => {
+            if (data.goalCalorieActivityWeekly) {
+              document.getElementById('weekly-goal-kcal').textContent = 
+                Number(data.goalCalorieActivityWeekly).toLocaleString();
+            }
+          })
+          .catch(error => {
+            console.error('목표 칼로리 로드 실패:', error);
+          });
+      }
+
+      // 수정 버튼 클릭
+      document.getElementById('editWeeklyGoalBtn').addEventListener('click', function() {
+        const currentGoal = document.getElementById('weekly-goal-kcal').textContent.replace(/,/g, '');
+        document.getElementById('weeklyGoalInput').value = currentGoal;
+        document.getElementById('weeklyGoalModal').style.display = 'flex';
+      });
+
+      // 모달 닫기
+      document.querySelector('.close-goal-modal-btn').addEventListener('click', function() {
+        document.getElementById('weeklyGoalModal').style.display = 'none';
+      });
+
+      document.querySelector('.btn-cancel-goal').addEventListener('click', function() {
+        document.getElementById('weeklyGoalModal').style.display = 'none';
+      });
+
+      // 모달 외부 클릭 시 닫기
+      document.getElementById('weeklyGoalModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.style.display = 'none';
+        }
+      });
+
+      // 저장 버튼 클릭
+      document.querySelector('.btn-save-goal').addEventListener('click', function() {
+        const goalValue = document.getElementById('weeklyGoalInput').value;
+        
+        if (!goalValue || goalValue <= 0) {
+          Swal.fire({
+            icon: 'warning',
+            title: '입력 오류',
+            text: '목표 칼로리를 올바르게 입력해주세요.',
+            confirmButtonText: '확인'
+          });
+          return;
+        }
+
+        // 서버에 저장
+        fetch('/routine/goal/weekly', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            goalCalorieActivityWeekly: Number(goalValue)
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('weekly-goal-kcal').textContent = 
+              Number(goalValue).toLocaleString();
+            document.getElementById('weeklyGoalModal').style.display = 'none';
+            
+            Swal.fire({
+              icon: 'success',
+              title: '저장 완료',
+              text: '주간 목표 칼로리가 설정되었습니다.',
+              confirmButtonText: '확인'
+            });
+          } else {
+            throw new Error('저장 실패');
+          }
+        })
+        .catch(error => {
+          console.error('목표 칼로리 저장 실패:', error);
+          Swal.fire({
+            icon: 'error',
+            title: '저장 실패',
+            text: '목표 칼로리 저장에 실패했습니다.',
+            confirmButtonText: '확인'
+          });
+        });
+      });
+    </script>
   </body>
 </html>

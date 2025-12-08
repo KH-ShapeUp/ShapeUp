@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp" />
 <link rel="stylesheet"
    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -163,14 +163,11 @@
                   <div class="matching-card">
                      <div class="matching-user">
                         <div class="user-profile">
-						    <c:choose>
-						        <c:when test="${not empty mList.userProfileImg}">
-						            <img src="${mList.userProfileImg}" width="50" alt="프로필">
-						        </c:when>
-						        <c:otherwise>
-						            <img src="../../resources/img/default-profile.png" width="50" alt="기본 프로필">
-						        </c:otherwise>
-						    </c:choose>
+						    <!-- ⭐ 매칭 프로필 이미지 수정 -->
+						    <img src="${pageContext.request.contextPath}${not empty mList.userProfileImg ? mList.userProfileImg : '/resources/img/default-profile.png'}" 
+						         width="50" 
+						         alt="프로필 이미지"
+						         onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
 						</div>
                         <div class="user-profile-info">
                            <div class="user-profile-top">
@@ -179,23 +176,23 @@
                               </div>
                               <c:choose>
                                  <c:when test="${mList.matchingStatus == '마감'}">
-                                    <div class="card-state-finish">${mList.matchingStatus }</div>
+                                    <div class="card-state-finish">${mList.matchingStatus}</div>
                                  </c:when>
                                  <c:when test="${mList.matchingStatus == '마감임박'}">
-                                    <div class="card-state-imminent">${mList.matchingStatus }</div>
+                                    <div class="card-state-imminent">${mList.matchingStatus}</div>
                                  </c:when>
                                  <c:otherwise>
-                                    <div class="card-state-ing">${mList.matchingStatus }</div>
+                                    <div class="card-state-ing">${mList.matchingStatus}</div>
                                  </c:otherwise>
                               </c:choose>
                            </div>
                            <div class="category-wrapper">
-                              <span class="workout-category">${mList.activityName }</span>
+                              <span class="workout-category">${mList.activityName}</span>
                               <c:choose>
-                                 <c:when test="${mList.matchingLevel == 1 }">
+                                 <c:when test="${mList.matchingLevel == 1}">
                                     <span class="user-level"># 초급</span>
                                  </c:when>
-                                 <c:when test="${mList.matchingLevel == 2 }">
+                                 <c:when test="${mList.matchingLevel == 2}">
                                     <span class="user-level middleClass"># 중급</span>
                                  </c:when>
                                  <c:otherwise>
@@ -206,22 +203,22 @@
                         </div>
                      </div>
                      <div class="matching-title">
-                        <span class="card-title">${mList.matchingTitle }</span> <span
+                        <span class="card-title">${mList.matchingTitle}</span> <span
                            class="card-content">${mList.partnerType}</span>
                      </div>
                      <div class="matching-info">
                         <div class="matching-icon">
                            <div class="matching-location">
-                              <i class="fa-solid fa-location-dot"></i> <span>${mList.matchingLocation }</span>
+                              <i class="fa-solid fa-location-dot"></i> <span>${mList.matchingLocation}</span>
                            </div>
                            <div class="matching-time">
-                              <i class="fa-solid fa-clock"></i> <span>${mList.matchingTime }</span>
+                              <i class="fa-solid fa-clock"></i> <span>${mList.matchingTime}</span>
                            </div>
                            <div class="matching-day">
-                              <i class="fa-solid fa-calendar-days"></i> <span>${mList.matchingDate }</span>
+                              <i class="fa-solid fa-calendar-days"></i> <span>${mList.matchingDate}</span>
                            </div>
                            <div class="matching-money">
-                              <i class="fa-solid fa-wallet"></i> <span>${mList.matchingPrice }</span>
+                              <i class="fa-solid fa-wallet"></i> <span>${mList.matchingPrice}</span>
                            </div>
                            <div class="matching-user-icon">
                               <i class="fa-solid fa-users"></i> <span>${mList.applicationCount}
@@ -233,7 +230,7 @@
                            <c:choose>
                               <c:when
                                  test="${mList.applicationCount >= mList.matchingUserCount or mList.matchingStatus == '마감'}">
-                                 <button class="matching-btn finish":disabled">마감</button>
+                                 <button class="matching-btn finish" disabled>마감</button>
                               </c:when>
                               <c:otherwise>
                                  <button class="matching-btn"
@@ -265,44 +262,40 @@
                </div>
 
                <div class="goal-content">
-                  <c:forEach var="sList" items="${sList }">                  
+                  <c:forEach var="sList" items="${sList}">                  
                      <a href="/community/detail?boardNo=${sList.communityNo}">
                         <div class="goal-card">
                            <div class="goal-card-top">
                               <div class="goal-profile-img">
-								    <c:choose>
-								        <c:when test="${not empty sList.userProfileImg}">
-								            <img src="${sList.userProfileImg}" alt="프로필">
-								        </c:when>
-								        <c:otherwise>
-								            <img src="../../resources/img/default-profile.png" alt="기본 프로필">
-								        </c:otherwise>
-								    </c:choose>
-								</div>
+							    <!-- ⭐ 성공 후기 프로필 이미지 수정 -->
+							    <img src="${pageContext.request.contextPath}${not empty sList.userProfileImg ? sList.userProfileImg : '/resources/img/default-profile.png'}" 
+							         alt="프로필 이미지"
+							         onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
+							</div>
                               <div class="goal-profile-info">
-                                 <span>${sList.userNickName }</span> 
-                                 <span>${sList.timeAgo }</span>
+                                 <span>${sList.userNickName}</span> 
+                                 <span>${sList.timeAgo}</span>
                               </div>
                            </div>
    
                            <div class="goal-main">
                               <div class="goal-title">
-                                 <h4>${sList.communityTitle }</h4>
+                                 <h4>${sList.communityTitle}</h4>
                                  <div class="goal-icon">
                                     <div class="goal-view">
-                                       <i class="fa-regular fa-eye"></i> <span>${sList.viewCount }</span>
+                                       <i class="fa-regular fa-eye"></i> <span>${sList.viewCount}</span>
                                     </div>
                                     <div class="goal-good">
-                                       <i class="fa-regular fa-thumbs-up"></i> <span>${sList.likeCount }</span>
+                                       <i class="fa-regular fa-thumbs-up"></i> <span>${sList.likeCount}</span>
                                     </div>
                                     <div class="goal-comment">
                                        <i class="fa-regular fa-comment"></i>
-                                       <span>${sList.commentCount }</span>
+                                       <span>${sList.commentCount}</span>
                                     </div>
                                  </div>
                               </div>
                               <div class="goal-middle">
-                                 <div class="goal-content">${sList.communityContent }</div>                              
+                                 <div class="goal-content">${sList.communityContent}</div>                              
                               </div>
                            </div>
                         </div>
@@ -321,35 +314,35 @@
                      </a>
                   </div>
                   <div class="notice-content">
-                     <c:forEach var="nList" items="${nList }">
-                        <a href="/notice/detail?noticeNo=${nList.noticeNo }" class="notice-ahref">
+                     <c:forEach var="nList" items="${nList}">
+                        <a href="/notice/detail?noticeNo=${nList.noticeNo}" class="notice-ahref">
                                  <div class="notice-card">
                                        <div class="notice-top">
                                           <c:choose>
-                                    <c:when test="${nList.noticeCategory eq '이벤트' }">
-                                       <span class="notice-category-e pill">${nList.noticeCategory }</span>                                     
+                                    <c:when test="${nList.noticeCategory eq '이벤트'}">
+                                       <span class="notice-category-e pill">${nList.noticeCategory}</span>                                     
                                     </c:when>
-                                    <c:when test="${nList.noticeCategory eq '제휴' }">
-                                       <span class="notice-category-c pill">${nList.noticeCategory }</span>
+                                    <c:when test="${nList.noticeCategory eq '제휴'}">
+                                       <span class="notice-category-c pill">${nList.noticeCategory}</span>
                                     </c:when>
                                     <c:when test="${nList.noticeCategory eq '징계'}">
-                                       <span class="notice-category-d pill">${nList.noticeCategory }</span>
+                                       <span class="notice-category-d pill">${nList.noticeCategory}</span>
                                     </c:when>
                                     <c:otherwise>
-                                       <span class="notice-category-n pill">${nList.noticeCategory }</span>
+                                       <span class="notice-category-n pill">${nList.noticeCategory}</span>
                                     </c:otherwise>
                                  </c:choose>
-                                          <span class="notice-writeDate">${nList.createdDay }</span>
+                                          <span class="notice-writeDate">${nList.createdDay}</span>
                                        </div>
                                        <div class="notice-main">
                                  <div class="notice-middle">
                                     <h4>
-                                    ${nList.noticeTitle }
+                                    ${nList.noticeTitle}
                                     </h4>
                                  </div>
                                  <div class="notice-icon">
                                     <div>
-                                       <i class="fa-regular fa-eye"></i> <span>${nList.viewCount }</span>
+                                       <i class="fa-regular fa-eye"></i> <span>${nList.viewCount}</span>
                                     </div>                                         
                                  </div>
                                        </div>
@@ -369,43 +362,43 @@
                      </a>
                   </div>
                   <div class="post-content">
-                     <c:forEach var="cList" items="${cList }">
-                        <a href="/community/detail?boardNo=${cList.communityNo }" class="post-ahref">
+                     <c:forEach var="cList" items="${cList}">
+                        <a href="/community/detail?boardNo=${cList.communityNo}" class="post-ahref">
                            <div class="post-card">
                               <div class="post-header">
                                  <div class="post-header-left">
                                     <c:choose>
-                                                    <c:when test="${cList.communityType eq '운동질문' }">
-                                                        <span class="post-category-question">${cList.communityType }</span>
+                                                    <c:when test="${cList.communityType eq '운동질문'}">
+                                                        <span class="post-category-question">${cList.communityType}</span>
                                                     </c:when>
-                                                    <c:when test="${cList.communityType eq '운동꿀팁' }">
-                                                        <span class="post-category-tip">${cList.communityType }</span>
+                                                    <c:when test="${cList.communityType eq '운동꿀팁'}">
+                                                        <span class="post-category-tip">${cList.communityType}</span>
                                                     </c:when>
-                                                    <c:when test="${cList.communityType eq '식단/영양' }">
-                                                        <span class="post-category-food">${cList.communityType }</span>
+                                                    <c:when test="${cList.communityType eq '식단/영양'}">
+                                                        <span class="post-category-food">${cList.communityType}</span>
                                                     </c:when>
-                                                    <c:when test="${cList.communityType eq '운동인증' }">
-                                                        <span class="post-category-certification">${cList.communityType }</span>
+                                                    <c:when test="${cList.communityType eq '운동인증'}">
+                                                        <span class="post-category-certification">${cList.communityType}</span>
                                                     </c:when>
-                                                    <c:when test="${cList.communityType eq '일상/소통' }">
-                                                        <span class="post-category">${cList.communityType }</span>
+                                                    <c:when test="${cList.communityType eq '일상/소통'}">
+                                                        <span class="post-category">${cList.communityType}</span>
                                                     </c:when>
                                                 </c:choose>         
-                                    <span class="post-nickName">${cList.userNickName }</span> 
-                                    <span class="post-writeDate">${cList.timeAgo }</span>
+                                    <span class="post-nickName">${cList.userNickName}</span> 
+                                    <span class="post-writeDate">${cList.timeAgo}</span>
                                  </div>
                                  <div class="post-icon">
                                     <div>
-                                       <i class="fa-regular fa-eye"></i><span>${cList.viewCount }</span>
+                                       <i class="fa-regular fa-eye"></i><span>${cList.viewCount}</span>
                                     </div>
                                     <div>
-                                       <i class="fa-regular fa-thumbs-up"></i><span>${cList.likeCount }</span>
+                                       <i class="fa-regular fa-thumbs-up"></i><span>${cList.likeCount}</span>
                                     </div>
                                  </div>
                               </div>
                               <div class="post-middle">
-                                 <span class="post-title">${cList.communityTitle }</span> 
-                                 <span class="post-comment">(${cList.commentCount })</span>
+                                 <span class="post-title">${cList.communityTitle}</span> 
+                                 <span class="post-comment">(${cList.commentCount})</span>
                               </div>
                            </div>
                         </a>
@@ -594,7 +587,6 @@
                            confirmButton: 'success-button',
                         }
                      }).then(() => {
-                        // 새로고침
                         location.reload();
                      });
                   } else if (result == -1) {
@@ -791,7 +783,6 @@
             // ========================================
             // ⭐ 페이지 로드 시 실행 순서
             // ========================================
-            // 배너 불러오기 후 슬라이드 생성 -> Swiper 초기화
             const apiBase = window.location.origin || '';
             fetch(apiBase + '/api/banners/active')
               .then(res => res.ok ? res.json() : [])
@@ -809,16 +800,6 @@
             // ⭐ 목표 칼로리 먼저 로드 -> 식단 요약 로드
             loadHomeGoalCalories().then(() => {
                loadHomeDietSummary();
-            });
-        });
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // 프로필 이미지 로드 실패 시 기본 이미지로 변경
-            document.querySelectorAll('.user-profile img, .goal-profile-img img').forEach(img => {
-                img.onerror = function() {
-                    this.onerror = null; // 무한 루프 방지
-                    this.src = '../../resources/img/default-profile.png';
-                };
             });
         });
    </script>
