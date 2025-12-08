@@ -180,7 +180,7 @@ const PostMatchingBoard = () => {
         price: item.matchingPrice,
       }));
       setActivePosts(mapped);
-      setDeletedPosts(mappedDel);
+      setDeletedPosts(mappedDel.filter(item => item.deleteYn === "Y"));
 
       // 등록 추이 집계 (주 단위)
       const toWeekInfo = (val) => {
@@ -252,7 +252,7 @@ const PostMatchingBoard = () => {
         </div>
       </header>
       <BoardManager
-        boardTitle="매칭 게시판"
+        boardTitle="매칭 "
         initialPosts={activePosts}
         categories={categories}
         chartLabels={chartLabels.length ? chartLabels : undefined}
@@ -342,7 +342,7 @@ const PostMatchingBoard = () => {
   )}
     />
       <BoardManager
-        boardTitle="삭제된 매칭 게시판 관리"
+        boardTitle="삭제된 매칭 "
         initialPosts={deletedPosts}
         categories={categories}
         chartLabels={[]}

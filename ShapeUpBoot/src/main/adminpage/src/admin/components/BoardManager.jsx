@@ -23,6 +23,7 @@ const BoardManager = ({
   onUploadBanner = null,
   columns = null,
   detailRenderer = null,
+  fetchPosts = null,
 }) => {
   const loadStoredPosts = () => {
     const fallback = Array.isArray(initialPosts) ? initialPosts : [];
@@ -68,6 +69,26 @@ const BoardManager = ({
     if (storageKey) return;
     setPosts(initialPosts);
   }, [initialPosts, storageKey]);
+
+useEffect(() => {
+  if (!fetchPosts) return;
+
+  const loadPosts = async () => {
+    try {
+      const data = await fetchPosts(); // fetchPosts 함수 호출
+      const rawList = data.filter((p) => String(p.deleteYn || "").toUpperCase() === "N");
+      const mappedPosts = rawList.map((post) => ({
+        ...post,
+        images: post.images || [],
+      }));
+      setPosts(mappedPosts);
+    } catch (err) {
+      console.error("Failed to fetch posts:", err);
+    }
+  };
+
+  loadPosts();
+}, [fetchPosts]);
 
   useEffect(() => {
     if (!storageKey || !isBrowser) return;

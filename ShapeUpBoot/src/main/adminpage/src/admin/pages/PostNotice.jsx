@@ -140,7 +140,7 @@ const PostNotice = () => {
   const validate = () => {
     const next = {};
     if (!title.trim()) next.title = true;
-    if (!content.trim()) next.content = true;
+    // if (!content.trim()) next.content = true;
     if (category === "이벤트" && !eventEnd) next.eventEnd = true;
     setErrors(next);
     return Object.keys(next).length === 0;

@@ -54,6 +54,10 @@ registry.addInterceptor(new StadiumAccessInterceptor())
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+    	registry.addMapping("/trainer/**")
+        		.allowedOrigins("http://localhost:5173")
+        		.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        		.allowCredentials(true); // ★★★ 핵심
         registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:8080", "http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
@@ -99,5 +103,9 @@ registry.addInterceptor(new StadiumAccessInterceptor())
         // 5. JSP용 리소스 설정
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
+
+        // 6. 공지사항 용
+        registry.addResourceHandler("/uploads/notice/**")
+                .addResourceLocations("file:///" + projectPath + "/uploads/notice/");
     }
 }

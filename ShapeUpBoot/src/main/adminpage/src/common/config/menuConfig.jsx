@@ -23,6 +23,7 @@ const menus = {
       submenu3: { label: "성공 후기", path: "/admin/posts/submenu3" },
       submenu4: { label: "고객센터 문의", path: "/admin/posts/submenu4"},
       submenu5: { label: "매칭 게시판", path : "/admin/posts/matching"},
+      submenu6: { label: "트레이너 매칭 게시판", path : "/admin/posts/trainer"},
     },
   },
 };

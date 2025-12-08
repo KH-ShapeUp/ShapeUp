@@ -19,4 +19,6 @@ public interface trainerMatchingMapper {
 	/* 디테일 */
 	trainerMatchingDetailListDTO trainerMatchingDetailList(int matchingNo);
 
+	int updateDeleteYn(int matchingNo, String deleteYn);
+
 }

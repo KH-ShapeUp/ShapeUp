@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,8 @@ import com.ShapeUp.boot.domain.matching.model.service.trainerMatchingService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
+
+@CrossOrigin(origins = "http://localhost:5173")
 @Controller
 @RequestMapping("/trainer")
 @RequiredArgsConstructor
@@ -66,5 +69,22 @@ public class trainerMatchingController {
 		
 		System.out.println("디테일" + tmdList);
 		return "matching/trainerMatchingDetail";
+	}
+
+	// 리액트 용 메칭 리스트 불러오기
+	@GetMapping("/matching/list")
+	@ResponseBody
+	public List<trainerMatchingListDTO> trainerMatchingListApi() {
+    return tmService.trainerMatchingList();
+	}
+
+	// 어드민페이지용 삭제 / 복구 api
+	@PostMapping("/matching/delete")
+	@ResponseBody
+	public int trainerDelete(
+        @RequestParam("matchingNo") int matchingNo,
+        @RequestParam("deleteYn") String deleteYn
+	) {
+    return tmService.updateDeleteYn(matchingNo, deleteYn);
 	}
 }
