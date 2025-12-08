@@ -21,6 +21,7 @@ public class RoutineServiceImpl implements RoutineService {
 
 	private final RoutineMapper rMapper;
 
+	@Override
 	public List<Routine> selectRoutineListByUserNo(int userNo) {
 		List<Routine> routineList = rMapper.selectRoutineListByUserNo(userNo);
 		return routineList;
@@ -109,7 +110,10 @@ public class RoutineServiceImpl implements RoutineService {
 	}
 
 	@Override
-	public int deleteRoutine(int routineId) {
-		return rMapper.deleteRoutine(routineId);
+	public int deleteRoutine(int routineId, int userNo) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("routineId", routineId);
+		params.put("userNo", userNo);
+		return rMapper.deleteRoutine(params);
 	}
 }

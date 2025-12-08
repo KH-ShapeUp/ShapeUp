@@ -90,16 +90,14 @@
 	</select>
 
 	<!-- 루틴 작성 -->
-	<insert id="insertRoutine"
-		parameterType="com.ShapeUp.boot.domain.routine.vo.Routine">
+	<insert id="insertRoutine" parameterType="map">
 		<selectKey keyProperty="routineId" resultType="int"
 			order="BEFORE">
 			SELECT SEQ_ROUTINE_NO.NEXTVAL FROM DUAL
 		</selectKey>
 		INSERT INTO ROUTINE_TBL(
 		ROUTINE_ID,
-		USER_NO,
-		ROUTINE_NAME,
+		USER_NO, ROUTINE_NAME,
 		ROUTINE_EXPLAIN,
 		ROUTINE_START,
 		ROUTINE_END,
@@ -108,11 +106,11 @@
 		)
 		VALUES(
 		#{routineId},
-		#{userNo},
-		#{routineName},
+		#{userNo}, #{routineName},
 		#{routineExplain,
 		jdbcType=VARCHAR},
-		#{routineStart, jdbcType=DATE},
+		#{routineStart,
+		jdbcType=DATE},
 		#{routineEnd,
 		jdbcType=DATE},
 		SYSDATE,
@@ -157,9 +155,9 @@
 		)
 	</insert>
 	
-	<delete id="deleteRoutine" parameterType="int">
+	<delete id="deleteRoutine" parameterType="map">
 		DELETE FROM ROUTINE_TBL
-		WHERE ROUTINE_ID = #{routineId}
+		WHERE ROUTINE_ID = #{routineId} AND USER_NO = #{userNo}
 	</delete>
 
 </mapper>
