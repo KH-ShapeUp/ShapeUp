@@ -124,11 +124,17 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
               <span class="week-days-compact">월 화 수 목 금 토 일</span>
             </div>
 
-            <div class="progress-details">
-              <p>달성 횟수</p>
-              <p><span id="current-goal-count" class="count">0</span> / 5 회</p>
-            </div>
-
+			<div class="progress-details">
+			    <p>달성 횟수</p>
+			    <p>
+			        <span id="current-goal-count" class="count">0</span> / 
+			        <input type="number" id="goal-input" value="5" min="1" max="7" 
+			        style="width: 40px; text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 2px;"> 
+			        회
+			    </p>
+			</div>
+			<div class="panel goals-panel" data-weekly-goal="5"> 
+			</div>
             <div class="progress-bar-container">
               <div
                 id="progress-bar"

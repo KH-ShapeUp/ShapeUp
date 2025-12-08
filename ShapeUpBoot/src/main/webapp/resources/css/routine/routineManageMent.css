@@ -1,6 +1,6 @@
 /* Custom Properties (변수) */
 :root {
-  --primary-color: #007bff; /* 파란색 계열 */
+  --primary-color: #007bff; /* 파란색 계열 (버튼, 링크, 요일 활성화 등) */
   --secondary-color: #6c757d;
   --background-color: #f4f7f6; /* 연한 배경색 */
   --panel-background: #ffffff;
@@ -8,11 +8,11 @@
   --text-dark: #333;
   --text-light: #666;
 
-  /* 통일된 카테고리 색상 변수 정의 */
-  --color-sport: #dc3545; /* 스포츠: 강한 빨강 */
-  --color-cardio: #ffc107; /* 유산소: 노랑 */
-  --color-weight: #28a745; /* 근력: 녹색 */
-  --color-stretch: #007bff; /* 스트레칭: 파랑 */
+  /* 🚨 통일된 카테고리 색상 변수 정의 (최근 이미지에 맞춘 최종 버전) */
+  --color-sport: #2f80ff;   /* 스포츠: 밝은 빨강/다홍색 계열 */
+  --color-cardio: #ff9fb2;  /* 유산소: 밝은 파랑/청록 계열 */
+  --color-weight: #ffce73;  /* 근력: 녹색 */
+  --color-stretch: #8b9bff; /* 스트레칭: 주황/노랑색 계열 */
 }
 
 /* 기본 설정 */
@@ -149,7 +149,7 @@ body {
 }
 
 /* ---------------------------------------------------- */
-/* 1. 활동 요약 (왼쪽) (유지) */
+/* 1. 활동 요약 (왼쪽) */
 /* ---------------------------------------------------- */
 .summary-panel .panel-header {
   border: none;
@@ -162,13 +162,31 @@ body {
   justify-content: center;
   align-items: center;
   margin-bottom: 25px;
+  overflow: hidden;
 }
 
 .chart-circle {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background-color: var(--border-color); /* 임시 배경 */
+  
+  /* 1. 하드웨어 가속 강제 (유지) */
+  transform: translateZ(0); 
+  
+  /* 2. 다중 배경 레이어 설정 (radial-gradient로 중앙 구멍 생성) */
+  background-image: 
+    /* 레이어 1 (상단): radial-gradient로 중앙을 흰색으로 뚫기 */
+    radial-gradient(circle at center, 
+                    white 40%,        /* 중앙 40%까지 흰색 */
+                    transparent 40.5% /* 바깥 0.5%부터 투명으로 전환 */
+                   ), 
+    /* 레이어 2 (하단): JS에서 설정한 conic-gradient가 적용됨 */
+    var(--_conic-gradient, #f0f0f0 0deg 360deg);
+    
+  background-size: 100% 100%;
+  background-position: center;
+  background-color: transparent; /* 기본 배경색 없음 */
+  overflow: hidden; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -190,17 +208,18 @@ body {
   padding-left: 10px;
 }
 
+/* 🚨 활동 목록 구분선 색상 (변수 변경 적용) */
 .activity-item:nth-child(1) {
-  border-left-color: var(--color-sport); /* 스포츠 (빨강) */
+  border-left-color: var(--color-sport);    /* 스포츠 (밝은 빨강) */
 }
 .activity-item:nth-child(2) {
-  border-left-color: var(--color-cardio); /* 유산소 (노랑) */
+  border-left-color: var(--color-cardio);   /* 유산소 (밝은 파랑) */
 }
 .activity-item:nth-child(3) {
-  border-left-color: var(--color-weight); /* 근력 (녹색) */
+  border-left-color: var(--color-weight);   /* 근력 (녹색) */
 }
 .activity-item:nth-child(4) {
-  border-left-color: var(--color-stretch); /* 스트레칭 (파랑) */
+  border-left-color: var(--color-stretch);  /* 스트레칭 (주황/노랑) */
 }
 
 .activity-percent {
@@ -327,22 +346,22 @@ body {
   color: white;
 }
 
-/* 카테고리별 색상 정의 (유지) */
+/* 🚨 카테고리별 태그 색상 정의 (변수 변경 적용) */
 .routine-card .tag-유산소 {
-  background-color: var(--color-cardio);
-  color: var(--text-dark);
+  background-color: var(--color-cardio); /* 밝은 파랑/청록 */
+  color: white; /* 흰색 텍스트 */
 }
 
 .routine-card .tag-근력 {
-  background-color: var(--color-weight);
+  background-color: var(--color-weight); /* 녹색 */
 }
 
 .routine-card .tag-스포츠 {
-  background-color: var(--color-sport);
+  background-color: var(--color-sport); /* 밝은 빨강/다홍 */
 }
 
 .routine-card .tag-스트레칭 {
-  background-color: var(--color-stretch);
+  background-color: var(--color-stretch); /* 주황/노랑 */
 }
 
 /* 액션 버튼 영역 스타일 (유지) */
@@ -840,7 +859,6 @@ body {
     padding-top: 10px;
     order: 5;
   }
-  /* ... (나머지 992px 이하 스타일 유지) ... */
 }
 
 @media (max-width: 768px) {

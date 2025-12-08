@@ -118,8 +118,6 @@
   <jsp:include page="/WEB-INF/views/activity/tools/activityDeleteModal.jsp"/>
   <jsp:include page="/WEB-INF/views/activity/tools/activityToast.jsp"/>
 </body>
-
-// ... (activityRecord.jsp 상단 HTML 및 <head> 부분은 동일)
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   let actCurrentDate = null;
