@@ -10,6 +10,7 @@ import PostsNotice from "./pages/PostNotice";
 import PostFreeBoard from "./pages/PostFreeBoard";
 import PostSuccessBoard from "./pages/PostSuccessBoard";
 import PostQnaBoard from "./pages/PostQnaBoard";
+import PostTrainerBoard from './pages/PostTrainerBoard';
 import PostMatchingBoard from "./pages/PostMatchingBoard";
 import SendGuideline from "./pages/SendGuideline";
 import MembersReport from "./pages/ReportManagement";
@@ -94,6 +95,7 @@ function App() {
                 "/admin/posts/submenu4": <PostContactBoard />,
                 "/admin/posts/matching": <PostMatchingBoard />,
                 "/admin/feeds/send-guideline": <SendGuideline />,
+                "/admin/posts/trainer" : <PostTrainerBoard />
               };
               const element = routeElements[sub.path] ?? (
                 <PagePlaceholder title={`${section.name} - ${sub.label}`} />

@@ -156,4 +156,6 @@ public class matchingController {
 	public int updateDeleteYn(@RequestParam int matchingNo, @RequestParam String deleteYn) {
 		return mService.updateDeleteYn(matchingNo, deleteYn);
 	}
+
+	
 }

@@ -58,4 +58,10 @@
  		AND M.MATCHING_TYPE = 'TRAINER' 
  		AND M.MATCHING_NO = #{matchingNo}
  	</select>
+ 	<!-- 삭제 / 복구 상태 변경 -->
+ 	<update id="updateDeleteYn">
+    UPDATE MATCHING_TBL
+    SET DELETE_YN = #{deleteYn}
+    WHERE MATCHING_NO = #{matchingNo}
+	</update>
  </mapper>

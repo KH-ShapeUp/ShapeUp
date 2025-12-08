@@ -48,4 +48,9 @@ public class trainerMatchingServiceImpl implements trainerMatchingService{
 		return tmdList;
 	}
 
+	@Override
+	public int updateDeleteYn(int matchingNo, String deleteYn) {
+		return tmMapper.updateDeleteYn(matchingNo, deleteYn);
+	}
+
 }

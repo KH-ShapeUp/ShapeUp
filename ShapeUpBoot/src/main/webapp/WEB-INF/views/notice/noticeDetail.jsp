@@ -48,7 +48,7 @@
 				</div>
 			</c:if>
 
-			<div class="notice-content">
+			<div class="notice-content" style="white-space: pre-line;" >
 				${notice.noticeContent}
 			</div>
 
