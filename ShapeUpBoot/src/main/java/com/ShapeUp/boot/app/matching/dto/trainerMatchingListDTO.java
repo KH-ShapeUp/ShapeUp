@@ -21,7 +21,10 @@ public class trainerMatchingListDTO {
 	
 	private String timeAgo;
 	private String career;  // 커리어
+	private String userPhone;
 
 	private String matchingStatus; 		// SQL에서 날짜로 마감/모집중
-	private int applicationCount;		// 신청 인원 수
+	private int applyCount;		// 신청 인원 수
+	private String addrName;
+	private String userProfileImg;
 }

@@ -16,6 +16,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class matchingAppLiVo {
 	private int matchingAppliNo; 	// 매칭 신청자 (세션)
+	private String matchingType;    // 매칭 타입(user, trainer)
 	private int userNo;				// 매칭 게시글 작성자
 	private int matchingNo;			// 매칭 게시글 번호
 	private Timestamp createdAt;	// 신청 날짜

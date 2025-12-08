@@ -4,10 +4,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import com.ShapeUp.boot.app.community.dto.communityListDTO;
+import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
+import com.ShapeUp.boot.domain.comment.model.vo.commentVO;
 import com.ShapeUp.boot.domain.user.model.mapper.UserMapper;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
+import com.ShapeUp.boot.domain.user.model.vo.ReviewVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
@@ -233,4 +239,32 @@ public class UserServiceImpl implements UserService {
         log.info("✅ Service - 프로필 이미지: {}", profileImg);
         return profileImg;
     }
+
+    
+    /* 게시글 가져오기 */
+	@Override
+	public List<communityListDTO> getCommunityList(Integer userNo) {
+		return userMapper.getCommunityList(userNo);
+	}
+	/* 댓글 가져오기 */
+	@Override
+	public List<commentVO> getCommentList(Integer userNo) {
+		return userMapper.getCommentList(userNo);
+	}
+	/* 내가쓴 매칭 */
+	@Override
+	public List<matchingListDTO> getMatchingList(Integer userNo) {
+		return userMapper.getMatchingList(userNo);
+	}
+	/* 예약한 매칭 */
+	@Override
+	public List<matchingListDTO> getApplyMatchingList(Integer userNo) {
+		return userMapper.getApplyMatchingList(userNo);
+	}
+
+	/* 리뷰 작성 */
+	@Override
+	public int reviewInsert(ReviewVO rVo) {
+		return userMapper.reviewInsert(rVo);
+	}
 }

@@ -51,25 +51,7 @@
                     <div class="board-left-bottom">
                         <div class="board-left-content">
                             <c:choose>
-                                <c:when test="${empty sList}">
-                                    <script>
-                                        Swal.fire({
-                                            icon:'warning',
-                                            title: '검색결과가 없습니다.',
-                                            confirmButtonText: '확인',
-                                            customClass: {
-                                                popup: 'error-popup',
-                                                title: 'error-title',
-                                                text: 'error-text',
-                                                confirmButton: 'error-button'
-                                            },
-                                            didClose: () => {
-                                                location.href="/success";
-                                            }
-                                        });
-                                    </script>
-                                </c:when>
-                                <c:otherwise>
+                                <c:when test="${not empty sList}">
                                     <c:forEach var="sList" items="${sList }">	                  
                                         <a href="/community/detail?boardNo= ${sList.communityNo}">
                                             <div class="board-left-card">
@@ -117,37 +99,43 @@
                                             </div>
                                         </a>                                                               
                                     </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                                        <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                                        <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 댓글이 없습니다.</p>    
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
                     </div>
-                        <div class="pagination-wrapper">
-                            <nav class="pagination">                           	
-                            	<c:if test="${startNavi ne 1 }">                                                
-	                                <button class="back" 
-	                                		onclick="location.href='/success?boarNo=${startNavi - 1}'">
-	                                    <i class="fa-solid fa-arrow-left"></i>
-	                                    <span>이전</span>
-	                                </button>
-                                </c:if>
-                                
-                                <c:forEach begin="${startNavi }" end="${endNavi }" var="n">
-	                                <button 
-						                class="page-num ${currentPage eq n ? 'active' : ''}"
-						                onclick="movePage('${n}')">
-						                ${n}
-						            </button>
-                                </c:forEach>
-                                
-								<c:if test="${endNavi ne maxPage }">
-	                                <button class="next" 
-	                                		onclick="location.href='/success?boardNo=${endNavi + 1}'">
-	                                    <span>이전</span>
-	                                    <i class="fa-solid fa-arrow-right"></i>
-	                                </button>  
-								</c:if>
-                            </nav>
-                        </div>
+                    <div class="pagination-wrapper">
+                        <nav class="pagination">                           	
+                            <c:if test="${startNavi ne 1 }">                                                
+                                <button class="back" 
+                                        onclick="location.href='/success?boardNo=${startNavi - 1}'">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>이전</span>
+                                </button>
+                            </c:if>
+                            
+                            <c:forEach begin="${startNavi }" end="${endNavi }" var="n">
+                                <button 
+                                    class="page-num ${currentPage eq n ? 'active' : ''}"
+                                    onclick="movePage('${n}')">
+                                    ${n}
+                                </button>
+                            </c:forEach>
+                            
+                            <c:if test="${endNavi ne maxPage }">
+                                <button class="next" 
+                                        onclick="location.href='/success?boardNo=${endNavi + 1}'">
+                                    <span>이전</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>  
+                            </c:if>
+                        </nav>
+                    </div>
                 </div>
                 <div class="board-wrapper-right">
                     <div class="board-right-top">

@@ -65,7 +65,6 @@
 		
 		    WHERE A.USE_YN = 'Y'
 		        AND M.DELETE_YN = 'N'
-		        AND M.MATCHING_TYPE = 'NOMAL'
 		    ORDER BY 
 		    	M.CREATED_AT DESC
 		)

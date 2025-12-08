@@ -1,11 +1,15 @@
 package com.ShapeUp.boot.app.matching.dto;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @ToString
 public class trainerMatchingDetailListDTO {
 	private int matchingNo;				// 매칭 구분 번호
@@ -25,8 +29,14 @@ public class trainerMatchingDetailListDTO {
 	private double longitude;				// 경도
 	private String timeAgo;
 	private String career;  // 커리어
-	private String careerDetail; // 커리어 상세정보
+	private String careerDetail;
+	private List<String> careerInfo;
+
 	private String locationUrl;
 	private String matchingStatus; 		// SQL에서 날짜로 마감/모집중
-	private int applicationCount;		// 신청 인원 수
+	private int applyCount;		// 신청 인원 수
+	private String userPhone;
+	private String addrName;
+	private String userProfileImg;
+
 }

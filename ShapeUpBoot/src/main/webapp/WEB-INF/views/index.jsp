@@ -375,22 +375,22 @@
                               <div class="post-header">
                                  <div class="post-header-left">
                                     <c:choose>
-                                                    <c:when test="${cList.communityType eq '운동질문' }">
-                                                        <span class="post-category-question">${cList.communityType }</span>
-                                                    </c:when>
-                                                    <c:when test="${cList.communityType eq '운동꿀팁' }">
-                                                        <span class="post-category-tip">${cList.communityType }</span>
-                                                    </c:when>
-                                                    <c:when test="${cList.communityType eq '식단/영양' }">
-                                                        <span class="post-category-food">${cList.communityType }</span>
-                                                    </c:when>
-                                                    <c:when test="${cList.communityType eq '운동인증' }">
-                                                        <span class="post-category-certification">${cList.communityType }</span>
-                                                    </c:when>
-                                                    <c:when test="${cList.communityType eq '일상/소통' }">
-                                                        <span class="post-category">${cList.communityType }</span>
-                                                    </c:when>
-                                                </c:choose>         
+                                       <c:when test="${cList.communityType eq '운동질문' }">
+                                          <span class="post-category-question">${cList.communityType }</span>
+                                       </c:when>
+                                       <c:when test="${cList.communityType eq '운동꿀팁' }">
+                                          <span class="post-category-tip">${cList.communityType }</span>
+                                       </c:when>
+                                       <c:when test="${cList.communityType eq '식단/영양' }">
+                                          <span class="post-category-food">${cList.communityType }</span>
+                                       </c:when>
+                                       <c:when test="${cList.communityType eq '운동인증' }">
+                                          <span class="post-category-certification">${cList.communityType }</span>
+                                       </c:when>
+                                       <c:when test="${cList.communityType eq '일상/소통' }">
+                                          <span class="post-category">${cList.communityType }</span>
+                                       </c:when>
+                                    </c:choose>         
                                     <span class="post-nickName">${cList.userNickName }</span> 
                                     <span class="post-writeDate">${cList.timeAgo }</span>
                                  </div>

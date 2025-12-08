@@ -112,7 +112,6 @@
         </div>
       </div>
 
-      <hr class="section-divider">
       
       <!-- 기본 정보 섹션 -->
       <div class="info-section">
@@ -193,7 +192,6 @@
         </div>
       </div>
 
-      <hr class="section-divider">
 
       <!-- 연락처 정보 섹션 -->
       <div class="info-section">
@@ -220,8 +218,236 @@
         </div>
       </div>
 
-      <hr class="section-divider">
+      <!-- 게시물, 매칭 관리 -->
+      <div class="info-section">
+        <h2 class="board-title">내가 쓴 게시물</h2>
 
+        <div class="board-section">
+          <c:choose>
+            <c:when test="${not empty cList}">
+              <c:forEach var="comunityList" items="${cList}">
+                <a href="/community/detail?boardNo=${comunityList.communityNo}">
+                  <div class="board-card">
+                    <div class="board-top-left">
+                      <div class="card-top">
+                        <c:choose>
+                          <c:when test="${comunityList.communityType eq 'success'}">
+                            <span class="board-category-success">성공 후기</span>
+                          </c:when>
+                          <c:when test="${comunityList.communityType eq '일상/소통'}">
+                            <span class="board-category">${comunityList.communityType}</span>
+                          </c:when>
+                          <c:when test="${comunityList.communityType eq '운동질문'}">
+                            <span class="board-category-question">${comunityList.communityType}</span>
+                          </c:when>
+                          <c:when test="${comunityList.communityType eq '운동꿀팁'}">
+                            <span class="board-category-tip">${comunityList.communityType}</span>
+                          </c:when>
+                          <c:when test="${comunityList.communityType eq '식단/영양'}">
+                            <span class="board-category-diet">${comunityList.communityType}</span>
+                          </c:when>
+                          <c:when test="${comunityList.communityType eq '운동인증'}">
+                            <span class="board-category-workout">${cLcomunityListist.communityType}</span>
+                          </c:when>
+                        </c:choose>
+                        <span class="card-title">${comunityList.communityTitle}</span>
+                      </div>
+                      <div class="card-footer">
+                        <span class="nick-name">${comunityList.userNickName}</span>
+                        <span class="created-Date">${comunityList.createdDay}</span>
+                        <span class="viewCount">조회 ${comunityList.viewCount}</span>
+                      </div>
+                    </div>
+                    <div class="board-top-right">
+                      <div class="board-comment">
+                        <span class="comment">${comunityList.commentCount}</span>
+                        <span class="comment-txt">댓글</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </c:forEach>
+            </c:when>
+              <c:otherwise>
+                <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                  <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                  <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 댓글이 없습니다.</p>    
+                </div>
+              </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+
+      <!-- 댓글 관리 -->
+      <div class="info-section">
+          <h2 class="section-title">내가 쓴 댓글</h2>
+
+          <div class="board-section">
+            <c:choose>
+              <c:when test="${not empty cmList}">
+                <c:forEach var="cmList" items="${cmList}">
+                  <a href="/community/detail?boardNo=${cmList.communityNo}">
+                    <div class="board-card">
+                      <div class="board-top-left">
+                        <div class="card-top">
+                          <span class="card-title">${cmList.commentContent}</span>
+                        </div>
+                        <div class="card-footer">
+                          <span class="created-Date">${cmList.createdDay}</span>
+                        </div>
+                      </div>
+                      <div class="board-top-right">
+                        <button class="commentdelete" data-comment-no="${cmList.commentNo}">삭제</button>
+                      </div>
+                    </div>
+                  </a>
+                </c:forEach>
+              </c:when>
+              <c:otherwise>
+                <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                  <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                  <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 댓글이 없습니다.</p>    
+                </div>
+              </c:otherwise>  
+            </c:choose>
+          </div>
+      </div>
+      <!-- 매칭 관리 -->
+      <div class="info-section">
+        <h2 class="board-title">내가 쓴 매칭</h2>
+
+        <div class="board-section">
+          <c:choose>
+            <c:when test="${not empty mList}">
+              <c:forEach var="mList" items="${mList}"> 
+
+              <div class="matching-card">
+                <div class="matching-card-top">
+                  <div class="card-info">
+                    <span class="board-category">${mList.activityName}</span>
+                    <span class="card-title">${mList.matchingTitle}</span>
+                    <span class="created-day">작성일: ${mList.createdDate}</span>
+                  </div>
+                  <div class="setting">
+                    <button class="matchingDelete" data-matching-no="${mList.matchingNo}">삭제</button>
+                  </div>
+                </div>
+                <div class="card-partner-type">
+                  <span class="matchingContent">${mList.matchingContent}</span>
+                </div>
+                <div class="matching-footer">
+                  <div class="matching-location">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span>${mList.matchingLocation}</span>
+                  </div>
+                  <div class="matching-time">
+                      <i class="fa-solid fa-clock"></i>
+                      <span>${mList.matchingTime}</span>
+                  </div>
+                  <div class="matching-day">
+                      <i class="fa-solid fa-calendar-days"></i>
+                      <span>${mList.matchingDate}</span>
+                  </div>
+                  <div class="matching-money">
+                      <i class="fa-solid fa-wallet"></i>
+                      <span>${mList.matchingPrice}</span>
+                  </div>
+                  <div class="matching-user">
+                      <i class="fa-solid fa-users"></i>
+                      <span>${mList.applicationCount}/${mList.matchingUserCount} 명</span>
+                  </div>
+                </div>
+              </div>
+
+            </c:forEach>
+            </c:when>
+              <c:otherwise>
+                <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                  <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                  <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 매칭이 없습니다.</p>    
+                </div>
+              </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+
+      <!-- 신청한 매칭 -->
+      <div class="info-section">
+        <h2 class="board-title">내가 신청한 매칭</h2>
+
+        <div class="board-section">
+          <c:choose>
+            <c:when test="${not empty aList}">
+              <c:forEach var="aList" items="${aList}"> 
+
+              <div class="matching-card">
+                <div class="matching-card-top">
+                  <div class="card-info">
+                    <c:choose>
+                      <c:when test="${aList.matchingType eq 'NOMAL'}">
+                        <span class="board-category-user">유저매칭</span>
+                      </c:when>
+                      <c:otherwise>
+                        <span class="board-category-trainer">트레이너</span>
+                      </c:otherwise>
+                    </c:choose>
+                    <span class="card-title">${aList.matchingTitle}</span>
+                    <span class="created-day">신청 날짜: ${aList.applyDay}</span>
+                  </div>
+                  <div class="setting">
+                    <c:choose>
+                      <c:when test="${aList.matchingStatus eq '마감'}">
+                        <button class="reviewWrite" 
+                                data-matching-no="${aList.matchingNo}" 
+                                data-user-no="${userNo}"
+                                onclick="reviewWrite(this);">
+                          리뷰쓰러가기
+                        </button>
+                      </c:when>
+                      <c:otherwise>
+                        <button class="matchingCancel"  type="button" data-matching-num="${aList.matchingNo}">취소</button>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                </div>
+                <div class="card-partner-type">
+                  <span class="matchingContent">${aList.matchingContent}</span>
+                </div>
+                <div class="matching-footer">
+                  <div class="matching-location">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span>${aList.matchingLocation}</span>
+                  </div>
+                  <div class="matching-time">
+                      <i class="fa-solid fa-clock"></i>
+                      <span>${aList.matchingTime}</span>
+                  </div>
+                  <div class="matching-day">
+                      <i class="fa-solid fa-calendar-days"></i>
+                      <span>${aList.matchingDate}</span>
+                  </div>
+                  <div class="matching-money">
+                      <i class="fa-solid fa-wallet"></i>
+                      <span>${aList.matchingPrice}</span>
+                  </div>
+                  <div class="matching-user">
+                      <i class="fa-solid fa-users"></i>
+                      <span>${aList.applicationCount}/${aList.matchingUserCount} 명</span>
+                  </div>
+                </div>
+              </div>
+
+            </c:forEach>
+            </c:when>
+              <c:otherwise>
+                <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                  <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                  <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 매칭이 없습니다.</p>    
+                </div>
+              </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
       <!-- 보안 설정 섹션 -->
       <div class="info-section">
         <h2 class="section-title">보안 설정</h2>
@@ -231,7 +457,7 @@
             <div class="info-label">비밀번호</div>
             <div class="info-value">••••••••</div>
             <div class="info-actions">
-              <button class="btn btn-edit" id="showPasswordFormBtn" onclick="togglePasswordForm()">변경</button>
+              <button type="button" class="btn btn-edit" id="showPasswordFormBtn" onclick="togglePasswordForm()">변경</button>
             </div>
           </div>
 
@@ -403,10 +629,45 @@
       </form>
     </div>
   </div>
+
+  <!-- 리뷰 모달 -->
+  <div id="reviewModal" class="request-form-modal">
+    <div class="review-wrapper">
+      <h3 class="reivew-title">리뷰를 작성해주세요</h3>
+      <span class="label">리뷰 별점</span>
+      <div class="review-btn-wrapper">
+        <span class="star" data-value="1">
+            <i class="fa-regular fa-star" style="color: #FFD43B;"></i>
+        </span>
+        <span class="star" data-value="2">
+            <i class="fa-regular fa-star" style="color: #FFD43B;"></i>
+        </span>
+        <span class="star" data-value="3">
+            <i class="fa-regular fa-star" style="color: #FFD43B;"></i>
+        </span>
+        <span class="star" data-value="4">
+            <i class="fa-regular fa-star" style="color: #FFD43B;"></i>
+        </span>
+        <span class="star" data-value="5">
+            <i class="fa-regular fa-star" style="color: #FFD43B;"></i>
+        </span>    
+      </div>
+      <div class="form-group">
+        <label for="reviewContent">리뷰 내용</label>
+        <textarea name="reviewContent" id="reviewContent" placeholder="리뷰를 작성해주세요."></textarea>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="saveBtn">저장</button>
+        <button type="button" class="cancelBtn">취소</button>
+      </div>
+    </div>
+  </div>
 <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
+
 const contextPath = '${pageContext.request.contextPath}';
 let pendingRequest = null;
 let selectedProfileFile = null;
@@ -808,6 +1069,166 @@ function displayUserType() {
     currentPermissionTitle.textContent = permissionTitle;
   }
 }
+/* 리뷰 */
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- [중요] 전역 변수 선언 (함수들끼리 공유하기 위함) ---
+    let currentMatchingNo = null;
+    let currentUserNo = null;
+    let starValue = '0'; 
+    let isSubmitting = false; // 중복 저장 방지용 안전장치
+
+    // --- 1. 모달 열기 (HTML의 onclick="reviewWrite(this)"에서 호출됨) ---
+    window.reviewWrite = function(button) {
+        currentMatchingNo = button.dataset.matchingNo;
+        currentUserNo = button.dataset.userNo;
+
+        // 모달 열 때 값 초기화
+        starValue = '0';
+        document.querySelector("#reviewContent").value = '';
+        isSubmitting = false; // 저장 잠금 해제
+        resetStars();
+
+        document.querySelector("#reviewModal").style.display = "flex";
+    };
+
+    // --- 2. 별점 초기화 함수 (모양만 초기화) ---
+    function resetStars() {
+        document.querySelectorAll(".star i").forEach(icon => {
+            icon.classList.remove("fa-solid");
+            icon.classList.add("fa-regular");
+        });
+    }
+
+    // --- 3. 별점 클릭 이벤트 (여기에 저장 로직이 있으면 절대 안 됨!) ---
+    // 오직 "별 색깔 바꾸기"와 "점수 변수(starValue) 담기"만 수행
+    document.querySelectorAll(".star").forEach((star, index) => {
+        star.addEventListener("click", () => {
+            // 점수 저장
+            starValue = star.dataset.value;
+
+            // UI 업데이트 (모두 지우고 -> 해당 인덱스까지 채우기)
+            let stars = document.querySelectorAll(".star");
+            
+            // 1) 싹 지우기
+            stars.forEach(s => {
+                let icon = s.querySelector("i");
+                icon.classList.remove("fa-solid");
+                icon.classList.add("fa-regular");
+            });
+
+            // 2) 클릭한 곳까지 채우기
+            for (let i = 0; i <= index; i++) {
+                let icon = stars[i].querySelector("i");
+                icon.classList.remove("fa-regular");
+                icon.classList.add("fa-solid");
+            }
+            
+            // console.log("현재 별점:", starValue); // 확인용
+        });
+    }); 
+    // ▲ 위에서 forEach가 끝났습니다. 저장 버튼은 이 괄호 밖에서 만들어야 합니다.
+
+    
+    // --- 4. [저장 버튼] 클릭 이벤트 (반복문 밖, 독립적으로 존재) ---
+    const saveBtn = document.querySelector(".saveBtn");
+    
+    if(saveBtn) {
+        // onclick을 사용하여 기존에 혹시 쌓였을 이벤트를 덮어씌움 (안전함)
+        saveBtn.onclick = function() {
+          // (1) 이미 저장 중이면 함수 종료 (더블클릭/중복저장 방지)
+          if (isSubmitting) return;
+
+          // (2) 별점 선택 안했으면 경고
+          if (starValue === '0' || starValue === '') {
+              Swal.fire({ 
+                  icon: 'warning', 
+                  title: '별점을 선택해주세요!', 
+                  confirmButtonText: '확인',
+                  customClass: {
+                      popup: 'success-popup',
+                      title: 'success-title',
+                      text: 'success-text',
+                      confirmButton: 'success-button'
+                  }
+              });
+              return;
+          }
+
+          // (3) 저장 시작 (잠금 걸기)
+          isSubmitting = true; 
+
+          const data = {
+              matchingNo: currentMatchingNo,
+              userNo: currentUserNo,
+              reviewContent: document.querySelector("#reviewContent").value,
+              reviewType: starValue,
+          };
+          console.log(data)
+          fetch("/review", { 
+              method: "post",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data)
+          })
+          .then(res => res.json())
+          .then(result => {
+            if (result > 0) {
+                Swal.fire({
+                  icon: 'success',
+                  title: '리뷰 작성완료!',
+                  confirmButtonText: '확인',
+                  customClass: {
+                      popup: 'success-popup',
+                      title: 'success-title',
+                      text: 'success-text',
+                      confirmButton: 'success-button'
+                  },
+                  didClose: () => {
+                    location.reload();
+                  }
+                })
+            } else {
+                Swal.fire({
+                  icon:'error',
+                  title: '리뷰 작성 실패..ㅠ',
+                  text: '다시 시도 해주세요.',
+                  confirmButtonText: '확인',
+                  customClass: {
+                      popup: 'error-popup',
+                      title: 'error-title',
+                      text: 'error-text',
+                      confirmButton: 'error-button'
+                  }
+              });
+                isSubmitting = false; // 실패 시 잠금 해제
+            }
+        })
+        .catch(err => {
+            Swal.fire({
+              icon:'error',
+              title: '리뷰 작성 실패..ㅠ',
+              text: err,
+              confirmButtonText: '확인',
+              customClass: {
+                  popup: 'error-popup',
+                  title: 'error-title',
+                  text: 'error-text',
+                  confirmButton: 'error-button'
+              }
+            })
+            isSubmitting = false; // 에러 시 잠금 해제
+        });
+      };
+    }
+
+    // --- 5. [취소 버튼] ---
+    const cancelBtn = document.querySelector(".cancelBtn");
+    if(cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+            document.querySelector("#reviewModal").style.display = "none";
+        });
+    }
+});
 
 function openPermissionSelect() {
   document.getElementById('permissionSelectModal').style.display = 'flex';
@@ -961,6 +1382,7 @@ function validateNewPassword() {
     
     if (newPassword.length < 8) {
       errorMsg += '8자 이상 입력해주세요. ';
+    } else if (newPassword.length > 20) {
     } else if (newPassword.length > 20) {
       errorMsg += '20자 이하로 입력해주세요. ';
     }
@@ -1243,6 +1665,224 @@ function showModal(message) {
 function closeModal() {
   document.getElementById('customModal').style.display = 'none';
 }
-</script>
 
+document.addEventListener("DOMContentLoaded", () => {
+  /* 댓글 삭제 */
+  document.querySelectorAll(".commentdelete").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const commentNo = btn.getAttribute("data-comment-no");
+        Swal.fire({
+          title: '해당 댓글을 삭제하시겠습니까?',
+          showCancelButton: true,
+          cancelButtonText: "취소",
+          confirmButtonText: "삭제",
+          customClass: {
+            popup: 'success-popup',
+            title: 'success-title',
+            confirmButton: 'success-button',
+            cancelButton: 'cancel-button'
+          }
+      }).then((result)=> {
+        if(result.isConfirmed) {
+          fetch("/comment/delete?commentNo=" + commentNo, {
+            method: 'delete',
+            headers: {"Content-Type":"application/json"}
+          })
+          .then(res => res.json())
+          .then(result => {
+            if(result > 0) {
+              Swal.fire({
+                icon: 'success',
+                title: '삭제 완료!',
+                confirmButtonText: '확인',
+                customClass: {
+                  popup: 'success-popup',
+                  title: 'success-title',
+                  confirmButton: 'success-button',
+                }
+              }).then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire({
+                icon:'error',
+                title: '삭제 실패..ㅠ',
+                text: '다시 시도 해주세요.',
+                confirmButtonText: '확인',
+                customClass: {
+                  popup: 'error-popup',
+                  title: 'error-title',
+                  text: 'error-text',
+                  confirmButton: 'error-button'
+                }
+              });
+            }
+          })
+          .catch(err => {
+            Swal.fire({
+                icon:'error',
+                title: '오류가 발생하였습니다.',
+                text: err,
+                confirmButtonText: '확인',
+                customClass: {
+                    popup: 'error-popup',
+                    title: 'error-title',
+                    text: 'error-text',
+                    confirmButton: 'error-button'
+                }
+            });
+          })
+        }
+      })
+    })
+  
+    document.querySelectorAll(".matchingDelete").forEach(matching => {
+      matching.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const matchingNo = matching.getAttribute("data-matching-no");
+  
+        Swal.fire({
+          title: '해당 매칭을 삭제하시겠습니까?',
+          showCancelButton: true,
+          cancelButtonText: "취소",
+          confirmButtonText: "삭제",
+          customClass: {
+            popup: 'success-popup',
+            title: 'success-title',
+            confirmButton: 'success-button',
+            cancelButton: 'cancel-button'
+          }
+        }).then((result)=> {
+          if(result.isConfirmed) {
+            fetch("/matching/delete?matchingNo=" + matchingNo, {
+              method: 'delete',
+              headers: {"Content-Type":"application/json"}
+            })
+            .then(res => res.json())
+            .then(result => {
+              if(result > 0) {
+                Swal.fire({
+                  icon: 'success',
+                  title: '삭제 완료!',
+                  confirmButtonText: '확인',
+                  customClass: {
+                    popup: 'success-popup',
+                    title: 'success-title',
+                    confirmButton: 'success-button',
+                  }
+                }).then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire({
+                  icon:'error',
+                  title: '삭제 실패..ㅠ',
+                  text: '다시 시도 해주세요.',
+                  confirmButtonText: '확인',
+                  customClass: {
+                    popup: 'error-popup',
+                    title: 'error-title',
+                    text: 'error-text',
+                    confirmButton: 'error-button'
+                  }
+                });
+              }
+            })
+            .catch(err => {
+              Swal.fire({
+                  icon:'error',
+                  title: '오류가 발생하였습니다.',
+                  text: err,
+                  confirmButtonText: '확인',
+                  customClass: {
+                      popup: 'error-popup',
+                      title: 'error-title',
+                      text: 'error-text',
+                      confirmButton: 'error-button'
+                  }
+              });
+            })
+          }
+        })
+      })
+    })
+  
+    document.querySelectorAll(".matchingCancel").forEach(cancel => {
+      cancel.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const matchingNo = cancel.getAttribute("data-matching-num");
+        const userNo = "${userNo}"
+  
+        Swal.fire({
+            title: '매칭 예약을 취소하겠습니까?',
+            showCancelButton: true,
+            cancelButtonText: "아니오",
+            confirmButtonText: "예",
+            customClass: {
+              popup: 'success-popup',
+              title: 'success-title',
+              confirmButton: 'success-button',
+              cancelButton: 'cancel-button'
+            }
+        }).then((result)=> {
+          if(result.isConfirmed) {
+            fetch(`/apply/cancel?matchingNo=\${matchingNo}&userNo=\${userNo}`, {
+              method: 'delete',
+              headers: {"Content-Type":"application/json"}
+            })
+            .then(res => res.json())
+            .then(result => {
+              if(result > 0) {
+                Swal.fire({
+                  icon: 'success',
+                  title: '취소 완료!',
+                  confirmButtonText: '확인',
+                  customClass: {
+                    popup: 'success-popup',
+                    title: 'success-title',
+                    confirmButton: 'success-button',
+                  }
+                }).then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire({
+                  icon:'error',
+                  title: '삭제 실패..ㅠ',
+                  text: '다시 시도 해주세요.',
+                  confirmButtonText: '확인',
+                  customClass: {
+                    popup: 'error-popup',
+                    title: 'error-title',
+                    text: 'error-text',
+                    confirmButton: 'error-button'
+                  }
+                });
+              }
+            })
+            .catch(err => {
+              Swal.fire({
+                  icon:'error',
+                  title: '오류가 발생하였습니다.',
+                  text: err,
+                  confirmButtonText: '확인',
+                  customClass: {
+                      popup: 'error-popup',
+                      title: 'error-title',
+                      text: 'error-text',
+                      confirmButton: 'error-button'
+                  }
+              });
+            })
+          }
+        })
+      })
+    })
+  })
+})
+</script>
 </html>

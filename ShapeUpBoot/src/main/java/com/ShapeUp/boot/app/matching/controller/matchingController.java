@@ -8,9 +8,11 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -149,11 +151,25 @@ public class matchingController {
 		mAppDTO.setMatchingAppliNo(loginUserNo);
 		return mService.matchApplication(mAppDTO);
 	}
+	// 매칭 삭제
+	@DeleteMapping("/matching/delete")
+	@ResponseBody
+	public int matchingDelete(@RequestParam("matchingNo") int matchingNo) {
+		return mService.matchingDelete(matchingNo);
+	}
 
 	// 매칭 삭제/복구 (deleteYn: Y/N)
 	@RequestMapping(value = "/matching/delete", method = { RequestMethod.POST, RequestMethod.PATCH })
 	@ResponseBody
 	public int updateDeleteYn(@RequestParam int matchingNo, @RequestParam String deleteYn) {
 		return mService.updateDeleteYn(matchingNo, deleteYn);
+	}
+	
+	// 예약 취소
+	@DeleteMapping("/apply/cancel")
+	@ResponseBody
+	public int applyDelete(@RequestParam("matchingNo") int matchingNo,
+			@RequestParam("userNo") int userNo) {
+		return mService.applyDelete(matchingNo, userNo);
 	}
 }

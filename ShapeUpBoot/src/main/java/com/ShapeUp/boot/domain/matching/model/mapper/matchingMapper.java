@@ -48,7 +48,13 @@ public interface matchingMapper{
 
 	/* 매칭 중복 방지 */
 	int getMatchDedupe(int loginUserNo, int matchingNo);
-
+	
 	int updateDeleteYn(@Param("matchingNo") int matchingNo, @Param("deleteYn") String deleteYn);
+	
+	/* 매칭 삭제 */
+	int matchingDelete(int matchingNo);
+	
+	/* 예약 취소 */
+	int applyDelete(int matchingNo, int userNo);
 
 }

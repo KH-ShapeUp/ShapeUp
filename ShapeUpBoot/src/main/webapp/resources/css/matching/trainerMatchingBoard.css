@@ -1,3 +1,10 @@
+:root {
+    --main-color : #0A84FF;
+    --txt-color : #111;
+    --border-color : #ddd;
+    --box-shadow : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
 /* 게시글 wrapper */
 .matching-board-wrapper {
     width: 100%;
@@ -13,13 +20,16 @@
 .search-wrapper {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
     padding: 14px 18px;
+    justify-content: space-between;
 }
 
 /* form 내부 */
-.search-wrapper form {
+.search-wrapper .form {
     display: flex;
     align-items: center;
     gap: 18px;
@@ -275,6 +285,7 @@
 }
 
 .matching-footer .location,
+.matching-footer .status,
 .matching-footer .time,
 .matching-footer .badge,
 .matching-footer .user {
@@ -290,10 +301,31 @@
     margin-top: 3px;
 }
 
-.matching-footer span:nth-last-child(1) {
+.matching-footer .location-txt,
+.matching-footer .time-txt,
+.matching-footer .badge-txt,
+.matching-footer .userCount{
     font-size: .9rem;
     font-weight: 500;
     color: #444;
+}
+
+.status .status-txt {
+    color: var(--main-color);
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.status .status-txt-imminent {
+    color: #F25C5C;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.status .status-txt-finish {
+    color: #666;
+    font-size: .8rem;
+    font-weight: 600;
 }
 
 .detail-btn {
@@ -318,4 +350,73 @@
 .detail-btn:active {
     transform: scale(0.98);
     filter: brightness(1.05);
+}
+
+/* 페이징 */
+.pagination-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination button {
+    background-color: transparent;
+}
+
+.page-num {
+    padding: 8px 14px;
+    cursor: pointer;
+    border: none;
+    color: #111;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.page-num.active {
+    color: var(--main-color);
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.pagination .back {
+    position: absolute;
+    left: 0px; 
+}
+
+.pagination .next {
+    position: absolute;
+    right: 0px; 
+}
+
+.pagination .back,
+.pagination .next {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: .25s;
+    color: #111;
+    font-weight: 550;
+    font-size: .9rem;
+}
+
+.page-num:hover {
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.pagination .back:hover,
+.pagination .next:hover {
+    color: var(--main-color);
 }

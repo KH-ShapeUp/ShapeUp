@@ -369,6 +369,19 @@
     margin-top: 5px;
 }
 
+.input {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.errTxt {
+    font-size: .85rem;
+    font-weight: 600;
+    color: #999;
+}
+
 
 @media screen and (max-width: 768px) {
     .mobile-searchInput {display:none;}

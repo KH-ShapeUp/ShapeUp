@@ -33,6 +33,7 @@ public class matchingVO {
 	private double latitude;				// 위도			
 	private double longitude;				// 경도
 	private String locationUrl;
+	private String addrName;
 	
 	private int activityId;				// 활동 카테고리 id
 }
