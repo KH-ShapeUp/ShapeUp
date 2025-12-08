@@ -8,7 +8,7 @@
  		INSERT INTO MATCHING_TBL VALUES (SEQ_MATCH_NO.NEXTVAL, #{userNo}, #{matchingTitle}, #{matchingContent}, DEFAULT, NULL, DEFAULT,
  		#{matchingLocation}, #{matchingDate}, #{matchingLevel}, #{matchingTime}, 
  		#{partnerType}, DEFAULT, #{matchingUserCount}, #{activityId}, #{matchingPrice},
- 		NULL, NULL, NULL)
+ 		NULL, NULL, NULL, NULL)
  	</insert>
  	
  	<!-- 매칭 카테고리 리스트 -->
@@ -44,8 +44,13 @@
 	        M.MATCHING_USER_COUNT,
 	        (SELECT COUNT(*) 
 	        FROM MATCHING_APPLI_TBL A
-	        WHERE A.MATCHING_NO = M.MATCHING_NO) AS APPLICATION_COUNT,
-	
+	        WHERE A.MATCHING_NO = M.MATCHING_NO AND A.DELETE_YN = 'N') AS APPLICATION_COUNT,
+	        <!-- ⭐ 프로필 이미지 추가 -->
+		    (SELECT IMG_PATH || '/' || IMG_RENAME
+		     FROM USER_PROFILE_IMG_TBL 
+		     WHERE USER_NO = M.USER_NO 
+		     AND IMG_MAIN = 'Y'
+		     AND ROWNUM = 1) AS USER_PROFILE_IMG,
 			CASE
 			    -- 1. [마감] 날짜가 지났을 경우
 	            WHEN TO_DATE(M.MATCHING_DATE, 'YYYY-MM-DD') <![CDATA[ < ]]> TRUNC(SYSDATE) 
@@ -57,7 +62,7 @@
 	            THEN '마감'
 	            
 	            -- 3. [마감] 신청 인원이 모집 인원과 같거나 많을 경우 
-	            WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO) 
+	            WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO AND DELETE_YN = 'N') 
 	                 <![CDATA[ >= ]]> M.MATCHING_USER_COUNT
 	            THEN '마감'
 	            
@@ -159,7 +164,7 @@
  	<!-- 매칭 신청 버튼(삽입) -->
  	<insert id="matchinApplication">
  		INSERT INTO MATCHING_APPLI_TBL VALUES (
- 			#{matchingAppliNo}, #{userNo}, #{matchingNo}, DEFAULT, DEFAULT
+ 			#{matchingAppliNo}, #{userNo}, #{matchingNo}, DEFAULT, DEFAULT, 'userType', DEFAULT
  		)		
  	</insert>
  	
@@ -170,6 +175,16 @@
  	
  	<!-- 매칭 중복 선택 방지 -->
  	<select id="getMatchDedupe">
- 		SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_APPLI_NO = #{loginUserNo} AND MATCHING_NO = #{matchingNo}
+ 		SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_APPLI_NO = #{loginUserNo} AND MATCHING_NO = #{matchingNo} AND DELETE_YN ='N'
  	</select>
+ 	
+ 	<!-- 매칭 삭제 -->
+ 	<update id="matchingDelete">
+ 		UPDATE MATCHING_TBL SET DELETE_YN = 'Y' WHERE MATCHING_NO = #{matchingNo}
+ 	</update>
+ 	
+ 	<!-- 예약 취소 -->
+ 	<update id="applyDelete">
+ 		UPDATE MATCHING_APPLI_TBL SET DELETE_YN = 'Y' WHERE MATCHING_NO = #{matchingNo} AND MATCHING_APPLI_NO = ${userNo}
+ 	</update>
  </mapper>

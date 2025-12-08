@@ -26,7 +26,8 @@ public class communityListDTO {
 	private String goalDate;
 	private String userProfileImg;
 	
-	 
+	// 마이페이지 작성일
+	private String createdDay;
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }

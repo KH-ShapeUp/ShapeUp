@@ -8,7 +8,13 @@ import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.ShapeUp.boot.app.community.dto.communityListDTO;
+import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
+import com.ShapeUp.boot.domain.comment.model.vo.commentVO;
 import com.ShapeUp.boot.domain.user.model.vo.RequestPermissionVO;
+import com.ShapeUp.boot.domain.user.model.vo.ReviewVO;
+
 import java.util.List;
 
 @Mapper
@@ -169,5 +175,20 @@ public interface UserMapper {
     String selectUserProfileImgPath(int userNo);
     
     void updateUserStatus(UserVO user);
+
+    /* 게시글 가져오기 */
+	List<communityListDTO> getCommunityList(Integer userNo);
+
+	/* 댓글 가져오기 */
+	List<commentVO> getCommentList(Integer userNo);
+
+	/* 내가쓴 매칭 */
+	List<matchingListDTO> getMatchingList(Integer userNo);
+
+	/* 내가 예약한 매칭 */
+	List<matchingListDTO> getApplyMatchingList(Integer userNo);
+
+	/* 리뷰 작성 */
+	int reviewInsert(ReviewVO rVo);
 
 }

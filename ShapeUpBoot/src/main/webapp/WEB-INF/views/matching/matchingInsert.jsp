@@ -28,7 +28,7 @@
                         <span class="label">매칭 카테고리</span>
 
                         <button class="dropdown-header" id="CategoryHeader">
-                            <span>전체</span>
+                            <span id="categorySpan"></span>
                             <i class="fa-solid fa-angle-down"></i>
                         </button>
                         
@@ -44,7 +44,7 @@
                             </c:forEach>
                             </div>
                         </div>
-                        
+                        <span class="errMsg"></span>
                     </div>
 
                     <div class="matching-level-wrapper">
@@ -93,7 +93,7 @@
                         <span class="label" id="matching-label">매칭 지역</span>
 
                         <button class="dropdown-header" id="locationHeader">
-                            <span>전체</span>
+                            <span id="locationSpan">전체</span>
                             <i class="fa-solid fa-angle-down"></i>
                         </button>
                         
@@ -120,7 +120,10 @@
                     <div class="form-group" id="form-price">
                         <i class="fa-solid fa-wallet"></i>
                         <label for="matchingPrice">매칭 가격</label>
-                        <input type="text" name="matchingPrice" id="matchingPrice" min="0" max="1000000">
+                        <div class="input">
+                            <input type="text" name="matchingPrice" id="matchingPrice" min="0" max="1000000">
+                            <span class="errTxt">원</span>
+                        </div>
                         <span class="errMsg"></span>
                     </div>
 
@@ -133,7 +136,10 @@
                     <div class="form-group" id="form-user">
                         <i class="fa-solid fa-users"></i>
                         <label for="userCount">매칭 인원 수</label>
-                        <input type="number" name="userCount" id="userCount" min="0">
+                        <div class="input">
+                            <input type="number" name="userCount" id="userCount" min="0">
+                            <span class="errTxt">명</span>
+                        </div>
                         <span class="errMsg"></span>
                     </div>
                 </div>
@@ -155,7 +161,7 @@
         /*       지역 선택 드롭다운       */
         /* ============================== */
         const locationHeader = document.querySelector("#locationHeader");
-        const locationSpan = document.querySelector("#locationHeader span");
+        const locationSpan = document.querySelector("#locationSpan");
         const locationFilterBox = locationHeader.nextElementSibling;
 
         /* 헤더 클릭 시 토글 */
@@ -188,7 +194,7 @@
         /*     매칭 카테고리 드롭다운     */
         /* ============================== */
         const categoryHeader = document.querySelector("#CategoryHeader");
-        const categorySpan = document.querySelector("#CategoryHeader span");
+        const categorySpan = document.querySelector("#categorySpan");
         const categoryFilterBox = categoryHeader.nextElementSibling;
 
         categoryHeader.addEventListener("click", () => {
@@ -294,9 +300,10 @@
         /* ============================== */
         /*         매칭 게시글 삽입       */
         /* ============================== */
-        function saveFun() {
+        function saveFun() {            
             const inputs = [
                 {el: document.querySelector("#matchingTitle"), msg : "매칭 제목을 입력해주세요."},
+                {el: document.querySelector("#categorySpan"), msg : "매칭 카테고리를 선택해주세요."},
                 {el: document.querySelector("#matchingContent"), msg : "매칭 내용을 입력해주세요."},
                 {el: document.querySelector("#matchingDay"), msg : "매칭 날짜를 입력해주세요."},
                 {el: document.querySelector("#matchingTime"), msg : "매칭 시간을 입력해주세요."},
@@ -304,35 +311,52 @@
                 {el: document.querySelector("#partnerType"), msg : "파트너 타입을 입력해주세요."},
                 {el: document.querySelector("#userCount"), msg : "모집 인원 수를 입력해주세요."}
             ]
-
+            
             document.querySelectorAll(".errMsg").forEach(span => {
                 span.innerText = '';
             });
-
+            
+            const numberRegex = /^[0-9]+$/;
+            
             for(let i = 0; i < inputs.length; i++) {
                 const input  = inputs[i];
-                const value = input.el.value.trim();
                 const errSpan = document.querySelectorAll(".errMsg")[i];
+                const targetId = input.el.id;
 
-                input.el.style.border = ''; 
+                let value = "";
+
+                if (targetId === "categorySpan") {
+                    value = input.el.innerText.trim();
+                    document.querySelector("#CategoryHeader").style.border = '';
+                } else {
+                    value = input.el.value.trim();
+                    input.el.style.border = '';
+                }
+
                 errSpan.innerText = '';
+            
 
                 if(value === '') {
-                    const price = document.querySelector(".fa-wallet");
-                    input.el.style.border = '1.5px solid #ff3b00';
                     errSpan.innerText = input.msg;
-                    price.style.top = 43 + "%";
-                    input.el.focus(); // 오류난 input에 포커스
-                    return; 
+
+                   if (targetId === "categorySpan") {
+                        document.querySelector("#CategoryHeader").style.border = '1.5px solid #ff3b00';
+                    } else {
+                        input.el.style.border = '1.5px solid #ff3b00';
+                        input.el.focus();
+                    }
+                    return;
+                }
+
+                if (targetId === "matchingPrice" || targetId === "userCount") {
+                    if(!numberRegex.test(value)) {
+                        input.el.style.border = '1.5px solid #ff3b00';
+                        errSpan.innerText = '숫자만 입력해주세요.';
+                        input.el.focus();
+                        return;
+                    }
                 }
             }
-    
-            if(matchingTitle.value.trim() === '') {
-                matchingTitle.style.border = '1.5px solid #ff3b00';
-                errMsg.innerText = '매칭 제목을 입력해주세요.';
-                return;
-            }
-
 
             const level = document.querySelector("input[name='matchingLevel']:checked").value;
             const matchingData = {

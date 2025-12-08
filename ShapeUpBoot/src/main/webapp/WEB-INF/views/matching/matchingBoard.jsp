@@ -322,23 +322,18 @@
                     badgeClass = 'ing';
                 }
 
-                // ⭐⭐⭐ 프로필 이미지 처리 (핵심 수정 부분)
-                let profileImgSrc = '';
-                if (match.userProfileImg && match.userProfileImg !== '') {
-                    // DB에서 프로필 이미지 경로가 있는 경우
-                    profileImgSrc = contextPath + match.userProfileImg;
-                } else {
-                    // 기본 이미지
-                    profileImgSrc = contextPath + '/resources/img/default-profile.png';
-                }
+
+                const imgTag = match.userProfileImg
+                    ? `<img src="\${match.userProfileImg}" width="50" alt="프로필">`
+                    : `<img src="../../resources/img/default-profile.png" width="50" alt="기본 프로필">`;
+
+
 
                 matchingList.innerHTML += `
                     <div class="matching-card" data-id="\${match.matchingNo}">
                         <div class="matching-card-header">
                             <div class="card-img">
-                                <img src="\${profileImgSrc}" 
-                                     alt="프로필 이미지"
-                                     onerror="this.src='\${contextPath}/resources/img/default-profile.png'">
+                               \${imgTag}
                             </div>
                             <div class="card-user-wrapper">
                                 <div class="card-user-info">
@@ -438,7 +433,6 @@
                 })
                 .then(res => res.json())
                 .then(result => {
-                    console.log(result);
                     if(result > 0) {
                         Swal.fire({
                             icon: 'success',
@@ -512,7 +506,6 @@
                     }
                 })
                 .catch(err => {
-                    console.error(err);
                     Swal.fire({
                         icon:'error',
                         title: '매칭 신청 실패..ㅠ',

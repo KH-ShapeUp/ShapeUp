@@ -22,8 +22,19 @@ searchPlaces();
 function searchPlaces() {
     var keyword = document.getElementById('keyword').value;
 
-    if (!keyword.replace(/^\s+|\s+$/g, '')) {
-        alert('키워드를 입력해주세요!');
+    if (!keyword.replace(/^\s+|\s+$/g, ''))  {
+        Swal.fire({
+            icon:'warning',
+            title: '키워드를 입력해주세요.',
+            text: '다시 시도 해주세요.',
+            confirmButtonText: '확인',
+            customClass: {
+                popup: 'error-popup',
+                title: 'error-title',
+                text: 'error-text',
+                confirmButton: 'error-button'
+            }
+        });
         return false;
     }
 
@@ -60,7 +71,18 @@ function placesSearchCB(data, status, pagination) {
 
     } else if (status === kakao.maps.services.Status.ERROR) {
         
-        alert('검색 결과 중 오류가 발생했습니다.');
+        Swal.fire({
+            icon:'error',
+            title: '오류가 발생했습니다.',
+            text: '다시 시도 해주세요.',
+            confirmButtonText: '확인',
+            customClass: {
+                popup: 'error-popup',
+                title: 'error-title',
+                text: 'error-text',
+                confirmButton: 'error-button'
+            }
+        });
         return;
     }
 }
@@ -97,25 +119,26 @@ function displayPlaces(places) {
             
             // 마커 클릭 시
             kakao.maps.event.addListener(marker, 'click', function () {
-                displayInfowindow(marker, place.place_name);
-
+                displayInfowindow(marker, place, place.place_name);
                 document.querySelector("#matchingLocation").value = place.place_name;
                 document.querySelector("#locationInputHidden").value = place.place_name;
                 document.querySelector("#latHidden").value = place.y; // 위도
                 document.querySelector("#lngHidden").value = place.x; // 경도
                 document.querySelector("#urlHidden").value = place.place_url;
+                document.querySelector("#addrNameHidden").value = place.address_name;
             });
-
+            
             // 리스트 클릭 시
             itemEl.onclick = function () {
                 displayInfowindow(marker, place.place_name);
-
                 document.querySelector("#matchingLocation").value = place.place_name;
                 document.querySelector("#locationInputHidden").value = place.place_name;
                 document.querySelector("#latHidden").value = place.y; // 위도
                 document.querySelector("#lngHidden").value = place.x; // 경도
                 document.querySelector("#urlHidden").value = place.place_url;
+                document.querySelector("#addrNameHidden").value = place.address_name;
                 console.log("이름", place.place_name, "위도 :", place.y, "경도:", place.x, "주소", place.place_url);
+                console.log(place.address_name);
                 
                 // 클릭 시 해당 위치로 이동 (선택 사항)
                 map.panTo(marker.getPosition()); 

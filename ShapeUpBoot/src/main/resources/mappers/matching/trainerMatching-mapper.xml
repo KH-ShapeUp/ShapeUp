@@ -8,7 +8,7 @@
  		INSERT INTO MATCHING_TBL VALUES (SEQ_MATCH_NO.NEXTVAL, #{userNo}, #{matchingTitle}, #{matchingContent}, DEFAULT, NULL, DEFAULT,
  		#{matchingLocation}, NULL, NULL, #{matchingTime}, 
  		#{partnerType}, #{matchingType}, #{matchingUserCount}, NULL, #{matchingPrice},
- 		#{longitude}, #{latitude}, #{locationUrl})
+ 		#{longitude}, #{latitude}, #{locationUrl}, #{addrName})
  	</insert>
  	<!-- 리스트 -->
  	<select id="trainerMatchingList">
@@ -23,14 +23,57 @@
  			M.MATCHING_USER_COUNT,
  			M.CREATED_AT,
  			U.USER_NAME,
+ 			U.USER_PHONE,
  			PER.CAREER,
- 			(SELECT COUNT(*) FROM MATCHING_APPLI_TBL AT WHERE AT.MATCHING_NO = M.MATCHING_NO) AS applicationCount
+ 			(SELECT COUNT(*) FROM MATCHING_APPLI_TBL AT WHERE AT.MATCHING_NO = M.MATCHING_NO AND AT.DELETE_YN = 'N') AS APPLYCOUNT,
+ 			<!-- ⭐ 프로필 이미지 추가 -->
+		    (SELECT IMG_PATH || '/' || IMG_RENAME
+		     FROM USER_PROFILE_IMG_TBL 
+		     WHERE USER_NO = M.USER_NO 
+		     AND IMG_MAIN = 'Y'
+		     AND ROWNUM = 1) AS USER_PROFILE_IMG,
+			
+			CASE 
+				WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO AND DELETE_YN = 'N')
+					 <![CDATA[ >= ]]> M.MATCHING_USER_COUNT
+				THEN '마감'
+				
+				WHEN (M.MATCHING_USER_COUNT - (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO AND DELETE_YN = 'N'))
+					<![CDATA[ <= ]]> 2
+				THEN '마감임박'
+				ELSE '모집중'
+			END AS MATCHING_STATUS
  		FROM MATCHING_TBL M
  		JOIN USER_TBL U ON M.USER_NO = U.USER_NO
  		JOIN REQUEST_PERMISSION PER ON M.USER_NO = PER.USER_NO
- 		WHERE M.DELETE_YN = 'N' AND
- 		M.MATCHING_TYPE = 'TRAINER'
+ 		
+ 		<where>
+ 			M.DELETE_YN = 'N' AND
+	 		M.MATCHING_TYPE = 'TRAINER'
+	 		<if test="category != null and category != ''">
+	 			AND M.ADDR_NAME LIKE '%'||#{category}||'%'
+	 		</if>
+	 		<if test="keyword != null and keyword != ''">
+	 			AND (M.MATCHING_TITLE LIKE '%'||#{keyword}||'%'
+	 			OR M.PARTNER_TYPE LIKE '%'||#{keyword}||'%')
+	 		</if>
+ 		</where>
  		ORDER BY M.CREATED_AT DESC
+ 	</select>
+ 	
+ 	<select id="getTotalCount">
+ 		SELECT COUNT(*) FROM MATCHING_TBL
+ 		<where>
+ 			MATCHING_TYPE = 'TRAINER'
+ 			AND DELETE_YN = 'N'
+ 			<if test="category != null and category != ''">
+	 			AND ADDR_NAME ='%'||#{category}||'%'
+	 		</if>
+	 		<if test="keyword != null and keyword != ''">
+	 			AND (MATCHING_TITLE LIKE '%'||#{keyword}||'%'
+	 			OR PARTNER_TYPE LIKE '%'||#{keyword}||'%')
+	 		</if>
+ 		</where>
  	</select>
  	<!-- 디테일 -->
  	<select id="trainerMatchingDetailList">
@@ -50,7 +93,25 @@
  			M.LOCATION_URL,
  			U.USER_NAME,
  			PER.CAREER,
- 			PER.CAREER_DETAIL
+ 			PER.CAREER_DETAIL,
+ 			U.USER_PHONE,
+ 			(SELECT COUNT(*) FROM MATCHING_APPLI_TBL AT WHERE AT.MATCHING_NO = M.MATCHING_NO ) AS APPLYCOUNT,
+ 			<!-- ⭐ 프로필 이미지 추가 -->
+		    (SELECT IMG_PATH || '/' || IMG_RENAME
+		     FROM USER_PROFILE_IMG_TBL 
+		     WHERE USER_NO = M.USER_NO 
+		     AND IMG_MAIN = 'Y'
+		     AND ROWNUM = 1) AS USER_PROFILE_IMG,
+ 			CASE 
+				WHEN (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO)
+					 <![CDATA[ >= ]]> M.MATCHING_USER_COUNT
+				THEN '마감'
+				
+				WHEN (M.MATCHING_USER_COUNT - (SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_NO = M.MATCHING_NO))
+					<![CDATA[ <= ]]> 2
+				THEN '마감임박'
+				ELSE '모집중'
+			END AS MATCHING_STATUS
  		FROM MATCHING_TBL M 
  		JOIN USER_TBL U ON M.USER_NO = U.USER_NO
  		JOIN REQUEST_PERMISSION PER ON M.USER_NO = PER.USER_NO
@@ -58,10 +119,31 @@
  		AND M.MATCHING_TYPE = 'TRAINER' 
  		AND M.MATCHING_NO = #{matchingNo}
  	</select>
+
  	<!-- 삭제 / 복구 상태 변경 -->
  	<update id="updateDeleteYn">
     UPDATE MATCHING_TBL
     SET DELETE_YN = #{deleteYn}
     WHERE MATCHING_NO = #{matchingNo}
 	</update>
+
+ 	<!-- 작성자 번호 -->
+ 	<select id="getWriterUserNo">
+ 		SELECT USER_NO FROM MATCHING_TBL WHERE MATCHING_NO = #{matchingNo}
+ 	</select>
+ 	<!--  매칭 중복 방지 -->
+ 	<select id="matchingDedpue">
+ 		SELECT COUNT(*) FROM MATCHING_APPLI_TBL WHERE MATCHING_APPLI_NO = #{loginUserNo} AND MATCHING_NO = #{matchingNo}
+ 	</select>
+ 	<!-- 매칭 신청 -->
+ 	<insert id="matchingApply">
+ 		INSERT INTO MATCHING_APPLI_TBL VALUES (
+ 			#{matchingAppliNo}, #{userNo}, #{matchingNo}, DEFAULT, DEFAULT, 'trainerType', DEFAULT
+ 		)	
+ 	</insert>
+ 	<!-- 매칭 삭제 -->
+ 	<update id="deleteMatching">
+ 		UPDATE MATCHING_TBL SET DELETE_YN = 'Y' WHERE MATCHING_NO = #{matchingNo}
+ 	</update>
+
  </mapper>

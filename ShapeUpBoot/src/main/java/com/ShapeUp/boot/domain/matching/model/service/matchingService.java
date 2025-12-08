@@ -38,5 +38,11 @@ public interface matchingService {
 
 	/* 매칭 중복 방지 */
 	int matchDedupe(int loginUserNo, int matchingNo);
+
+	/* 매칭 삭제 */
+	int matchingDelete(int matchingNo);
+
+	/* 매칭 취소 */
+	int applyDelete(int matchingNo, int userNo);
 	
 }

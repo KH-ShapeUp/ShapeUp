@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ShapeUp.boot.app.community.dto.communityListDTO;
+import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 import com.ShapeUp.boot.app.user.mail.MailService;
 import com.ShapeUp.boot.domain.user.model.service.UserService;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
@@ -30,12 +32,13 @@ import com.ShapeUp.boot.domain.user.model.vo.UserVO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import com.ShapeUp.boot.domain.comment.model.vo.commentVO;
 import com.ShapeUp.boot.domain.user.model.service.RequestPermissionService;
 import com.ShapeUp.boot.domain.user.model.vo.RequestPermissionVO;
+import com.ShapeUp.boot.domain.user.model.vo.ReviewVO;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -798,10 +801,26 @@ public class UserController {
     public String updateUserInfo(HttpSession session, Model model) {
         Integer userNo = (Integer) session.getAttribute("userNo");
         
+        /* 게시글 가져오기 */
+        List<communityListDTO> cList = userService.getCommunityList(userNo);
+        model.addAttribute("cList", cList);
+        
+        /* 댓글 리스트 */
+        List<commentVO> cmList = userService.getCommentList(userNo);
+        model.addAttribute("cmList", cmList);
+        
+        /* 내가쓴 매칭 */
+        List<matchingListDTO> mList = userService.getMatchingList(userNo);
+        System.out.println("매칭 리스트" + mList);
+        model.addAttribute("mList", mList);
+        model.addAttribute("userNo", userNo);
+        
+        /* 예약한 매칭 */
+        List<matchingListDTO> aList = userService.getApplyMatchingList(userNo);
+        model.addAttribute("aList", aList);
         if (userNo == null) {
             return "redirect:/user/login";
         }
-        
         // 사용자 정보 조회
         UserVO user = userService.selectUserByUserNo(userNo);
         
@@ -1647,5 +1666,12 @@ public class UserController {
 	     }
 	     
 	     return response;
+	 }
+	 
+	 /* 리뷰 작성 */
+	 @PostMapping("/review")
+	 @ResponseBody
+	 public int reviewInsert(@RequestBody ReviewVO rVo) {		 
+		 return userService.reviewInsert(rVo);
 	 }
 }

@@ -1,5 +1,11 @@
 package com.ShapeUp.boot.domain.user.model.service;
 
+import java.util.List;
+
+import com.ShapeUp.boot.app.community.dto.communityListDTO;
+import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
+import com.ShapeUp.boot.domain.comment.model.vo.commentVO;
+import com.ShapeUp.boot.domain.user.model.vo.ReviewVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserInterestVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;
 import com.ShapeUp.boot.domain.user.model.vo.UserVO;
@@ -97,7 +103,19 @@ public interface UserService {
      * @return 프로필 이미지 전체 경로 (IMG_PATH || '/' || IMG_RENAME)
      */
     String getUserProfileImg(int userNo);
-    
+
     void updateUserStatus(UserVO user) ;
     
+
+
+    /* 게시물 가져오기 */
+	List<communityListDTO> getCommunityList(Integer userNo);
+	/* 댓글 가져오기 */
+	List<commentVO> getCommentList(Integer userNo);
+	/* 내가쓴 매칭 */
+	List<matchingListDTO> getMatchingList(Integer userNo);
+	/* 예약한 매칭 */
+	List<matchingListDTO> getApplyMatchingList(Integer userNo);
+	/* 리뷰 쓰기 */
+	int reviewInsert(ReviewVO rVo);
 }

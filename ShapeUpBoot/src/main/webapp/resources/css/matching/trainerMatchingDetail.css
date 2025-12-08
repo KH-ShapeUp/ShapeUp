@@ -70,14 +70,15 @@
     display: flex;
     flex-direction: row;
     gap: 20px;
+    align-items: flex-start; /* 핵심! 서로 높이를 억지로 맞추지 않게 함 */
 }
 
 .board-wrapper-left {
-    max-height: 520px;
     display: flex;
+    height: auto;
     flex-direction: column;
     border-radius: 12px;
-    flex: 1;
+    flex: 0 0 400px;
     gap: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
@@ -97,11 +98,14 @@
     border-radius: 50%;
     object-fit: cover;
 }
+
 .user-info {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
+
 .user-info .user-name {
     font-size: 1rem;
     font-weight: 550;
@@ -218,9 +222,64 @@
     background-color: var(--main-color);
     border-radius: 8px;
     font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.setting {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+}
+.setting-left{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.setting-left a {
+    color: #111;
+    text-decoration: none;
+    font-size: .95rem;
+    font-weight: 500;
+}
+
+.setting-left button {
+    color: #ff3b00;
+    border: none;
+    background-color: #fff;
+    font-size: .95rem;
     font-weight: 500;
     cursor: pointer;
 }
+
+.setting-left a:hover,
+.setting-left button:hover {
+    text-decoration: underline;
+}
+
+#applyBtnImminent {
+    width: 100%;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border: none;
+    color: #F25C5C;
+    background-color: #FFE4D9;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#applyBtn:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;       
+    pointer-events: none;   
+}
+
 /* 커리어 디테일 */
 .badge {
     cursor: pointer;
@@ -231,26 +290,57 @@
     font-size: .85rem;
     font-weight: 600;
 }
+
 .career-detail {
-    gap: 5px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 15px; /* 여백 조금 늘림 */
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background-color: #fff;
+    background-color: #f1f1f1;
+    background-color: #f8f9fa; /* 배경색 살짝 변경 */
+    gap: 10px;
 }
+
+.career-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    /* 핵심: 높이 제한과 스크롤 */
+    max-height: 150px; /* 원하는 높이로 조절하세요 (예: 150px ~ 200px) */
+    overflow-y: auto;  /* 내용이 넘치면 세로 스크롤 생성 */
+}
+
+.career-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.career-list::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    background-color: var(--main-color);
+}
+.career-txt {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+
 
 /* 정보 부분 */
 
 .board-wrapper-right {
+    box-shadow: var(--box-shadow);
     border-radius: 12px;
     position: relative;
     display: flex;
     height: 80vh;
     flex-direction: column;
     overflow: hidden;
-    flex: 2;
+    flex: 1;
 }
 
 #map {

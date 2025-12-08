@@ -85,4 +85,16 @@ public class matchingServiceImpl implements matchingService{
 		return mMapper.getMatchDedupe(loginUserNo, matchingNo);
 	}
 
+	/* 매칭 삭제 */
+	@Override
+	public int matchingDelete(int matchingNo) {
+		return mMapper.matchingDelete(matchingNo);
+	}
+
+	/* 매칭 취소 */
+	@Override
+	public int applyDelete(int matchingNo, int userNo) {
+		return mMapper.applyDelete(matchingNo, userNo);
+	}
+
 }

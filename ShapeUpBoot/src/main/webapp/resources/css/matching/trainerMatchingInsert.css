@@ -18,6 +18,14 @@
     overflow: hidden;
 }
 
+.errMsg {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #ff3b00;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 #map {
     width: 100%;
     height: 100%;
@@ -25,6 +33,19 @@
     top: 0;
     left: 0;
     z-index: 1;
+}
+
+.input {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.errTxt {
+    font-size: .85rem;
+    font-weight: 600;
+    color: #999;
 }
 
 /* 메뉴 전체 래퍼 (검색창 + 리스트) - 지도 위에 투명하게 덮어씌움 */

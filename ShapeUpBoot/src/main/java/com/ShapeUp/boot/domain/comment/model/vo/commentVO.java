@@ -29,7 +29,9 @@ public class commentVO {
 	private String timeAgo;      // 상대 시간 문자열
 	private String userProfileImg;
 	
-	 
+	
+	/* 마이 페이지 */
+	private String createdDay;
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }

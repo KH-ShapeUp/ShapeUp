@@ -17,64 +17,91 @@
 					<div class="board-wrapper-left">
 						<div class="left-top">
 							<div class="user-img">
-								<!-- ⭐ 프로필 이미지 동적 처리 -->
+
 								<c:choose>
-									<c:when test="${not empty mList.userProfileImg}">
-										<img src="${pageContext.request.contextPath}${mList.userProfileImg}" 
-										     alt="프로필 이미지"
-										     onerror="this.src='${pageContext.request.contextPath}/resources/img/default-profile.png'">
+									<c:when test="${not empty tmdList.userProfileImg}">
+										<img src="${tmdList.userProfileImg}" width="50" alt="프로필">
 									</c:when>
 									<c:otherwise>
-										<img src="${pageContext.request.contextPath}/resources/img/default-profile.png" 
-										     alt="기본 프로필">
+										<img src="../../../resources/img/default-profile.png" width="50" alt="기본 프로필">
 									</c:otherwise>
 								</c:choose>
 							</div>
 							<div class="user-info">
-								<span class="user-name">${mList.userName}</span>								
-								<span class="created-date">${mList.timeAgo}</span>
+								<div class="setting-left">
+									<span class="user-name">${tmdList.userName }</span>								
+									<div class="setting">
+										<c:choose>
+											<c:when test="${tmdList.userNo == userNo}">
+												<a href="#">수정</a>
+												<button onclick="matchingDelete('${tmdList.matchingNo}');">삭제</button>
+											</c:when>
+											<c:when test="${userType == 'SYSTEM_MANAGER'}">
+												<button onclick="matchingDelete('${tmdList.matchingNo}');">삭제</button>
+											</c:when>
+										</c:choose>
+									</div>
+								</div>
+								<span class="created-date">${tmdList.timeAgo }</span>
 							</div>
 						</div>
 						<div class="matching-category">
 							<div class="info">
-								<span class="category"># ${mList.partnerType}</span>
+								<span class="category"># ${tmdList.partnerType }</span>
 							</div>
 							<div class="user-view">
 								<img src="../../../resources/img/star.png">
 								<span class="viewAvg">4.8</span>
 								<span class="viewCount">(10)</span>
 							</div>
-							<div class="left-title">${mList.matchingTitle}</div>
+							<div class="left-title">${tmdList.matchingTitle }</div>
+
 						</div>
 						<div class="left-middle">
-							<dic class="left-content">${mList.matchingContent}</dic>
+							<dic class="left-content">${tmdList.matchingContent }</dic>
 						</div>
 						<div class="matching-footer">
 							<p class="matching-info">매칭 정보</p>
 							<div class="location">
 								<span class="material-symbols-outlined">location_on</span>
-								<span class="location-txt">${mList.matchingLocation}</span>
+								<span class="location-txt">${tmdList.matchingLocation}</span>
+							</div>
+							<div class="location">
+								<span class="material-symbols-outlined">phone_enabled</span>
+								<span class="location-txt">${tmdList.userPhone}</span>
 							</div>
 							<div class="time">
 								<span class="material-symbols-outlined">schedule</span>
-								<span class="time-txt">${mList.matchingTime}</span>
+								<span class="time-txt">${tmdList.matchingTime}</span>
 							</div>
 							<div class="badge">
 								<span class="material-symbols-outlined">editor_choice</span>
-								<span class="badge-txt">${mList.career}</span>							
+								<span class="badge-txt">${tmdList.career}</span>							
 							</div>
-							<div class="career-detail hidden">
-								<span class="badge-title">상세 정보</span>
-								<span class="badge-txt">${mList.careerDetail}</span>
+							<div class="career-detail">
+							    <span class="badge-title">경력 상세 정보</span>
+							    <ul class="career-list">
+							        <c:forEach var="career" items="${tmdList.careerInfo}">
+							            <li class="career-txt">- ${career}</li>
+							        </c:forEach>
+							    </ul>
 							</div>
 							<div class="user">
 								<span class="material-symbols-outlined">groups</span>
-								<span class="user-txt">${mList.matchingUserCount} 명</span>
+								<span class="user-txt">${tmdList.applyCount}/${tmdList.matchingUserCount} 명</span>
 							</div>
+							<c:choose>
+								<c:when test="${tmdList.matchingStatus == '마감임박'}">
+									<button type="button" id="applyBtnImminent"  onclick="applyBtn('${tmdList.matchingNo}', '${tmdList.userNo}');">마감 임박</button>
+								</c:when>
+								<c:when test="${tmdList.matchingStatus == '마감'}">
+									<button type="button" id="applyBtn" disabled>마감</button>
+								</c:when>
+								<c:otherwise>
+									<button type="button" id="applyBtn" onclick="applyBtn('${tmdList.matchingNo}', '${tmdList.userNo}');">신청하기</button>
+								</c:otherwise>
+							</c:choose>
 						</div>
-						<button type="button" id="applyBtn">
-							신청하기
-						</button>
 					</div>
 					<div class="board-wrapper-right">
  						<div id="map"></div>
@@ -86,10 +113,10 @@
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1382c885f22984e6547b8e00aa6fab29"></script>
 	<script>	
 		document.addEventListener("DOMContentLoaded", function () {
-			var placeName = "${mList.matchingLocation}";
-			var lat = "${mList.latitude}";
-			var lng = "${mList.longitude}";		
-			var detailInfo = "${mList.locationUrl}";
+			var placeName = "${tmdList.matchingLocation}";
+			var lat = "${tmdList.latitude}";
+			var lng = "${tmdList.longitude}";		
+			var detailInfo = "${tmdList.locationUrl}";
 
 			var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 			mapOption = { 
@@ -158,6 +185,189 @@
 			});
 		});
 		
+
+		function applyBtn(matchingNo, userNo) {
+			console.log(matchingNo);
+			console.log(userNo);
+			Swal.fire({
+				title: '해당 매칭을 신청하시겠습니까?',
+				showCancelButton: true,
+				cancelButtonText: "취소하기",
+				confirmButtonText: "신청하기",
+				customClass: {
+					popup: 'success-popup',
+					title: 'success-title',
+					confirmButton: 'success-button',
+					cancelButton: 'cancel-button'
+				}
+			}).then(result => {
+				if(result.isConfirmed) {
+					fetch("/trainer/apply", {
+						method: "post",
+						headers: {"Content-Type":"application/json"},
+						body: JSON.stringify({
+							matchingNo: matchingNo,
+							userNo: userNo
+						})
+					})
+					.then(res => res.json())
+					.then(result => {
+						if(result > 0) {
+							Swal.fire({
+								icon: 'success',
+								title: '매칭 신청완료!',
+								text: '승인전까지 기다려주세요!',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'success-popup',
+									title: 'success-title',
+									confirmButton: 'success-button',
+								}
+							}).then(() => {
+								location.reload();
+							});
+						/* 자기가쓴 매칭 신청 방지 */
+						} else if (result == -33) {
+							Swal.fire({
+								icon:'warning',
+								title: '자기가 쓴 매칭을 \n 신청할 수 없습니다..ㅠ',
+								text: '다른 매칭을 신청해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							});
+						/* 재신청 방지 */
+						} else if (result == -55) {
+							Swal.fire({
+								icon:'warning',
+								title: '이미 신청한 매칭입니다.',
+								text: '다른 매칭을 신청해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							}); 
+						} else if (result == -99) {
+						 	Swal.fire({
+								icon:'warning',
+								title: '로그인이 필요한 서비스입니다.',
+								text: '로그인 후 이용해주세요.',
+								confirmButtonText: '로그인 하러가기',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}, 
+								didClose: () => {
+									location.href="/user/login";
+								}
+                        	});
+						} else {
+						 	Swal.fire({
+								icon:'error',
+								title: '매칭 신청 실패..ㅠ',
+								text: '다시 시도 해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							});
+						}
+					})
+					.catch(err => {
+						Swal.fire({
+							icon:'error',
+							title: '매칭 신청 실패..ㅠ',
+							text: '다시 시도 해주세요.',
+							confirmButtonText: '확인',
+							customClass: {
+								popup: 'error-popup',
+								title: 'error-title',
+								text: 'error-text',
+								confirmButton: 'error-button'
+							}
+						});
+					})
+				}
+			})
+		}
+
+		function matchingDelete(matchingNo) {
+			Swal.fire({
+				title: '삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '삭제',
+				cancelButtonText: '취소',
+				customClass: {
+					popup: 'success-popup',
+					title: 'success-title',
+					confirmButton: 'success-button',
+					cancelButton: 'cancel-button'
+				}
+			}).then((result) => {
+				if (result.isConfirmed) {
+					fetch("/trainer/detail?matchingNo=" + matchingNo, {
+						method: 'delete',
+						headers: {"Content-Type":"application/json"}
+					})
+					.then(res => res.json())
+					.then(result => {
+						if(result > 0) {
+							Swal.fire({
+								icon: 'success',
+								title: '삭제 완료!',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'success-popup',
+									title: 'success-title',
+									confirmButton: 'success-button',
+								}
+							}).then(() => {
+								location.href="/trainer/matching/board";
+							});
+						} else {
+							Swal.fire({
+								icon:'error',
+								title: '삭제 실패..ㅠ',
+								text: '다시 시도 해주세요.',
+								confirmButtonText: '확인',
+								customClass: {
+									popup: 'error-popup',
+									title: 'error-title',
+									text: 'error-text',
+									confirmButton: 'error-button'
+								}
+							});
+						}
+					})
+					.catch(err => {
+						Swal.fire({
+                            icon:'error',
+                            title: '오류가 발생하였습니다.',
+                            text: err,
+                            confirmButtonText: '확인',
+                            customClass: {
+                                popup: 'error-popup',
+                                title: 'error-title',
+                                text: 'error-text',
+                                confirmButton: 'error-button'
+                            }
+                        });
+					})
+				}
+			})
+		}
 	</script>
 </body>
 </html>
