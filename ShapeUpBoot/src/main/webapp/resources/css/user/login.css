@@ -114,9 +114,9 @@
     transition: 0.25s;
 }
 
-.form-group input[type='password'] {
+/*.form-group input[type='password'] {
     padding-right: 35px;
-}
+}*/
 
 .form-group input:focus {
     border-color: #0A84FF;

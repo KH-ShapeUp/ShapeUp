@@ -32,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.ShapeUp.boot.domain.user.model.service.RequestPermissionService;
 import com.ShapeUp.boot.domain.user.model.vo.RequestPermissionVO;
 import java.io.File;
@@ -250,25 +252,30 @@ public class UserController {
         try {
             log.info("✅ 소셜 로그인 추가 정보 업데이트 시작 - 닉네임: {}", nickname);
             
-            UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+            // ⭐ 변경: loginUser 대신 임시 세션 정보 사용
+            String tempEmail = (String) session.getAttribute("tempSocialEmail");
+            String tempName = (String) session.getAttribute("tempSocialName");
+            String tempProvider = (String) session.getAttribute("tempSocialProvider");
+            Integer tempUserNo = (Integer) session.getAttribute("tempSocialUserNo");
             
-            if (loginUser == null) {
-                log.error("❌ 세션에 loginUser가 없음");
-                model.addAttribute("errorMsg", "로그인 정보가 없습니다.");
+            // ⭐ 변경: 임시 세션 검증
+            if (tempEmail == null || tempUserNo == null) {
+                log.error("❌ 임시 세션 정보가 없음");
+                model.addAttribute("errorMsg", "세션이 만료되었습니다. 다시 로그인해주세요.");
                 return "redirect:/user/login";
             }
             
-            log.info("✅ 세션 사용자 확인 - userNo: {}, userId: {}", loginUser.getUserNo(), loginUser.getUserId());
+            log.info("✅ 임시 세션 확인 - userNo: {}, email: {}", tempUserNo, tempEmail);
             
-            if (!nickname.equals(loginUser.getUserNickname())) {
-                int nicknameCount = userService.checkNicknameDuplicate(nickname);
-                if (nicknameCount > 0) {
-                    log.warn("❌ 닉네임 중복: {}", nickname);
-                    model.addAttribute("errorMsg", "이미 사용 중인 닉네임입니다.");
-                    return "redirect:/user/signupInsertInfo";
-                }
+            // 닉네임 중복 확인 (기존 닉네임과 다른 경우에만)
+            int nicknameCount = userService.checkNicknameDuplicate(nickname);
+            if (nicknameCount > 0) {
+                log.warn("❌ 닉네임 중복: {}", nickname);
+                model.addAttribute("errorMsg", "이미 사용 중인 닉네임입니다.");
+                return "redirect:/user/signupInsertInfo";
             }
             
+            // 주민번호 및 나이 계산
             String userSerialNo = birthDate + "-" + genderDigit;
             int birthYear = Integer.parseInt(birthDate.substring(0, 2));
             
@@ -284,8 +291,9 @@ public class UserController {
             
             log.info("✅ 계산된 나이: {}, 주민번호: {}", age, userSerialNo);
             
+            // ⭐ 변경: tempUserNo 사용
             UserVO updateUser = new UserVO();
-            updateUser.setUserNo(loginUser.getUserNo());
+            updateUser.setUserNo(tempUserNo);
             updateUser.setUserName(name);
             updateUser.setUserNickname(nickname);
             updateUser.setUserAge(age);
@@ -299,24 +307,16 @@ public class UserController {
             if (result > 0) {
                 log.info("✅ 소셜 로그인 사용자 정보 업데이트 성공");
                 
-                loginUser.setUserName(name);
-                loginUser.setUserNickname(nickname);
-                loginUser.setUserAge(age);
-                loginUser.setUserPhone(phone);
-                loginUser.setUserSerialNo(userSerialNo);
-                
-                session.setAttribute("loginUser", loginUser);
-                session.setAttribute("userNickname", nickname);
-                session.setAttribute("userId", loginUser.getUserId());
-                session.setAttribute("email", loginUser.getUserEmail());
+                // ⭐⭐⭐ 핵심 변경: 임시 세션 정보만 설정 (정식 로그인 세션 생성 안 함)
+                session.setAttribute("email", tempEmail);
                 session.setAttribute("name", name);
                 session.setAttribute("nickname", nickname);
                 session.setAttribute("phone", phone);
                 session.setAttribute("userSerialNo", userSerialNo);
                 session.setAttribute("age", age);
                 
-                session.removeAttribute("socialName");
-                session.removeAttribute("socialEmail");
+                // ⭐ 임시 소셜 세션은 유지 (설문조사에서 사용)
+                // tempSocialEmail, tempSocialName, tempSocialProvider, tempSocialUserNo는 유지
                 
                 log.info("✅ 설문조사 페이지로 리다이렉트");
                 return "redirect:/user/signupSurvey";
@@ -355,26 +355,23 @@ public class UserController {
             HttpSession session
     ) {
         try {
-            String userId = (String) session.getAttribute("userId");
-            String password = (String) session.getAttribute("password");
-            String name = (String) session.getAttribute("name");
-            String nickname = (String) session.getAttribute("nickname");
-            String email = (String) session.getAttribute("email");
-            String phone = (String) session.getAttribute("phone");
-            String userSerialNo = (String) session.getAttribute("userSerialNo");
-            Integer age = (Integer) session.getAttribute("age");
-
-            UserVO existingUser = (UserVO) session.getAttribute("loginUser");
+            // ⭐ 변경: 임시 세션 정보 먼저 확인
+            String tempEmail = (String) session.getAttribute("tempSocialEmail");
+            String tempName = (String) session.getAttribute("tempSocialName");
+            String tempProvider = (String) session.getAttribute("tempSocialProvider");
+            Integer tempUserNo = (Integer) session.getAttribute("tempSocialUserNo");
             Boolean isSocialLogin = (Boolean) session.getAttribute("isSocialLogin");
             
-            if (existingUser != null && isSocialLogin != null && isSocialLogin) {
-                int userNo = existingUser.getUserNo();
+            // ⭐ 소셜 로그인 신규 회원인 경우
+            if (isSocialLogin != null && isSocialLogin && tempUserNo != null) {
+                log.info("✅ 소셜 로그인 신규 회원 설문조사 처리 - userNo: {}", tempUserNo);
                 
+                // 관심사 등록 (선택사항)
                 if (interests != null && !interests.isBlank() && 
                     times != null && !times.isBlank() && 
                     addresses != null && !addresses.isBlank()) {
                     userService.insertUserInterest(
-                        userNo, 
+                        tempUserNo, 
                         interests, 
                         times, 
                         addresses
@@ -384,18 +381,34 @@ public class UserController {
                     log.info("⚠️ 소셜 로그인 사용자가 관심사를 입력하지 않음 - 스킵");
                 }
                 
+                // ⭐⭐⭐ 임시 세션 모두 삭제 (정식 로그인 세션 생성 안 함)
+                session.removeAttribute("tempSocialEmail");
+                session.removeAttribute("tempSocialName");
+                session.removeAttribute("tempSocialProvider");
+                session.removeAttribute("tempSocialUserNo");
+                session.removeAttribute("isSocialLogin");
+                session.removeAttribute("socialName");
+                session.removeAttribute("socialEmail");
                 session.removeAttribute("email");
-                session.removeAttribute("userId");
                 session.removeAttribute("name");
                 session.removeAttribute("nickname");
                 session.removeAttribute("phone");
                 session.removeAttribute("userSerialNo");
                 session.removeAttribute("age");
-                session.removeAttribute("isSocialLogin");
                 
-                log.info("✅ 소셜 로그인 회원가입 완료");
+                log.info("✅ 소셜 로그인 회원가입 완료 - 모든 세션 삭제");
                 return "redirect:/user/signupSuccess";
             }
+            
+            // ⭐ 일반 회원 로직 (기존 코드)
+            String userId = (String) session.getAttribute("userId");
+            String password = (String) session.getAttribute("password");
+            String name = (String) session.getAttribute("name");
+            String nickname = (String) session.getAttribute("nickname");
+            String email = (String) session.getAttribute("email");
+            String phone = (String) session.getAttribute("phone");
+            String userSerialNo = (String) session.getAttribute("userSerialNo");
+            Integer age = (Integer) session.getAttribute("age");
 
             if (userId == null || password == null || name == null || 
                 nickname == null || email == null || phone == null || 
@@ -479,7 +492,10 @@ public class UserController {
             HttpServletResponse response,
             Model model
     ) {
+        log.info("===== 로그인 시도: {} =====", userId);
+        
         UserVO user = userService.selectUserById(userId);
+
 
         if(user != null && passwordEncoder.matches(userPw, user.getUserPw())) {
             if ("정지".equals(user.getStatus())) {
@@ -521,8 +537,102 @@ public class UserController {
                 return "redirect:/";
             }
         } else {
+        // 1. 사용자 존재 여부 확인
+        if (user == null) {
+            log.warn("사용자를 찾을 수 없음: {}", userId);
+
             model.addAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");
             return "user/login";
+        }
+        log.info("조회된 사용자 - userNo: {}, status: [{}]", user.getUserNo(), user.getStatus());
+        
+        // 2. 소셜 로그인 계정 체크
+        if ("SOCIAL".equals(user.getUserPw())) {
+            log.info("소셜 로그인 계정입니다");
+            model.addAttribute("errorMsg", "소셜 로그인으로 가입된 계정입니다. 소셜 로그인을 이용해주세요.");
+            return "user/login";
+        }
+
+        // 3. 비밀번호 확인
+        boolean passwordMatch = passwordEncoder.matches(userPw, user.getUserPw());
+        log.info("비밀번호 일치 여부: {}", passwordMatch);
+        
+        if (!passwordMatch) {
+            log.warn("비밀번호가 일치하지 않습니다");
+            model.addAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");
+            return "user/login";
+        }
+
+     // 4. ✅✅✅ 계정 정지 상태 체크 (비밀번호 확인 후에 체크)
+        if (user.getStatus() != null && "정지".equals(user.getStatus().trim())) {
+            log.warn("⛔ 정지된 계정 감지: {}", userId);
+            java.sql.Timestamp until = user.getUpdatedAt();
+            log.info("정지 해제 예정일: {}", until);
+            
+            if (until == null) {
+                log.info("무기한 정지 계정");
+                model.addAttribute("errorMsg", "정지된 계정입니다. 고객센터로 문의해주세요.");
+                return "user/login";
+            }
+            
+            java.time.Instant now = java.time.Instant.now();
+            log.info("현재 시각: {}, 해제일: {}", now, until.toInstant());
+            
+            if (until.toInstant().isAfter(now)) {
+                // 아직 정지 기간 중
+                log.warn("아직 정지 기간 중입니다");
+                model.addAttribute("errorMsg", "해당 계정은 정지 상태입니다. 해제 예정일: " 
+                    + until.toLocalDateTime().toLocalDate());
+                return "user/login";
+            }
+            
+            // ✅ 정지 기간이 만료되었으면 자동으로 상태를 '정상'으로 업데이트
+            log.info("⏰ 정지 기간이 만료되었습니다. 계정 상태를 '정상'으로 자동 업데이트합니다.");
+            user.setStatus("정상");
+            userService.updateUserStatus(user);
+            log.info("✅ 계정 상태가 '정상'으로 업데이트되었습니다. 로그인을 진행합니다.");
+            // 여기서는 return 하지 않고 계속 진행 → 로그인 성공으로
+        }
+
+        // 5. 탈퇴 상태 체크
+        if (user.getStatus() != null && "탈퇴".equals(user.getStatus().trim())) {
+            log.warn("탈퇴한 계정: {}", userId);
+            model.addAttribute("errorMsg", "탈퇴한 계정입니다.");
+            return "user/login";
+        }
+
+        // 6. ✅ 로그인 성공
+        log.info("✅✅✅ 로그인 성공: {}", userId);
+        
+        session.setAttribute("userNo", user.getUserNo());
+        session.setAttribute("userNickname", user.getUserNickname());
+        session.setAttribute("loginUser", user);
+        session.setAttribute("userType", user.getUserType());
+        session.setAttribute("loginUserEmail", user.getUserEmail());
+
+        // 7. 자동 로그인 처리
+        if ("on".equals(autoLogin)) {
+            String encodedUserId = Base64.getEncoder()
+                    .encodeToString(userId.getBytes());
+
+            Cookie cookie = new Cookie("rememberId", encodedUserId);
+            cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+
+            response.addCookie(cookie);
+
+            log.info("✅ 자동 로그인 쿠키 생성: {}", userId);
+        }
+
+        // 8. 권한별 리다이렉트
+        if ("SYSTEM_MANAGER".equalsIgnoreCase(user.getUserType())) {
+            return "redirect:http://192.168.52.24:8080/admin";
+        } else if ("STADIUM_MANAGER".equalsIgnoreCase(user.getUserType())) {
+            return "redirect:http://192.168.52.24:8080/stadium";
+        } else {
+            return "redirect:/";
+        }
         }
     }
 

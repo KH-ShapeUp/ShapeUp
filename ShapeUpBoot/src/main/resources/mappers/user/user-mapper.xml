@@ -540,5 +540,10 @@
 	    AND IMG_MAIN = 'Y'
 	    AND ROWNUM = 1
 	</select>
-	
+	<update id="updateUserStatus">
+	    UPDATE USER_TBL
+	    SET STATUS = #{status},
+	        UPDATED_AT = SYSTIMESTAMP
+	    WHERE USER_NO = #{userNo}
+	</update>
 </mapper>

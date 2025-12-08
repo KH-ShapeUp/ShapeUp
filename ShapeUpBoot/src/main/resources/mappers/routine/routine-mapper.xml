@@ -159,5 +159,26 @@
 		DELETE FROM ROUTINE_TBL
 		WHERE ROUTINE_ID = #{routineId} AND USER_NO = #{userNo}
 	</delete>
+	
+	<!-- ⭐ 주간 목표 칼로리 조회 -->
+	<select id="selectWeeklyGoalCalorie" parameterType="int" resultType="Integer">
+		SELECT GOAL_CALORIE_ACTIVITY_WEEKLY
+		FROM GOAL_TBL
+		WHERE USER_NO = #{userNo}
+	</select>
+
+	<!-- ⭐ 주간 목표 칼로리 업데이트 (MERGE 사용) -->
+	<update id="updateWeeklyGoalCalorie">
+		MERGE INTO GOAL_TBL
+		USING DUAL
+		ON (USER_NO = #{userNo})
+		WHEN MATCHED THEN
+			UPDATE SET 
+				GOAL_CALORIE_ACTIVITY_WEEKLY = #{goalCalorie},
+				UPDATED_AT = SYSTIMESTAMP
+		WHEN NOT MATCHED THEN
+			INSERT (USER_NO, GOAL_CALORIE_ACTIVITY_WEEKLY, CREATED_AT, UPDATED_AT)
+			VALUES (#{userNo}, #{goalCalorie}, SYSTIMESTAMP, SYSTIMESTAMP)
+	</update>
 
 </mapper>

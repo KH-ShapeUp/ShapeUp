@@ -167,5 +167,7 @@ public interface UserMapper {
     int deleteAllProfileImages(int userNo);
     
     String selectUserProfileImgPath(int userNo);
+    
+    void updateUserStatus(UserVO user);
 
 }

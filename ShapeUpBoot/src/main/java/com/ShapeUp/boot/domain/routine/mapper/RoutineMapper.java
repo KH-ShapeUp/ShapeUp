@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.ShapeUp.boot.domain.routine.vo.Routine;
 import com.ShapeUp.boot.domain.routine.vo.RoutineItem;
@@ -30,4 +31,13 @@ public interface RoutineMapper {
 	int selectActivityIdByName(String activityName);
 
 	int deleteRoutine(Map<String, Object> params);
+
+	
+	// ⭐ 주간 목표 칼로리 조회
+		Integer selectWeeklyGoalCalorie(int userNo);
+		
+	// ⭐ 주간 목표 칼로리 업데이트
+	int updateWeeklyGoalCalorie(@Param("userNo") int userNo, 
+	                            @Param("goalCalorie") int goalCalorie);
+
 }

@@ -62,13 +62,13 @@
 /* 태그 그리드 */
 .tag-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* ✅ 120px → 140px */
   gap: 10px;
   margin-top: 15px;
 }
 
 .time-grid {
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* ✅ 100px → 110px */
 }
 
 /* 태그 버튼 */
@@ -83,6 +83,11 @@
   color: #666;
   transition: all 0.3s ease;
   text-align: center;
+  white-space: nowrap; /* ✅ 텍스트 줄바꿈 방지 */
+  min-height: 44px; /* ✅ 최소 높이 설정으로 일관성 유지 */
+  display: flex; /* ✅ flexbox로 중앙 정렬 */
+  align-items: center; /* ✅ 세로 중앙 정렬 */
+  justify-content: center; /* ✅ 가로 중앙 정렬 */
 }
 
 .tag-btn:hover {
@@ -104,22 +109,24 @@
 .tag-btn.active::before {
   content: '✓ ';
   font-weight: bold;
+  margin-right: 2px; /* ✅ 체크 표시와 텍스트 간격 */
 }
 
 /* 반응형: 태블릿 */
 @media (max-width: 768px) {
   .tag-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* ✅ 조정 */
     gap: 8px;
   }
-  
+
   .time-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .tag-btn {
     padding: 10px 12px;
     font-size: 0.9rem;
+    min-height: 42px; /* ✅ 태블릿에서도 최소 높이 유지 */
   }
 }
 
@@ -127,5 +134,9 @@
 @media (max-width: 480px) {
   .tag-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .tag-btn {
+    min-height: 40px; /* ✅ 모바일에서도 최소 높이 유지 */
   }
 }

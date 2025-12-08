@@ -19,6 +19,7 @@ import com.ShapeUp.boot.app.success.dto.successInsertDTO;
 import com.ShapeUp.boot.app.success.dto.successListDTO;
 import com.ShapeUp.boot.domain.activity.model.service.impl.ActivityServiceImpl;
 import com.ShapeUp.boot.domain.community.model.service.successService;
+import com.ShapeUp.boot.domain.user.model.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class successController {
 	private final successService sService;
+	private final UserService userService;
 
 	@GetMapping("/success")
 	public String successPage(HttpSession session, Model model,
@@ -48,6 +50,13 @@ public class successController {
 		if(endNavi > maxPage) {endNavi = maxPage;}
 		
 		List<successListDTO> sList = sService.successList(currentPage, boardLimit, category, keyword);
+		
+		// ⭐ 메인 리스트에만 프로필 이미지 추가
+		for(successListDTO success : sList) {
+			String profileImg = userService.getUserProfileImg(success.getUserNo());
+			success.setUserProfileImg(profileImg);
+		}
+		
 		model.addAttribute("TotalCount", TotalCount);
 		model.addAttribute("category", category);
 	    model.addAttribute("keyword", keyword);
@@ -57,13 +66,14 @@ public class successController {
 		model.addAttribute("startNavi", startNavi);
 		model.addAttribute("sList", sList);
 		
-		List<successListDTO> popsList = sService.popSuccessList();
 		/* 인기 게시물 */
+		List<successListDTO> popsList = sService.popSuccessList();
 		model.addAttribute("psList", popsList);
 
 		/* 댓글 순 */
 		List<successListDTO> cmList = sService.commentSuccessList();
 		model.addAttribute("cmsList", cmList);
+		
 		return "success/successMain";
 	}
 	

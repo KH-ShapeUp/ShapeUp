@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -109,236 +110,62 @@
                     </div>
                     <div class="matching-board-wrapper">
                         <div class="matching-content">
-                            <div class="matching-card" onclick="matchingDetail('${boardNo}')">
-                                <div class="matching-card-header">
-                                    <div class="card-img">
-                                        <img src="../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-user-wrapper">
-                                        <div class="card-user-info">
-                                            <span class="user-name">윤태혁 (남)</span>
-                                            <span class="user-category">헬스</span>
-                                        </div>
-                                        <div class="card-state-ing">모집중</div>
-                                    </div>
-                                </div>
-                                <div class="mathcing-card-main">
-                                    <span class="card-title">강남역 헬스장에서 같이 운동하실 분</span>
-                                    <span class="card-content">주 3회 저녁 7시~9시 운동하고 있습니다. 
-                                        다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.</span>
-                                </div>
-                                <div class="matching-card-bottom">
-                                    <div class="matching-left">
-                                        <div class="matching-location">
-                                            <i class="fa-solid fa-location-dot"></i>
-                                            <span>도봉산</span>
-                                        </div>
-                                        <div class="matching-time">
-                                            <i class="fa-solid fa-clock"></i>
-                                            <span>22:00 ~ 23:00</span>
-                                        </div>
-                                        <div class="matching-day">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                            <span>2025.11.14</span>
-                                        </div>
-                                        <div class="matching-money">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>없음</span>
-                                        </div>
-                                        <div class="matching-user">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span>0/1명</span>
+                            <!-- c:forEach로 매칭 리스트를 순회한다고 가정 -->
+                            <c:forEach var="matching" items="${matchingList}">
+                                <div class="matching-card" onclick="matchingDetail('${matching.boardNo}')">
+                                    <div class="matching-card-header">
+                                        <div class="card-img">
+										    <!-- ⭐ 프로필 이미지 동적 처리 -->
+										    <c:choose>
+										        <c:when test="${not empty matching.userProfileImg}">
+										            <img src="${pageContext.request.contextPath}${matching.userProfileImg}" alt="프로필">
+										        </c:when>
+										        <c:otherwise>
+										            <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본 프로필">
+										        </c:otherwise>
+										    </c:choose>
+										</div>
+                                        <div class="card-user-wrapper">
+                                            <div class="card-user-info">
+                                                <span class="user-name">${matching.userName} (${matching.userGender})</span>
+                                                <span class="user-category">${matching.category}</span>
+                                            </div>
+                                            <div class="card-state-ing">모집중</div>
                                         </div>
                                     </div>
-                                    <div class="matching-right">
-                                        <button class="matching-application-btn">신청하기</button>
+                                    <div class="mathcing-card-main">
+                                        <span class="card-title">${matching.title}</span>
+                                        <span class="card-content">${matching.content}</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="matching-card" onclick="matchingDetail('${boardNo}')">
-                                <div class="matching-card-header">
-                                    <div class="card-img">
-                                        <img src="../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-user-wrapper">
-                                        <div class="card-user-info">
-                                            <span class="user-name">윤태혁 (남)</span>
-                                            <span class="user-category">헬스</span>
+                                    <div class="matching-card-bottom">
+                                        <div class="matching-left">
+                                            <div class="matching-location">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                                <span>${matching.location}</span>
+                                            </div>
+                                            <div class="matching-time">
+                                                <i class="fa-solid fa-clock"></i>
+                                                <span>${matching.time}</span>
+                                            </div>
+                                            <div class="matching-day">
+                                                <i class="fa-solid fa-calendar-days"></i>
+                                                <span>${matching.date}</span>
+                                            </div>
+                                            <div class="matching-money">
+                                                <i class="fa-solid fa-wallet"></i>
+                                                <span>${matching.cost}</span>
+                                            </div>
+                                            <div class="matching-user">
+                                                <i class="fa-solid fa-users"></i>
+                                                <span>${matching.currentCount}/${matching.maxCount}명</span>
+                                            </div>
                                         </div>
-                                        <div class="card-state-ing">모집중</div>
+                                        <div class="matching-right">
+                                            <button class="matching-application-btn">신청하기</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mathcing-card-main">
-                                    <span class="card-title">강남역 헬스장에서 같이 운동하실 분</span>
-                                    <span class="card-content">주 3회 저녁 7시~9시 운동하고 있습니다. 
-                                        다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.</span>
-                                </div>
-                                <div class="matching-card-bottom">
-                                    <div class="matching-left">
-                                        <div class="matching-location">
-                                            <i class="fa-solid fa-location-dot"></i>
-                                            <span>도봉산</span>
-                                        </div>
-                                        <div class="matching-time">
-                                            <i class="fa-solid fa-clock"></i>
-                                            <span>22:00 ~ 23:00</span>
-                                        </div>
-                                        <div class="matching-day">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                            <span>2025.11.14</span>
-                                        </div>
-                                        <div class="matching-money">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>없음</span>
-                                        </div>
-                                        <div class="matching-user">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span>0/1명</span>
-                                        </div>
-                                    </div>
-                                    <div class="matching-right">
-                                        <button class="matching-application-btn">신청하기</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="matching-card" onclick="matchingDetail('${boardNo}')">
-                                <div class="matching-card-header">
-                                    <div class="card-img">
-                                        <img src="../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-user-wrapper">
-                                        <div class="card-user-info">
-                                            <span class="user-name">윤태혁 (남)</span>
-                                            <span class="user-category">헬스</span>
-                                        </div>
-                                        <div class="card-state-ing">모집중</div>
-                                    </div>
-                                </div>
-                                <div class="mathcing-card-main">
-                                    <span class="card-title">강남역 헬스장에서 같이 운동하실 분</span>
-                                    <span class="card-content">주 3회 저녁 7시~9시 운동하고 있습니다. 
-                                        다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.</span>
-                                </div>
-                                <div class="matching-card-bottom">
-                                    <div class="matching-left">
-                                        <div class="matching-location">
-                                            <i class="fa-solid fa-location-dot"></i>
-                                            <span>도봉산</span>
-                                        </div>
-                                        <div class="matching-time">
-                                            <i class="fa-solid fa-clock"></i>
-                                            <span>22:00 ~ 23:00</span>
-                                        </div>
-                                        <div class="matching-day">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                            <span>2025.11.14</span>
-                                        </div>
-                                        <div class="matching-money">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>없음</span>
-                                        </div>
-                                        <div class="matching-user">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span>0/1명</span>
-                                        </div>
-                                    </div>
-                                    <div class="matching-right">
-                                        <button class="matching-application-btn">신청하기</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="matching-card" onclick="matchingDetail('${boardNo}')">
-                                <div class="matching-card-header">
-                                    <div class="card-img">
-                                        <img src="../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-user-wrapper">
-                                        <div class="card-user-info">
-                                            <span class="user-name">윤태혁 (남)</span>
-                                            <span class="user-category">헬스</span>
-                                        </div>
-                                        <div class="card-state-ing">모집중</div>
-                                    </div>
-                                </div>
-                                <div class="mathcing-card-main">
-                                    <span class="card-title">강남역 헬스장에서 같이 운동하실 분</span>
-                                    <span class="card-content">주 3회 저녁 7시~9시 운동하고 있습니다. 
-                                        다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.</span>
-                                </div>
-                                <div class="matching-card-bottom">
-                                    <div class="matching-left">
-                                        <div class="matching-location">
-                                            <i class="fa-solid fa-location-dot"></i>
-                                            <span>도봉산</span>
-                                        </div>
-                                        <div class="matching-time">
-                                            <i class="fa-solid fa-clock"></i>
-                                            <span>22:00 ~ 23:00</span>
-                                        </div>
-                                        <div class="matching-day">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                            <span>2025.11.14</span>
-                                        </div>
-                                        <div class="matching-money">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>없음</span>
-                                        </div>
-                                        <div class="matching-user">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span>0/1명</span>
-                                        </div>
-                                    </div>
-                                    <div class="matching-right">
-                                        <button class="matching-application-btn">신청하기</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="matching-card" onclick="matchingDetail('${boardNo}')">
-                                <div class="matching-card-header">
-                                    <div class="card-img">
-                                        <img src="../../resources/img/person.png">
-                                    </div>
-                                    <div class="card-user-wrapper">
-                                        <div class="card-user-info">
-                                            <span class="user-name">윤태혁 (남)</span>
-                                            <span class="user-category">헬스</span>
-                                        </div>
-                                        <div class="card-state-ing">모집중</div>
-                                    </div>
-                                </div>
-                                <div class="mathcing-card-main">
-                                    <span class="card-title">강남역 헬스장에서 같이 운동하실 분</span>
-                                    <span class="card-content">주 3회 저녁 7시~9시 운동하고 있습니다. 
-                                        다이어트 목표로 운동 중이라 함께 동기부여 받으며 운동하실 분 찾습니다.</span>
-                                </div>
-                                <div class="matching-card-bottom">
-                                    <div class="matching-left">
-                                        <div class="matching-location">
-                                            <i class="fa-solid fa-location-dot"></i>
-                                            <span>도봉산</span>
-                                        </div>
-                                        <div class="matching-time">
-                                            <i class="fa-solid fa-clock"></i>
-                                            <span>22:00 ~ 23:00</span>
-                                        </div>
-                                        <div class="matching-day">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                            <span>2025.11.14</span>
-                                        </div>
-                                        <div class="matching-money">
-                                            <i class="fa-solid fa-wallet"></i>
-                                            <span>없음</span>
-                                        </div>
-                                        <div class="matching-user">
-                                            <i class="fa-solid fa-users"></i>
-                                            <span>0/1명</span>
-                                        </div>
-                                    </div>
-                                    <div class="matching-right">
-                                        <button class="matching-application-btn">신청하기</button>
-                                    </div>
-                                </div>
-                            </div>                       
+                            </c:forEach>
                         </div>
                         <div class="matching-pagination-wrapper">
                             <nav class="pagination">
@@ -358,7 +185,7 @@
     <script>
         // 매칭 디테일 이동
         function matchingDetail(boardNo) {
-            location.href="/matching/detail?matchingNo=" + 10;
+            location.href="/matching/detail?matchingNo=" + boardNo;
         }
 
         // 매칭 신청 버튼

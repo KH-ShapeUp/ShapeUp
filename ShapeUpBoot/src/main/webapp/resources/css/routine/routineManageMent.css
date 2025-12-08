@@ -947,4 +947,142 @@ body {
   .routine-summary {
     text-align: left;
   }
+
 }
+/* ⭐ 주간 목표 칼로리 영역 */
+.calorie-target-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.calorie-target {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.btn-edit-goal {
+  background: none;
+  border: none;
+  color: #4a90e2;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.btn-edit-goal:hover {
+  background-color: #e3f2fd;
+  color: #2196f3;
+}
+
+/* ⭐ 주간 목표 칼로리 모달 */
+.modal-content-goal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content-goal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-content-goal .modal-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.close-goal-modal-btn {
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+  font-size: 24px;
+}
+
+.close-goal-modal-btn:hover {
+  color: #333;
+}
+
+.goal-input-wrapper {
+  margin-bottom: 24px;
+}
+
+.goal-input-wrapper label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.goal-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.goal-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.goal-hint {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-cancel-goal,
+.btn-save-goal {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-goal {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.btn-cancel-goal:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-save-goal {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.btn-save-goal:hover {
+  background-color: #357abd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+

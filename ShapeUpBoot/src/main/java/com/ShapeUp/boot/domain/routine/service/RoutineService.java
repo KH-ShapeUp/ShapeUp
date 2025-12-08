@@ -15,6 +15,12 @@ public interface RoutineService {
 
 	void insertFullRoutine(Map<String, Object> routineData);
 
+
 	int deleteRoutine(int routineId, int userNo);
+
+	Integer getWeeklyGoalCalorie(int userNo);
+	
+	int updateWeeklyGoalCalorie(int userNo, int goalCalorie);
+
 
 }

@@ -124,7 +124,10 @@
         <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script> 
+    <script>
+        // ⭐ contextPath를 JavaScript 변수로 저장
+        const contextPath = '${pageContext.request.contextPath}';
+        
         /* ---------------------- 지역 필터 ---------------------- */
         const locationHeader = document.querySelector("#locationHeader");
         const locationHeaderSpan = document.querySelector("#locationHeader span");
@@ -319,11 +322,23 @@
                     badgeClass = 'ing';
                 }
 
+                // ⭐⭐⭐ 프로필 이미지 처리 (핵심 수정 부분)
+                let profileImgSrc = '';
+                if (match.userProfileImg && match.userProfileImg !== '') {
+                    // DB에서 프로필 이미지 경로가 있는 경우
+                    profileImgSrc = contextPath + match.userProfileImg;
+                } else {
+                    // 기본 이미지
+                    profileImgSrc = contextPath + '/resources/img/default-profile.png';
+                }
+
                 matchingList.innerHTML += `
                     <div class="matching-card" data-id="\${match.matchingNo}">
                         <div class="matching-card-header">
                             <div class="card-img">
-                                <img src="../../resources/img/person.png">
+                                <img src="\${profileImgSrc}" 
+                                     alt="프로필 이미지"
+                                     onerror="this.src='\${contextPath}/resources/img/default-profile.png'">
                             </div>
                             <div class="card-user-wrapper">
                                 <div class="card-user-info">

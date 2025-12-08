@@ -1,6 +1,5 @@
 package com.ShapeUp.boot.app.matching.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +20,12 @@ import com.ShapeUp.boot.app.matching.dto.matchingApplicationDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingInsertDTO;
 import com.ShapeUp.boot.app.matching.dto.matchingListDTO;
 
-
-
 import com.ShapeUp.boot.domain.activity.model.vo.ActivityVO;
-
 import com.ShapeUp.boot.domain.matching.model.service.matchingService;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingAppLiVo;
 import com.ShapeUp.boot.domain.matching.model.vo.matchingVO;
+import com.ShapeUp.boot.domain.user.model.service.UserService;
+import com.ShapeUp.boot.domain.user.model.vo.UserProfileImageVO;   // ⭐ 추가
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +34,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class matchingController {
 
-	private final matchingService mService;
+    private final matchingService mService;
+    private final UserService userService;
 
 	// 매칭 페이지 이동
 	@GetMapping("/matching/board")
 	public String matchingPage(HttpSession session, Model model) {
 		Integer userNo = (Integer)session.getAttribute("userNo");
 		model.addAttribute("userNo", userNo);
+
+        // ⭐ 프로필 이미지 조회 추가
+        if (userNo != null) {
+            String userProfileImg = userService.getUserProfileImg(userNo);
+            model.addAttribute("userProfileImg", userProfileImg);
+        }
+
 		return "matching/matchingBoard";
 	}
 
@@ -52,6 +58,14 @@ public class matchingController {
 		List<ActivityVO> aList = mService.matchingCategory();
 		System.out.println("가져온 카테고리" + aList);
 		model.addAttribute("aList", aList);
+
+        // ⭐ 프로필 이미지 조회 추가
+        Integer userNo = (Integer) session.getAttribute("userNo");
+        if (userNo != null) {
+            String userProfileImg = userService.getUserProfileImg(userNo);
+            model.addAttribute("userProfileImg", userProfileImg);
+        }
+
 		return "matching/matchingInsert";
 	}
 
@@ -77,60 +91,75 @@ public class matchingController {
 		return aList;
 	}
 
-	// 매칭 리스트
+	// ⭐⭐⭐ 매칭 리스트 (프로필 이미지 추가)
 	@GetMapping("/matching/list")
 	@ResponseBody
 	public Map<String, Object> matchingList(matchingListDTO mDTO, HttpSession session,
-			@RequestParam("page") int currentPage,
-			@RequestParam(required = false, defaultValue = "") String location,
-			@RequestParam(required = false, defaultValue = "") String time,
-			@RequestParam(required = false, defaultValue = "") String level,
-			@RequestParam(required = false, defaultValue = "") String sort,
-			@RequestParam(required = false, defaultValue = "N") String deleteYn) {
-		
-		int matchBoardLimit = 5;
-		int naviLimit = 5;
-		
-		int getTotalCount = mService.getTotalCount(location, time, level, deleteYn);
-		
-		int maxPage = (int)Math.ceil((double)getTotalCount/matchBoardLimit);
-		int startNavi = ((currentPage - 1)/naviLimit) * naviLimit + 1;
-		int endNavi = (startNavi-1) + naviLimit;
-		if(endNavi > maxPage) {endNavi = maxPage;}
-		List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit, location, time, level, sort, deleteYn);
-		System.out.println("가져온 매칭 리스트" + mList);
-		
-		// 매칭 신청 인원 카운트
-		
-		Map<String, Object> result = new HashMap<String, Object>();
-		System.out.println();
-		result.put("mList", mList);
-		result.put("currentPage", currentPage);
-		result.put("maxPage", maxPage);
-		result.put("startNavi", startNavi);
-		result.put("endNavi", endNavi);
-		
-		result.put("location", location);
-		result.put("time", time);
-		result.put("level", level);
-		result.put("sort", sort);
-		
-		return result;
+	        @RequestParam("page") int currentPage,
+	        @RequestParam(required = false, defaultValue = "") String location,
+	        @RequestParam(required = false, defaultValue = "") String time,
+	        @RequestParam(required = false, defaultValue = "") String level,
+	        @RequestParam(required = false, defaultValue = "") String sort,
+	        @RequestParam(required = false, defaultValue = "N") String deleteYn) {
+
+	    int matchBoardLimit = 5;
+	    int naviLimit = 5;
+
+	    int getTotalCount = mService.getTotalCount(location, time, level, deleteYn);
+
+	    int maxPage = (int)Math.ceil((double)getTotalCount/matchBoardLimit);
+	    int startNavi = ((currentPage - 1)/naviLimit) * naviLimit + 1;
+	    int endNavi = (startNavi-1) + naviLimit;
+	    if(endNavi > maxPage) {endNavi = maxPage;}
+
+	    List<matchingListDTO> mList = mService.matchingList(currentPage, matchBoardLimit, location, time, level, sort, deleteYn);
+
+	    // ⭐⭐⭐ 각 매칭 게시글에 프로필 이미지 정보 추가
+	    for (matchingListDTO matching : mList) {
+	        int writerUserNo = matching.getUserNo();  // 작성자 번호
+	        
+	        // UserService를 통해 프로필 이미지 조회
+	        UserProfileImageVO profileImage = userService.getProfileImage(writerUserNo);
+	        
+	        if (profileImage != null) {
+	            // 프로필 이미지 전체 경로 설정
+	            String fullPath = profileImage.getImgPath() + "/" + profileImage.getImgRename();
+	            matching.setUserProfileImg(fullPath);
+	            System.out.println("✅ 프로필 이미지 설정 - userNo: " + writerUserNo + ", path: " + fullPath);
+	        } else {
+	            // 기본 프로필 이미지 경로 설정
+	            matching.setUserProfileImg("/resources/img/default-profile.png");
+	            System.out.println("⚠️ 기본 프로필 이미지 설정 - userNo: " + writerUserNo);
+	        }
+	    }
+
+	    Map<String, Object> result = new HashMap<String, Object>();
+	    result.put("mList", mList);
+	    result.put("currentPage", currentPage);
+	    result.put("maxPage", maxPage);
+	    result.put("startNavi", startNavi);
+	    result.put("endNavi", endNavi);
+
+	    result.put("location", location);
+	    result.put("time", time);
+	    result.put("level", level);
+	    result.put("sort", sort);
+
+	    return result;
 	}
-	
+
+
 	// 매칭 신청
 	@PostMapping("/matching/application")
 	@ResponseBody
 	public int matchApplication(@RequestBody matchingApplicationDTO mAppDTO, HttpSession session) {
-		// 로그인한 사용자 유저 번호 가져오기
 		Integer loginUserNo = (Integer)session.getAttribute("userNo");
 		System.out.println(loginUserNo);
-		// 매칭 작성자 가져오기 mapper
+		
 		int writerUserNo = mService.getWriterUserNo(mAppDTO.getMatchingNo());
 		System.out.println("매칭 작성자" + writerUserNo);
 
 		if(loginUserNo == null) {
-			System.out.println(loginUserNo);
 			return -10;
 		}
 		
@@ -138,7 +167,6 @@ public class matchingController {
 			return -1;
 		}
 		
-		// 매칭 중복 신청 불가능
 		int matchingNo = mAppDTO.getMatchingNo();
 		int matchDedupe = mService.matchDedupe(loginUserNo, matchingNo);
 		
@@ -150,12 +178,10 @@ public class matchingController {
 		return mService.matchApplication(mAppDTO);
 	}
 
-	// 매칭 삭제/복구 (deleteYn: Y/N)
+	// 매칭 삭제/복구
 	@RequestMapping(value = "/matching/delete", method = { RequestMethod.POST, RequestMethod.PATCH })
 	@ResponseBody
 	public int updateDeleteYn(@RequestParam int matchingNo, @RequestParam String deleteYn) {
 		return mService.updateDeleteYn(matchingNo, deleteYn);
 	}
-
-	
 }

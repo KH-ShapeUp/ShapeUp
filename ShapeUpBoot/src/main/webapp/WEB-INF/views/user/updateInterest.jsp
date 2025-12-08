@@ -125,125 +125,138 @@
 
   <jsp:include page="/WEB-INF/views/include/footer.jsp"/>
 
-  <script>
-  const contextPath = '${pageContext.request.contextPath}';
-  
-  // 서버에서 받은 기존 관심사 데이터
-  const existingInterests = '${userInterest.interestActivity}' || '';
-  const existingTimes = '${userInterest.activityTime}' || '';
+<script>
+const contextPath = '${pageContext.request.contextPath}';
 
-  // 페이지 로드 시 기존 선택 복원
-  window.addEventListener('DOMContentLoaded', function() {
-    // 운동 종목 복원
-    if (existingInterests) {
-      const activities = existingInterests.split(',');
-      activities.forEach(activity => {
-        const trimmedActivity = activity.trim();
-        const btn = document.querySelector(`button[data-group="exercise"][data-value="${trimmedActivity}"]`);
-        if (btn) {
+// 서버에서 받은 기존 관심사 데이터
+const existingInterests = '<c:out value="${userInterest.interestActivity}" default=""/>';
+const existingTimes = '<c:out value="${userInterest.activityTime}" default=""/>';
+
+console.log('기존 운동 종목:', existingInterests);
+console.log('기존 시간대:', existingTimes);
+
+// 페이지 로드 시 기존 선택 복원
+window.addEventListener('DOMContentLoaded', function() {
+  // 운동 종목 복원
+  if (existingInterests && existingInterests !== '') {
+    const activities = existingInterests.split(',');
+    console.log('복원할 운동 종목 배열:', activities);
+    
+    const allActivityButtons = document.querySelectorAll('button[data-group="exercise"]');
+    
+    activities.forEach(activity => {
+      const trimmedActivity = activity.trim();
+      
+      allActivityButtons.forEach(btn => {
+        if (btn.getAttribute('data-value') === trimmedActivity) {
+          console.log('✅ 버튼 찾음:', trimmedActivity, btn);
           btn.classList.add('active');
         }
       });
-    }
-    
-    // 시간대 복원
-    if (existingTimes) {
-      const times = existingTimes.split(',');
-      times.forEach(time => {
-        const trimmedTime = time.trim();
-        const btn = document.querySelector(`button[data-group="time"][data-value="${trimmedTime}"]`);
-        if (btn) {
-          btn.classList.add('active');
-        }
-      });
-    }
-    
-    updateCounts();
-  });
-
-  // 태그 버튼 클릭 이벤트
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('tag-btn')) {
-      e.target.classList.toggle('active');
-      updateCounts();
-    }
-  });
-
-  // 드롭다운 토글
-  function toggleDropdown(id) {
-    const dropdown = document.getElementById(id);
-    const toggleBtn = event.currentTarget;
-    dropdown.classList.toggle('active');
-    toggleBtn.classList.toggle('active');
-  }
-
-  // 선택 개수 업데이트
-  function updateCounts() {
-    const activityCount = document.querySelectorAll('button[data-group="exercise"].active').length;
-    const timeCount = document.querySelectorAll('button[data-group="time"].active').length;
-    
-    document.getElementById('activityCount').textContent = activityCount + '개 선택';
-    document.getElementById('timeCount').textContent = timeCount + '개 선택';
-  }
-
-  // 폼 제출
-  function submitForm() {
-    // 선택된 운동 종목
-    const selectedActivities = Array.from(document.querySelectorAll('button[data-group="exercise"].active'))
-      .map(btn => btn.getAttribute('data-value'));
-    
-    // 선택된 시간대
-    const selectedTimes = Array.from(document.querySelectorAll('button[data-group="time"].active'))
-      .map(btn => btn.getAttribute('data-value'));
-    
-    // 유효성 검사
-    if (selectedActivities.length === 0) {
-      showModal('최소 1개 이상의 운동 종목을 선택해주세요.');
-      return;
-    }
-    
-    if (selectedTimes.length === 0) {
-      showModal('최소 1개 이상의 시간대를 선택해주세요.');
-      return;
-    }
-    
-    // 서버로 전송
-    const formData = new URLSearchParams();
-    formData.append('interests', selectedActivities.join(','));
-    formData.append('times', selectedTimes.join(','));
-    
-    fetch(contextPath + '/user/updateInterest', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showModal('관심사가 저장되었습니다.');
-        setTimeout(() => {
-          window.location.href = contextPath + '/user/updateUserInfo';
-        }, 1500);
-      } else {
-        showModal(data.message || '저장에 실패했습니다.');
-      }
-    })
-    .catch(err => {
-      console.error('오류:', err);
-      showModal('오류가 발생했습니다.');
     });
   }
-
-  function showModal(message) {
-    document.getElementById('modalMessage').textContent = message;
-    document.getElementById('customModal').style.display = 'flex';
+  
+  // 시간대 복원
+  if (existingTimes && existingTimes !== '') {
+    const times = existingTimes.split(',');
+    console.log('복원할 시간대 배열:', times);
+    
+    const allTimeButtons = document.querySelectorAll('button[data-group="time"]');
+    
+    times.forEach(time => {
+      const trimmedTime = time.trim();
+      
+      allTimeButtons.forEach(btn => {
+        if (btn.getAttribute('data-value') === trimmedTime) {
+          console.log('✅ 버튼 찾음:', trimmedTime, btn);
+          btn.classList.add('active');
+        }
+      });
+    });
   }
+  
+  updateCounts();
+});
 
-  function closeModal() {
-    document.getElementById('customModal').style.display = 'none';
+// 태그 버튼 클릭 이벤트
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('tag-btn')) {
+    e.target.classList.toggle('active');
+    updateCounts();
   }
-  </script>
+});
+
+// 드롭다운 토글
+function toggleDropdown(id) {
+  const dropdown = document.getElementById(id);
+  const toggleBtn = event.currentTarget;
+  dropdown.classList.toggle('active');
+  toggleBtn.classList.toggle('active');
+}
+
+// 선택 개수 업데이트
+function updateCounts() {
+  const activityCount = document.querySelectorAll('button[data-group="exercise"].active').length;
+  const timeCount = document.querySelectorAll('button[data-group="time"].active').length;
+  
+  document.getElementById('activityCount').textContent = activityCount + '개 선택';
+  document.getElementById('timeCount').textContent = timeCount + '개 선택';
+}
+
+// 폼 제출
+function submitForm() {
+  const selectedActivities = Array.from(document.querySelectorAll('button[data-group="exercise"].active'))
+    .map(btn => btn.getAttribute('data-value'));
+  
+  const selectedTimes = Array.from(document.querySelectorAll('button[data-group="time"].active'))
+    .map(btn => btn.getAttribute('data-value'));
+  
+  if (selectedActivities.length === 0) {
+    showModal('최소 1개 이상의 운동 종목을 선택해주세요.');
+    return;
+  }
+  
+  if (selectedTimes.length === 0) {
+    showModal('최소 1개 이상의 시간대를 선택해주세요.');
+    return;
+  }
+  
+  const formData = new URLSearchParams();
+  formData.append('interests', selectedActivities.join(','));
+  formData.append('times', selectedTimes.join(','));
+  
+  fetch(contextPath + '/user/updateInterest', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal('관심사가 저장되었습니다.');
+      setTimeout(() => {
+        window.location.href = contextPath + '/user/updateUserInfo';
+      }, 1500);
+    } else {
+      showModal(data.message || '저장에 실패했습니다.');
+    }
+  })
+  .catch(err => {
+    console.error('오류:', err);
+    showModal('오류가 발생했습니다.');
+  });
+}
+
+function showModal(message) {
+  document.getElementById('modalMessage').textContent = message;
+  document.getElementById('customModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('customModal').style.display = 'none';
+}
+</script>
 </body>
 </html>

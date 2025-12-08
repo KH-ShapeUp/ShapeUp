@@ -174,7 +174,7 @@ public class OAuthService {
         UserVO user = userMapper.findByUserId(userId);
         
         if (user != null) {
-            // ✅ 기존 회원 로그인
+            // ✅ 기존 회원 로그인 - 정식 세션 생성
             log.info("✅ 기존 회원 로그인 - userNo: {}, userId: {}", user.getUserNo(), user.getUserId());
             
             session.setAttribute("userNo", user.getUserNo());
@@ -182,6 +182,9 @@ public class OAuthService {
             session.setAttribute("loginUser", user);
             session.setAttribute("userType", user.getUserType());
             session.setAttribute("loginUserEmail", user.getUserEmail());
+            
+            log.info("✅ 기존 회원 정식 로그인 세션 생성 완료");
+            
             return false; // 기존 회원
         }
 
@@ -222,19 +225,21 @@ public class OAuthService {
         
         log.info("✅ INSERT 후 조회 완료 - userNo: {}", user.getUserNo());
 
-        // ✅ 세션에 소셜 로그인 임시 정보 저장
-        session.setAttribute("userNo", user.getUserNo());
-        session.setAttribute("userNickname", user.getUserNickname());
-        session.setAttribute("loginUser", user);
-        session.setAttribute("userType", user.getUserType());
-        session.setAttribute("loginUserEmail", user.getUserEmail());
-        
-        // ✅ 소셜 로그인 추가 정보 입력용 플래그
+        // ⭐ 신규 회원: 임시 세션만 생성 (정식 로그인 세션 생성 안 함)
+        session.setAttribute("tempSocialEmail", email);
+        session.setAttribute("tempSocialName", nickname);
+        session.setAttribute("tempSocialProvider", provider);
+        session.setAttribute("tempSocialUserNo", user.getUserNo()); // 나중에 업데이트용
         session.setAttribute("isSocialLogin", true);
         session.setAttribute("socialName", nickname);
         session.setAttribute("socialEmail", email);
         
-        log.info("✅ 세션 설정 완료 - isSocialLogin: true");
+        log.info("✅ 신규 회원 임시 세션 생성 완료");
+        log.info("   - tempSocialEmail: {}", email);
+        log.info("   - tempSocialName: {}", nickname);
+        log.info("   - tempSocialProvider: {}", provider);
+        log.info("   - tempSocialUserNo: {}", user.getUserNo());
+        log.info("   - isSocialLogin: true");
         
         return true; // 신규 회원
     }

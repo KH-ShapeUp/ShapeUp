@@ -63,7 +63,7 @@
                  <c:if test="${isSocialLogin}">readonly style="background-color: #f5f5f5;"</c:if> required>
         </div>
 
-        <%-- 닉네임 --%>
+        <%-- ⭐ 닉네임 (소셜/일반 모두 중복 확인 가능) --%>
         <div class="form-group">
           <label>닉네임</label>
           <div class="field-inline">
@@ -143,21 +143,22 @@
           </c:choose>
         </div>
 
-        <%-- 주민등록번호 --%>
-        <div class="form-group">
-          <label>주민등록번호</label>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="text" name="birthDate" id="birthDateInput" placeholder="YYMMDD" maxlength="6" 
-                   style="flex: 0 0 120px;" required>
-            <span style="font-size: 1.2em; font-weight: bold;">-</span>
-            <input type="text" name="genderDigit" id="genderDigitInput" placeholder="1" maxlength="1" 
-                   style="flex: 0 0 50px; text-align: center;" required>
-            <span style="color: #666;">● ● ● ● ● ●</span>
-          </div>
-          <p class="hint-text" style="font-size: 0.85em; color: #666; margin-top: 5px;">
-            뒷자리 첫 번째 숫자만 입력 (1,2: 1900년대생 | 3,4: 2000년대생)
-          </p>
-        </div>
+        <!-- 주민등록번호 -->
+		<div class="form-group">
+		  <label>주민등록번호</label>
+		  <div style="display: flex; align-items: center; gap: 8px;">
+		    <input type="text" name="birthDate" id="birthDateInput" placeholder="YYMMDD" maxlength="6" 
+		           style="flex: 0 0 120px;" required>
+		    <span style="font-size: 1.2em; font-weight: bold;">-</span>
+		    <input type="text" name="genderDigit" id="genderDigitInput" placeholder="1" maxlength="1" 
+		           style="flex: 0 0 50px; text-align: center;" required>
+		    <span style="color: #666;">● ● ● ● ● ●</span>
+		  </div>
+		  <p class="hint-text" style="font-size: 0.85em; color: #666; margin-top: 5px;">
+		    뒷자리 첫 번째 숫자만 입력 (1,2: 1900년대생 | 3,4: 2000년대생)
+		  </p>
+		  <span id="birthDateMsg" class="validation-msg"></span>
+		</div>
 
         <%-- 전화번호 --%>
         <div class="form-group">
@@ -179,14 +180,14 @@
 const contextPath = '<%=request.getContextPath()%>';
 const isSocialLogin = ${isSocialLogin != null ? isSocialLogin : false};
 
-// ✅ 닉네임 입력값 변경 시 중복확인 초기화
+// ⭐ 닉네임 입력값 변경 시 중복확인 초기화 (소셜/일반 모두 적용)
 document.getElementById('nicknameInput').addEventListener('input', function() {
   window.isNicknameChecked = false;
   window.isNicknameAvailable = false;
   document.getElementById('nicknameMsg').textContent = '';
 });
 
-// 닉네임 중복 확인
+// ⭐ 닉네임 중복 확인 (소셜/일반 모두 적용)
 function checkNickname() {
   const nickname = document.getElementById('nicknameInput').value.trim();
   if (!nickname) {
@@ -334,6 +335,121 @@ if (!isSocialLogin) {
   }
 }
 
+// ✅ 생년월일 유효성 검사 함수
+function validateBirthDate(birthDate, genderDigit) {
+  // 1. 숫자 6자리 확인
+  if (!/^\d{6}$/.test(birthDate)) {
+    return { valid: false, message: '생년월일은 6자리 숫자여야 합니다. (예: 990101)' };
+  }
+  
+  const year = parseInt(birthDate.substring(0, 2));
+  const month = parseInt(birthDate.substring(2, 4));
+  const day = parseInt(birthDate.substring(4, 6));
+  
+  // 2. 월 검증 (1~12)
+  if (month < 1 || month > 12) {
+    return { valid: false, message: '올바른 월을 입력해주세요.' };
+  }
+  
+  // 3. 일 검증 (1~31, 월별로 다름)
+  const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (day < 1 || day > daysInMonth[month - 1]) {
+    return { valid: false, message: '올바른 일을 입력해주세요.' };
+  }
+  
+  // 4. 성별 숫자에 따른 연도 계산
+  let fullYear;
+  if (genderDigit === '1' || genderDigit === '2') {
+    fullYear = 1900 + year;
+  } else if (genderDigit === '3' || genderDigit === '4') {
+    fullYear = 2000 + year;
+  } else {
+    return { valid: false, message: '주민등록번호 뒷자리 첫 번째 숫자를 1~4 중에서 입력해주세요.' };
+  }
+  
+  // 5. 윤년 검증 (2월 29일인 경우)
+  if (month === 2 && day === 29) {
+    const isLeapYear = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
+    if (!isLeapYear) {
+      return { valid: false, message: `${fullYear}년은 윤년이 아니므로 2월 29일은 존재하지 않습니다.` };
+    }
+  }
+  
+  // 6. 미래 날짜 체크
+  const birthDateObj = new Date(fullYear, month - 1, day);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (birthDateObj > today) {
+    return { valid: false, message: '생년월일은 오늘 이후 날짜일 수 없습니다.' };
+  }
+  
+  // 7. 너무 오래된 날짜 체크 (120세 이상)
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 120);
+  
+  if (birthDateObj < minDate) {
+    return { valid: false, message: '생년월일이 너무 오래되었습니다.' };
+  }
+  
+  // 8. 만 14세 미만 체크
+  const minAgeDate = new Date();
+  minAgeDate.setFullYear(minAgeDate.getFullYear() - 14);
+  
+  if (birthDateObj > minAgeDate) {
+    return { valid: false, message: '만 14세 이상만 가입할 수 있습니다.' };
+  }
+  
+  return { valid: true, message: '유효한 생년월일입니다.' };
+}
+
+// ✅ 생년월일 실시간 검증
+const birthDateInput = document.getElementById('birthDateInput');
+const genderDigitInput = document.getElementById('genderDigitInput');
+const birthDateMsg = document.getElementById('birthDateMsg');
+
+birthDateInput.addEventListener('input', function() {
+  // 숫자만 입력되도록
+  this.value = this.value.replace(/[^0-9]/g, '');
+  
+  if (this.value.length === 6 && genderDigitInput.value) {
+    const result = validateBirthDate(this.value, genderDigitInput.value);
+    if (!result.valid) {
+      birthDateMsg.textContent = '❌ ' + result.message;
+      birthDateMsg.style.color = 'red';
+      window.isBirthDateValid = false;
+    } else {
+      birthDateMsg.textContent = '✅ ' + result.message;
+      birthDateMsg.style.color = 'green';
+      window.isBirthDateValid = true;
+    }
+  } else {
+    birthDateMsg.textContent = '';
+    window.isBirthDateValid = false;
+  }
+});
+
+genderDigitInput.addEventListener('input', function() {
+  // 숫자만 입력되도록
+  this.value = this.value.replace(/[^0-9]/g, '');
+  
+  if (birthDateInput.value.length === 6 && this.value) {
+    const result = validateBirthDate(birthDateInput.value, this.value);
+    if (!result.valid) {
+      birthDateMsg.textContent = '❌ ' + result.message;
+      birthDateMsg.style.color = 'red';
+      window.isBirthDateValid = false;
+    } else {
+      birthDateMsg.textContent = '✅ ' + result.message;
+      birthDateMsg.style.color = 'green';
+      window.isBirthDateValid = true;
+    }
+  } else {
+    birthDateMsg.textContent = '';
+    window.isBirthDateValid = false;
+  }
+});
+
 // 취소 버튼
 document.querySelector('.btn.cancel').addEventListener('click', function() {
   if(confirm('회원가입을 취소하시겠습니까?')) {
@@ -341,9 +457,9 @@ document.querySelector('.btn.cancel').addEventListener('click', function() {
   }
 });
 
-// Form 제출 검증
+// ⭐ Form 제출 검증 (소셜/일반 구분)
 document.getElementById('signupForm').addEventListener('submit', function(e) {
-  // 닉네임 검증
+  // ⭐ 닉네임 검증 (소셜/일반 모두 필수)
   const nicknameChecked = window.isNicknameChecked || false;
   const nicknameAvailable = window.isNicknameAvailable || false;
   if (!nicknameChecked || !nicknameAvailable) {
@@ -386,25 +502,22 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     }
   }
 
-  // 생년월일 검증
+  // ✅ 생년월일 및 주민번호 검증 (소셜/일반 모두 필수)
   const birthDate = document.getElementById('birthDateInput').value;
-  if (birthDate.length !== 6 || !/^\d{6}$/.test(birthDate)) {
-    e.preventDefault();
-    alert('생년월일 6자리를 정확히 입력해주세요. (예: 990101)');
-    return false;
-  }
-
-  // 주민등록번호 뒷자리 첫 번째 숫자 검증
   const genderDigit = document.getElementById('genderDigitInput').value;
-  if (!/^[1-4]$/.test(genderDigit)) {
+  
+  const birthValidation = validateBirthDate(birthDate, genderDigit);
+  if (!birthValidation.valid) {
     e.preventDefault();
-    alert('주민등록번호 뒷자리 첫 번째 숫자를 1~4 중에서 입력해주세요.');
+    birthDateMsg.textContent = '❌ ' + birthValidation.message;
+    birthDateMsg.style.color = 'red';
+    birthDateInput.focus();
     return false;
   }
 
-  // 전화번호 검증
+  // 전화번호 검증 (소셜/일반 모두 필수)
   const phone = document.getElementById('phoneInput').value.trim();
-  const phonePattern = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
+  const phonePattern = /^01[0-9]-[0-9]{4}-[0-9]{4}$/;
   if (!phonePattern.test(phone)) {
     e.preventDefault();
     alert('전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)');
