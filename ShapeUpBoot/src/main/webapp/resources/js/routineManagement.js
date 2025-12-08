@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		".activity-list .activity-item"
 	);
 	const chartCircle = document.querySelector(".ratio-chart .chart-circle"); // 카테고리 비율을 시각화하는 차트 원형
-	const chartTooltip = document.getElementById('chartTooltip'); // 차트 마우스 오버 시 표시되는 외부 툴팁
+	// const chartTooltip = document.getElementById('chartTooltip'); // 🚨 [제거]: 툴팁 기능을 제거하므로 변수도 제거
 
 	// 우측 패널 DOM 요소 (목표 및 칼로리)
 	const goalsPanel = document.querySelector(".goals-panel"); // 주간 목표 전체 컨테이너 (data-weekly-goal 속성을 가짐)
@@ -52,8 +52,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let currentCaloriePerMin = 0.0; // 현재 선택된 활동 종목의 **분당** 칼로리 값
     
-    // 툴팁 기능에서 사용할 차트 데이터 세그먼트 저장 배열
-    let chartDataSegments = []; 
+    // 🚨 [제거]: 툴팁 기능을 제거하므로 툴팁 데이터 변수도 제거
+    // let chartDataSegments = []; 
+    
     // 카테고리 색상 정의 (JS에서 사용)
     const categoryColors = {
         스포츠: '#2f80ff',    
@@ -246,60 +247,17 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	// --------------------------------------------------------
-	// [활동 리스트 강조 로직]
+	// 🚨 [제거]: 활동 리스트 강조 로직 (마우스 오버 효과 제거)
 	// --------------------------------------------------------
-
-	/**
-	 * 활동 리스트 항목에 마우스 이벤트 리스너를 등록합니다.
-	 */
-	function initializeActivityListEvents() {
-		activityListItems.forEach(item => {
-			// 마우스 오버 시
-			item.addEventListener('mouseenter', function() {
-				const categoryName = this.querySelector(".activity-name").textContent.trim();
-				highlightActivityItem(categoryName, true); // 강조 (활성화)
-			});
-
-			// 마우스 이탈 시
-			item.addEventListener('mouseleave', function() {
-				const categoryName = this.querySelector(".activity-name").textContent.trim();
-				highlightActivityItem(categoryName, false); // 강조 해제 (비활성화)
-			});
-		});
-	}
-
-	/**
-	 * 특정 활동 리스트 항목을 강조하거나 해제합니다.
-	 * @param {string} categoryName - 활동 카테고리 이름
-	 * @param {boolean} highlight - 강조할지 여부 (true/false)
-	 */
-	function highlightActivityItem(categoryName, highlight) {
-		const color = categoryColors[categoryName] || 'var(--text-dark)';
-		
-		// 1. 해당 리스트 아이템 찾기
-		const listItem = Array.from(activityListItems).find(item => 
-			item.querySelector(".activity-name").textContent.trim() === categoryName
-		);
-
-		if (listItem) {
-			if (highlight) {
-				// 강조 시: 배경색 또는 테두리 색상 적용
-				listItem.style.border = `2px solid ${color}`;
-				listItem.style.backgroundColor = `${color}1A`; // 색상의 10% 투명도
-			} else {
-				// 해제 시: 스타일 제거
-				listItem.style.border = '2px solid transparent';
-				listItem.style.backgroundColor = 'transparent';
-			}
-		}
-	}
-
+    // initializeActivityListEvents() 함수 제거
+    // highlightActivityItem() 함수 제거
 
 	// --------------------------------------------------------
-	// [카테고리 비율 계산 및 업데이트 (차트/툴팁)]
+	// [카테고리 비율 계산 및 업데이트 (차트)]
 	// --------------------------------------------------------
 	/**
 	 * 루틴 목록을 순회하며 카테고리별 비율을 계산하고 좌측 패널 차트와 리스트를 업데이트합니다.
+	 * 🚨 마우스 오버(툴팁, 리스트 강조) 기능은 제거되었습니다.
 	 */
 	function updateCategoryRatio() {
 		const allRoutines = Array.from(document.querySelectorAll(".routine-card")); // 모든 루틴 카드 DOM 요소를 배열로 가져옴
@@ -317,9 +275,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				if (percentSpan) percentSpan.textContent = "0%";
 			});
 			chartCircle.style.setProperty('--_conic-gradient', 'conic-gradient(#f0f0f0 0deg 360deg)'); 
-            
-            chartDataSegments = []; // 툴팁 데이터 초기화
-            initializeTooltip(); // 툴팁 이벤트 리스너 설정
 			return;
 		}
 
@@ -337,7 +292,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		// 3. 비율 계산 및 코닉 그라디언트 문자열 생성
 		let currentAngle = 0; // 현재까지 누적된 각도 (0도에서 시작)
 		let stops = []; // conic-gradient의 색상 정지점을 저장할 배열
-        chartDataSegments = []; // 차트 데이터 세그먼트 배열 초기화
 
 		for (const category of categories) {
 			const count = categoryCounts[category] || 0;
@@ -364,16 +318,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				// 현재 색상 시작점/끝점 정의
 				stops.push(`${color} ${currentAngle}deg`);
 				stops.push(`${color} ${nextAngle}deg`);
-                
-                // 툴팁 로직을 위한 세그먼트 데이터 저장
-                chartDataSegments.push({
-                    category: category,
-					// 카테고리별 '갯수'도 툴팁에 표시하기 위해 count 저장
-                    count: count, 
-                    percent: Math.round(percent),
-                    startAngle: currentAngle,
-                    endAngle: nextAngle
-                });
 				
 				currentAngle = nextAngle; // 다음 조각의 시작점 업데이트
 			}
@@ -394,114 +338,18 @@ document.addEventListener("DOMContentLoaded", function() {
 			chartCircle.style.setProperty('--_conic-gradient', 'conic-gradient(#f0f0f0 0deg 360deg)');
 		}
         
-        // 5. 툴팁 이벤트 리스너 등록
-        initializeTooltip();
-		
-		// 6. 활동 리스트 항목 이벤트 등록 및 초기화
-		initializeActivityListEvents(); 
+        // 🚨 [제거]: 툴팁 및 리스트 강조 이벤트 초기화 호출 제거
+        // initializeTooltip(); 
+		// initializeActivityListEvents(); 
 	}
 
 
-    /**
-     * 툴팁 초기화 및 마우스 이벤트 등록 함수
-     */
-    function initializeTooltip() {
-        if (!chartCircle || !chartTooltip) {
-            if (chartTooltip) chartTooltip.style.opacity = 0;
-            // 이벤트 제거
-            chartCircle.removeEventListener('mousemove', handleChartMouseMove);
-            chartCircle.removeEventListener('mouseleave', handleChartMouseLeave);
-            return;
-        }
-
-        // 마우스 이벤트 리스너 등록 (중복 등록 방지)
-        chartCircle.removeEventListener('mousemove', handleChartMouseMove);
-        chartCircle.removeEventListener('mouseleave', handleChartMouseLeave);
-        chartCircle.addEventListener('mousemove', handleChartMouseMove);
-        chartCircle.addEventListener('mouseleave', handleChartMouseLeave);
-    }
-    
-    /**
-     * 마우스가 차트를 벗어날 때 툴팁을 숨기는 핸들러
-     */
-    function handleChartMouseLeave() {
-        if (chartTooltip) {
-            chartTooltip.style.opacity = 0; // 툴팁 숨김
-        }
-		// 차트 확대 효과 제거
-		chartCircle.classList.remove('hover-effect'); 
-    }
-
-
-    /**
-     * 마우스 이동 시 툴팁을 업데이트하고 위치를 계산하는 핸들러 (각도 계산 로직)
-     * @param {MouseEvent} e
-     */
-    function handleChartMouseMove(e) {
-        if (!chartTooltip) return;
-        
-        const rect = chartCircle.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const deltaX = e.clientX - centerX;
-        const deltaY = e.clientY - centerY;
-        
-        // 차트의 중앙 구멍 또는 바깥쪽에 마우스가 있는지 확인
-        const radius = rect.width / 2;
-        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        
-        // 중앙 구멍 (40%) 안에 있거나, 차트 영역(radius) 밖에 있으면 툴팁 숨김
-        if (distance < radius * 0.4 || distance > radius) { 
-            chartTooltip.style.opacity = 0;
-			chartCircle.classList.remove('hover-effect'); // 확대 효과 제거
-            return;
-        }
-		
-		// 마우스가 차트 영역 내에 있으면 확대 효과 적용
-		chartCircle.classList.add('hover-effect'); 
-
-        // 1. 마우스 각도 계산 (0~360도, 시계방향)
-        let angleRad = Math.atan2(deltaY, deltaX);
-        let angleDeg = angleRad * (180 / Math.PI);
-        angleDeg = angleDeg < 0 ? angleDeg + 360 : angleDeg; 
-
-        // 2. 현재 각도에 해당하는 카테고리 찾기
-        const segment = chartDataSegments.find(segment => {
-            // 각도 범위 검사 (startAngle <= angleDeg < endAngle)
-            return angleDeg >= segment.startAngle && angleDeg < segment.endAngle;
-        });
-
-        if (segment) {
-            // 3. 툴팁 내용 업데이트 (카테고리명과 갯수 표시)
-            const categoryName = segment.category;
-            const count = segment.count; 
-            const color = categoryColors[categoryName] || '#000';
-            
-            // 툴팁 내용 채우기
-            chartTooltip.querySelector('.tooltip-category').textContent = categoryName;
-            chartTooltip.querySelector('.tooltip-count').innerHTML = `<span style="color:${color};">&#9632;</span> ${count}`;
-            
-            // 4. 툴팁 위치 계산 (마우스 좌표를 기준으로)
-            const chartParentRect = chartCircle.closest('.ratio-chart').getBoundingClientRect(); 
-            
-            // 마우스 커서 위치를 기준으로 툴팁을 표시
-            let tooltipX = e.clientX - chartParentRect.left - chartTooltip.offsetWidth / 2; // 툴팁 중앙을 커서 아래에 맞춤
-            let tooltipY = e.clientY - chartParentRect.top - chartTooltip.offsetHeight - 15; 
-            
-            // 툴팁이 차트 영역 밖으로 나가지 않도록 경계 처리 (선택 사항)
-            if (tooltipX < 0) tooltipX = 0;
-            if (tooltipY < 0) tooltipY = 0;
-
-            chartTooltip.style.left = `${tooltipX}px`;
-            chartTooltip.style.top = `${tooltipY}px`;
-            chartTooltip.style.opacity = 1; // 툴팁 표시
-            
-        } else {
-             chartTooltip.style.opacity = 0;
-			 chartCircle.classList.remove('hover-effect');
-        }
-    }
+    // --------------------------------------------------------
+	// 🚨 [제거]: 차트 툴팁 관련 함수 제거
+    // initializeTooltip() 함수 제거
+    // handleChartMouseLeave() 함수 제거
+    // handleChartMouseMove() 함수 제거
+    // --------------------------------------------------------
     
 
 	// --------------------------------------------------------
@@ -515,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		
 		let goalTarget = 5; // 기본 목표 횟수
 		
-		// 🚨 [수정] 목표 횟수를 입력 필드에서 읽어오고 유효성 검사
+		// 🚨 목표 횟수를 입력 필드에서 읽어오고 유효성 검사
 		if (goalInput) {
 			goalTarget = parseInt(goalInput.value) || 5; 
 			// 1~7 범위 제한
@@ -549,15 +397,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		const activeDaysCount = activeDays.size; // 실제 활동 요일 수
 
 		// 2. 목표 달성률 계산 및 DOM 업데이트
-		// 목표가 0일 경우 무한대 방지 (달성률 0% 또는 100% 처리)
-        const progress = (goalTarget > 0) ? Math.min(100, (activeDaysCount / goalTarget) * 100) : 0;
+		// 🚨 100% 초과 허용 로직
+        let progress = 0;
+        if (goalTarget > 0) {
+            progress = (activeDaysCount / goalTarget) * 100; // Math.min(100, ...) 제한 제거
+        }
 
 		if (currentGoalCountSpan)
 			currentGoalCountSpan.textContent = activeDaysCount; // 달성 횟수 업데이트
-		
-		// 🚨 goalTargetDisplaySpan은 input으로 대체되었으므로, 별도의 텍스트 업데이트 로직이 필요 없습니다.
 
-		if (progressBar) progressBar.style.width = progress + "%"; // 진행률 바 너비 업데이트
+		if (progressBar) progressBar.style.width = progress + "%"; // 진행률 바 너비 업데이트 (100% 초과 가능)
 		if (progressPercentSpan)
 			progressPercentSpan.textContent = Math.round(progress) + "%"; // 진행률 텍스트 업데이트
 
