@@ -7,6 +7,7 @@
   <title>ShapeUp 소개</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp" />
   <link rel="stylesheet" href="/resources/css/introduce.css">
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
   <div class="intro-wrap">

@@ -5,9 +5,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>매칭게시판 | ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 <link rel="stylesheet" href="../../resources/css/matching/matchingBoard.css">
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
     <div class="container">
@@ -58,9 +59,9 @@
 
                         <div class="filter-btn-wrapper hidden" id="time-filter">
                             <button class="filter-btn time-filter-btn" id="time-filter-btn" value="">전체</button>
-                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="07:00 ~ 11:59">오전</button>
-                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="12:00 ~ 17:59">오후</button>
-                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="17:59 ~ 23:59">저녁</button>
+                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="오전">오전</button>
+                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="오후">오후</button>
+                            <button class="filter-btn time-filter-btn" id="time-filter-btn" value="저녁">저녁</button>
                         </div>
                     </div>
 

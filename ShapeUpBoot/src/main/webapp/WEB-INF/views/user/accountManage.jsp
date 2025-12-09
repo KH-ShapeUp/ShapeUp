@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/updateUserInfo.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/mypage.css">
   <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
+
   
 </head>
 <body>

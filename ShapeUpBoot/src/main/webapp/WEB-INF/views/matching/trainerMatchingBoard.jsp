@@ -5,9 +5,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>트레이닝 모집 | ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 <link rel="stylesheet" href="../../../resources/css/matching/trainerMatchingBoard.css">
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
     <div class="container">
@@ -63,9 +64,9 @@
                         </div>
                     </div>
                     <div class="matching-board">
-                        <div class="matching-content-wrapper">
-                            <c:choose>
-                                <c:when test="${not empty mList}">
+                        <c:choose>
+                            <c:when test="${not empty mList}">
+                                <div class="matching-content-wrapper">
                                     <c:forEach var="mList" items="${mList }">                
                                         <div class="matching-card">
                                             <div class="matching-card-top">
@@ -87,11 +88,11 @@
                                                     <span class="createDay">${mList.timeAgo }</span>
                                                 </div>                                    
                                             </div>
-                                            <div class="matching-review">
+                                            <!-- <div class="matching-review">
                                                 <img src="../../../resources/img/star.png">
                                                 <span class="reviewAvg">4.5</span>
                                                 <span class="reviewCount">(20)</span>
-                                            </div>
+                                            </div> -->
                                             <div class="category-wrapper">
                                                 <span class="category"># ${mList.partnerType }</span>
                                             </div>
@@ -137,15 +138,17 @@
                                             <a href="/trainer/matching/detail?boardNo=${mList.matchingNo }" class="detail-btn">상세보기</a>
                                         </div>            
                                     </c:forEach>
+                                </div>
                                 </c:when>
-                                <c:otherwise>              
-                                    <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
-                                        <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
-                                        <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 댓글이 없습니다.</p>    
+                                <c:otherwise>
+                                    <div style="height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                        <div style="width:100%; height: 10vh; display:flex; align-items:center; justify-content:center; flex-direction: column; gap:10px">
+                                            <span class="material-symbols-outlined" style="font-size:50px; color:#aaa; font-weight: 500;">error</span>
+                                            <p style="margin-top:10px; font-size:1rem; font-weight: 500; color:#aaa;">작성한 댓글이 없습니다.</p>    
+                                        </div> 
                                     </div>
                                 </c:otherwise>
-                            </c:choose>
-                        </div>
+                        </c:choose>
                     </div>
                     <div class="pagination-wrapper">
                         <nav class="pagination">                           	

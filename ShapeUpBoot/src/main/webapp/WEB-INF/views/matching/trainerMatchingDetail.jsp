@@ -5,9 +5,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>트레이닝 | ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 <link rel="stylesheet" href="../../resources/css/matching/trainerMatchingDetail.css">
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
 	<div class="container">

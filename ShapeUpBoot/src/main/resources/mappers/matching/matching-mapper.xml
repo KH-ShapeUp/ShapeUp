@@ -97,7 +97,17 @@
 		
 		    
 		    <if test="time != null and time != ''">
-		        AND M.MATCHING_TIME = #{time}
+		        <choose>
+			        <when test="time == '오전'">
+			            AND M.MATCHING_TIME BETWEEN '07:00' AND '12:00'
+			        </when>
+			        <when test="time == '오후'">
+			            AND M.MATCHING_TIME BETWEEN '13:00' AND '17:00'
+			        </when>
+			        <when test="time == '저녁'">
+			            AND M.MATCHING_TIME BETWEEN '18:00' AND '23:00'
+			        </when>
+			    </choose>
 		    </if>
 		
 		    

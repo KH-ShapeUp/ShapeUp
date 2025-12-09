@@ -7,6 +7,7 @@
   <title>추가 정보 입력 | ShapeUp</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/signupSurvey.css">
   <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
+
 </head>
 <body>
 

@@ -4,9 +4,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Insert title here</title>
+    <title>시설 지도 | ShapeUp</title>
     <jsp:include page="/WEB-INF/views/include/head.jsp"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/map/map.css">
+    <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
     <div class="container">

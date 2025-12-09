@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원가입 | ShapeUp</title>
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/user/signupInsertInfo.css">
   <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">

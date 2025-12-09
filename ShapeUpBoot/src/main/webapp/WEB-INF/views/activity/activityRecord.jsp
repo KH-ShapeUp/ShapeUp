@@ -4,10 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오늘의 운동</title>
+  <title>오늘의 운동 | ShapeUp</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityRecord.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/activity/activityList.css">
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 </head>
 <body class="activity-record">

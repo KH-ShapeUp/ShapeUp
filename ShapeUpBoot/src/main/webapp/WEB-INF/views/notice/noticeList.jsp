@@ -7,7 +7,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>공지사항</title>
+<title>공지사항 | ShapeUp</title>
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 <link rel="stylesheet" href="/resources/css/notice/noticeList.css" />
 </head>
 <body>
