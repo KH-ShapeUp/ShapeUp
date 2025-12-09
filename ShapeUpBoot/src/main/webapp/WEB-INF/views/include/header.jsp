@@ -1,17 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="com.ShapeUp.boot.domain.user.model.vo.UserVO" %>
+<%@ page import="com.ShapeUp.boot.domain.user.model.service.UserService" %>
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%
-    // 세션에서 로그인 정보 가져오기 (한 번만 선언)
-    String loginUserNickname = (String) session.getAttribute("userNickname");
-    boolean isLogin = loginUserNickname != null;
-
-    String loginUserEmail = (String)session.getAttribute("loginUserEmail");
-
+    // 로그인 여부 확인
+    Integer userNo = (Integer) session.getAttribute("userNo");
+    String loginUserEmail = (String) session.getAttribute("loginUserEmail");
+    boolean isLogin = userNo != null;
+    
+    String loginUserNickname = null;
+    
+    // 로그인 상태면 DB에서 최신 닉네임 조회
+    if (isLogin) {
+        try {
+            WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(application);
+            UserService userService = context.getBean(UserService.class);
+            UserVO user = userService.selectUserByUserNo(userNo);
+            
+            if (user != null) {
+                loginUserNickname = user.getUserNickname();
+            }
+        } catch (Exception e) {
+            // 조회 실패 시 세션의 닉네임 사용
+            loginUserNickname = (String) session.getAttribute("userNickname");
+        }
+    }
 %>
 
 <div class="header">
     <div class="logo">
-        <a href="/"><img src="../../../resources/img/main_logo.png" alt="" width="110px"></a>
+        <a href="/"><img src="${pageContext.request.contextPath}/resources/img/main_logo.png" alt="" width="110px"></a>
     </div>
     <div class="menu">
         <ul class="main-menu">
@@ -59,7 +79,6 @@
             <!-- 비로그인 상태 -->
             <a href="/user/login" id="loginBtn" class="btn login-btn">로그인</a>
             <a href="/user/signupAgreement" id="singnBtn" class="btn signup-btn">회원가입</a>
-
         <% } %>
     </div>
 
@@ -80,13 +99,13 @@
         <% if(isLogin) { %>
         <div class="userInfo">
             <div class="profile-img">
-                <img src="../../../resources/img/person.png">
+                <img src="${pageContext.request.contextPath}/resources/img/person.png">
             </div>
             <div class="profile-info">
-                    <span class="name"><%= loginUserNickname %></span>
-                    <span class="email"><%= loginUserEmail %></span>
-                </div>
+                <span class="name"><%= loginUserNickname %></span>
+                <span class="email"><%= loginUserEmail %></span>
             </div>
+        </div>
         <% } %>
 
         <% if(!isLogin) { %>
@@ -99,7 +118,6 @@
         <hr style="border: 0.3px solid #f1f1f1;">
 
         <div class="sideBar-List">
-            <!-- 메뉴 리스트 동일 -->
             <div class="list-item">
                 <a href="/">
                     <span class="material-symbols-outlined">home</span>
