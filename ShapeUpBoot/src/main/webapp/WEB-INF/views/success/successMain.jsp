@@ -16,7 +16,7 @@
             <div class="board-wrapper">
                 <div class="board-wrapper-left">
                 	<div style="padding: 20px 0px">
-	                    <p class="board-title">성공 후기 테이블</p>
+	                    <p class="board-title">성공 후기 게시판</p>
 	                    <span style="font-size:.8rem; color:#222;">총 게시물 : ${TotalCount}</span>
                 	</div>
                     <div class="board-left-top">

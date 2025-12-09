@@ -449,46 +449,65 @@
         </div>
       </div>
       <!-- 보안 설정 섹션 -->
-      <div class="info-section">
-        <h2 class="section-title">보안 설정</h2>
-        
-        <div class="password-section">
-          <div class="info-group" style="border-bottom: none;">
-            <div class="info-label">비밀번호</div>
-            <div class="info-value">••••••••</div>
-            <div class="info-actions">
-              <button type="button" class="btn btn-edit" id="showPasswordFormBtn" onclick="togglePasswordForm()">변경</button>
-            </div>
-          </div>
-
-          <div class="password-form" id="passwordForm">
-            <form id="changePasswordForm">
-              <div class="form-group">
-                <label>현재 비밀번호</label>
-                <input type="password" id="currentPassword" placeholder="현재 비밀번호를 입력하세요" required>
-              </div>
-
-              <div class="form-group">
-                <label>새 비밀번호</label>
-                <input type="password" id="newPassword" placeholder="새 비밀번호를 입력하세요" required>
-                <small style="color: #666; font-size: 0.85rem;">8~20자, 영문+숫자+특수문자(@$!%*#?&) 조합</small>
-                <span id="newPasswordValidMsg" class="validation-msg"></span>
-              </div>
-
-              <div class="form-group">
-                <label>새 비밀번호 확인</label>
-                <input type="password" id="confirmPassword" placeholder="새 비밀번호를 다시 입력하세요" required>
-                <span id="confirmPasswordMsg" class="validation-msg"></span>
-              </div>
-
-              <div class="password-buttons">
-                <button type="button" class="btn btn-save" onclick="changePassword()">비밀번호 변경</button>
-                <button type="button" class="btn btn-cancel" onclick="togglePasswordForm()">취소</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+		<div class="info-section">
+		  <h2 class="section-title">보안 설정</h2>
+		  
+		  <!-- ⭐ 소셜 로그인 사용자가 아닐 때만 비밀번호 변경 섹션 표시 -->
+		  <c:choose>
+		    <c:when test="${user.userPw == 'SOCIAL'}">
+		      <!-- 소셜 로그인 사용자용 메시지 -->
+		      <div class="social-login-notice">
+		        <div style="padding: 20px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
+		          <span style="font-size: 2rem;">🔐</span>
+		          <p style="margin-top: 10px; font-size: 1rem; font-weight: 500;">
+		            소셜 로그인으로 가입한 계정입니다
+		          </p>
+		          <p style="margin-top: 5px; font-size: 0.9rem; color: #999;">
+		          </p>
+		        </div>
+		      </div>
+		    </c:when>
+		    <c:otherwise>
+		      <!-- 일반 로그인 사용자용 비밀번호 변경 폼 -->
+		      <div class="password-section">
+		        <div class="info-group" style="border-bottom: none;">
+		          <div class="info-label">비밀번호</div>
+		          <div class="info-value">••••••••</div>
+		          <div class="info-actions">
+		            <button type="button" class="btn btn-edit" id="showPasswordFormBtn" onclick="togglePasswordForm()">변경</button>
+		          </div>
+		        </div>
+		
+		        <div class="password-form" id="passwordForm">
+		          <form id="changePasswordForm">
+		            <div class="form-group">
+		              <label>현재 비밀번호</label>
+		              <input type="password" id="currentPassword" placeholder="현재 비밀번호를 입력하세요" required>
+		            </div>
+		
+		            <div class="form-group">
+		              <label>새 비밀번호</label>
+		              <input type="password" id="newPassword" placeholder="새 비밀번호를 입력하세요" required>
+		              <small style="color: #666; font-size: 0.85rem;">8~20자, 영문+숫자+특수문자(@$!%*#?&) 조합</small>
+		              <span id="newPasswordValidMsg" class="validation-msg"></span>
+		            </div>
+		
+		            <div class="form-group">
+		              <label>새 비밀번호 확인</label>
+		              <input type="password" id="confirmPassword" placeholder="새 비밀번호를 다시 입력하세요" required>
+		              <span id="confirmPasswordMsg" class="validation-msg"></span>
+		            </div>
+		
+		            <div class="password-buttons">
+		              <button type="button" class="btn btn-save" onclick="changePassword()">비밀번호 변경</button>
+		              <button type="button" class="btn btn-cancel" onclick="togglePasswordForm()">취소</button>
+		            </div>
+		          </form>
+		        </div>
+		      </div>
+		    </c:otherwise>
+		  </c:choose>
+		</div>
 
     </div>
   </div>
