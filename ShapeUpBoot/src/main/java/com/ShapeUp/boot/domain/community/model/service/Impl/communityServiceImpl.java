@@ -228,4 +228,9 @@ public class communityServiceImpl implements communityService {
 	public List<Map<String, Object>> selectSuccessTrend() {
 		return cMapper.selectSuccessTrend();
 	}
+
+	@Override
+	public int modifyCommunity(communityInsertDTO cDTO, int userNo) {
+		return cMapper.modifyCommunity(cDTO, userNo);
+	}
 }

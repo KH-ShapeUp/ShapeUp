@@ -118,4 +118,10 @@ public interface UserService {
 	List<matchingListDTO> getApplyMatchingList(Integer userNo);
 	/* 리뷰 쓰기 */
 	int reviewInsert(ReviewVO rVo);
+	/* 리뷰 전체 가져오기 */
+	List<ReviewVO> getReviewList(int matchingNo);
+
+	int reviewDelete(int matchingNo, int userNo);
+
+
 }

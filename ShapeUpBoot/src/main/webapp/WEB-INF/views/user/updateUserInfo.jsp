@@ -396,13 +396,19 @@
                   </div>
                   <div class="setting">
                     <c:choose>
+                      <c:when test="${aList.reviewCount >= 1}">
+                        <button class="myreviewWrite" onclick="reviewAll('${aList.matchingNo}')">
+                          <span>리뷰보기</span>
+                          <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                      </c:when>
                       <c:when test="${aList.matchingStatus eq '마감'}">
                         <button class="reviewWrite" 
                                 data-matching-no="${aList.matchingNo}" 
                                 data-user-no="${userNo}"
                                 onclick="reviewWrite(this);">
                           리뷰쓰러가기
-                        </button>
+                        </button>      
                       </c:when>
                       <c:otherwise>
                         <button class="matchingCancel"  type="button" data-matching-num="${aList.matchingNo}">취소</button>
@@ -678,6 +684,20 @@
       <div class="btn-row">
         <button type="button" class="saveBtn">저장</button>
         <button type="button" class="cancelBtn">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리뷰 리스트 -->
+  <div id="reviewListModal" class="request-form-modal">
+    <div class="reviewList-wrapper">
+      <div class="review-top">
+        <h3 class="review-title">리뷰 리스트</h3>
+        <button class="reviewAllClose" onclick="reviewAllClose();">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="review-content">
       </div>
     </div>
   </div>
@@ -1089,8 +1109,9 @@ function displayUserType() {
   }
 }
 /* 리뷰 */
+
+
 document.addEventListener("DOMContentLoaded", () => {
-    
     // --- [중요] 전역 변수 선언 (함수들끼리 공유하기 위함) ---
     let currentMatchingNo = null;
     let currentUserNo = null;
@@ -1248,6 +1269,122 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function reviewAll(matchingNo) {
+  document.querySelector("#reviewListModal").style.display = 'flex';
+  fetch("/review/list?matchingNo=" + matchingNo)
+  .then(res => res.json())
+  .then(rList => {
+    const reviewList = document.querySelector(".review-content")
+    reviewList.innerHTML = '';
+
+    rList.forEach(r => {
+      const imgTag = r.userProfileImg
+        ? `<img src="\${r.userProfileImg}" width="50" alt="프로필">`
+        : `<img src="../../resources/img/default-profile.png" width="50" alt="기본 프로필">`;
+
+      let stars = '';
+      for(let i = 1; i <= 5; i++) {
+          if(i <= r.reviewType){
+              stars += `<i class="fa-solid fa-star" style="color: #FFD43B;"></i>`;
+          } else {
+              stars += `<i class="fa-regular fa-star" style="color: #FFD43B;"></i>`;
+          }
+      }
+
+      reviewList.innerHTML += `
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="card-top-left">
+              \${imgTag}
+            </div>
+            <div class="card-top-right">
+              <div class="card-top-user">
+                <span class="nick-name">\${r.userNickName}</span>
+                <span class="created-day">\${r.createdDay}</span>
+              </div>
+              <button class="reviewDelete" onclick="reviewDelete('\${r.matchingNo}');">삭제</button>
+            </div>
+          </div>
+          <div class="review-star">
+            \${stars}
+          </div>
+          <div class="card-middle">
+            <span class="card-review-content">\${r.reviewContent}</span>
+          </div>
+        </div>
+      `;
+    }) 
+  })
+}
+function reviewDelete(matchingNo) {
+  Swal.fire({
+    title: '해당 리뷰를 삭제하시겠습니까?',
+    showCancelButton: true,
+    cancelButtonText: "취소",
+    confirmButtonText: "삭제",
+    customClass: {
+      popup: 'success-popup',
+      title: 'success-title',
+      confirmButton: 'success-button',
+      cancelButton: 'cancel-button'
+    }
+  }).then((result)=> {
+    if(result.isConfirmed) {
+      fetch("/review/delete?matchingNo=" + matchingNo) 
+      .then(res => res.json())
+      .then(result => {
+        if(result > 0) {
+          Swal.fire({
+            icon: 'success',
+            title: '삭제 완료!',
+            confirmButtonText: '확인',
+            customClass: {
+              popup: 'success-popup',
+              title: 'success-title',
+              confirmButton: 'success-button',
+            }
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon:'error',
+            title: '삭제 실패..ㅠ',
+            text: '다시 시도 해주세요.',
+            confirmButtonText: '확인',
+            customClass: {
+              popup: 'error-popup',
+              title: 'error-title',
+              text: 'error-text',
+              confirmButton: 'error-button'
+            }
+          });
+        }
+      })
+      .catch(err => {
+        Swal.fire({
+            icon:'error',
+            title: '오류가 발생하였습니다.',
+            text: err,
+            confirmButtonText: '확인',
+            customClass: {
+                popup: 'error-popup',
+                title: 'error-title',
+                text: 'error-text',
+                confirmButton: 'error-button'
+            }
+        });
+      })
+    }
+  })
+}
+
+
+
+function reviewAllClose() {
+  document.querySelector("#reviewListModal").style.display = 'none';
+}
 
 function openPermissionSelect() {
   document.getElementById('permissionSelectModal').style.display = 'flex';

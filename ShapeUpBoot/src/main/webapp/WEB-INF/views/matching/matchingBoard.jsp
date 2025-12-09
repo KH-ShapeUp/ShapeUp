@@ -325,7 +325,7 @@
 
                 const imgTag = match.userProfileImg
                     ? `<img src="\${match.userProfileImg}" width="50" alt="프로필">`
-                    : `<img src="../../resources/img/default-profile.png" width="50" alt="기본 프로필">`;
+                    : `<img src="../../../resources/img/default-profile.png" width="50" alt="기본 프로필">`;
 
 
 

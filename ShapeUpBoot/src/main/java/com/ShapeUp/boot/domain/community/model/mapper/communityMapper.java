@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.ShapeUp.boot.app.community.dto.communityImageDTO;
@@ -80,5 +81,7 @@ public interface communityMapper {
 
 	/* Admin 전용: 성공후기 등록 추이 */
 	List<java.util.Map<String, Object>> selectSuccessTrend();
+
+	int modifyCommunity(@Param("cDTO") communityInsertDTO cDTO, @Param("userNo") int userNo);
 
 }

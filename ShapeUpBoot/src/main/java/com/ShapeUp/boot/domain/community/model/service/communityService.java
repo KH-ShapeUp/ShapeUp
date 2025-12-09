@@ -59,4 +59,6 @@ public interface communityService {
 	/* Admin 전용: 성공후기 등록 추이 */
 	List<Map<String, Object>> selectSuccessTrend();
 
+	int modifyCommunity(communityInsertDTO cDTO, int userNo);
+
 }
