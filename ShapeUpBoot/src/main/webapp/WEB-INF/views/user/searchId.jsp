@@ -7,6 +7,7 @@
   <title>아이디 찾기 | ShapeUp</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/searchId.css">
+  <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
 </head>
 <body>
 
