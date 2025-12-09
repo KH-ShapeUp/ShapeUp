@@ -7,6 +7,7 @@
   <title>약관 동의 | ShapeUp</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/signupAgreement.css">
+  <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
 </head>
 <body>
   <main class="signup-container">

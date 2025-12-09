@@ -11,6 +11,7 @@
     <meta charset="UTF-8">
     <title>로그인 | ShapeUp</title>
     <link rel="stylesheet" href="/resources/css/user/login.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
 </head>
 <body>
 

@@ -8,6 +8,7 @@
   <title>회원가입 | ShapeUp</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/user/signupInsertInfo.css">
+  <link rel="icon" href="${pageContext.request.contextPath}/resources/img/fav/favicon.png">
 </head>
 <body>
 <main class="signup-container">
