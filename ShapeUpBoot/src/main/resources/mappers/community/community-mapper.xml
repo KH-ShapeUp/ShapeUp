@@ -403,4 +403,10 @@
 		GROUP BY TO_CHAR(CREATED_AT, 'YYYY\"-\"IW')
 		ORDER BY LABEL
 	</select>
+	
+	<update id="modifyCommunity">
+		UPDATE COMMUNITY_TBL SET COMMUNITY_TITLE = #{cDTO.communityTitle}, COMMUNITY_TYPE = #{cDTO.communityType}, 
+		COMMUNITY_CONTENT = #{cDTO.communityContent} 
+		WHERE USER_NO = #{userNo} AND COMMUNITY_NO = #{cDTO.communityNo}
+	</update>
  </mapper>

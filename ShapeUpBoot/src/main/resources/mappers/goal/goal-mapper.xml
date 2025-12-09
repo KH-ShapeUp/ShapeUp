@@ -43,37 +43,37 @@
     <!-- 목표 등록 (식사별 목표 칼로리 포함) -->
     <!-- 목표 저장 (INSERT 또는 UPDATE) -->
 	<insert id="insertGoal" parameterType="GoalVO">
-	    MERGE INTO GOAL_TBL G
-	    USING DUAL
-	    ON (G.USER_NO = #{userNo})
-	    WHEN MATCHED THEN
-	        UPDATE SET
-	            GOAL_WEIGHT = #{goalWeight},
-	            GOAL_FAT = #{goalFat},
-	            GOAL_SMM = #{goalSmm},
-	            GOAL_CALORIE = NULL,  <!-- ✅ NULL로 설정 -->
-	            UPDATED_AT = SYSTIMESTAMP
-	    WHEN NOT MATCHED THEN
-	        INSERT (
-	            USER_NO,
-	            GOAL_WEIGHT,
-	            GOAL_FAT,
-	            GOAL_SMM,
-	            GOAL_CALORIE,
-	            CREATED_AT,
-	            UPDATED_AT
-	        )
-	        VALUES (
-	            #{userNo},
-	            #{goalWeight},
-	            #{goalFat},
-	            #{goalSmm},
-	            NULL,  <!-- ✅ NULL로 설정 -->
-	            SYSTIMESTAMP,
-	            SYSTIMESTAMP
-	        )
-	</insert>
-
+       MERGE INTO GOAL_TBL G
+       USING DUAL
+       ON (G.USER_NO = #{userNo})
+       WHEN MATCHED THEN
+           UPDATE SET
+               GOAL_WEIGHT = #{goalWeight},
+               GOAL_FAT = #{goalFat},
+               GOAL_SMM = #{goalSmm},
+               GOAL_CALORIE = NULL,  <!-- ✅ NULL로 설정 -->
+               UPDATED_AT = SYSTIMESTAMP
+       WHEN NOT MATCHED THEN
+           INSERT (
+               USER_NO,
+               GOAL_WEIGHT,
+               GOAL_FAT,
+               GOAL_SMM,
+               GOAL_CALORIE,
+               CREATED_AT,
+               UPDATED_AT
+           )
+           VALUES (
+               #{userNo},
+               #{goalWeight},
+               #{goalFat},
+               #{goalSmm},
+               NULL,  <!-- ✅ NULL로 설정 -->
+               SYSTIMESTAMP,
+               SYSTIMESTAMP
+           )
+   </insert>
+   
     <!-- 목표 수정 (식사별 목표 칼로리 포함) -->
     <update id="updateGoal" parameterType="com.ShapeUp.boot.domain.goal.model.vo.GoalVO">
         UPDATE GOAL_TBL

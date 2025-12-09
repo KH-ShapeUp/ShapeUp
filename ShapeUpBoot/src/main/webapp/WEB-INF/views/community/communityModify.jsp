@@ -156,7 +156,7 @@
             console.log("수정할 데이터:", data);
 
             fetch("/community/modify", { 
-                method: 'put', 
+                method:'PUT',
                 headers: {"Content-Type":"application/json"},
                 body: JSON.stringify(data)
             })

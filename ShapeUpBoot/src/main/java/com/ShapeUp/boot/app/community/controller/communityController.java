@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -194,5 +195,13 @@ public class communityController {
 		System.out.println(cmDTO);
 		model.addAttribute("cList", cmDTO);
 		return "community/communityModify";
+	}
+	
+	@PutMapping("/community/modify")
+	@ResponseBody
+	public int modifyCommunity(@RequestBody communityInsertDTO cDTO, HttpSession session) {
+		int userNo = (int)session.getAttribute("userNo");
+		System.out.println("수정할 데이터"+cDTO);
+		return cService.modifyCommunity(cDTO, userNo);
 	}
 }

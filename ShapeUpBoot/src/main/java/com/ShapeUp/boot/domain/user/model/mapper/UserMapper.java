@@ -191,4 +191,10 @@ public interface UserMapper {
 	/* 리뷰 작성 */
 	int reviewInsert(ReviewVO rVo);
 
+	/* 리뷰 리스트 */
+	List<ReviewVO> getReviewList(int matchingNo);
+
+	int reviewDelete(int matchingNo, int userNo);
+
+
 }

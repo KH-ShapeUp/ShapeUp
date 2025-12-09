@@ -20,4 +20,9 @@ public class ReviewVO {
 	private Timestamp createdAt;
 	private Timestamp updateAt;
 	private String deleteYn;
+
+	private String userNickName;
+	private String createdDay;
+	
+	private String userProfileImg;
 }

@@ -818,6 +818,7 @@ public class UserController {
         /* 예약한 매칭 */
         List<matchingListDTO> aList = userService.getApplyMatchingList(userNo);
         model.addAttribute("aList", aList);
+        
         if (userNo == null) {
             return "redirect:/user/login";
         }
@@ -1671,7 +1672,24 @@ public class UserController {
 	 /* 리뷰 작성 */
 	 @PostMapping("/review")
 	 @ResponseBody
-	 public int reviewInsert(@RequestBody ReviewVO rVo) {		 
+	 public int reviewInsert(@RequestBody ReviewVO rVo) {
 		 return userService.reviewInsert(rVo);
+	 }
+	 
+	 /* 리뷰 가져오기 */
+	 @GetMapping("/review/list")
+	 @ResponseBody
+	 public List<ReviewVO> getReviewList(@RequestParam("matchingNo") int matchingNo) {
+		 System.out.println(matchingNo);
+		 return userService.getReviewList(matchingNo);
+	 }
+	 
+	 /* 리뷰 삭제 */
+	 @GetMapping("/review/delete")
+	 @ResponseBody
+	 public int reviewDelete(@RequestParam("matchingNo") int matchingNo, HttpSession session) {
+		 int userNo = (int)session.getAttribute("userNo");
+		 
+		 return userService.reviewDelete(matchingNo, userNo);
 	 }
 }

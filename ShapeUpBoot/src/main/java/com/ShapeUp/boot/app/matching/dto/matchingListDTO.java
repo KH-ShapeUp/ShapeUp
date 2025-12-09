@@ -27,4 +27,6 @@ public class matchingListDTO {
 	private String matchingStatus; 		// SQL에서 날짜로 마감/모집중
 	private int applicationCount;		// 신청 인원 수
 	private String userProfileImg;
+	
+	private int reviewCount;
 }

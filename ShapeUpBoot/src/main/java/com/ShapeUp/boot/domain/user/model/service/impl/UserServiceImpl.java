@@ -277,4 +277,15 @@ public class UserServiceImpl implements UserService {
 		return userMapper.reviewInsert(rVo);
 	}
 
+	/* 리뷰 전체 리스트 */
+	@Override
+	public List<ReviewVO> getReviewList(int matchingNo) {
+		return userMapper.getReviewList(matchingNo);
+	}
+
+	@Override
+	public int reviewDelete(int matchingNo, int userNo) {
+		return userMapper.reviewDelete(matchingNo, userNo);
+	}
+
 }
