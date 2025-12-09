@@ -32,7 +32,7 @@ const Sidebar = ({
     fetch("/api/session/logout", { method: "POST", credentials: "include" })
       .catch(() => {})
       .finally(() => {
-        window.location.href = "http://localhost:8080";
+        window.location.href = "http://192.168.52.24:8080";
       });
   };
 
@@ -40,10 +40,7 @@ const Sidebar = ({
     // Admin과 Stadium 모두 루트(8080)로 이동하도록 고정
     const target =
       variant === "admin" || variant === "stadium" ? "/" : homeHref || "/";
-    const url = target.startsWith("http")
-      ? target
-      : `${window.location.protocol}//${window.location.hostname}:8080${target}`;
-    window.location.href = url;
+    window.location.href = "http://192.168.52.24:8080";
   };
 
   const logoSrc = variant === "stadium" ? stadiumLogo : adminLogo;
