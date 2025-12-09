@@ -596,3 +596,33 @@
 .comment-delete:hover {
     text-decoration: underline;
 }
+
+@media  (max-width:768px) {
+    .main {
+        width: 100%;
+        display: flex;
+        padding: 5vw;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+        flex-direction: column;
+        gap: 2em;
+    }
+
+    .notice-category {
+        font-size: .7rem;
+        padding: 3px 5px;
+    }
+
+    .post-category-tip,
+    .post-category-certification,
+    .post-category,
+    .post-category-food {
+        font-size: .7rem;
+        padding: 3px 5px;
+    }
+
+    .post-nickName {
+        font-size: .75rem;
+    }
+}

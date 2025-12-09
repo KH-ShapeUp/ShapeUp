@@ -7,7 +7,8 @@ uri="http://java.sun.com/jsp/jstl/functions"%>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShapeUp | 루틴 관리</title>
+    <title>루틴 관리 | ShapeUp</title>
+    <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"

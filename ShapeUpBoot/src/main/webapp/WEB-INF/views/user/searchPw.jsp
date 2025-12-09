@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>비밀번호 찾기 | ShapeUp</title>
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/searchPw.css">
 </head>
 <body>

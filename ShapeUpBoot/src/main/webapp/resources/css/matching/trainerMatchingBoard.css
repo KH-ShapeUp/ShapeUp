@@ -164,6 +164,11 @@
     gap: 20px;
 }
 
+.matching-content-wrapper .not {
+    display: flex;
+    padding: 30px;
+}
+
 .matching-card {
     height: 100%;            /* 그리드 셀 높이에 맞춰 꽉 채움 */
     min-height: 350px;       /* 최소 높이 유지 */
@@ -419,4 +424,32 @@
 .pagination .back:hover,
 .pagination .next:hover {
     color: var(--main-color);
+}
+
+@media (max-width: 768px) {
+  .main {
+    width: 100%;
+    display: flex;
+    padding: 5vw;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    flex-direction: column;
+    gap: 2em;
+  }
+
+  .matching-content-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .location-filter {
+    text-align: start;
+  }
+
 }

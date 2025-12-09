@@ -10,7 +10,7 @@
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/updateUserInfo.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/mypage.css">
-  
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/header.jsp"/>
@@ -335,26 +335,33 @@
                 <div class="card-partner-type">
                   <span class="matchingContent">${mList.matchingContent}</span>
                 </div>
-                <div class="matching-footer">
-                  <div class="matching-location">
-                      <i class="fa-solid fa-location-dot"></i>
-                      <span>${mList.matchingLocation}</span>
+                <div class="mymatching-footer">
+                  <div class="mymatching-footer-left">
+                    <div class="matching-location">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>${mList.matchingLocation}</span>
+                    </div>
+                    <div class="matching-time">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>${mList.matchingTime}</span>
+                    </div>
+                    <div class="matching-day">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>${mList.matchingDate}</span>
+                    </div>
+                    <div class="matching-money">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>${mList.matchingPrice}</span>
+                    </div>
+                    <div class="matching-user">
+                        <i class="fa-solid fa-users"></i>
+                        <span>${mList.applicationCount}/${mList.matchingUserCount} 명</span>
+                    </div>
                   </div>
-                  <div class="matching-time">
-                      <i class="fa-solid fa-clock"></i>
-                      <span>${mList.matchingTime}</span>
-                  </div>
-                  <div class="matching-day">
-                      <i class="fa-solid fa-calendar-days"></i>
-                      <span>${mList.matchingDate}</span>
-                  </div>
-                  <div class="matching-money">
-                      <i class="fa-solid fa-wallet"></i>
-                      <span>${mList.matchingPrice}</span>
-                  </div>
-                  <div class="matching-user">
-                      <i class="fa-solid fa-users"></i>
-                      <span>${mList.applicationCount}/${mList.matchingUserCount} 명</span>
+                  <div class="matching-footer-right">
+                    <c:if test="${mList.reviewCount >= 1}">
+                      <button class="myreviewWrite" onclick="reviewAll('${mList.matchingNo}')">리뷰보기</button>
+                    </c:if>
                   </div>
                 </div>
               </div>
@@ -1291,7 +1298,14 @@ function reviewAll(matchingNo) {
               stars += `<i class="fa-regular fa-star" style="color: #FFD43B;"></i>`;
           }
       }
+      const loginUserNo = '${sessionScope.userNo}';
+      const writerUser = (String(r.userNo) === String(loginUserNo)) 
+        ? `<span style="font-size:.8rem; font-weight:500; color:#0A84FF;">(나)</span>` 
+        : '';
 
+      const reviewDelete = (String(r.userNo) === String(loginUserNo))
+        ? `<button class="reviewDelete" onclick="reviewDelete('\${r.matchingNo}');">삭제</button>`
+        : ''
       reviewList.innerHTML += `
         <div class="review-card">
           <div class="review-card-top">
@@ -1300,10 +1314,17 @@ function reviewAll(matchingNo) {
             </div>
             <div class="card-top-right">
               <div class="card-top-user">
-                <span class="nick-name">\${r.userNickName}</span>
+                <div style="width: 100%; display:flex; flex-direction: row; align-items: center; gap:8px; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; flex-direction:row; gap:5px;">
+                    <span class="nick-name">\${r.userNickName}</span>
+                    \${writerUser}
+                  </div>
+                  <div>
+                    \${reviewDelete}
+                  </div>
+                </div>
                 <span class="created-day">\${r.createdDay}</span>
               </div>
-              <button class="reviewDelete" onclick="reviewDelete('\${r.matchingNo}');">삭제</button>
             </div>
           </div>
           <div class="review-star">

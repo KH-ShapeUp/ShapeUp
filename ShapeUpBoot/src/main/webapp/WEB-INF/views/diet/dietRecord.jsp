@@ -4,10 +4,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오늘의 식단</title>
+    <title>오늘의 식단 | ShapeUp</title>
     <link rel="stylesheet" href="../../../resources/css/diet/dietRecord.css" />
     <link rel="stylesheet" href="../../../resources/css/diet/insertDietRecord.css" />
     <link rel="stylesheet" href="../../../resources/css/diet/modal.css" />
+    <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
     <script>
       window.isDietLoggedIn = <%= session.getAttribute("userNickname") != null ? "true" : "false" %>;
     </script>

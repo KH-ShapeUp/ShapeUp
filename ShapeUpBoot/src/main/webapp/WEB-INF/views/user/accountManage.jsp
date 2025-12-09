@@ -10,6 +10,7 @@
   <jsp:include page="/WEB-INF/views/include/head.jsp"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/updateUserInfo.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/mypage.css">
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
   
 </head>
 <body>

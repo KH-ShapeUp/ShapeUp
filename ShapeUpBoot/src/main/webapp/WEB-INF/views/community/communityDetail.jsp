@@ -5,10 +5,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>커뮤니티 | ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 <link rel="stylesheet" href="../../../resources/css/community/communityDetail.css"/>
 <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
 	<div class="container">

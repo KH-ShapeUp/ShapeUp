@@ -399,6 +399,7 @@
 .user-profile img {
   object-fit: contain;
   width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 
@@ -569,13 +570,8 @@
   color: #111;
 }
 
-.goal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-}
 
-.goal-content a {
+.goal-content-wrapper a {
   text-decoration: none;
   color: #111;
 }
@@ -588,7 +584,7 @@
   overflow: hidden;
   padding: 1.5rem;
   border: 1px solid #f2f3f4;
-  gap: 10px;
+  --gap: 10px;
   transition: background-color 0.15s ease;
 }
 
@@ -660,16 +656,22 @@
   gap: 5px;
   overflow: hidden;
 }
-
+.goal-left-content .goal-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap:10px;
+}
 .goal-middle .goal-content {
   font-size: 0.9rem;
   font-weight: 500;
   color: #666;
-  --flex: 1;                 /* 남은 공간을 모두 차지 */
+  flex: 1;                 /* 남은 공간을 모두 차지 */
   min-width: 0;            /* flex item이 컨텐츠 크기보다 작아질 수 있게 함 */
-  --white-space: nowrap;     /* 텍스트를 한 줄로 강제 */
+  max-width: 500px;
+  white-space: nowrap;
   overflow: hidden;        /* 넘치는 텍스트 숨김 */
   text-overflow: ellipsis; /* 말줄임표(...) 표시 */
+  --gap: 10px;
 }
 
 /* 공지사항 */
@@ -967,7 +969,7 @@
     pointer-events: none;
 }
 
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
   .main {
     width: 100%;
     display: flex;
@@ -1024,6 +1026,7 @@
   .matching-info {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .matching-btn-wrapper {
@@ -1045,7 +1048,7 @@
     flex-direction: column;
   }
 
-  .goal-content {
+  .goal-content-wrapper {
     overflow-y: auto;
     flex-direction: row;
     -ms-overflow-style: none;
@@ -1053,11 +1056,11 @@
     gap: 20px;
   }
 
-  .goal-content::-webkit-scrollbar {
+  .goal-content-wrapper::-webkit-scrollbar {
     display: none;
   }
 
-  .goal-content a {
+  .goal-content-wrapper a {
     flex: 0 0 100%; /* 1개씩만 보이도록 */
     width: 100%;
   }

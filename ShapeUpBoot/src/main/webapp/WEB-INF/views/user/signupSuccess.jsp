@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원가입 완료 | ShapeUp</title>
+  <link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/user/signupSuccess.css">
 </head>
 <body>

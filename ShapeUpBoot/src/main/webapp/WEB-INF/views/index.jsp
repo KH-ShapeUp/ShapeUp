@@ -5,11 +5,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ShapeUp</title>
 <jsp:include page="/WEB-INF/views/include/head.jsp" />
 <link rel="stylesheet"
    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <link rel="stylesheet" href="../../resources/css/index.css">
+<link href="../../../resources/img/fav/favicon.png" rel="shortcut icon" type="image/x-icon">
 </head>
 <body>
    <div class="container">
@@ -261,7 +263,7 @@
                   </div>
                </div>
 
-               <div class="goal-content">
+               <div class="goal-content-wrapper">
                   <c:forEach var="sList" items="${sList}">                  
                      <a href="/community/detail?boardNo=${sList.communityNo}">
                         <div class="goal-card">
